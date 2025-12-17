@@ -1,7 +1,6 @@
 {
 	"root": true,
 	"env": {
-		"node":true,
 		"browser": true,
 		"es2023": true
 	},
@@ -11,10 +10,13 @@
 	},
 	"globals": {
 		"sap": true,
-		"jQuery": true
+		"jQuery": true,
+		"$":true,
+		"hasher":true
 	},
 	"rules": {
 		// Possible Errors
+		
 		"for-direction": "error",
 		"getter-return": "error",
 		"no-async-promise-executor": "error",
@@ -105,7 +107,7 @@
 		"no-void": "error",
 		"no-warning-comments": ["warn", {"location": "anywhere"}],
 		"no-with": "error",
-		"prefer-object-has-own": "error",
+		"prefer-object-has-own": "off",
 		"radix": ["error", "as-needed"],
 		"require-await": "error",
 		"wrap-iife": ["error", "any"],
