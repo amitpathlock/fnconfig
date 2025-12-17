@@ -4,7 +4,7 @@ on: push
 
 jobs:
   build:
-    name: CI Pipeline Validation Checks
+    name: Initialize Dependencies
     runs-on: ubuntu-latest # The type of runner machine to use
 
     steps:
@@ -19,8 +19,32 @@ jobs:
       - name: Dependency Initialization # Step 3: Run commands to install project dependencies
         run: yarn
 
+  ESList-Checks:
+    needs: build
+    name: Initialize Dependencies
+    runs-on: ubuntu-latest # The type of runner machine to use
+    steps:
+      - name: Checkout to repository # Step 1: Get the code
+        uses: actions/checkout@v1 # Uses a prebuilt action to check out the repo
+
+      - name: Use Node.js ${{ matrix.node-version }} # Step 2: Set up the specific language environment
+        uses: actions/setup-node@v1  # Uses a prebuilt action to install Node
+        with:
+          node-version: ${{ matrix.node-version }} # Specify the version
       - name: ESLint Checks # Step 3: Run commands for EsLint Checks
         run: yarn lint
 
+  Finalized-Build:
+    needs: ESList-Checks
+    name: Initialize Dependencies
+    runs-on: ubuntu-latest # The type of runner machine to use
+    steps:
+      - name: Checkout to repository # Step 1: Get the code
+        uses: actions/checkout@v1 # Uses a prebuilt action to check out the repo
+
+      - name: Use Node.js ${{ matrix.node-version }} # Step 2: Set up the specific language environment
+        uses: actions/setup-node@v1  # Uses a prebuilt action to install Node
+        with:
+          node-version: ${{ matrix.node-version }} # Specify the version
       - name: Build Project # Step 5: Run the build command
         run: npm run build
