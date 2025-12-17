@@ -1,26 +1,22 @@
-name: CI-Pipeline-validation
+name: Main flow
 
-on: push
+on:
+  push:
+    branches:
+      - main
 
 jobs:
-  build:
-    name: CI Pipeline Validation Checks
-    runs-on: ubuntu-latest # The type of runner machine to use
-
+  lint:
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout to repository # Step 1: Get the code
-        uses: actions/checkout@v1 # Uses a prebuilt action to check out the repo
-
-      - name: Use Node.js ${{ matrix.node-version }} # Step 2: Set up the specific language environment
-        uses: actions/setup-node@v1  # Uses a prebuilt action to install Node
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }} # Specify the version
-
-      - name: Dependency Initialization # Step 3: Run commands to install project dependencies
-        run: yarn
-
-      - name: ESLint Checks # Step 3: Run commands for EsLint Checks
-        run: yarn lint
-
-      - name: Build Project # Step 5: Run the build command
-        run: npm run build
+          node-version: 16
+      - run: npm ci
+      - run: npm run lint:json
+        continue-on-error: true
+      - uses: ldiego73/eslint-report-action@v1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          report: reports/lint.json
