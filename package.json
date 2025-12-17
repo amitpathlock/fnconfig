@@ -1,5 +1,5 @@
 {
-  "name": "amitpathlock/fnconfig",
+  "name": "fnconfig",
   "version": "0.0.1",
   "license": "MIT",
   "description": "An SAP Fiori application.",
@@ -32,9 +32,9 @@
   },
   "sapuxLayer": "CUSTOMER_BASE",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
+    "@amitpathlock:registry": "https://npm.pkg.github.com"
   },
-   "repository": {
+  "repository": {
     "type": "git",
     "url": "https://github.com/amitpathlock/fnconfig.git"
   }
