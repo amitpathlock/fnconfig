@@ -16,9 +16,9 @@ sap.ui.define([
              * @override
              */
             init: function () {
-                /*eslint-disable*/
+              
                 UIComponent.prototype.init.apply(this, arguments);
-                 /*eslint-enable*/
+              
                 this.setModel(new JSONModel({ layout: "OneColumn" }), "layoutMode");
                 this.getRouter().initialize();
             }
