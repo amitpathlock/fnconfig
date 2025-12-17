@@ -40,7 +40,7 @@ jobs:
 
   Finalized-Build:
     needs: ESList-Checks
-    name: Finaliazed Build
+    name: Finalizing Build
     runs-on: ubuntu-latest # The type of runner machine to use
     steps:
       - name: Checkout to repository # Step 1: Get the code
