@@ -30,5 +30,12 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix --ext .js,.jsx ."
   },
-  "sapuxLayer": "CUSTOMER_BASE"
+  "sapuxLayer": "CUSTOMER_BASE",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
+   "repository": {
+    "type": "git",
+    "url": "https://github.com/amitpathlock/fnconfig.git"
+  }
 }

@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: 20
       - name: Dependency Initialization # Step 3: Run commands to install project dependencies
-        run: yarn
+        run: npm install
   publish-gpr:
     needs: build
     runs-on: ubuntu-latest
