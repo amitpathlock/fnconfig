@@ -21,7 +21,7 @@ jobs:
 
   ESList-Checks:
     needs: build
-    name: Initialize Dependencies
+    name: ESLint Checks
     runs-on: ubuntu-latest # The type of runner machine to use
     steps:
       - name: Checkout to repository # Step 1: Get the code
@@ -36,7 +36,7 @@ jobs:
 
   Finalized-Build:
     needs: ESList-Checks
-    name: Initialize Dependencies
+    name: Finaliazed Build
     runs-on: ubuntu-latest # The type of runner machine to use
     steps:
       - name: Checkout to repository # Step 1: Get the code
