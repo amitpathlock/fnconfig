@@ -32,7 +32,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }} # Specify the version
       - name: ESLint Checks # Step 3: Run commands for EsLint Checks
-        run: npm run lint:fix
+        run: npm run lint
 
   Finalized-Build:
     needs: ESList-Checks
