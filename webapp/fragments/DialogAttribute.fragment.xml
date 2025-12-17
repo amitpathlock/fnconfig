@@ -1,0 +1,50 @@
+    <core:FragmentDefinition
+        xmlns="sap.m"
+        xmlns:core="sap.ui.core"
+        xmlns:f="sap.ui.layout.form">
+        <Dialog class="PlDacDailogBox"
+            icon="{viewModel>/Icon}"
+            title="{viewModel>/Title}">
+            <content>
+                <f:SimpleForm
+                    editable="true"
+                    layout="ResponsiveGridLayout"
+                    labelSpanXL="3"
+                    labelSpanL="3"
+                    labelSpanM="3"
+                    labelSpanS="12"
+                    adjustLabelSpan="false"
+                    emptySpanXL="4"
+                    emptySpanL="4"
+                    emptySpanM="4"
+                    emptySpanS="0"
+                    columnsXL="1"
+                    columnsL="1"
+                    columnsM="1"
+                    singleContainerFullSize="false">
+                    <f:content>
+                      <!-- @ui5ignore -->
+                        <Label text="{viewModel>/Name}"  required="true"/>
+                         <!-- @ui5ignore -->
+                        <Input enabled="{viewModel>/AttrNameEnabled}" 
+                        valueState="{viewModel>/ErrorState}"
+                        valueStateText="{viewModel>/ErrorMessage}"
+                        
+                        liveChange="onInputChange"   value="{viewModel>/Data/AttributeId}"  placeholder="{viewModel>/PlaceHolder}"/>
+                        <Label text="{viewModel>/Description}" required="true"/>
+                        <Input value="{viewModel>/Data/Description}" 
+                         valueState="{viewModel>/ErrorStateDesc}"
+                        valueStateText="{viewModel>/ErrorMessageDesc}"
+                         />
+                        <!-- Add more form fields as needed -->
+                    </f:content>
+                </f:SimpleForm>
+            </content>
+            <beginButton>
+                <Button text="Save" press="onSave" />
+            </beginButton>
+            <endButton>
+                <Button text="Cancel" press="onCloseDialog" />
+            </endButton>
+        </Dialog>
+    </core:FragmentDefinition>

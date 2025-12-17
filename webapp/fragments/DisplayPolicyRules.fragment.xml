@@ -1,0 +1,93 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+    
+>
+
+	 <VBox >
+	 <items>
+	 <!-- @ui5ignore -->
+	 <Title text="No rule found"  visible="{viewModel>/ShowNoRecordFound}" class="plDacNoRecordFound"></Title>
+	 <VBox items="{ruleModel>/types}" >
+	
+	 <Panel expandable="true"   expanded="true" headerText="{ruleModel>RuleType}" 
+	 width="auto" class="sapUiResponsiveMargin plDacPanelBackground">
+	 		
+			<headerToolbar>
+				<Toolbar class="plDacIFToolbar" >
+					<Title text="{ruleModel>RuleType}" />	
+				
+			<ToolbarSpacer/>
+			<!-- @ui5ignore -->
+			
+		</Toolbar>
+			</headerToolbar>
+			<content>
+				<VBox items="{ruleModel>Condition/}">
+					<items>
+						<VBox >
+							<Toolbar class="plDacIFToolbar" 
+							visible="{parts:[{path:'ruleModel>CType'},{path:'ruleModel>RuleType'}],formatter:'.formatter.displayViewHandleIFBlockVisiblity'}">
+								<Title class="plDacRuleConditonTitle"  text="{path:'ruleModel>CType',formatter:'.formatter.handleConditionText'}"  />
+								
+								
+							</Toolbar>
+							
+							<Toolbar class="plDacIFToolbar plDacElseIfTitle" 
+							visible="{parts:[{path:'ruleModel>RuleType'},{path:'ruleModel>CType'}],formatter:'.formatter.displayViewHandleElseIFBlockVisiblity'}">
+								<Title  class="plDacRuleConditonTitle" />
+								
+								
+							</Toolbar>
+							
+							 <!-- @ui5ignore -->
+							<VBox  items="{ruleModel>Rules/}" class="plDacRuleBackground">
+								<VBox class="plDacOperatorTitle">
+									<items>
+										
+										<Title text="{ruleModel>ContitionType}" class="plDacRuleConditonTitle sapUiTinyMarginBegin"  visible="{path:'ruleModel>ContitionType',formatter:'.formatter.handleANDOperatorVisibility'}" />	
+										<FlexBox width="100%" class="plDacFlexBoxPaddingAll"  
+										alignItems="Start"
+										>
+											<items>
+											 <!-- @ui5ignore -->
+											   <Text
+												   text="{ruleModel>AttributeDesc}"
+												  class="plDacPolicyAttribute"
+												   width="100%"
+											   >
+											   <layoutData>
+														<FlexItemData growFactor="1" />
+													</layoutData>
+											   </Text>
+												
+												<Text textAlign="Center" text="{ruleModel>Operator}" width="100%" class="plDacPolicyAttribute">
+													<layoutData>
+														<FlexItemData growFactor="1" />
+													</layoutData>
+												</Text>
+											   
+											   <Text
+												   text="{ruleModel>ValueDesc}"
+												   class="plDacPolicyAttribute"
+												   width="100%"
+											   >
+											   <layoutData>
+														<FlexItemData growFactor="1" />
+													</layoutData>
+											   </Text>
+											</items>
+										</FlexBox>
+									</items>
+								</VBox>
+							</VBox>
+						</VBox>
+					</items>	
+
+				</VBox>
+			</content>
+	 </Panel>
+	  </VBox>
+	  </items>
+	 </VBox>
+</core:FragmentDefinition>

@@ -1,0 +1,431 @@
+/* Enter your custom styles here */
+/*.plDacInfoPage{
+    background-image: url(../assets/BG-Hero-scaled-1.webp);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.plDacInfoPageTitle{
+    color: #fff;
+    font-size: 37px;
+    font-weight: 600;
+}
+.plDacTreeItemText>div{
+    color: #24B770;
+}*/
+.plDacRuleText {
+    margin-right: 4px;
+}
+
+.plDacPaddingBegin {
+    padding-left: 45px;
+}
+
+.plDacContentPedding {
+    padding: 3rem;
+}
+
+.plDacRuleOperator {
+    margin-right: 5px;
+
+    margin-top: 4px;
+    margin-left: 0px;
+}
+
+.plDacRuleJoinOperator {
+    margin-right: 12px;
+    margin-left: 12px;
+    font-weight: 600;
+}
+
+.plDacRuleSection {
+    margin-bottom: 17px;
+}
+
+.plDacPageHeaderBorderBottom {
+    border-bottom: 1px solid #ccc;
+}
+
+.plDacInfoPageTitle {
+    font-size: 33px;
+    font-weight: 600;
+}
+
+.plDacRuleSection {
+    background: #fff;
+}
+
+.plDacToolbar {
+    background: #24b770 !important;
+}
+
+.plDacToolbar .sapUiIcon {
+    color: #fff;
+}
+
+.plDacToolbar .sapMTitle {
+    color: #fff !important;
+}
+
+.plDacToolbar .sapMBtnCustomIcon {
+    color: #fff !important;
+}
+
+.sapMSTIIcon {
+    color: #1a9459;
+}
+
+.sapMLIB {
+    border-bottom: 1px solid #24b770;
+}
+
+.sapMBtnCustomIcon {
+    color: #086739;
+}
+
+.sapMTB-Transparent-CTX .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnAttention):not(.sapMBtnReject):not(.sapMBtnActive):not(.sapMBtnGhost) {
+    border-color: #24b770;
+}
+
+.sapMBtn {
+    border-color: #24b770;
+}
+
+.sapMBtn:hover .sapMBtnHoverable {
+    background: #24b770 !important;
+    border-color: #1a9459 !important;
+}
+
+.sapMBtn:hover .sapUiIcon {
+    color: #fff !important;
+}
+
+.sapMBtnGhost {
+    border-color: #24b770;
+}
+
+.sapMBtnGhost>span {
+    color: #24b770 !important;
+}
+
+.sapMBtnGhost:hover {
+    color: #fff !important;
+}
+
+.sapMBtnDisabled:hover {
+    color: #1a9459 !important;
+}
+
+.sapMRb .sapMRbB .sapMRbBOut {
+    stroke: #24b770;
+}
+
+.sapMLIBSelected {
+    border-bottom: 0.0625rem solid #1a9459 !important;
+}
+
+.sapMTableTBody:not(.sapMListTblHasPopin)>.sapMLIBSelected,
+.sapMTableTBody.sapMListTblHasPopin>.sapMLIBSelected+.sapMListTblSubRow {
+    box-shadow: inset 0px -0.0625rem #1a9459;
+}
+
+.sapMRbSel .sapMRbBInn {
+    fill: #1a9459;
+    stroke: none;
+}
+
+:nth-child(even of .sapMListTblRowAlternate).sapMLIBSelected,
+:nth-child(even of .sapMListTblRowAlternate)+.sapMListTblSubRow.sapMLIBSelected {
+    background: #e2f9eb;
+}
+
+.sapMSwt.sapMSwtOn:not(.sapMSwtAcceptReject) {
+    background: #98ffcd;
+    border-color: #23c375;
+}
+
+.sapMSwt.sapMSwtOn:not(.sapMSwtAcceptReject).sapMSwtHoverable:not(.sapMSwtAcceptReject):hover {
+    background: #98ffcd;
+    border-color: #23c375;
+}
+
+.sapMSwt.sapMSwtOff:not(.sapMSwtAcceptReject).sapMSwtHoverable:not(.sapMSwtAcceptReject):hover .sapMSwtHandle {
+    background: #08ea7d;
+    border-color: #23c375;
+}
+
+.sapMSwt.sapMSwtOn:not(.sapMSwtAcceptReject) .sapMSwtHandle {
+    box-sizing: border-box;
+    background: #23c375;
+    border-color: #1ba008;
+}
+
+.sapMSwt.sapMSwtOff:not(.sapMSwtAcceptReject).sapMSwtHoverable:not(.sapMSwtAcceptReject):hover {
+    border-color: #23c375;
+}
+
+.sapMSwt.sapMSwtOff:not(.sapMSwtAcceptReject) .sapMSwtHandle {
+    background: #08ea7d;
+    border-color: #23c375;
+}
+
+span.sapMBtnInner.sapMBtnEmphasized {
+    background-image: none;
+    background-color: #0ad165;
+    border-color: #0bd10a;
+}
+
+.sapMBtn:hover>.sapMBtnHoverable.sapMBtnEmphasized:not(.sapMBtnActive):not(.sapMToggleBtnPressed) {
+
+    border-color: #0bd10a;
+}
+
+.plDacRuleButton>span {
+    border-radius: 0;
+}
+
+.plDacRuleButton .sapUiIcon {
+    font-size: 13px;
+    margin-left: 5px;
+}
+
+.plDacSubRule {
+    padding-left: 37px;
+}
+
+
+
+
+
+.plDacRuleRowAction {
+    position: absolute;
+    right: 0;
+}
+
+span.sapMBtnInner.sapMBtnReject {
+    background-image: none;
+    background: transparent;
+    border: 0;
+
+}
+
+
+.plDacElseIfTitle::before {
+    content: 'OR';
+    position: absolute;
+    left: 50%;
+    top: 6px;
+    padding: 4px 17px;
+    background: #acf389;
+    color: #bb0000fa;
+}
+
+.plDacRuleButton .sapMBtnContent {
+    position: absolute;
+    left: 0;
+    margin-left: 4px;
+}
+
+.plDacRuleButton .sapUiIcon {
+    font-family: SAP-icons;
+    position: absolute;
+    right: 0;
+    margin-right: 4px;
+}
+
+.plDacMarginLR {
+    margin-left: 3px;
+}
+
+.plDacIFToolbar {
+    border-bottom: 0 !important
+}
+
+.plDacFlexBoxPaddingAll {
+    padding: 7px;
+    border: 1px solid #e8ffe8;
+}
+
+.plDacRuleOperator>span {
+    padding: 4px 11px;
+    background: #d8fceb;
+    color: #bb0000fa;
+
+}
+
+.plDacRuleConditonTitle>span {
+    font-size: 15px;
+}
+
+.plDacRuleBackground>.sapMFlexBoxBGTransparent {}
+
+.plDacRuleBackground>.sapMFlexBoxBGTransparent:nth-child(1) {
+    padding-top: 17px;
+    padding-bottom: 17px;
+    padding-left: 17px;
+    padding-right: 17px;
+    background: #b5f2b9;
+    margin-left: 17px;
+}
+
+.plDacPanelBackground {
+    background: rgba(250, 240, 210, 0.5);
+}
+
+.plDacRuleBackground>.sapMFlexBoxBGTransparent:not(:nth-child(1)) {
+    padding-top: 0px;
+    padding-bottom: 17px;
+    padding-left: 17px;
+    padding-right: 17px;
+    background: #b5f2b9;
+    margin-left: 17px;
+}
+
+.plDacRuleBackground .sapMTitle {
+    color: #bb0000fa !important;
+    margin-top: -4px;
+}
+
+.plDacIFToolbar:last-child {
+    margin-top: 7px !important;
+}
+
+.plDacRuleInputIcon {
+    margin-left: -20px;
+    margin-top: 8px;
+    font-size: 16px;
+    color: #0854a0;
+}
+
+.plDacRuleInput>div {
+    padding-right: 20px;
+}
+
+
+
+.plDacSections {
+    display: flex;
+    /* Makes the ul a flex container */
+    list-style: none;
+    /* Removes default bullet points */
+    padding: 0;
+    /* Removes default padding */
+    margin: 0
+}
+
+.plDacSections li a {
+    font-family: "72", "72full", Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    padding-left: 0;
+    color: #32363a;
+    padding: 10px 17px;
+    display: block;
+    font-weight: 500;
+}
+
+ul.plDacSections {
+    border-bottom: 1px solid #23c375;
+}
+
+.plDacSections li {
+    flex-grow: 1;
+    /* Allows li items to grow and fill available space equally */
+    text-align: center;
+    /* Centers content within each li */
+    /* Add other styling as needed, e.g., border, background */
+}
+
+.plDacSections li a span {
+    margin-right: 6px;
+}
+
+.plDacSectionSelected {
+    background: #23c375;
+    color: #fff !important;
+}
+
+.plDacSections li {
+    border-right: 1px dotted #23c375;
+}
+
+.plDacAddRows {
+    float: right;
+    margin-right: 8px;
+}
+
+.plDactextOperators {
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+.plDacPolicyAttribute {
+    font-size: 15px;
+
+
+    border: 1px solid #0854a0;
+    padding: 2px 6px;
+    height: 26px;
+}
+
+.plDacFlexBoxPaddingAll>div {
+    padding: 0px 4px;
+}
+
+.plDacNoRecordFound {
+    width: 100%;
+    height: 320px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.plDacNoRecordFound>span {
+    font-size: 37px;
+    font-weight: 700;
+    color: #24b770;
+}
+.sapMMessageToast{
+    color: #fff !important;
+    background: #23c375 !important;
+    border-color:#23c375 !important;
+    box-shadow: 0 0 0 0.0625rem #24b770a3, 0 0.625rem 1.875rem 0 #37da8bc9;
+    border-radius: 0.25rem;
+}
+.plDacLabelWidth{
+        width: 110px;
+        color: #32363a;
+}
+.plDacFunctionalityForm .sapUiFormTitle {
+    border-bottom: 1px solid #1a9459;
+
+}
+.PlDacMessageBox>header>div>div {
+    background: #23c375 !important;
+}
+.PlDacMessageBox>header>div {
+    background: #23c375 !important;
+    box-shadow: none !important;
+}
+.PlDacMessageBox .sapMBarPH span{
+    color:#fff !important;
+}
+
+.PlDacDailogBox>header>div>div {
+    background: #23c375 !important;
+}
+.PlDacDailogBox>header>div {
+    background: #23c375 !important;
+}
+.PlDacDailogBox .sapMBarPH span{
+    color:#fff !important;
+}
+.PlDacPopover .sapMTBStandard  {
+    background: #23c375 !important;
+}
+.PlDacPopover .sapMTBStandard span{
+    color:#fff !important;
+}
+.plDacObjectHeader{padding: 7px 12px !important;}
+
+.plDacObjectHeader .sapMOHBottomRow{margin-top:1px;}
+.plDacObjectHeader .sapMOHBottomRow .sapMOHAttrRow{margin-top:1px;}

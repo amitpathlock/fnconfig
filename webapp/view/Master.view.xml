@@ -1,0 +1,32 @@
+<mvc:View
+	controllerName="pl.dac.apps.fnconfig.controller.Master"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	displayBlock="true"
+	height="100%"
+   xmlns:core="sap.ui.core"
+	busyIndicatorDelay="0"
+>
+<!-- @ui5ignore -->
+<Page >
+ <customHeader >
+    <Toolbar design="Transparent" class="plDacToolbar">
+	 	<core:Icon src="sap-icon://alphabetical-order" />
+        <Title text="{i18n>titleMasterPage}"/>
+         <ToolbarSpacer/>
+       
+    </Toolbar>
+ </customHeader>
+ <content>
+	<!-- @ui5ignore -->
+            <Tree mode="SingleSelectMaster"
+		    id="Tree5"
+            selectionChange=".onSelectionChange"
+		    items="{path: 'actionData>/'}">
+			<!-- @ui5ignore -->
+			<StandardTreeItem class="plDacTreeItemText" title="{actionData>Name}" icon="{actionData>Icon}" />
+		</Tree>
+      
+ </content>
+</Page>
+</mvc:View>

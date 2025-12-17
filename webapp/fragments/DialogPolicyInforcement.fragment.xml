@@ -1,0 +1,85 @@
+    <core:FragmentDefinition
+        xmlns="sap.m"
+        xmlns:core="sap.ui.core"
+        xmlns:f="sap.ui.layout.form">
+        <Dialog
+            icon="{viewModel>/Icon}"
+            contentWidth="400px"
+            class="PlDacDailogBox"
+            resizable="true"
+            title="{viewModel>/Title}">
+            <content>
+                <f:SimpleForm
+                    editable="true"
+                    layout="ResponsiveGridLayout"
+                    labelSpanXL="3"
+                    labelSpanL="3"
+                    labelSpanM="3"
+                    labelSpanS="12"
+                    adjustLabelSpan="false"
+                    emptySpanXL="4"
+                    emptySpanL="4"
+                    emptySpanM="4"
+                    emptySpanS="0"
+                    columnsXL="1"
+                    columnsL="1"
+                    columnsM="1"
+                    singleContainerFullSize="true">
+                    <f:content>
+                      <!-- @ui5ignore -->
+                        <Label text="{viewModel>/Name}"  required="true"/>
+                         <!-- @ui5ignore -->
+                        <Input enabled="{viewModel>/PolicyNameEnabled}"  id="idPolicyName"
+                        showSuggestion="true"
+                        showValueHelp="true"
+                        valueHelpRequest=".onValueHelpRequested"
+                        valueState="{viewModel>/ErrorState}"
+                        valueStateText="{viewModel>/ErrorMessage}"
+                        suggestionItemSelected="onSuggestionItemSelected"
+                        	suggestionRows="{
+				path: '/PolicySet',
+				length: 10
+			}"
+                        
+                        liveChange="onInputChange"   value="{viewModel>/Data/Policy}" >
+                        	<suggestionColumns>
+				<Column>
+					<Label text="Name"/>
+				</Column>
+				<Column>
+					<Label text="Description"/>
+				</Column>
+			</suggestionColumns>
+			<suggestionRows>
+              <!-- @ui5ignore -->
+				<ColumnListItem >
+					<Label text="{Policy}" />
+					<Label text="{PolicyDesc}" />
+				</ColumnListItem>
+			</suggestionRows>
+                        </Input>
+                       <Label text="{viewModel>/Description}" />
+                        <!-- @ui5ignore -->
+                       <Input  id="idPolicyDescription" value="{viewModel>/Data/PolicyDesc}" enabled="false"/>
+                        <Label text="{viewModel>/Action}" required="true"/>
+                        	<Select 	selectedKey="{viewModel>/Data/PolicyResult}">
+                                <items>
+                                    <core:Item key="" text="" />
+                                    <core:Item key="A" text="ALLOWED" />
+                                    <core:Item key="D" text="DENY" />
+                                </items>
+                            </Select>
+					
+                        	<CheckBox text="Is Active" selected="{viewModel>/Data/IsActive}" />
+                        <!-- Add more form fields as needed -->
+                    </f:content>
+                </f:SimpleForm>
+            </content>
+            <beginButton>
+                <Button text="Save" press="onSave" />
+            </beginButton>
+            <endButton>
+                <Button text="Cancel" press="onCloseDialog" />
+            </endButton>
+        </Dialog>
+    </core:FragmentDefinition>

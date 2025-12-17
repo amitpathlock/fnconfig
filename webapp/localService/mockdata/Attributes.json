@@ -1,0 +1,26 @@
+[
+	{
+        "Id":"1000",
+        "Name":"DATA.SO_SUPPLIER_ID",
+        "Description":"Sales Order Supplier Id",
+        "AttributeCategory":"Data"
+    },
+    {
+        "Id":"1001",
+        "Name":"DATA.PO_SUPPLIER_ID",
+        "Description":"Purchase Order Supplier Id",
+        "AttributeCategory":"Data"
+    },
+    {
+        "Id":"1003",
+        "Name":"DATA.INVOICE_SUPPLIER_ID",
+        "Description":"Invoice List Supplier Id",
+        "AttributeCategory":"Data"
+    },
+    {
+        "Id":"1004",
+        "Name":"USER.ROLE_NAME",
+        "Description":"User Role Name",
+        "AttributeCategory":"User"
+    }
+]

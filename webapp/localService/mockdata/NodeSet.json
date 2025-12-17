@@ -1,0 +1,318 @@
+{
+    "d": {
+        "results": [
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(10)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(10)",
+                    "type": "NorthwindModel.NodeType"
+                },
+                "NodeID": 10,
+                "Title": "Dynamic access control",
+                "IconSrc": "sap-icon://shield",
+                "ParentNodeID": 0,
+                "HasChild": true,
+                "Level":"H1"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(11)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(11)",
+                    "type": "NorthwindModel.NodeType"
+                },
+                "NodeID": 11,
+                "Title": "Functional Config",
+                "IconSrc": "sap-icon://alphabetical-order",
+                "ParentNodeID": 10,
+                "HasChild": true,
+                "Level":"H2"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(12)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(12)",
+                    "type": "NorthwindModel.NodeType"
+                },
+                "NodeID": 12,
+                "Title": "Technical Config",
+                "IconSrc": "sap-icon://technical-object",
+                "ParentNodeID": 10,
+                "HasChild": true,
+                "Level":"H2"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(13)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(13)",
+                    "type": "NorthwindModel.NodeType"
+                },
+                "NodeID": 13,
+                "Title": "Monitoring",
+                "IconSrc": "sap-icon://sys-monitor",
+                "ParentNodeID": 10,
+                "HasChild": true,
+                "Level":"H2"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(14)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(14)",
+                    "type": "NorthwindModel.NodeType"
+                },
+                "NodeID": 14,
+                "Title": "Advance Config",
+                "IconSrc": "sap-icon://settings",
+                "ParentNodeID": 10,
+                "HasChild": true,
+                "Level":"H2"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(15)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(15)",
+                    "type": "NorthwindModel.NodeType"
+                },
+                "NodeID": 15,
+                "Title": "DAC Feed",
+                "IconSrc": "sap-icon://feed",
+                "ParentNodeID": 10,
+                "HasChild": false,
+                "Level":"H2"
+            },
+             {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(16)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(16)",
+                    "type": "NorthwindModel.NodeType"
+                },
+                "NodeID": 16,
+                "Title": "Activation",
+                "IconSrc": "sap-icon://hide",
+                "ParentNodeID": 11,
+                "HasChild": false,
+                "Level":"H3"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(17)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(17)",
+                    "type": "NorthwindModel.NodeType"
+                },
+                "NodeID": 17,
+                "Title": "Policy Information Point",
+                "IconSrc": "sap-icon://locked",
+                "ParentNodeID": 11,
+                "HasChild": true,
+                "Level":"H3"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(18)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(18)",
+                    "type": "NorthwindModel.NodeType"
+                },
+                "NodeID": 18,
+                "Title": "Policy Administration",
+                "IconSrc": "sap-icon://fx",
+                "ParentNodeID": 11,
+                "HasChild": true,
+                "Level":"H3"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(19)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(19)",
+                    "type": "NorthwindModel.NodeType"
+                },
+                "NodeID": 19,
+                "Title": "Policy Inforcement",
+                "IconSrc": "sap-icon://fx",
+                "ParentNodeID": 11,
+                "HasChild": true,
+                "Level":"H3"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(20)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(20)",
+                    "type": "NorthwindModel.NodeType"
+                },
+                "NodeID": 20,
+                "Title": "Data Attributes Config",
+                "IconSrc": "sap-icon://product",
+                "ParentNodeID": 12,
+                "HasChild": true,
+                "Level":"H3"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(21)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(21)",
+                    "type": "NorthwindModel.NodeType"
+                },
+                "NodeID": 21,
+                "Title": "User Attributes Config",
+                "IconSrc": "sap-icon://person-placeholder",
+                "ParentNodeID": 12,
+                "HasChild": true,
+                "Level":"H3"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(22)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(22)",
+                    "type": "NorthwindModel.NodeType"
+                },
+                "NodeID": 22,
+                "Title": "Exports",
+                "IconSrc": "sap-icon://download-from-cloud",
+                "ParentNodeID": 13,
+                "HasChild": false,
+                "Level":"H3"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(23)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(23)",
+                    "type": "NorthwindModel.NodeType"
+                },
+                "NodeID": 23,
+                "Title": "Imports",
+                "IconSrc": "sap-icon://upload-to-cloud",
+                "ParentNodeID": 13,
+                "HasChild": false,
+                "Level":"H3"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(24)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(24)",
+                    "type": "NorthwindModel.NodeType"
+                },
+                "NodeID": 24,
+                "Title": "Maintant T-Codes",
+                "IconSrc": "sap-icon://source-code",
+                "ParentNodeID": 14,
+                "HasChild": false,
+                "Level":"H3"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(25)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(25)",
+                    "type": "NorthwindModel.NodeType"
+                },
+                "NodeID": 25,
+                "Title": "Data Attributes Master",
+                "IconSrc": "sap-icon://product",
+                "ParentNodeID": 17,
+                "HasChild": false,
+                "Level":"H4"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(26)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(26)",
+                    "type": "NorthwindModel.NodeType"
+                },
+                "NodeID": 26,
+                "Title": "User Attributes Master",
+                "IconSrc": "sap-icon://person-placeholder",
+                "ParentNodeID": 17,
+                "HasChild": false,
+                "Level":"H4"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(27)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(27)",
+                    "type": "NorthwindModel.NodeType"
+                },
+                "NodeID": 27,
+                "Title": "Rules",
+                "IconSrc": "sap-icon://simulate",
+                "ParentNodeID": 18,
+                "HasChild": false,
+                "Level":"H4"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(28)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(28)",
+                    "type": "NorthwindModel.NodeType"
+                },
+                "NodeID": 28,
+                "Title": "Data Masking",
+                "IconSrc": "sap-icon://hide",
+                "ParentNodeID": 19,
+                "HasChild": false,
+                "Level":"H4"
+            },
+             {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(29)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(29)",
+                    "type": "NorthwindModel.NodeType"
+                },
+                "NodeID": 29,
+                "Title": "Data Restriction",
+                "IconSrc": "sap-icon://locked",
+                "ParentNodeID": 19,
+                "HasChild": false,
+                "Level":"H4"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(30)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(30)",
+                    "type": "NorthwindModel.NodeType"
+                },
+                "NodeID": 30,
+                "Title": "Technical Mapping",
+                "IconSrc": "sap-icon://connected",
+                "ParentNodeID": 20,
+                "HasChild": false,
+                "Level":"H4"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(31)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(31)",
+                    "type": "NorthwindModel.NodeType"
+                },
+                "NodeID": 31,
+                "Title": "Look Up",
+                "IconSrc": "sap-icon://sys-find",
+                "ParentNodeID": 20,
+                "HasChild": false,
+                "Level":"H4"
+            },
+             {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(32)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(32)",
+                    "type": "NorthwindModel.NodeType"
+                },
+                "NodeID": 32,
+                "Title": "Custom Code Impl.",
+                "IconSrc": "sap-icon://customize",
+                "ParentNodeID": 20,
+                "HasChild": false,
+                "Level":"H4"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(33)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeSet(33)",
+                    "type": "NorthwindModel.NodeType"
+                },
+                "NodeID": 33,
+                "Title": "Custom Code Impl.",
+                "IconSrc": "sap-icon://customize",
+                "ParentNodeID": 21,
+                "HasChild": false,
+                "Level":"H4"
+            }
+        ]
+    }
+}

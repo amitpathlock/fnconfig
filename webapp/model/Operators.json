@@ -1,0 +1,34 @@
+[
+    {
+        "Key":" ",
+        "Text":""
+    },
+    {
+        "Key":"EQ",
+        "Text":"Equal To"
+    },
+    {
+        "Key":"GE",
+        "Text":"Greater Than or Equal To"
+    },
+    {
+        "Key":"LE",
+        "Text":"Less Than or Equal To"
+    },
+    {
+        "Key":"GT",
+        "Text":"Greater than"
+    },
+    {
+        "Key":"<",
+        "Text":"Less than"
+    },
+    {
+        "Key":"NE",
+        "Text":"Not Equal To"
+    },
+    {
+        "Key":"BT",
+        "Text":"Between"
+    }
+]

@@ -1,0 +1,225 @@
+{
+    "_version": "1.17.0",
+    "sap.app": {
+        "id": "pl.dac.apps.fnconfig",
+        "type": "application",
+        "i18n": "i18n/i18n.properties",
+        "applicationVersion": {
+            "version": "0.0.1"
+        },
+        "title": "{{appTitle}}",
+        "description": "{{appDescription}}",
+        "resources": "resources.json",
+        "sourceTemplate": {
+            "id": "@sap/generator-fiori:basic",
+            "version": "1.16.1",
+            "toolsId": "afa74783-536f-4311-bb11-59fc97d2395c"
+        },
+        "dataSources": {
+            "mainService": {
+                "uri": "/sap/opu/odata/APPSDM/DAC_FUNC_CONFIG_SRV_02/",
+                "type": "OData",
+                "settings": {
+                    "odataVersion": "2.0",
+                    "localUri": "localService/metadata.xml"
+                }
+            }
+        }
+    },
+    "sap.ui": {
+        "technology": "UI5",
+        "icons": {
+            "icon": "",
+            "favIcon": "",
+            "phone": "",
+            "phone@2": "",
+            "tablet": "",
+            "tablet@2": ""
+        },
+        "deviceTypes": {
+            "desktop": true,
+            "tablet": true,
+            "phone": true
+        }
+    },
+    "sap.ui5": {
+        "flexEnabled": true,
+        "dependencies": {
+            "minUI5Version": "1.71.64",
+            "libs": {
+                "sap.m": {},
+                "sap.ui.core": {}
+            }
+        },
+        "contentDensities": {
+            "compact": true,
+            "cozy": true
+        },
+        "models": {
+            "i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "settings": {
+                    "bundleName": "pl.dac.apps.fnconfig.i18n.i18n"
+                }
+            },
+             "": {
+                "type": "sap.ui.model.odata.v2.ODataModel",
+                "dataSource": "mainService",
+                "preload": true
+            }
+        },
+        "resources": {
+            "css": [
+                {
+                    "uri": "css/style.css"
+                }
+            ]
+        },
+        "routing": {
+            "config": {
+                "routerClass": "sap.f.routing.Router",
+                "viewType": "XML",
+                "async": true,
+                "viewPath": "pl.dac.apps.fnconfig.view",
+                "controlAggregation": "beginColumnPages",
+                "controlId": "FCL"
+            },
+            "routes": [
+                {
+                    "name": "RouteMaster",
+                    "pattern": ":?query:",
+                    "target": [
+                        "TargetMaster"
+                    ]
+                },
+                {
+                    "name": "Info",
+                    "pattern": "Info",
+                    "target": [
+                        "TargetMaster",
+                        "Info"
+                    ]
+                },
+                {
+                    "name": "Functionality",
+                    "pattern": "Functionality",
+                    "target": [
+                        "TargetMaster",
+                        "Functionality"
+                    ]
+                },
+                {
+                    "name": "DataAttributes",
+                    "pattern": "DataAttributes",
+                    "target": [
+                        "TargetMaster",
+                        "DataAttributes"
+                    ]
+                },
+                {
+                    "name": "UserAttributes",
+                    "pattern": "UserAttributes",
+                    "target": [
+                        "TargetMaster",
+                        "UserAttributes"
+                    ]
+                },
+                {
+                    "name": "Policies",
+                    "pattern": "Policies",
+                    "target": [
+                        "TargetMaster",
+                        "Policies"
+                    ]
+                },
+                {
+                    "name": "DataMasking",
+                    "pattern": "DataMasking",
+                    "target": [
+                        "TargetMaster",
+                        "DataMasking"
+                    ]
+                },
+                {
+                    "name": "DataRestriction",
+                    "pattern": "DataRestriction",
+                    "target": [
+                        "TargetMaster",
+                        "DataRestriction"
+                    ]
+                },
+                {
+                    "name": "PolicyRules",
+                    "pattern": "PolicyRules/{PolicyName}",
+                    "target": [
+                        "TargetMaster",
+                        "PolicyRules"
+                    ]
+                }
+            ],
+            "targets": {
+                "TargetMaster": {
+                    "viewType": "XML",
+                    "transition": "slide",
+                    "viewId": "Master",
+                    "viewName": "Master"
+                },
+                   
+                "Functionality": {
+                    "viewType": "XML",
+                    "transition": "slide",
+                    "viewName": "Functionality",
+                    "controlAggregation": "midColumnPages"
+                },
+                "DataAttributes": {
+                    "viewType": "XML",
+                    "transition": "slide",
+                    "viewName": "DataAttributes",
+                    "controlAggregation": "midColumnPages"
+                },
+                "UserAttributes": {
+                    "viewType": "XML",
+                    "transition": "slide",
+                    "viewName": "UserAttributes",
+                    "controlAggregation": "midColumnPages"
+                },
+                "Policies": {
+                    "viewType": "XML",
+                    "transition": "slide",
+                    "viewName": "Policies",
+                    "controlAggregation": "midColumnPages"
+                },
+                "DataMasking":{
+                    "viewType": "XML",
+                    "transition": "slide",
+                    "viewName": "DataMaskingEnforcement",
+                    "controlAggregation": "midColumnPages"
+                },
+                "DataRestriction":{
+                    "viewType": "XML",
+                    "transition": "slide",
+                    "viewName": "DataRestrictionEnforcement",
+                    "controlAggregation": "midColumnPages"
+                },
+                "Info":{
+                    "viewType": "XML",
+                    "transition": "slide",
+                    "viewName": "Information",
+                    "controlAggregation": "midColumnPages"
+                },
+                "PolicyRules":{
+                    "viewType": "XML",
+                    "transition": "slide",
+                    "viewName": "RuleBuilder",
+                    "controlAggregation": "endColumnPages"
+                }
+            }
+        },
+        "rootView": {
+            "viewName": "pl.dac.apps.fnconfig.view.FlexibleColumnLayout",
+            "type": "XML",
+            "async": true,
+            "id": "app"
+        }
+    }
+}

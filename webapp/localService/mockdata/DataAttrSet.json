@@ -1,0 +1,60 @@
+{
+    "d": {
+        "results": [
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/DataAttrSet('DATA.AC_DOC_TYPE')",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/DataAttrSet('DATA.AC_DOC_TYPE')",
+                    "type": "NorthwindModel.DataAttrType"
+                },
+                "AttributeName": "DATA.AC_DOC_TYPE",
+                "Description": "Accouting document type"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/DataAttrSet('DATA.CC_NAME')",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/DataAttrSet('DATA.CC_NAME')",
+                    "type": "NorthwindModel.DataAttrType"
+                },
+                "AttributeName": "DATA.CC_NAME",
+                "Description": "Company Code Name"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/DataAttrSet('DATA.CL_JOURNAL_ENTRY')",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/DataAttrSet('DATA.CL_JOURNAL_ENTRY')",
+                    "type": "NorthwindModel.DataAttrType"
+                },
+                "AttributeName": "DATA.CL_JOURNAL_ENTRY",
+                "Description": "Journal Entries"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/DataAttrSet('DATA.COMPANY_CODE')",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/DataAttrSet('DATA.COMPANY_CODE')",
+                    "type": "NorthwindModel.DataAttrType"
+                },
+                "AttributeName": "DATA.COMPANY_CODE",
+                "Description": "Company Code"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/DataAttrSet('DATA.CUST_AMOUNT')",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/DataAttrSet('DATA.CUST_AMOUNT')",
+                    "type": "NorthwindModel.DataAttrType"
+                },
+                "AttributeName": "DATA.CUST_AMOUNT",
+                "Description": "Customer line items Amount"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/DataAttrSet('DATA.DIVISION')",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/DataAttrSet('DATA.DIVISION')",
+                    "type": "NorthwindModel.DataAttrType"
+                },
+                "AttributeName": "DATA.DIVISION",
+                "Description": "Division"
+            }
+        ]
+    }
+}

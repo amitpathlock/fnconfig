@@ -1,0 +1,87 @@
+<mvc:View
+	controllerName="pl.dac.apps.fnconfig.controller.DataAttributes"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	displayBlock="true"
+	height="100%"
+    xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
+    xmlns:smartTable="sap.ui.comp.smarttable"
+xmlns:core="sap.ui.core"
+	
+>
+<!-- @ui5ignore -->
+<Page  >
+<customHeader>
+<Toolbar design="Transparent" class="plDacToolbar">
+    
+        <core:Icon src="sap-icon://product" />
+        <Title text="{i18n>titPIPDataAttributePage}"/>
+        <ToolbarSpacer/>
+        <!-- @ui5ignore -->
+        	<OverflowToolbarButton type="Transparent" icon="sap-icon://full-screen" press="handleFullScreen" tooltip="Enter Full Screen Mode" visible="{viewModel>/FullScreen}"/>
+			<!-- @ui5ignore -->
+            <OverflowToolbarButton type="Transparent" icon="sap-icon://exit-full-screen" press="handleExitFullScreen" tooltip="Exit Full Screen Mode" visible="{viewModel>/ExitFullScreen}"/>
+			
+    </Toolbar>
+</customHeader>
+ <content>
+ <!-- @ui5ignore -->
+	 <smartFilterBar:SmartFilterBar
+               id="smartFilterBar-da"
+               entitySet="DataAttrSet"
+                persistencyKey="SmartFilterBar_Explored"
+                enableBasicSearch="true"
+            />
+            <!-- @ui5ignore -->
+            <smartTable:SmartTable
+                id="idSmartTableDataAttributes"
+                entitySet="DataAttrSet"
+                smartFilterId="smartFilterBar-da"
+                tableType="ResponsiveTable"
+                header="{i18n>titPIPSmartTableDataAttribute}"
+                beforeRebindTable="onBeforeRebindTable"
+                persistencyKey="SmartTableAnalytical_Explored"
+                enableAutoBinding="true"
+                demandPopin="true"
+                class="sapUiResponsiveContentPadding"
+              
+                initiallyVisibleFields="AttributeId,Description"
+            >
+            <smartTable:customToolbar>
+			<OverflowToolbar design="Transparent">
+				<ToolbarSpacer/>
+                 <!-- @ui5ignore -->
+                <OverflowToolbarButton icon="sap-icon://add" tooltip="{i18n>txtBtnAddDataAttribute}" text="Add" press="onAddBtnPress"/>
+				 <!-- @ui5ignore -->
+                <OverflowToolbarButton icon="sap-icon://edit" tooltip="{i18n>txtBtnEditDataAttribute}" enabled="{viewModel>/EditButtonEnabled}" press="onEditBtnPress"/>
+                 <!-- @ui5ignore -->
+                <OverflowToolbarButton icon="sap-icon://delete" tooltip="{i18n>txtBtnDelDataAttribute}" enabled="{viewModel>/DeleteButtonEnabled}" press="onDeleteBtnPress"/>
+				 <!-- @ui5ignore -->
+                <OverflowToolbarButton icon="sap-icon://sort" tooltip="Sort" text="Sort" press="onSort"/>
+			</OverflowToolbar>
+		</smartTable:customToolbar>
+         <!-- @ui5ignore -->
+                <Table mode="SingleSelectLeft" id="idTableDataAttributes"
+                    alternateRowColors="true"
+                    sticky="ColumnHeaders,HeaderToolbar"
+                    selectionChange="onTableSelectionChange"
+                    growing="true"
+                    growingThreshold="10"
+                >
+                    <!-- Header -->
+                    <columns > </columns>
+                    <!-- Data -->
+                    <items>
+                        <ColumnListItem >
+                           <cells>
+									<ObjectIdentifier title="{AttributeId}"/>
+									<Text text="{Description}"/>
+									
+								</cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </smartTable:SmartTable>
+ </content>
+</Page>
+</mvc:View>

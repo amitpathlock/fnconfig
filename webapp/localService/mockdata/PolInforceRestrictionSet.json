@@ -1,0 +1,36 @@
+{
+   "d":{
+      "results":[
+         {
+            "__metadata":{
+               "id":"https://services.odata.org/V2/northwind/Northwind.svc/PolInforceRestrictionSet('RESTRICT_AC_DOC_TYPE')",
+               "uri":"https://services.odata.org/V2/northwind/Northwind.svc/PolInforceRestrictionSet('RESTRICT_AC_DOC_TYPE')",
+               "type":"NorthwindModel.PolInforceRestrictionType"
+            },
+            "PolicyName":"RESTRICT_AC_DOC_TYPE",
+            "Action":"DENY",
+            "Status":false
+         },
+         {
+            "__metadata":{
+               "id":"https://services.odata.org/V2/northwind/Northwind.svc/PolInforceRestrictionSet('RESTRICT_BP_COUNTRY')",
+               "uri":"https://services.odata.org/V2/northwind/Northwind.svc/PolInforceRestrictionSet('RESTRICT_BP_COUNTRY')",
+               "type":"NorthwindModel.PolInforceRestrictionType"
+            },
+            "PolicyName":"RESTRICT_BP_COUNTRY",
+            "Action":"DENY",
+            "Status":true
+         },
+         {
+            "__metadata":{
+               "id":"https://services.odata.org/V2/northwind/Northwind.svc/PolInforceRestrictionSet('RESTRICT_CL_JOURNAL_ENTRY')",
+               "uri":"https://services.odata.org/V2/northwind/Northwind.svc/PolInforceRestrictionSet('RESTRICT_CL_JOURNAL_ENTRY')",
+               "type":"NorthwindModel.PolInforceRestrictionType"
+            },
+            "PolicyName":"RESTRICT_CL_JOURNAL_ENTRY",
+            "Action":"DENY",
+            "Status":true
+         }
+      ]
+   }
+}

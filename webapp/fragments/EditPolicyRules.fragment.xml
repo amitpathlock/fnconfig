@@ -1,0 +1,164 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+    xmlns:cc="pl.dac.apps.fnconfig.control"
+>
+	
+	
+	 <VBox items="{ruleModel>/types}" >
+	
+	 <Panel expandable="true"   expanded="true" headerText="{ruleModel>RuleType}" 
+	 width="auto" class="sapUiResponsiveMargin plDacPanelBackground">
+	 		
+			<headerToolbar>
+				<Toolbar class="plDacIFToolbar" >
+					<Title text="{ruleModel>RuleType}" />	
+
+			<ToolbarSpacer/>
+			<!-- @ui5ignore -->
+			<Button text="Add Condition" icon="sap-icon://add"
+			 press="onPressAddConditionBtn" class="sapUiTinyMarginEnd" type="Transparent"
+			  enabled="{parts:[{path:'ruleModel>ContitionType'},{path:'ruleModel>'}],formatter:'.formatter.hasAddConditionBtnEnabled'}" >
+				<customData>
+						<core:CustomData key="data" value="{ruleModel>}"/>
+				</customData>
+			</Button>
+			
+			<Button text="Delete" icon="sap-icon://delete" type="Transparent" />
+		</Toolbar>
+			</headerToolbar>
+			<content>
+				<VBox items="{ruleModel>Condition/}">
+					<items>
+						<VBox >
+							<Toolbar class="plDacIFToolbar" 
+							visible="{parts:[{path:'ruleModel>CType'},{path:'ruleModel>RuleType'}],formatter:'.formatter.editViewHandleIFBlockVisiblity'}">
+								<Title text="{parts:[{path:'ruleModel>CType'},{path:'ruleModel>RuleType'}],formatter:'.formatter.handleConditionText'}"  class="plDacRuleConditonTitle"/>
+								<ToolbarSpacer/>
+								<!-- @ui5ignore -->
+								<Button text="Add" icon="sap-icon://add" class="sapUiTinyMarginEnd"
+								 press="onButtonPressAddRuleMain" type="Transparent" 
+								 >
+								<customData>
+										<core:CustomData key="data" value="{ruleModel>}"/>
+									</customData>
+								</Button>
+								<!-- @ui5ignore -->
+								<Button text="Delete" icon="sap-icon://delete" type="Transparent" 
+								 press="onButtonPressDeleteRuleMain">
+									<customData>
+										<core:CustomData key="data" value="{ruleModel>}"/>
+									</customData>
+							
+								</Button>
+							</Toolbar>
+							
+							<Toolbar class="sapUiMediumMarginTop plDacIFToolbar" visible="{parts:[{path:'ruleModel>CType'},{path:'ruleModel>RuleType'}],formatter:'.formatter.editViewHandleEndIfVisiblity'}">
+								<Title text="{ruleModel>CType}"  class="plDacRuleConditonTitle"/>
+								<ToolbarSpacer/>
+				
+							</Toolbar>
+							<Toolbar class="sapUiMediumMarginTop plDacIFToolbar" visible="{parts:[{path:'ruleModel>CType'},{path:'ruleModel>RuleType'}],formatter:'.formatter.editViewHandleANDOperatorVisiblity'}">
+								<Title text="{ruleModel>CType}"  class="plDacRuleConditonTitle sapUiTinyMarginBegin"/>
+								<ToolbarSpacer/>
+				
+							</Toolbar>
+							<Toolbar class="sapUiMediumMarginTop plDacIFToolbar plDacElseIfTitle" visible="{parts:[{path:'ruleModel>CType'},{path:'ruleModel>RuleType'}],formatter:'.formatter.editViewHandleELSEIFVisiblity'}">
+								<Title  class="plDacRuleConditonTitle sapUiTinyMarginBegin"/>
+								<ToolbarSpacer/>
+								<!-- @ui5ignore -->
+								<Button text="Add" icon="sap-icon://add" class="sapUiTinyMarginEnd"
+								 press="onButtonPressAddRuleMain" type="Transparent" 
+								 >
+								<customData>
+										<core:CustomData key="data" value="{ruleModel>}"/>
+									</customData>
+								</Button>
+								<!-- @ui5ignore -->
+								<Button text="Delete" icon="sap-icon://delete" type="Transparent" 
+								 press="onButtonPressDeleteRuleMain">
+									<customData>
+										<core:CustomData key="data" value="{ruleModel>}"/>
+									</customData>
+							
+								</Button>
+							</Toolbar>
+							 <!-- @ui5ignore -->
+							<VBox id="idBoxRuleMain" class="plDacRuleBackground" items="{ruleModel>Rules/}">
+								<VBox class="plDacOperatorTitle">
+									<items>
+										<Toolbar class="{ruleModel>Classes}" visible="{path:'ruleModel>ContitionType',formatter:'.formatter.handleTitleElseIFVisibile'}">
+											<ToolbarSpacer/>
+											<!-- @ui5ignore -->
+											<Button text="Add" icon="sap-icon://add" class="sapUiTinyMarginEnd" press="onButtonPressAddRule" type="Transparent" visible="{path:'ruleModel>ContitionType',formatter:'.formatter.handleANDVisibility'}">
+												 <customData>
+													<core:CustomData key="data" value="{ruleModel>}"/>
+												</customData>
+											</Button>
+											<!-- @ui5ignore -->
+											<Button  press="onButtonPressDeleteRuleMain" text="Delete" icon="sap-icon://delete" type="Reject" />
+										</Toolbar>
+										<Title text="{ruleModel>ContitionType}" class=""  visible="{path:'ruleModel>ContitionType',formatter:'.formatter.handleANDOperatorVisibility'}" />	
+										<FlexBox width="100%" class="plDacFlexBoxPaddingAll"  
+										alignItems="Start"
+										justifyContent="Center">
+											<items>
+											 <!-- @ui5ignore -->
+											   <Input  value="{ruleModel>AttributeDesc}"
+												 width="100%"
+												 showValueHelp="true"
+												 valueHelpRequest=".onAttributeValueHelpRequested"
+												
+											   >
+											   
+											   <customData>
+											   		<core:CustomData key="data" value="{ruleModel>}"/>
+											   </customData>
+												   <layoutData>
+												   <FlexItemData growFactor="4" />
+												   </layoutData>
+											   </Input>
+											   	<Select items="{Operators>/}" selectedKey="{ruleModel>Operator}" width="100%"
+												class="">
+													<core:Item key="{Operators>Key}" text="{Operators>Text}" />
+													 <customData>
+													<core:CustomData key="data" value="{ruleModel>}"/>
+												</customData>
+													<layoutData>
+														<FlexItemData growFactor="2" />
+													</layoutData>
+												</Select>
+										
+												 <!-- @ui5ignore -->
+												<cc:PlDacRuleInput
+													width="100%"
+													value="{ruleModel>ValueDesc}"
+													showValueDialog=".onShowValueDialog"
+												>
+												 <cc:customData>
+													<core:CustomData key="data" value="{ruleModel>}"/>
+												</cc:customData>
+													<cc:layoutData>
+														<FlexItemData growFactor="4" />
+													</cc:layoutData>
+												</cc:PlDacRuleInput>
+												 <!-- @ui5ignore -->
+												<Button icon="sap-icon://delete" type="Reject" press="onPressDeleteSingleRowRule"> 
+												<customData>
+													<core:CustomData key="data" value="{ruleModel>}"/>
+												</customData>
+												</Button>
+											</items>
+										</FlexBox>
+									</items>
+								</VBox>
+							</VBox>
+						</VBox>
+					</items>	
+
+				</VBox>
+			</content>
+	 </Panel>
+	  </VBox>
+	
+</core:FragmentDefinition>

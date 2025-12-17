@@ -1,0 +1,50 @@
+{
+   "d":{
+      "results":[
+         {
+            "__metadata":{
+               "id":"https://services.odata.org/V2/northwind/Northwind.svc/PolAttrMapSet('1')",
+               "uri":"https://services.odata.org/V2/northwind/Northwind.svc/PolAttrMapSet('1')",
+               "type":"NorthwindModel.PolAttrMapType"
+            },
+            "MapID":1,
+            "PolicyName":"RESTRICT_AC_DOC_TYPE",
+            "AttrName":"DATA.AC_DOC_TYPE",
+            "AttrDesc":"Accouting document type"
+         },
+         {
+            "__metadata":{
+               "id":"https://services.odata.org/V2/northwind/Northwind.svc/PolAttrMapSet('2')",
+               "uri":"https://services.odata.org/V2/northwind/Northwind.svc/PolAttrMapSet('2')",
+               "type":"NorthwindModel.PolAttrMapType"
+            },
+            "MapID":2,
+            "PolicyName":"RESTRICT_BP_COUNTRY",
+            "AttrName":"DATA.BP_COUNTRY",
+            "AttrDesc":"Business Partner country"
+         },
+          {
+            "__metadata":{
+               "id":"https://services.odata.org/V2/northwind/Northwind.svc/PolAttrMapSet('3')",
+               "uri":"https://services.odata.org/V2/northwind/Northwind.svc/PolAttrMapSet('3')",
+               "type":"NorthwindModel.PolAttrMapType"
+            },
+            "MapID":3,
+            "PolicyName":"RESTRICT_CL_JOURNAL_ENTRY",
+            "AttrName":"DATA.CC_NAME",
+            "AttrDesc":"Company Code Name"
+         },
+         {
+            "__metadata":{
+               "id":"https://services.odata.org/V2/northwind/Northwind.svc/PolAttrMapSet('4')",
+               "uri":"https://services.odata.org/V2/northwind/Northwind.svc/PolAttrMapSet('4')",
+               "type":"NorthwindModel.PolAttrMapType"
+            },
+            "MapID":4,
+            "PolicyName":"RESTRICT_CL_JOURNAL_ENTRY",
+            "AttrName":"DATA.JOURNALENTRY_CITY",
+            "AttrDesc":"Jountal Entry city"
+         }
+        ]
+   }
+}

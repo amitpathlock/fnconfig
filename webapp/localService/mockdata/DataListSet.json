@@ -1,0 +1,51 @@
+{
+    "d": {
+        "results": [
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/DataListSet('LIST.AUTH_GROUP')",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/DataListSet('LIST.AUTH_GROUP')",
+                    "type": "NorthwindModel.DataListType"
+                },
+                "ListName": "LIST.AUTH_GROUP",
+                "Description": "Auth Group"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/DataListSet('LIST.COUNTRY')",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/DataListSet('LIST.COUNTRY')",
+                    "type": "NorthwindModel.DataListType"
+                },
+                "ListName": "LIST.COUNTRY",
+                "Description": "Country"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/DataListSet('LIST.BANK')",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/DataListSet('LIST.BANK')",
+                    "type": "NorthwindModel.DataListType"
+                },
+                "ListName": "LIST.BANK",
+                "Description": "BANK"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/DataListSet('LIST.COUNTRY_KNA1')",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/DataListSet('LIST.COUNTRY_KNA1')",
+                    "type": "NorthwindModel.DataListType"
+                },
+                "ListName": "LIST.COUNTRY_KNA1",
+                "Description": "Country"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/DataListSet('LIST.IND_AUTH_GROUP')",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/DataListSet('LIST.IND_AUTH_GROUP')",
+                    "type": "NorthwindModel.DataListType"
+                },
+                "ListName": "LIST.IND_AUTH_GROUP",
+                "Description": "Auth Group"
+            }
+        ]
+    }
+}

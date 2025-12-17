@@ -1,0 +1,115 @@
+{
+    "d": {
+        "results": [
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeInfoSet(1)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeInfoSet(1)",
+                    "type": "NorthwindModel.NodeInfoType"
+                },
+                "NodeInfoID": 1,
+                "Head": "Short Text",
+                "Description": "Activate Functionality",
+                "NodeID": 16
+               
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeInfoSet(2)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeInfoSet(2)",
+                    "type": "NorthwindModel.NodeInfoType"
+                },
+                "NodeInfoID": 2,
+                "Head": "Purpose",
+                "Description": "This configuration activity allows system-wide activation or deactivation of the 'Data Masking' or 'Data Restriction' functionality.",
+                "NodeID": 16
+               
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeInfoSet(3)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeInfoSet(3)",
+                    "type": "NorthwindModel.NodeInfoType"
+                },
+                "NodeInfoID": 3,
+                "Head": "Usage",
+                "Description": "The 'Active' checkbox enables or disables functionality. Customizing transport requests are necessary to capture and move configurations to the respective target systems.",
+                "NodeID": 16
+               
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeInfoSet(4)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeInfoSet(4)",
+                    "type": "NorthwindModel.NodeInfoType"
+                },
+                "NodeInfoID": 4,
+                "Head": "Short Text",
+                "Description": "Define Data Attributes",
+                "NodeID": 25
+               
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeInfoSet(5)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeInfoSet(5)",
+                    "type": "NorthwindModel.NodeInfoType"
+                },
+                "NodeInfoID": 5,
+                "Head": "Purpose",
+                "Description": "Data Attributes are attributes defined for data objects, such as Business partner, Sales document, Employee salary, Country etc.",
+                "NodeID": 25
+               
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeInfoSet(6)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeInfoSet(6)",
+                    "type": "NorthwindModel.NodeInfoType"
+                },
+                "NodeInfoID": 6,
+                "Head": "Usage",
+                "Description": "To mask 'Bank Account Number' based on the 'Country', define 'DATA.BANK_ACCOUNT_NUMBER' as a Data Attribute and 'DATA.COUNTRY' as another Data Attribute.",
+                "NodeID": 25
+               
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeInfoSet(7)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeInfoSet(7)",
+                    "type": "NorthwindModel.NodeInfoType"
+                },
+                "NodeInfoID": 7,
+                "Head": "Note",
+                "Description": "Prefix all Data attributes with 'DATA'.",
+                "NodeID": 25
+               
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeInfoSet(8)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeInfoSet(8)",
+                    "type": "NorthwindModel.NodeInfoType"
+                },
+                "NodeInfoID": 8,
+                "Head": "Short Text",
+                "Description": "Functional Configuration",
+                "NodeID": 11
+               
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/NodeInfoSet(9)",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/NodeInfoSet(9)",
+                    "type": "NorthwindModel.NodeInfoType"
+                },
+                "NodeInfoID": 9,
+                "Head": "Purpose",
+                "Description": "Functional Configuration allow user to perform following activities-Activation,Policy Informaton Point,Policy Administration,Policy Inforcement",
+                "NodeID": 11
+               
+            }
+
+        ]
+    }
+}

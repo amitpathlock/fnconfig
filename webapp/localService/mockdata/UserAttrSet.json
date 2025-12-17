@@ -1,0 +1,60 @@
+{
+    "d": {
+        "results": [
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/UserAttrSet('USER.COUNTRY')",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/UserAttrSet('USER.COUNTRY')",
+                    "type": "NorthwindModel.UserAttrType"
+                },
+                "AttributeName": "USER.COUNTRY",
+                "Description": "User Country"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/UserAttrSet('USER.CURRENT_DATE')",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/UserAttrSet('USER.CURRENT_DATE')",
+                    "type": "NorthwindModel.UserAttrType"
+                },
+                "AttributeName": "USER.CURRENT_DATE",
+                "Description": "Current date of the user's location"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/UserAttrSet('USER.CURRENT_TIME')",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/UserAttrSet('USER.CURRENT_TIME')",
+                    "type": "NorthwindModel.UserAttrType"
+                },
+                "AttributeName": "USER.CURRENT_TIME",
+                "Description": "Current time of the user's location"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/UserAttrSet('USER.DEPARTMENT')",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/UserAttrSet('USER.DEPARTMENT')",
+                    "type": "NorthwindModel.UserAttrType"
+                },
+                "AttributeName": "USER.DEPARTMENT",
+                "Description": "User Department"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/UserAttrSet('USER.GROUP')",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/UserAttrSet('USER.GROUP')",
+                    "type": "NorthwindModel.UserAttrType"
+                },
+                "AttributeName": "USER.GROUP",
+                "Description": "User Group"
+            },
+            {
+                "__metadata": {
+                    "id": "https://services.odata.org/V2/northwind/Northwind.svc/UserAttrSet('USER.ID')",
+                    "uri": "https://services.odata.org/V2/northwind/Northwind.svc/UserAttrSet('USER.ID')",
+                    "type": "NorthwindModel.UserAttrType"
+                },
+                "AttributeName": "USER.ID",
+                "Description": "User ID"
+            }
+        ]
+    }
+}

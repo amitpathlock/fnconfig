@@ -1,0 +1,51 @@
+{
+   "d":{
+      "results":[
+         {
+            "__metadata":{
+               "id":"https://services.odata.org/V2/northwind/Northwind.svc/Shippers(1)",
+               "uri":"https://services.odata.org/V2/northwind/Northwind.svc/Shippers(1)",
+               "type":"NorthwindModel.Shipper"
+            },
+            "Orders":{
+               "__deferred":{
+                  "uri":"https://services.odata.org/V2/northwind/Northwind.svc/Shippers(1)/Orders"
+               }
+            },
+            "ShipperID":1,
+            "CompanyName":"Speedy Express",
+            "Phone":"(503) 555-9831"
+         },
+         {
+            "__metadata":{
+               "id":"https://services.odata.org/V2/northwind/Northwind.svc/Shippers(2)",
+               "uri":"https://services.odata.org/V2/northwind/Northwind.svc/Shippers(2)",
+               "type":"NorthwindModel.Shipper"
+            },
+            "Orders":{
+               "__deferred":{
+                  "uri":"https://services.odata.org/V2/northwind/Northwind.svc/Shippers(2)/Orders"
+               }
+            },
+            "ShipperID":2,
+            "CompanyName":"United Package",
+            "Phone":"(503) 555-3199"
+         },
+         {
+            "__metadata":{
+               "id":"https://services.odata.org/V2/northwind/Northwind.svc/Shippers(3)",
+               "uri":"https://services.odata.org/V2/northwind/Northwind.svc/Shippers(3)",
+               "type":"NorthwindModel.Shipper"
+            },
+            "Orders":{
+               "__deferred":{
+                  "uri":"https://services.odata.org/V2/northwind/Northwind.svc/Shippers(3)/Orders"
+               }
+            },
+            "ShipperID":3,
+            "CompanyName":"Federal Shipping",
+            "Phone":"(503) 555-9931"
+         }
+      ]
+   }
+}

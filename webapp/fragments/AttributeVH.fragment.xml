@@ -1,0 +1,15 @@
+<c:FragmentDefinition
+	xmlns="sap.ui.comp.valuehelpdialog"
+	xmlns:c="sap.ui.core"
+>
+<!--@ui5ignore-->
+<ValueHelpDialog 
+		title="Attributes"
+		ok=".onAttributeValueHelpOkPress"
+		cancel=".onValueHelpCancelPress"
+		afterClose=".onValueHelpAfterClose"
+		supportRanges="true"
+		key="AttributeName"
+		descriptionKey="Description">  
+        </ValueHelpDialog>
+</c:FragmentDefinition>

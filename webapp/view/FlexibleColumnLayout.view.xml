@@ -1,0 +1,17 @@
+<mvc:View
+	controllerName="pl.dac.apps.fnconfig.controller.FlexibleColumnLayout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	displayBlock="true"
+	height="100%"
+    xmlns:f="sap.f"
+	busyIndicatorDelay="0"
+>
+<!-- @ui5ignore -->
+<App id="app">
+<!-- @ui5ignore -->
+    <f:FlexibleColumnLayout id="FCL" layout="{layoutMode>/layout}" >
+    
+    </f:FlexibleColumnLayout>
+</App>
+</mvc:View>

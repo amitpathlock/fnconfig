@@ -1,0 +1,35 @@
+{
+    "RuleType": "Rules",
+    "CTypeID": "001",
+    "Condition": [
+        {
+            "CType": "IF",
+            "RuleType": "Rules",
+            "CTypeID": "001",
+            "Rules": [
+                {
+                    "ContitionType": "",
+                    "Attribute": "",
+                    "AttributeDesc": "",
+                    "Operator": "=",
+                    "Value": "",
+                    "ValueDesc": "",
+                    "Rows": 1,
+                    "CTypeID": "001",
+                    "RuleType": "Rules",
+                    "CondId": "001",
+                    "ValueRange": {
+                        "Operator": "",
+                        "Value": ""
+                    }
+                }
+            ]
+        },
+        {
+            "CType": "END IF",
+            "CTypeID": 40,
+            "RuleType": "Rules",
+            "Rules": []
+        }
+    ]
+}

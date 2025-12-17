@@ -1,0 +1,94 @@
+{
+   "d":{
+      "results":[
+         {
+            "__metadata":{
+               "id":"https://services.odata.org/V2/northwind/Northwind.svc/PolRuleSet('1')",
+               "uri":"https://services.odata.org/V2/northwind/Northwind.svc/PolRuleSet('1')",
+               "type":"NorthwindModel.PolRuleType"
+            },
+            "ID":1,
+            "PolicyName":"RESTRICT_AC_DOC_TYPE",
+            "Rule":"DATA.AC_DOC_TYPE EQ [RV]",
+             "Type":"Rule"
+         },
+         {
+            "__metadata":{
+               "id":"https://services.odata.org/V2/northwind/Northwind.svc/PolRuleSet('2')",
+               "uri":"https://services.odata.org/V2/northwind/Northwind.svc/PolRuleSet('2')",
+               "type":"NorthwindModel.PolRuleType"
+            },
+            "ID":2,
+            "PolicyName":"RESTRICT_BP_COUNTRY",
+            "Rule":"DATA.BP_COUNTRY EQ [US]",
+             "Type":"Rule"
+         },
+         {
+            "__metadata":{
+               "id":"https://services.odata.org/V2/northwind/Northwind.svc/PolRuleSet('3')",
+               "uri":"https://services.odata.org/V2/northwind/Northwind.svc/PolRuleSet('3')",
+               "type":"NorthwindModel.PolRuleType"
+            },
+            "ID":3,
+            "PolicyName":"RESTRICT_CL_AMOUNT",
+            "Rule":"DATA.CUSTOMER EQ [USCU_S01]",
+             "Type":"Precondition"
+         },
+         {
+            "__metadata":{
+               "id":"https://services.odata.org/V2/northwind/Northwind.svc/PolRuleSet('4')",
+               "uri":"https://services.odata.org/V2/northwind/Northwind.svc/PolRuleSet('4')",
+               "type":"NorthwindModel.PolRuleType"
+            },
+            "ID":4,
+            "PolicyName":"RESTRICT_CL_AMOUNT",
+            "Rule":"DATA.CUST_AMOUNT EQ [1120,1,120.00]",
+             "Type":"Rule"
+         },
+         {
+            "__metadata":{
+               "id":"https://services.odata.org/V2/northwind/Northwind.svc/PolRuleSet('5')",
+               "uri":"https://services.odata.org/V2/northwind/Northwind.svc/PolRuleSet('5')",
+               "type":"NorthwindModel.PolRuleType"
+            },
+            "ID":5,
+            "PolicyName":"RESTRICT_CL_JOURNAL ENTRY",
+            "Rule":"DATA.CUSTOMER EQ [USCU_S01]",
+             "Type":"Precondition"
+         },
+         {
+            "__metadata":{
+               "id":"https://services.odata.org/V2/northwind/Northwind.svc/PolRuleSet('6')",
+               "uri":"https://services.odata.org/V2/northwind/Northwind.svc/PolRuleSet('6')",
+               "type":"NorthwindModel.PolRuleType"
+            },
+            "ID":6,
+            "PolicyName":"RESTRICT_CL_JOURNAL ENTRY",
+            "Rule":"DATA.CL_JOURNAL_ENTRY EQ [9400000191]",
+             "Type":"Rule"
+         },
+         {
+            "__metadata":{
+               "id":"https://services.odata.org/V2/northwind/Northwind.svc/PolRuleSet('7')",
+               "uri":"https://services.odata.org/V2/northwind/Northwind.svc/PolRuleSet('7')",
+               "type":"NorthwindModel.PolRuleType"
+            },
+            "ID":7,
+            "PolicyName":"RESTRICT_FILTER_JOURNALENTRIES",
+            "Rule":"DATA.CC_NAME EQ [SAP&nbsp;A.G.]",
+             "Type":"Precondition"
+         },
+         {
+            "__metadata":{
+               "id":"https://services.odata.org/V2/northwind/Northwind.svc/PolRuleSet('8')",
+               "uri":"https://services.odata.org/V2/northwind/Northwind.svc/PolRuleSet('8')",
+               "type":"NorthwindModel.PolRuleType"
+            },
+            "ID":8,
+            "PolicyName":"RESTRICT_FILTER_JOURNALENTRIES",
+            "Rule":"DATA.JOURNALENTRY_CITY EQ [Walldorf] OR DATA.CC_NAME EQ [SAP&nbsp;A.G.]",
+             "Type":"Rule"
+         }
+        ]
+   }
+}

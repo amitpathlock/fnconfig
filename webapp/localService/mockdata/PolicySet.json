@@ -1,0 +1,52 @@
+{
+   "d":{
+      "results":[
+         {
+            "__metadata":{
+               "id":"https://services.odata.org/V2/northwind/Northwind.svc/PolicySet('RESTRICT_AC_DOC_TYPE')",
+               "uri":"https://services.odata.org/V2/northwind/Northwind.svc/PolicySet('RESTRICT_AC_DOC_TYPE')",
+               "type":"NorthwindModel.PolicyType"
+            },
+            "PolicyName":"RESTRICT_AC_DOC_TYPE",
+            "Description":"Accouting document type"
+         },
+         {
+            "__metadata":{
+               "id":"https://services.odata.org/V2/northwind/Northwind.svc/PolicySet('RESTRICT_BP_COUNTRY')",
+               "uri":"https://services.odata.org/V2/northwind/Northwind.svc/PolicySet('RESTRICT_BP_COUNTRY')",
+               "type":"NorthwindModel.PolicyType"
+            },
+            "PolicyName":"RESTRICT_BP_COUNTRY",
+            "Description":"Business Partner Country"
+         },
+         {
+            "__metadata":{
+               "id":"https://services.odata.org/V2/northwind/Northwind.svc/PolicySet('RESTRICT_CL_AMOUNT')",
+               "uri":"https://services.odata.org/V2/northwind/Northwind.svc/PolicySet('RESTRICT_CL_AMOUNT')",
+               "type":"NorthwindModel.PolicyType"
+            },
+            "PolicyName":"RESTRICT_CL_AMOUNT",
+            "Description":"Customer Line Items amount"
+         },
+         {
+            "__metadata":{
+               "id":"https://services.odata.org/V2/northwind/Northwind.svc/PolicySet('RESTRICT_CL_JOURNAL')",
+               "uri":"https://services.odata.org/V2/northwind/Northwind.svc/PolicySet('RESTRICT_CL_JOURNAL')",
+               "type":"NorthwindModel.PolicyType"
+            },
+            "PolicyName":"RESTRICT_CL_JOURNAL",
+            "Description":"Restrict Journal Entry"
+         },
+         {
+            "__metadata":{
+               "id":"https://services.odata.org/V2/northwind/Northwind.svc/PolicySet('RESTRICT_FILTER_JOURNALENTRIES')",
+               "uri":"https://services.odata.org/V2/northwind/Northwind.svc/PolicySet('RESTRICT_FILTER_JOURNALENTRIES')",
+               "type":"NorthwindModel.PolicyType"
+            },
+            "PolicyName":"RESTRICT_FILTER_JOURNALENTRIES",
+            "Description":"Filtering in Journal Entries"
+         }
+
+        ]
+   }
+}

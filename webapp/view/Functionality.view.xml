@@ -1,0 +1,62 @@
+<mvc:View
+	controllerName="pl.dac.apps.fnconfig.controller.Functionality"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	displayBlock="true"
+	height="100%"
+   
+	xmlns:f="sap.ui.layout.form"
+	
+	busyIndicatorDelay="0"
+>
+<!-- @ui5ignore -->
+<Page showHeader="false">
+	<content>
+		<!--<ObjectHeader
+				icon="sap-icon://activate"
+				title="Activate Functinality"
+				backgroundDesign="Solid"
+				 >
+				
+			</ObjectHeader> -->
+				<VBox class="sapUiSmallMargin">
+				<!-- @ui5ignore -->
+		<f:SimpleForm id="SimpleFormChange354"
+			editable="true"
+			layout="ResponsiveGridLayout"
+			title="{i18n>titleFunctionalityPage}"
+			labelSpanXL="3"
+			labelSpanL="3"
+			labelSpanM="3"
+			labelSpanS="12"
+			adjustLabelSpan="false"
+			emptySpanXL="4"
+			emptySpanL="4"
+			emptySpanM="4"
+			emptySpanS="0"
+			columnsXL="1"
+			columnsL="1"
+			columnsM="1"
+			singleContainerFullSize="false" class="plDacFunctionalityForm">
+			<f:content>
+				<VBox items="{viewModel>/}" class="sapUiLargeMargin">
+					<items>
+					<FlexBox  alignItems="Center">
+						<Label text="{viewModel>FunctionalityName}" class="plDacLabelWidth"/>
+						<!-- @ui5ignore -->
+							<Switch state="{viewModel>Status}" change="onSwitchChange" class="sapUiTinyMarginBegin">
+							<layoutData>
+								<FlexItemData growFactor="1" />
+							</layoutData>
+						</Switch>
+					</FlexBox>
+						
+					</items>
+				</VBox>
+				
+			</f:content>
+		</f:SimpleForm>
+	</VBox>
+	</content>
+</Page>
+</mvc:View>

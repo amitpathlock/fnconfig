@@ -1,0 +1,146 @@
+<mvc:View
+	controllerName="pl.dac.apps.fnconfig.controller.RuleBuilder"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.uxap"
+	xmlns:m="sap.m"
+	
+	displayBlock="true"
+	height="100%"
+	busyIndicatorDelay="0"
+	xmlns:core="sap.ui.core"
+	
+>
+<m:Page class="plDacInfoPage"  id="idRuleBuilderPage">
+<m:customHeader>
+ <m:Toolbar design="Transparent" class="plDacToolbar">
+	 	<core:Icon src="sap-icon://fx" />
+        <m:Title text="Manage Rules"/>
+         <m:ToolbarSpacer/>
+     <!-- @ui5ignore -->
+        	<m:OverflowToolbarButton type="Transparent" icon="sap-icon://full-screen" press="handleFullScreen" tooltip="Enter Full Screen Mode" visible="{viewModel>/FullScreen}"/>
+			 <!-- @ui5ignore -->
+            <m:OverflowToolbarButton type="Transparent" icon="sap-icon://exit-full-screen" press="handleExitFullScreen" tooltip="Exit Full Screen Mode" visible="{viewModel>/ExitFullScreen}"/>
+			 <!-- @ui5ignore -->
+            <m:OverflowToolbarButton type="Transparent" icon="sap-icon://decline" press="handleClose"  tooltip="Close column" visible="{viewModel>/ExitColumn}"/>
+    </m:Toolbar>
+</m:customHeader>
+ <m:content>
+	<ObjectPageLayout  upperCaseAnchorBar="false">
+		<headerTitle>
+			<ObjectPageHeader objectImageURI="sap-icon://documents" objectTitle="{PolicyName}"
+			objectSubtitle="{PolicyDesc}"
+			>
+			<actions>
+				 <!-- @ui5ignore -->
+			   <ObjectPageHeaderActionButton icon="sap-icon://edit" id="editRuleBtn" press="onPressEditRuleBtn"  text="edit" importance="Medium" tooltip="edit"/>
+				 <!-- @ui5ignore -->
+				<ObjectPageHeaderActionButton icon="sap-icon://save" id="saveRuleBtn" press="onPressSaveRuleBtn" text="save"  visible="false" tooltip="save"/>
+			</actions>
+			</ObjectPageHeader>
+		</headerTitle>
+		<sections>
+			<ObjectPageSection title="Rules">
+				<subSections>
+				 <!-- @ui5ignore -->
+					<ObjectPageSubSection title="Rules" id="idRuleSubSectionBlock">
+						<blocks>
+							<core:Fragment fragmentName="pl.dac.apps.fnconfig.fragments.DisplayPolicyRules" type="XML"/>
+						</blocks>
+					</ObjectPageSubSection>
+					
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection >
+				<subSections>
+					<ObjectPageSubSection title="Classification" titleUppercase="false">
+						<blocks>
+							 <!-- <m:Table items="{path:'/ExposeAttrSet'}"  headerText="Classification" >
+                        <m:columns>
+                            <m:Column 	minScreenWidth="Tablet"  demandPopin="true">
+                                <m:Text text="Attribute ID" />
+                            </m:Column> 
+                             <m:Column 	minScreenWidth="Tablet"  demandPopin="true">
+                                <m:Text text="Description" />
+                            </m:Column>     
+                        </m:columns>
+                        <m:items>
+                          
+                            <m:ColumnListItem vAlign="Middle" type="Active" press="onPressUserAttributeItem">
+                                <m:cells>
+                                    <m:ObjectIdentifier title="{AttributeName}" />
+                                    <m:Text text="{Description}"/>
+                                </m:cells>
+                            </m:ColumnListItem>
+                        </m:items>
+                    </m:Table> -->
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			
+			<ObjectPageSection >
+				<subSections>
+					<ObjectPageSubSection title="Exposed Attributed">
+						<blocks>
+							  <!-- <m:Table items="{path:'/ExposeAttrSet'}"  headerText="Exposed Attributed" >
+                        <m:columns>
+                            <m:Column 	minScreenWidth="Tablet"  demandPopin="true">
+                                <m:Text text="Attribute ID" />
+                            </m:Column> 
+                             <m:Column 	minScreenWidth="Tablet"  demandPopin="true">
+                                <m:Text text="Description" />
+                            </m:Column>     
+                        </m:columns>
+                        <m:items>
+                          
+                            <m:ColumnListItem vAlign="Middle" type="Active" press="onPressUserAttributeItem">
+                                <m:cells>
+                                    <m:ObjectIdentifier title="{AttributeName}" />
+                                    <m:Text text="{Description}"/>
+                                </m:cells>
+                            </m:ColumnListItem>
+                        </m:items>
+                    </m:Table> -->
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+
+	</ObjectPageLayout>
+ </m:content>
+</m:Page>
+
+<!--
+<Page   class="plDacInfoPage"  id="idRuleBuilderPage" >
+   <customHeader >
+    <Toolbar design="Transparent" class="plDacToolbar">
+	 	<core:Icon src="sap-icon://fx" />
+        <Title text="Manage Rules"/>
+         <ToolbarSpacer/>
+       >
+        	<OverflowToolbarButton type="Transparent" icon="sap-icon://full-screen" press="handleFullScreen" tooltip="Enter Full Screen Mode" visible="{viewModel>/FullScreen}"/>
+			
+            <OverflowToolbarButton type="Transparent" icon="sap-icon://exit-full-screen" press="handleExitFullScreen" tooltip="Exit Full Screen Mode" visible="{viewModel>/ExitFullScreen}"/>
+			
+            <OverflowToolbarButton type="Transparent" icon="sap-icon://decline" press="handleClose"  tooltip="Close column" visible="{viewModel>/ExitColumn}"/>
+    </Toolbar>
+ </customHeader>
+    <content>
+       		<ObjectHeader class="plDacPageHeaderBorderBottom"
+	
+		icon="sap-icon://documents"
+		iconDensityAware="false"
+		iconAlt="PolicyName"
+		title="{PolicyName}"
+		 >
+		
+		<attributes>
+			
+			<ObjectAttribute text="{Description}" />
+		</attributes>
+	</ObjectHeader>
+
+    </content>
+</Page> -->
+</mvc:View>

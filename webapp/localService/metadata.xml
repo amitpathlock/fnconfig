@@ -1,0 +1,319 @@
+<edmx:Edmx xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData" Version="1.0">
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema xmlns="http://schemas.microsoft.com/ado/2008/09/edm" Namespace="APPSDM_DAC_FUNC_CONFIG_SRV_02" xml:lang="en" sap:schema-version="1">
+            <EntityType Name="ActionType" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="ActionId" />
+                </Key>
+                <Property Name="ActionId" Type="Edm.String" Nullable="false" MaxLength="8" sap:unicode="false" sap:label="Action ID" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="ActionName" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Action Name" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="Text" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Action Text" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="Icon" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Action Icon" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="Target" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Action Target" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <NavigationProperty Name="to_ActionItem" Relationship="APPSDM_DAC_FUNC_CONFIG_SRV_02.ActionActionItemAsso" FromRole="FromRole_ActionActionItemAsso" ToRole="ToRole_ActionActionItemAsso" />
+            </EntityType>
+            <EntityType Name="ActionItemType" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="ActionId" />
+                </Key>
+                <Property Name="ActionId" Type="Edm.String" Nullable="false" MaxLength="8" sap:unicode="false" sap:label="Action ID" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="ActionName" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Action Name" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="Text" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Action Text" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="Icon" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Action Icon" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="Target" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Action Target" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+            </EntityType>
+            <EntityType Name="AttrType" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="AttributeId" />
+                </Key>
+                <Property Name="AttributeId" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Attribute ID" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="Description" Type="Edm.String" Nullable="false" MaxLength="255" sap:unicode="false" sap:label="Description" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+            </EntityType>
+            <EntityType Name="PolicyType" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Policy" />
+                </Key>
+                <Property Name="Policy" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Policy" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="PolicyName" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Policy Name" sap:creatable="false" sap:updatable="false" />
+                <Property Name="PolicyDesc" Type="Edm.String" Nullable="false" MaxLength="255" sap:unicode="false" sap:label="Description" sap:creatable="false" />
+                <NavigationProperty Name="to_Condition" Relationship="APPSDM_DAC_FUNC_CONFIG_SRV_02.PolicyConditionAsso" FromRole="FromRole_PolicyConditionAsso" ToRole="ToRole_PolicyConditionAsso" />
+            </EntityType>
+            <EntityType Name="DataMaskingEnforcementType" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Policy" />
+                </Key>
+                <Property Name="Policy" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Policy" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="IsActive" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Active Flag" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="PolicyResult" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Policy Result" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <NavigationProperty Name="to_Attr" Relationship="APPSDM_DAC_FUNC_CONFIG_SRV_02.DataMaskingEnforcementAttrAsso" FromRole="FromRole_DataMaskingEnforcementAttrAsso" ToRole="ToRole_DataMaskingEnforcementAttrAsso" />
+                <NavigationProperty Name="to_Policy" Relationship="APPSDM_DAC_FUNC_CONFIG_SRV_02.DataMaskingEnforcementPolicyAsso" FromRole="FromRole_DataMaskingEnforcementPolicyAsso" ToRole="ToRole_DataMaskingEnforcementPolicyAsso" />
+            </EntityType>
+            <EntityType Name="DataRestrictionEnforcementType" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Policy" />
+                </Key>
+                <Property Name="Policy" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Policy" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="IsActive" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Active Flag" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="PolicyResult" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Policy Result" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <NavigationProperty Name="to_Attr" Relationship="APPSDM_DAC_FUNC_CONFIG_SRV_02.DataRestrictionEnforcementAttrAsso" FromRole="FromRole_DataRestrictionEnforcementAttrAsso" ToRole="ToRole_DataRestrictionEnforcementAttrAsso" />
+                <NavigationProperty Name="to_Policy" Relationship="APPSDM_DAC_FUNC_CONFIG_SRV_02.DataRestrictionEnforcementPolicyAsso" FromRole="FromRole_DataRestrictionEnforcementPolicyAsso" ToRole="ToRole_DataRestrictionEnforcementPolicyAsso" />
+            </EntityType>
+            <EntityType Name="RuleType" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="CondId" />
+                    <PropertyRef Name="Policy" />
+                    <PropertyRef Name="AttributeId" />
+                </Key>
+                <Property Name="CondId" Type="Edm.String" Nullable="false" MaxLength="5" sap:unicode="false" sap:label="Condition ID" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="Policy" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Policy" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="AttributeId" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Attribute ID" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="Description" Type="Edm.String" Nullable="false" MaxLength="255" sap:unicode="false" sap:label="Description" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <NavigationProperty Name="to_Value" Relationship="APPSDM_DAC_FUNC_CONFIG_SRV_02.RuleValueAsso" FromRole="FromRole_RuleValueAsso" ToRole="ToRole_RuleValueAsso" />
+            </EntityType>
+            <EntityType Name="ConditionType" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="CondId" />
+                    <PropertyRef Name="Policy" />
+                </Key>
+                <Property Name="CondId" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="CType" Type="Edm.String" Nullable="false" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="Policy" Type="Edm.String" Nullable="false" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <NavigationProperty Name="to_Rule" Relationship="APPSDM_DAC_FUNC_CONFIG_SRV_02.ConditionRuleAsso" FromRole="FromRole_ConditionRuleAsso" ToRole="ToRole_ConditionRuleAsso" />
+            </EntityType>
+            <EntityType Name="ValueType" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Policy" />
+                    <PropertyRef Name="CondId" />
+                    <PropertyRef Name="AttributeId" />
+                    <PropertyRef Name="Row" />
+                </Key>
+                <Property Name="Policy" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Policy" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="CondId" Type="Edm.String" Nullable="false" MaxLength="5" sap:unicode="false" sap:label="Condition ID" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="AttributeId" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Attribute ID" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="Row" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Row" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="Operator" Type="Edm.String" Nullable="false" MaxLength="2" sap:unicode="false" sap:label="Operator" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="Value" Type="Edm.String" Nullable="false" MaxLength="255" sap:unicode="false" sap:label="Value" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="ValueDesc" Type="Edm.String" Nullable="false" MaxLength="255" sap:unicode="false" sap:label="Value Description" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <NavigationProperty Name="to_ValueRange" Relationship="APPSDM_DAC_FUNC_CONFIG_SRV_02.ValueValueRangeAsso" FromRole="FromRole_ValueValueRangeAsso" ToRole="ToRole_ValueValueRangeAsso" />
+            </EntityType>
+            <EntityType Name="DataAttrType" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="AttributeId" />
+                </Key>
+                <Property Name="AttributeId" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Attribute ID" sap:creatable="false" sap:updatable="false" />
+                <Property Name="Description" Type="Edm.String" MaxLength="255" sap:unicode="false" sap:label="Description" sap:creatable="false" sap:sortable="false" />
+            </EntityType>
+            <EntityType Name="UserAttrType" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="AttributeId" />
+                </Key>
+                <Property Name="AttributeId" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Attribute ID" sap:creatable="false" sap:updatable="false" />
+                <Property Name="Description" Type="Edm.String" Nullable="false" MaxLength="255" sap:unicode="false" sap:label="Description" sap:creatable="false" />
+            </EntityType>
+            <EntityType Name="ValueRangeType" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Policy" />
+                    <PropertyRef Name="CondId" />
+                    <PropertyRef Name="AttributeId" />
+                    <PropertyRef Name="Row" />
+                </Key>
+                <Property Name="Policy" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Policy" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="CondId" Type="Edm.String" Nullable="false" MaxLength="5" sap:unicode="false" sap:label="Condition ID" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="AttributeId" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Attribute ID" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="Row" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="COUNTER" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="Value" Type="Edm.String" Nullable="false" MaxLength="255" sap:unicode="false" sap:label="Value" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="ValueDesc" Type="Edm.String" Nullable="false" MaxLength="255" sap:unicode="false" sap:label="Value Description" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+            </EntityType>
+            <EntityType Name="PolRuleType" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Policy" />
+                </Key>
+                <Property Name="Policy" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Policy" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <NavigationProperty Name="to_Condition" Relationship="APPSDM_DAC_FUNC_CONFIG_SRV_02.PolRuleConditionAsso" FromRole="FromRole_PolRuleConditionAsso" ToRole="ToRole_PolRuleConditionAsso" />
+            </EntityType>
+            <ComplexType Name="StatusType">
+                <Property Name="FunctionalityName" Type="Edm.String" Nullable="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="FunctionalityType" Type="Edm.String" Nullable="false" MaxLength="1" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+                <Property Name="Status" Type="Edm.Boolean" Nullable="false" sap:label="Indicator" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+            </ComplexType>
+            <Association Name="PolRuleConditionAsso" sap:content-version="1">
+                <End Type="APPSDM_DAC_FUNC_CONFIG_SRV_02.PolRuleType" Multiplicity="1" Role="FromRole_PolRuleConditionAsso" />
+                <End Type="APPSDM_DAC_FUNC_CONFIG_SRV_02.ConditionType" Multiplicity="*" Role="ToRole_PolRuleConditionAsso" />
+                <ReferentialConstraint>
+                    <Principal Role="FromRole_PolRuleConditionAsso">
+                        <PropertyRef Name="Policy" />
+                    </Principal>
+                    <Dependent Role="ToRole_PolRuleConditionAsso">
+                        <PropertyRef Name="Policy" />
+                    </Dependent>
+                </ReferentialConstraint>
+            </Association>
+            <Association Name="RuleValueAsso" sap:content-version="1">
+                <End Type="APPSDM_DAC_FUNC_CONFIG_SRV_02.RuleType" Multiplicity="1" Role="FromRole_RuleValueAsso" />
+                <End Type="APPSDM_DAC_FUNC_CONFIG_SRV_02.ValueType" Multiplicity="*" Role="ToRole_RuleValueAsso" />
+                <ReferentialConstraint>
+                    <Principal Role="FromRole_RuleValueAsso">
+                        <PropertyRef Name="AttributeId" />
+                        <PropertyRef Name="Policy" />
+                        <PropertyRef Name="CondId" />
+                    </Principal>
+                    <Dependent Role="ToRole_RuleValueAsso">
+                        <PropertyRef Name="AttributeId" />
+                        <PropertyRef Name="Policy" />
+                        <PropertyRef Name="CondId" />
+                    </Dependent>
+                </ReferentialConstraint>
+            </Association>
+            <Association Name="ValueValueRangeAsso" sap:content-version="1">
+                <End Type="APPSDM_DAC_FUNC_CONFIG_SRV_02.ValueType" Multiplicity="1" Role="FromRole_ValueValueRangeAsso" />
+                <End Type="APPSDM_DAC_FUNC_CONFIG_SRV_02.ValueRangeType" Multiplicity="*" Role="ToRole_ValueValueRangeAsso" />
+                <ReferentialConstraint>
+                    <Principal Role="FromRole_ValueValueRangeAsso">
+                        <PropertyRef Name="Policy" />
+                        <PropertyRef Name="CondId" />
+                        <PropertyRef Name="AttributeId" />
+                        <PropertyRef Name="Row" />
+                    </Principal>
+                    <Dependent Role="ToRole_ValueValueRangeAsso">
+                        <PropertyRef Name="Policy" />
+                        <PropertyRef Name="CondId" />
+                        <PropertyRef Name="AttributeId" />
+                        <PropertyRef Name="Row" />
+                    </Dependent>
+                </ReferentialConstraint>
+            </Association>
+            <Association Name="PolicyConditionAsso" sap:content-version="1">
+                <End Type="APPSDM_DAC_FUNC_CONFIG_SRV_02.PolicyType" Multiplicity="1" Role="FromRole_PolicyConditionAsso" />
+                <End Type="APPSDM_DAC_FUNC_CONFIG_SRV_02.ConditionType" Multiplicity="*" Role="ToRole_PolicyConditionAsso" />
+                <ReferentialConstraint>
+                    <Principal Role="FromRole_PolicyConditionAsso">
+                        <PropertyRef Name="Policy" />
+                    </Principal>
+                    <Dependent Role="ToRole_PolicyConditionAsso">
+                        <PropertyRef Name="Policy" />
+                    </Dependent>
+                </ReferentialConstraint>
+            </Association>
+            <Association Name="DataRestrictionEnforcementAttrAsso" sap:content-version="1">
+                <End Type="APPSDM_DAC_FUNC_CONFIG_SRV_02.DataRestrictionEnforcementType" Multiplicity="1" Role="FromRole_DataRestrictionEnforcementAttrAsso" />
+                <End Type="APPSDM_DAC_FUNC_CONFIG_SRV_02.AttrType" Multiplicity="*" Role="ToRole_DataRestrictionEnforcementAttrAsso" />
+            </Association>
+            <Association Name="DataRestrictionEnforcementPolicyAsso" sap:content-version="1">
+                <End Type="APPSDM_DAC_FUNC_CONFIG_SRV_02.DataRestrictionEnforcementType" Multiplicity="1" Role="FromRole_DataRestrictionEnforcementPolicyAsso" />
+                <End Type="APPSDM_DAC_FUNC_CONFIG_SRV_02.PolicyType" Multiplicity="1" Role="ToRole_DataRestrictionEnforcementPolicyAsso" />
+                <ReferentialConstraint>
+                    <Principal Role="FromRole_DataRestrictionEnforcementPolicyAsso">
+                        <PropertyRef Name="Policy" />
+                    </Principal>
+                    <Dependent Role="ToRole_DataRestrictionEnforcementPolicyAsso">
+                        <PropertyRef Name="Policy" />
+                    </Dependent>
+                </ReferentialConstraint>
+            </Association>
+            <Association Name="DataMaskingEnforcementAttrAsso" sap:content-version="1">
+                <End Type="APPSDM_DAC_FUNC_CONFIG_SRV_02.DataMaskingEnforcementType" Multiplicity="1" Role="FromRole_DataMaskingEnforcementAttrAsso" />
+                <End Type="APPSDM_DAC_FUNC_CONFIG_SRV_02.AttrType" Multiplicity="*" Role="ToRole_DataMaskingEnforcementAttrAsso" />
+            </Association>
+            <Association Name="DataMaskingEnforcementPolicyAsso" sap:content-version="1">
+                <End Type="APPSDM_DAC_FUNC_CONFIG_SRV_02.DataMaskingEnforcementType" Multiplicity="1" Role="FromRole_DataMaskingEnforcementPolicyAsso" />
+                <End Type="APPSDM_DAC_FUNC_CONFIG_SRV_02.PolicyType" Multiplicity="1" Role="ToRole_DataMaskingEnforcementPolicyAsso" />
+                <ReferentialConstraint>
+                    <Principal Role="FromRole_DataMaskingEnforcementPolicyAsso">
+                        <PropertyRef Name="Policy" />
+                    </Principal>
+                    <Dependent Role="ToRole_DataMaskingEnforcementPolicyAsso">
+                        <PropertyRef Name="Policy" />
+                    </Dependent>
+                </ReferentialConstraint>
+            </Association>
+            <Association Name="ActionActionItemAsso" sap:content-version="1">
+                <End Type="APPSDM_DAC_FUNC_CONFIG_SRV_02.ActionType" Multiplicity="1" Role="FromRole_ActionActionItemAsso" />
+                <End Type="APPSDM_DAC_FUNC_CONFIG_SRV_02.ActionItemType" Multiplicity="*" Role="ToRole_ActionActionItemAsso" />
+                <ReferentialConstraint>
+                    <Principal Role="FromRole_ActionActionItemAsso">
+                        <PropertyRef Name="ActionId" />
+                    </Principal>
+                    <Dependent Role="ToRole_ActionActionItemAsso">
+                        <PropertyRef Name="ActionId" />
+                    </Dependent>
+                </ReferentialConstraint>
+            </Association>
+            <Association Name="ConditionRuleAsso" sap:content-version="1">
+                <End Type="APPSDM_DAC_FUNC_CONFIG_SRV_02.ConditionType" Multiplicity="1" Role="FromRole_ConditionRuleAsso" />
+                <End Type="APPSDM_DAC_FUNC_CONFIG_SRV_02.RuleType" Multiplicity="*" Role="ToRole_ConditionRuleAsso" />
+                <ReferentialConstraint>
+                    <Principal Role="FromRole_ConditionRuleAsso">
+                        <PropertyRef Name="CondId" />
+                        <PropertyRef Name="Policy" />
+                    </Principal>
+                    <Dependent Role="ToRole_ConditionRuleAsso">
+                        <PropertyRef Name="CondId" />
+                        <PropertyRef Name="Policy" />
+                    </Dependent>
+                </ReferentialConstraint>
+            </Association>
+            <EntityContainer Name="APPSDM_DAC_FUNC_CONFIG_SRV_02_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+                <EntitySet Name="ActionSet" EntityType="APPSDM_DAC_FUNC_CONFIG_SRV_02.ActionType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1" />
+                <EntitySet Name="ActionItemSet" EntityType="APPSDM_DAC_FUNC_CONFIG_SRV_02.ActionItemType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1" />
+                <EntitySet Name="AttrSet" EntityType="APPSDM_DAC_FUNC_CONFIG_SRV_02.AttrType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1" />
+                <EntitySet Name="PolicySet" EntityType="APPSDM_DAC_FUNC_CONFIG_SRV_02.PolicyType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1" />
+                <EntitySet Name="DataMaskingEnforcementSet" EntityType="APPSDM_DAC_FUNC_CONFIG_SRV_02.DataMaskingEnforcementType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1" />
+                <EntitySet Name="DataRestrictionEnforcementSet" EntityType="APPSDM_DAC_FUNC_CONFIG_SRV_02.DataRestrictionEnforcementType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1" />
+                <EntitySet Name="RuleSet" EntityType="APPSDM_DAC_FUNC_CONFIG_SRV_02.RuleType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1" />
+                <EntitySet Name="ConditionSet" EntityType="APPSDM_DAC_FUNC_CONFIG_SRV_02.ConditionType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1" />
+                <EntitySet Name="ValueSet" EntityType="APPSDM_DAC_FUNC_CONFIG_SRV_02.ValueType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1" />
+                <EntitySet Name="DataAttrSet" EntityType="APPSDM_DAC_FUNC_CONFIG_SRV_02.DataAttrType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1" />
+                <EntitySet Name="UserAttrSet" EntityType="APPSDM_DAC_FUNC_CONFIG_SRV_02.UserAttrType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1" />
+                <EntitySet Name="ValueRangeSet" EntityType="APPSDM_DAC_FUNC_CONFIG_SRV_02.ValueRangeType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1" />
+                <EntitySet Name="PolRuleSet" EntityType="APPSDM_DAC_FUNC_CONFIG_SRV_02.PolRuleType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1" />
+                <AssociationSet Name="DataMaskingEnforcementPolicyAssoSet" Association="APPSDM_DAC_FUNC_CONFIG_SRV_02.DataMaskingEnforcementPolicyAsso" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="DataMaskingEnforcementSet" Role="FromRole_DataMaskingEnforcementPolicyAsso" />
+                    <End EntitySet="PolicySet" Role="ToRole_DataMaskingEnforcementPolicyAsso" />
+                </AssociationSet>
+                <AssociationSet Name="DataRestrictionEnforcementAttrAssoSet" Association="APPSDM_DAC_FUNC_CONFIG_SRV_02.DataRestrictionEnforcementAttrAsso" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="DataRestrictionEnforcementSet" Role="FromRole_DataRestrictionEnforcementAttrAsso" />
+                    <End EntitySet="AttrSet" Role="ToRole_DataRestrictionEnforcementAttrAsso" />
+                </AssociationSet>
+                <AssociationSet Name="ConditionRuleAssoSet" Association="APPSDM_DAC_FUNC_CONFIG_SRV_02.ConditionRuleAsso" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="ConditionSet" Role="FromRole_ConditionRuleAsso" />
+                    <End EntitySet="RuleSet" Role="ToRole_ConditionRuleAsso" />
+                </AssociationSet>
+                <AssociationSet Name="ActionActionItemAssoSet" Association="APPSDM_DAC_FUNC_CONFIG_SRV_02.ActionActionItemAsso" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="ActionSet" Role="FromRole_ActionActionItemAsso" />
+                    <End EntitySet="ActionItemSet" Role="ToRole_ActionActionItemAsso" />
+                </AssociationSet>
+                <AssociationSet Name="DataRestrictionEnforcementPolicyAssoSet" Association="APPSDM_DAC_FUNC_CONFIG_SRV_02.DataRestrictionEnforcementPolicyAsso" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="DataRestrictionEnforcementSet" Role="FromRole_DataRestrictionEnforcementPolicyAsso" />
+                    <End EntitySet="PolicySet" Role="ToRole_DataRestrictionEnforcementPolicyAsso" />
+                </AssociationSet>
+                <AssociationSet Name="PolRuleConditionAssoSet" Association="APPSDM_DAC_FUNC_CONFIG_SRV_02.PolRuleConditionAsso" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="PolRuleSet" Role="FromRole_PolRuleConditionAsso" />
+                    <End EntitySet="ConditionSet" Role="ToRole_PolRuleConditionAsso" />
+                </AssociationSet>
+                <AssociationSet Name="ValueValueRangeAssoSet" Association="APPSDM_DAC_FUNC_CONFIG_SRV_02.ValueValueRangeAsso" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="ValueSet" Role="FromRole_ValueValueRangeAsso" />
+                    <End EntitySet="ValueRangeSet" Role="ToRole_ValueValueRangeAsso" />
+                </AssociationSet>
+                <AssociationSet Name="DataMaskingEnforcementAttrAssoSet" Association="APPSDM_DAC_FUNC_CONFIG_SRV_02.DataMaskingEnforcementAttrAsso" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="DataMaskingEnforcementSet" Role="FromRole_DataMaskingEnforcementAttrAsso" />
+                    <End EntitySet="AttrSet" Role="ToRole_DataMaskingEnforcementAttrAsso" />
+                </AssociationSet>
+                <AssociationSet Name="RuleValueAssoSet" Association="APPSDM_DAC_FUNC_CONFIG_SRV_02.RuleValueAsso" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="RuleSet" Role="FromRole_RuleValueAsso" />
+                    <End EntitySet="ValueSet" Role="ToRole_RuleValueAsso" />
+                </AssociationSet>
+                <AssociationSet Name="PolicyConditionAssoSet" Association="APPSDM_DAC_FUNC_CONFIG_SRV_02.PolicyConditionAsso" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="PolicySet" Role="FromRole_PolicyConditionAsso" />
+                    <End EntitySet="ConditionSet" Role="ToRole_PolicyConditionAsso" />
+                </AssociationSet>
+                <FunctionImport Name="Func_Imp_Get_Status" ReturnType="Collection(APPSDM_DAC_FUNC_CONFIG_SRV_02.StatusType)" m:HttpMethod="GET" />
+                <FunctionImport Name="Func_Imp_Set_Status" ReturnType="Collection(APPSDM_DAC_FUNC_CONFIG_SRV_02.StatusType)" m:HttpMethod="POST">
+                    <Parameter Name="Status" Type="Edm.Boolean" Mode="In" />
+                    <Parameter Name="FunctionalityType" Type="Edm.String" Mode="In" MaxLength="1" />
+                </FunctionImport>
+            </EntityContainer>
+            <atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="self" href="https://vm355r3.gh.pri:44300/sap/opu/odata/APPSDM/DAC_FUNC_CONFIG_SRV_02/$metadata" />
+            <atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="latest-version" href="https://vm355r3.gh.pri:44300/sap/opu/odata/APPSDM/DAC_FUNC_CONFIG_SRV_02/$metadata" />
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

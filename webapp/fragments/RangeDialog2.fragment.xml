@@ -1,0 +1,76 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+>
+   <Dialog icon="{viewModel>/DialogIcon}" contentWidth="500px"
+            title="{viewModel>/DialogTitle}">   
+        <content>
+            <FlexBox
+            >
+                <items>
+                    <VBox visible="{path:'setting>/Operator',formatter:'.formatter.handleRangDialogUserAttrTblVisiblity'}">
+                        <items>
+                            <!-- @ui5ignore -->
+                    <Table items="{path:'/UserAttrSet'}" >
+                        <columns>
+                            <Column 	minScreenWidth="Tablet"  demandPopin="true">
+                                <Text text="Name" />
+                            </Column> 
+                             <Column 	minScreenWidth="Tablet"  demandPopin="true">
+                                <Text text="Description" />
+                            </Column>     
+                        </columns>
+                        <items>
+                          <!-- @ui5ignore -->
+                            <ColumnListItem vAlign="Middle" type="Active" press="onPressUserAttributeItem">
+                                <cells>
+                                    <ObjectIdentifier title="{AttributeName}" />
+                                    <Text text="{Description}"/>
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                        </items>
+                         <layoutData>
+						<FlexItemData growFactor="1" />
+						</layoutData>
+                    </VBox>
+
+                    <VBox visible="{path:'setting>/Operator',formatter:'.formatter.handleRangDialogRangeTblVisiblity'}">
+                        <items>
+
+                        <Table items="{valueRangeModel>/}"  >
+                        <columns>
+                            <Column 	minScreenWidth="Tablet"  demandPopin="true">
+                                <Text text="Value" />
+                            </Column> 
+                           
+                        </columns>
+                        <items>
+                            <ColumnListItem vAlign="Middle" type="Active">
+                                <cells>
+                                    <Input value="{valueRangeModel>Value}"/>
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                        </items>
+                        <layoutData>
+							<FlexItemData growFactor="1" />
+							</layoutData>
+                    </VBox>
+                </items>
+            </FlexBox>
+
+        </content> 
+            <beginButton>
+                 <!-- @ui5ignore -->
+             <Button text="Ok" press="onValueDialogOkPress" visible="{viewModel>/VisibleOK}" />
+            </beginButton> 
+          <endButton>
+          
+           <!-- @ui5ignore -->
+                <Button text="Cancel" press="onCloseValueDialog" />
+            </endButton>      
+    </Dialog>
+</c:FragmentDefinition>
