@@ -8,10 +8,7 @@ export default [
             "node_modules/",
             "dist/",
             "webapp/test/"
-        ],
-        globals: {
-            sap: true,
-        }
+        ]
     },
     eslint.configs.recommended,
     // other configurations...
