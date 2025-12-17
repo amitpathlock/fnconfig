@@ -17,7 +17,7 @@ jobs:
           node-version: ${{ matrix.node-version }} # Specify the version
 
       - name: Dependency Initialization # Step 3: Run commands to install project dependencies
-        run: npm install
+        run: npm ci # Use npm ci for clean and fast installs in CI environments
 
   ESList-Checks:
     needs: build
@@ -31,6 +31,10 @@ jobs:
         uses: actions/setup-node@v1  # Uses a prebuilt action to install Node
         with:
           node-version: ${{ matrix.node-version }} # Specify the version
+
+      - name: Dependency Initialization # Step 3: Run commands to install project dependencies
+        run: npm ci # Use npm ci for clean and fast installs in CI environments
+
       - name: ESLint Checks # Step 3: Run commands for EsLint Checks
         run: npm run lint
 
@@ -46,5 +50,8 @@ jobs:
         uses: actions/setup-node@v1  # Uses a prebuilt action to install Node
         with:
           node-version: ${{ matrix.node-version }} # Specify the version
+
+      - name: Dependency Initialization # Step 3: Run commands to install project dependencies
+        run: npm ci # Use npm ci for clean and fast installs in CI environments
       - name: Build Project # Step 5: Run the build command
         run: npm run build
