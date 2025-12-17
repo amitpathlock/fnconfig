@@ -17,7 +17,7 @@ jobs:
           node-version: ${{ matrix.node-version }} # Specify the version
 
       - name: Dependency Initialization # Step 3: Run commands to install project dependencies
-        run: yarn
+        run: npm install
 
   ESList-Checks:
     needs: build
@@ -32,7 +32,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }} # Specify the version
       - name: ESLint Checks # Step 3: Run commands for EsLint Checks
-        run: yarn lint
+        run: npm run lint
 
   Finalized-Build:
     needs: ESList-Checks
