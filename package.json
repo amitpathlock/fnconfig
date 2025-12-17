@@ -12,7 +12,8 @@
   "devDependencies": {
     "@sap/ux-ui5-tooling": "1",
     "@ui5/cli": "^4.0.38",
-    "eslint": "^9.39.2"
+    "eslint": "^9.39.2",
+    "global": "^4.4.0"
   },
   "scripts": {
     "start": "fiori run --open \"test/flpSandbox.html?sap-ui-xx-viewCache=false#pldacappsfnconfig-display\"",
