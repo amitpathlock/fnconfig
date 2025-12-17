@@ -12,7 +12,9 @@
   "devDependencies": {
     "@sap/ux-ui5-tooling": "1",
     "@ui5/cli": "^4.0.38",
+    "@eslint/js": "^9.39.2",
     "eslint": "^9.39.2",
+    "eslint-plugin-ava": "^15.1.0",
     "global": "^4.4.0"
   },
   "scripts": {
