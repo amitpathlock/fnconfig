@@ -1,17 +1,16 @@
 // eslint.config.js
-import { defineConfig } from "eslint/config";
+import { defineConfig,globalIgnores  } from "eslint/config";
 
 export default defineConfig([
-	js.configs.recommended,
+	globalIgnores([
+		"!node_modules/", // unignore `node_modules/` directory
+		"node_modules/*", // ignore its content
+		"!dist/", // unignore `node_modules/mylibrary` directory
+		"dist/*", // ignore its content
+		"!webapp/test/", // unignore `node_modules/mylibrary` directory
+		"webapp/test/*" // ignore its content
+	]),
 	{
-		// This configuration applies to all files except those in 'myFolder'
-		files: ["**/*.js"], // applies to all JS files first
-		ignores: [
-			// For non-global ignores, a full glob pattern is required to match files in subdirectories
-			'dist/**',
-			'webapp/test/**',
-			'node_modules/**'
-		],
 		rules: {
 			semi: "error",
 			"prefer-const": "error",
