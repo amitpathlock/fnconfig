@@ -1,6 +1,5 @@
 import js from "@eslint/js";
 import globals from "globals";
-import jsdoc from "eslint-plugin-jsdoc";
 import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig([
@@ -16,6 +15,5 @@ export default defineConfig([
     "webapp/localService/*"
   ]),
   { files: ["**/*.{js,mjs,cjs}"], plugins: { js }, extends: ["js/recommended"],
-   languageOptions: { globals: { "sap": true, "$": true ,"jQuery":true,"element":true,"hasher":true} } },
-  jsdoc.configs.recommended
+   languageOptions: { globals: { "sap": true, "$": true ,"jQuery":true,"element":true,"hasher":true} } }
 ]);
