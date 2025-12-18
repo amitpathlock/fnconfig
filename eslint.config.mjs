@@ -3,13 +3,6 @@ import globals from "globals";
 import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig([
-  {
-    globals: {
-      "sap": true,
-      "$": true,
-      "hasher": true
-    }
-  },
   globalIgnores([
     "!node_modules/", // unignore `node_modules/` directory
     "node_modules/*", // ignore its content
@@ -18,5 +11,5 @@ export default defineConfig([
     "!webapp/test/", // unignore `node_modules/mylibrary` directory
     "webapp/test/*" // ignore its content
   ]),
-  { files: ["**/*.{js,mjs,cjs}"], plugins: { js }, extends: ["js/recommended"], languageOptions: { globals: globals.browser } },
+  { files: ["**/*.{js,mjs,cjs}"], plugins: { js }, extends: ["js/recommended"], languageOptions: { globals: {"sap":true,"$":true} } },
 ]);
