@@ -1,5 +1,5 @@
 {
-  "name": "@amitpathlock/fnconfig",
+  "name":"fnconfig",
   "version": "0.0.1",
   "description": "An SAP Fiori application.",
   "keywords": [
@@ -631,7 +631,7 @@
     "globals": "^16.5.0"
   },
   "publishConfig": {
-    "@amitpathlock:registry": "https://npm.pkg.github.com/"
+    "@fnconfig:registry": "https://npm.pkg.github.com/"
   },
   "sapuxLayer": "CUSTOMER_BASE"
 }
