@@ -97,7 +97,7 @@ sap.ui.define([
             }
             $(".plDacSection").removeClass("plDacSectionSelected");
             $(oEvent.currentTarget).addClass("plDacSectionSelected");
-            $(".plDacSectionItem").each(function (i, element) {
+            $(".plDacSectionItem").each(function (i) {
                 if (i == idx) {
                     $(this).css('display', 'block');
                 } else {
@@ -107,7 +107,7 @@ sap.ui.define([
         },
         onAfterRendering: function (evt) {
             evt.preventDefault();
-            $(".plDacSectionItem").each(function (idx, element) {
+            $(".plDacSectionItem").each(function (idx) {
                 if (idx > 0) {
                     $(this).css('display', 'none');
                 }
@@ -115,15 +115,16 @@ sap.ui.define([
             $(".plDacSection").on("click", this.handleOnSectionClick.bind(this));
             this.getParent().getModel("viewModel").setProperty("/VisibleOK", true);
             var oData = this.getParent().getModel("setting").getData();
+            var idx;
           //  var items = oData.ValueRange;
             if (oData.ValueRange.length > 0) {
-                var idx = 0;
+                idx = 0;
                 if (!oData.ValueRange[0].Lower) {
                     //
                 } else {
                     //
                 }
-                $(".plDacSectionItem").each(function (i, element) {
+                $(".plDacSectionItem").each(function (i) {
                     if (i == idx) {
                         $(this).css('display', 'block');
                     } else {
@@ -131,14 +132,14 @@ sap.ui.define([
                     }
                 });
                 $(".plDacSection").removeClass("plDacSectionSelected");
-                $(".plDacSection").each(function (i, element) {
+                $(".plDacSection").each(function (i) {
                     if (i == idx) {
                         $(this).addClass("plDacSectionSelected");
                     }
                 });
             } else {
                 if (oData.Value != "") {
-                    var idx = null;
+                    idx = null;
                     if (oData.Value.split(".")[0] == "USER") {
                         idx = 2;
                     }
@@ -146,7 +147,7 @@ sap.ui.define([
                         idx = 3;
                     }
                     if (idx != null) {
-                        $(".plDacSectionItem").each(function (i, element) {
+                        $(".plDacSectionItem").each(function (i) {
                             if (i == idx) {
                                 $(this).css('display', 'block');
                             } else {
@@ -154,7 +155,7 @@ sap.ui.define([
                             }
                         });
                         $(".plDacSection").removeClass("plDacSectionSelected");
-                        $(".plDacSection").each(function (i, element) {
+                        $(".plDacSection").each(function (i,) {
                             if (i == idx) {
                                 $(this).addClass("plDacSectionSelected");
                             }

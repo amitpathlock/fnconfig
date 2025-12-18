@@ -25,7 +25,7 @@ sap.ui.define([
 		/* ###Method has been defined to implement table header edit attribute event.
 		* @param {sap.ui.base.Event} oEvent
 		 */
-		onEditBtnPress: function (oEvent) {
+		onEditBtnPress: function () {
 			var oView = this.getView();
 			var oSelectedContextData = this.getView().byId("idTableUserAttributes").getSelectedItem().getBindingContext().getObject();
 
@@ -52,7 +52,7 @@ sap.ui.define([
 		*  -> Set the AttrNameEnabled property as true of viewModel
 		* @param {sap.ui.base.Event} oEvent
 		 */
-		onAddBtnPress: function (oEvent) {
+		onAddBtnPress: function () {
 			var oView = this.getView();
 			oView.getModel("viewModel").setProperty("/Data", { AttributeId: "", Description: "" });
 			oView.getModel("viewModel").setProperty("/AttrNameEnabled", true);
@@ -79,7 +79,7 @@ sap.ui.define([
 		*  -> Create viewModel with relavent properties
 		* @param {sap.ui.base.Event} oEvent
 		 */
-		_onRouteMatched: function (oEvent) {
+		_onRouteMatched: function () {
 			var oView = this.getView(), oBundle = oView.getModel("i18n").getResourceBundle();
 
 			oView.setModel(new JSONModel(
@@ -111,7 +111,7 @@ sap.ui.define([
 		/* ### A Method has been defined to implement table selection change event.
 		* @param {sap.ui.base.Event} oEvent
 		 */
-		onTableSelectionChange: function (oEvent) {
+		onTableSelectionChange: function () {
 			var oView = this.getView();
 			oView.getModel("viewModel").setProperty("/EditButtonEnabled", true);
 			oView.getModel("viewModel").setProperty("/DeleteButtonEnabled", true);
@@ -141,7 +141,7 @@ sap.ui.define([
 		/* ### A Method has been defined to implement save/update operation.
 		* @param {sap.ui.base.Event} oEvent
 		 */
-		onSave: function (oEvent) {
+		onSave: function () {
 			var sPath, oEntry,
 				oView = this.getView(),
 				oModel = oView.getModel(),
@@ -212,13 +212,14 @@ sap.ui.define([
 				oBundle = oView.getModel("i18n").getResourceBundle();
 			oModel.read(sPath, // Path to the specific entity
 				{
-					success: function (oData, oResponse) {
+					success: function () {
 						that.__oInput.focus();
 						oView.getModel("viewModel").setProperty("/ErrorMessage", oBundle.getText("msgErrorDuplicateEntry", [oEntry.AttributeId]));
 						oView.getModel("viewModel").setProperty("/ErrorState", "Error");
 						return;
 					},
 					error: function (oError) {
+						Log.error("Error"+oError);
 						that._createEntry(oEntry);
 					}
 				}
@@ -307,6 +308,7 @@ sap.ui.define([
 						message = errorBody.error.errordetails[0].message;
 					}
 				} catch (e) {
+					Log.error(e);
 					// Handle cases where response body might not be valid JSON
 					message = $(oError.response.body).find('message').first().text();
 				}

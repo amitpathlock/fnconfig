@@ -4,13 +4,15 @@ sap.ui.define([
     "pl/dac/apps/fnconfig/const/PlDacConst",
     "sap/ui/model/json/JSONModel",
     "sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator"
+    "sap/ui/model/FilterOperator",
+    "sap/base/Log"
 ], function (
     Controller,
     PlDacConst,
     JSONModel,
     Filter,
-    FilterOperator
+    FilterOperator,
+    Log
 ) {
     "use strict";
 
@@ -23,7 +25,7 @@ sap.ui.define([
         /*
          #Event handler of sap.ui.core.routing.Route~patternMatched
         */
-        _onRouteMatched: function (oEvent) {
+        _onRouteMatched: function () {
 
             sap.ui.core.BusyIndicator.hide();
         },
@@ -49,7 +51,7 @@ sap.ui.define([
             oFilter = new Filter("Status", FilterOperator.EQ, 1);
             aFilter = [oFilter];
             oModel.read(PlDacConst.ENTITY_SET_ACTION_PATH, {
-             //   filters: aFilter,
+                filters: aFilter,
                 urlParameters: {
                     "$expand": "to_ActionItem" // Expand to_ActionItem
                 },
@@ -77,10 +79,7 @@ sap.ui.define([
                     sap.ui.core.BusyIndicator.hide();
                 }.bind(this), // Bind 'this' to the controller context
                 error: function (oError) {
-                    // Error occurred during data retrieval
-                    /* eslint-disable no-console */
-                    console.error("Read failed:", oError);
-                    /* eslint-enable no-console */
+                    Log.error("Read failed:"+ oError);
                     sap.ui.core.BusyIndicator.hide();
                 }
             });

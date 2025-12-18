@@ -22,7 +22,7 @@ sap.ui.define([
 		/* ###Method has been defined to implement table header edit attribute event.
 		* @param {sap.ui.base.Event} oEvent
 		*/
-		onEditBtnPress: function (oEvent) {
+		onEditBtnPress: function () {
 			var oView = this.getView();
 			var oSelectedContextData = this.getView().byId("idTableDataAttributes").getSelectedItem().getBindingContext().getObject();
 			oView.getModel("viewModel").setProperty("/Data", oSelectedContextData);
@@ -48,7 +48,7 @@ sap.ui.define([
 		*  -> Set the AttrNameEnabled property as true of viewModel
 		* @param {sap.ui.base.Event} oEvent
 		 */
-		onAddBtnPress: function (oEvent) {
+		onAddBtnPress: function () {
 			var oView = this.getView();
 			oView.getModel("viewModel").setProperty("/Data", { AttributeId: "", Description: "" });
 			oView.getModel("viewModel").setProperty("/AttrNameEnabled", true);
@@ -76,7 +76,7 @@ sap.ui.define([
 		*  -> Create viewModel with relavent properties
 		* @param {sap.ui.base.Event} oEvent
 		 */
-		_onRouteMatched: function (oEvent) {
+		_onRouteMatched: function () {
 
 			var oBundle = this.getView().getModel("i18n").getResourceBundle();
 			this.getView().setModel(new JSONModel(
@@ -108,7 +108,7 @@ sap.ui.define([
 		/* ### A Method has been defined to implement table selection change event.
 		* @param {sap.ui.base.Event} oEvent
 		 */
-		onTableSelectionChange: function (oEvent) {
+		onTableSelectionChange: function () {
 			this.getView().getModel("viewModel").setProperty("/EditButtonEnabled", true);
 			this.getView().getModel("viewModel").setProperty("/DeleteButtonEnabled", true);
 
@@ -137,7 +137,7 @@ sap.ui.define([
 		/* ### A Method has been defined to implement save/update operation.
 		* @param {sap.ui.base.Event} oEvent
 		 */
-		onSave: function (oEvent) {
+		onSave: function () {
 			var sPath, oView = this.getView(),
 				oModel = oView.getModel(), oBundle = oView.getModel("i18n").getResourceBundle(), oEntry, that = this;
 			oEntry = oView.getModel("viewModel").getData().Data;
@@ -206,13 +206,13 @@ sap.ui.define([
 				oBundle = oView.getModel("i18n").getResourceBundle();
 			oModel.read(sPath, // Path to the specific entity
 				{
-					success: function (oData, oResponse) {
+					success: function () {
 						that.__oInput.focus();
 						oView.getModel("viewModel").setProperty("/ErrorMessage", oBundle.getText("msgErrorDuplicateEntry", [oEntry.AttributeId]));
 						oView.getModel("viewModel").setProperty("/ErrorState", "Error");
 						return;
 					},
-					error: function (oError) {
+					error: function () {
 						that._createEntry(oEntry);
 					}
 				}

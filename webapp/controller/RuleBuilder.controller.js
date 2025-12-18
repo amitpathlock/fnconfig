@@ -10,9 +10,11 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"pl/dac/apps/fnconfig/formatter/PLDACFormatter",
 	"sap/m/MessageToast",
-	"pl/dac/apps/fnconfig/control/Rule"
+	"pl/dac/apps/fnconfig/control/Rule",
+	 "sap/base/Log"
 ], function (
-	Controller, JSONModel, RuleBuilder, Fragment, UIColumn, Column, Text, Label, ColumnListItem, PLDACFormatter, MessageToast, Rule
+	Controller, JSONModel, RuleBuilder, Fragment, UIColumn, Column, Text, Label, ColumnListItem, PLDACFormatter, MessageToast, 
+	Rule,Log
 ) {
 	"use strict";
 
@@ -83,10 +85,7 @@ sap.ui.define([
 
 				},
 				error: function (oError) {
-					// Error occurred during data retrieval
-					  /* eslint-disable no-console */
-					console.error("Read failed:", oError);
-					 /* eslint-enable no-console */
+					Log.error("Read failed:"+oError);
 					sap.ui.core.BusyIndicator.hide();
 				}
 			});
@@ -170,7 +169,7 @@ sap.ui.define([
 				oSubSection.addBlock(this._oDisplayRules);
 			}
 		},
-		_buildRule: function (oCondition, iCondition, sType) {
+		_buildRule: function (oCondition, iCondition) {
 			var lArr = oCondition.to_Rule.results, i, oRule = new Rule(), aRules = [], oValue;
 			if (lArr.length > 0) {
 				for (i = 0; i < lArr.length; i++) {
@@ -192,7 +191,7 @@ sap.ui.define([
 			}
 			return aRules;
 		},
-		_buildPrecondtion: function (oCondition, iCondition, sType) {
+		_buildPrecondtion: function (oCondition, iCondition) {
 			var lArr = oCondition.to_Rule.results, i, oRule = new Rule(), aRules = [], oValue;
 			if (lArr.length > 0) {
 				for (i = 0; i < lArr.length; i++) {
@@ -221,7 +220,7 @@ sap.ui.define([
 					oValue["Operator"] = aResult[iResult].Operator;
 					oValue["Value"] = aResult[iResult].Value;
 					oValue["ValueDesc"] = aResult[iResult].ValueDesc;
-					if (({}).hasOwnProperty(aResult.to_ValueRange, "results")) {
+					if (({}).hasOwnProperty.call(aResult.to_ValueRange, "results")) {
 						oValue["ValueRange"] = [];
 					} else {
 						oValue["ValueRange"] = [{ Operator: aResult[iResult].Operator, Value: aResult[iResult].Value }];
@@ -322,11 +321,11 @@ sap.ui.define([
 			return aRules;
 		},
 		onPressDeleteSingleRowRule: function (oEvent) {
-			var oBtn = oEvent.getSource(), i, aRules, nRules = [], j;
+			var oBtn = oEvent.getSource(), i, aRules, nRules = [], j,aCondition;
 			var oValue = oBtn.getCustomData()[0].getValue();
 			var oRuleData = this.getView().getModel("ruleModel").getData();
 			if (oValue.RuleType == "Rules") {
-				var aCondition = oRuleData.types[1].Condition;
+				aCondition = oRuleData.types[1].Condition;
 				for (i = 0; i < aCondition.length; i++) {
 					if (aCondition[i].CTypeID == oValue.CTypeID) {
 						aRules = aCondition[i].Rules;
@@ -342,7 +341,7 @@ sap.ui.define([
 				}
 				oRuleData.types[1].Condition = aCondition;
 			} else {
-				var aCondition = oRuleData.types[0].Condition;
+				aCondition = oRuleData.types[0].Condition;
 				for (i = 0; i < aCondition.length; i++) {
 					if (aCondition[i].CTypeID == oValue.CTypeID) {
 						aRules = aCondition[i].Rules;
@@ -362,11 +361,11 @@ sap.ui.define([
 		},
 		onButtonPressDeleteRuleMain: function (oEvent) {
 			var oView = this.getView();
-			var oBtn = oEvent.getSource(), i, nConditions = [];
+			var oBtn = oEvent.getSource(), i, nConditions = [],aCondition;
 			var oValue = oBtn.getCustomData()[0].getValue();
 			var oRuleData = oView.getModel("ruleModel").getData();
 			if (oValue.RuleType == "Rules") {
-				var aCondition = oRuleData.types[1].Condition;
+				aCondition = oRuleData.types[1].Condition;
 				if (oValue.CTypeID == 1 && aCondition.length == 2) {
 					oRuleData.types[1].Condition = nConditions;
 				} else if (oValue.CTypeID == 1 && aCondition.length > 2) {
@@ -387,7 +386,7 @@ sap.ui.define([
 					oRuleData.types[1].Condition = nConditions;
 				}
 			} else {
-				var aCondition = oRuleData.types[0].Condition;
+				aCondition = oRuleData.types[0].Condition;
 				if (oValue.CTypeID == 1 && aCondition.length == 2) {
 					oRuleData.types[1].Condition = nConditions;
 				} else if (oValue.CTypeID == 1 && aCondition.length > 2) {
@@ -484,7 +483,7 @@ sap.ui.define([
 		onValueHelpCancelPress: function () {
 			this.oVHDialogAttr.close();
 		},
-		onValueDialogOkPress: function (oEvent) {
+		onValueDialogOkPress: function () {
 			var oView = this.getView(), i, aValues = [];
 			var oData = this._oRangeDialog.getModel("setting").getData();
 			//	var oViewData = oView.getModel("viewModel").getData();
@@ -626,7 +625,7 @@ sap.ui.define([
 					oView.addDependent(this._oRangeDialog);
 					this._oRangeDialog.setModel(oModel, "setting");
 					oModelSingleValues = new JSONModel();
-					oModelSingleValues.attachRequestCompleted(function (oEvent) {
+					oModelSingleValues.attachRequestCompleted(function () {
 						that._oRangeDialog.getContent()[0].getModel("SingleValues").setData(oModelSingleValues.getData());
 						that.updateSingleValuesModel(oCustomData.ValueRange, oModelSingleValues.getData());
 						that._oRangeDialog.open();
@@ -637,7 +636,7 @@ sap.ui.define([
 				oModelSingleValues = this._oRangeDialog.getContent()[0].getModel("SingleValues");
 				aSingleValueModel = oModelSingleValues.getData();
 				if (Object.entries(aSingleValueModel).length == 0) {
-					oModelSingleValues.attachRequestCompleted(function (oEvent) {
+					oModelSingleValues.attachRequestCompleted(function () {
 						that._oRangeDialog.setModel(oModel, "setting");
 						that._oRangeDialog.open();
 						that.updateSingleValuesModel(oCustomData.ValueRange, aSingleValueModel);
@@ -655,10 +654,10 @@ sap.ui.define([
 		onBeforeOpenDialog: function () {
 
 		},
-		onPressAddRowInValues: function (oEvent) {
+		onPressAddRowInValues: function () {
 			this._oRangeDialog.getContent()[0].addRowInValues();
 		},
-		onPressAddRowInRanges: function (oEvent) {
+		onPressAddRowInRanges: function () {
 			this._oRangeDialog.getContent()[0].addRowInRanges();
 		},
 		onCloseValueDialog: function () {
@@ -735,7 +734,7 @@ sap.ui.define([
 			this.getView().getModel("layoutMode").setProperty("/layout", "TwoColumnsMidExpanded");
 		},
 		onButtonPressAddRuleMain: function (oEvent) {
-			var oBtn = oEvent.getSource(), i;
+			var oBtn = oEvent.getSource(), i,iLen;
 			var oView = this.getView();
 			var oRule = [];
 			var oValue = oBtn.getCustomData()[0].getValue();
@@ -750,7 +749,7 @@ sap.ui.define([
 				for (i = 0; i < aCondition.length; i++) {
 					if (aCondition[i].CTypeID == oValue.CTypeID) {
 						aCondition[i].Rules = this._reindexConditionRules(aCondition[i].Rules);
-						var iLen = aCondition[i].Rules.length;
+						iLen = aCondition[i].Rules.length;
 						oRule["CTypeID"] = oValue.CTypeID;
 						oRule["Rows"] = iLen + 1;
 						oRule["RuleType"] = "Rules";
@@ -769,7 +768,7 @@ sap.ui.define([
 				for (i = 0; i < aCondition.length; i++) {
 					if (aCondition[i].CTypeID == oValue.CTypeID) {
 						aCondition[i].Rules = this._reindexConditionRules(aCondition[i].Rules);
-						var iLen = aCondition[i].Rules.length;
+						iLen = aCondition[i].Rules.length;
 						oRule["CTypeID"] = oValue.CTypeID;
 						oRule["Rows"] = iLen + 1;
 						oRule["RuleType"] = "Precondition";
@@ -794,7 +793,7 @@ sap.ui.define([
 			oView.byId("saveRuleBtn").setVisible(true);
 			if (oRuleData.types.length == 0) {
 				oEmptyRuleModel = new JSONModel();
-				oEmptyRuleModel.attachRequestCompleted(function (oEvent) {
+				oEmptyRuleModel.attachRequestCompleted(function () {
 					oView.getModel("ruleModel").setData(oEmptyRuleModel.getData());
 					//oView.getModel("ruleModel").setData(oRuleData);
 				});
@@ -803,7 +802,7 @@ sap.ui.define([
 			}
 			if (oRuleData.types[0] && oRuleData.types[0].RuleType != "Precondition") {
 				oEmptyPrecondition = new JSONModel();
-				oEmptyPrecondition.attachRequestCompleted(function (oEvent) {
+				oEmptyPrecondition.attachRequestCompleted(function () {
 					oRuleData.types.unshift(oEmptyPrecondition.getData());
 					oView.getModel("ruleModel").setData(oRuleData);
 				});
@@ -811,7 +810,7 @@ sap.ui.define([
 			}
 			if (oRuleData.types.length == 1 && oRuleData.types[0].RuleType == "Precondition") {
 				oEmptyRule = new JSONModel();
-				oEmptyRule.attachRequestCompleted(function (oEvent) {
+				oEmptyRule.attachRequestCompleted(function () {
 					oRuleData.types.push(oEmptyRule.getData());
 					oView.getModel("ruleModel").setData(oRuleData);
 				});

@@ -15,7 +15,7 @@ sap.ui.define([
 			this.oRouter = this.getOwnerComponent().getRouter();
 			this.oRouter.getRoute("Policies").attachPatternMatched(this._onRouteMatched, this);
 		},
-		onEditBtnPress: function (oEvent) {
+		onEditBtnPress: function () {
 			var oView = this.getView();
 			var oSelectedContextData = this.getView().byId("idTablePolicies").getSelectedItem().getBindingContext().getObject();
 
@@ -35,7 +35,7 @@ sap.ui.define([
 			}
 			oView.getModel("viewModel").setProperty("/PolicyNameEnabled", false);
 		},
-		onAddBtnPress: function (oEvent) {
+		onAddBtnPress: function () {
 			var oView = this.getView();
 			oView.getModel("viewModel").setProperty("/Data", { PolicyName: "", PolicyDesc: "", Policy: "" });
 
@@ -58,7 +58,7 @@ sap.ui.define([
 				this._oFormUserAttrDialog.close();
 			}
 		},
-		_onRouteMatched: function (oEvent) {
+		_onRouteMatched: function () {
 			//	this.getView().byId("idSmartTablePolicies").setEnableCopy(false);
 			var oBundle = this.getView().getModel("i18n").getResourceBundle();
 
@@ -89,12 +89,12 @@ sap.ui.define([
 			), "viewModel");
 			sap.ui.core.BusyIndicator.hide();
 		},
-		onTableSelectionChange: function (oEvent) {
+		onTableSelectionChange: function () {
 			this.getView().getModel("viewModel").setProperty("/EditButtonEnabled", true);
 			this.getView().getModel("viewModel").setProperty("/DeleteButtonEnabled", true);
 
 		},
-		onInputChange: function (oEvent) {
+		onInputChange: function () {
 			/*var sNewValue = oEvent.getParameter("newValue");
 			var oInput = oEvent.getSource();
 			oInput.setValueState("None");
@@ -112,7 +112,7 @@ sap.ui.define([
 				}
 			}*/
 		},
-		onSave: function (oEvent) {
+		onSave: function () {
 			var sPath;
 			var oEntry = this.getView().getModel("viewModel").getData().Data;
 			if (oEntry.PolicyName.trim() == "") {

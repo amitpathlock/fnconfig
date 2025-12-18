@@ -9,10 +9,9 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Label",
 	"sap/m/ColumnListItem",
-	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator"
+	"sap/base/Log"
 ], function (
-	Controller, Fragment, JSONModel, MessageBox, UIColumn, Column, Text, Label, ColumnListItem, Filter, FilterOperator
+	Controller, Fragment, JSONModel, MessageBox, UIColumn, Column, Text, Label, ColumnListItem,Log
 ) {
 	"use strict";
 
@@ -21,7 +20,7 @@ sap.ui.define([
 			this._oRouter = this.getOwnerComponent().getRouter();
 			this._oRouter.getRoute("DataMasking").attachPatternMatched(this._onRouteMatched, this);
 		},
-		onEditBtnPress: function (oEvent) {
+		onEditBtnPress: function () {
 			var oView = this.getView();
 			var oSelectedContextData = this.getView().byId("idTableDataMaskingEnforcement").getSelectedItem().getBindingContext().getObject();
 
@@ -41,7 +40,7 @@ sap.ui.define([
 			}
 			oView.getModel("viewModel").setProperty("/PolicyNameEnabled", false);
 		},
-		onAddBtnPress: function (oEvent) {
+		onAddBtnPress: function () {
 			var oView = this.getView();
 			oView.getModel("viewModel").setProperty("/Data", { Policy: "", PolicyResult: "", IsActive: false });
 
@@ -64,7 +63,7 @@ sap.ui.define([
 				this._oFormUserAttrDialog.close();
 			}
 		},
-		_onRouteMatched: function (oEvent) {
+		_onRouteMatched: function () {
 			sap.ui.core.BusyIndicator.hide();
 			//this.getView().byId("idSmartTablePOPRestriction").setEnableCopy(false);
 			var oBundle = this.getView().getModel("i18n").getResourceBundle();
@@ -101,7 +100,7 @@ sap.ui.define([
 
 			});
 		},
-		onTableSelectionChange: function (oEvent) {
+		onTableSelectionChange: function () {
 			this.getView().getModel("viewModel").setProperty("/EditButtonEnabled", true);
 			this.getView().getModel("viewModel").setProperty("/DeleteButtonEnabled", true);
 
@@ -194,7 +193,7 @@ sap.ui.define([
 		onValueHelpAfterClose: function () {
 			//this.oVHDialog.destroy();
 		},
-		onSave: function (oEvent) {
+		onSave: function () {
 			var sPath;
 			var oEntry = this.getView().getModel("viewModel").getData().Data;
 			if (oEntry.Policy.trim() == "") {
@@ -213,6 +212,7 @@ sap.ui.define([
 						this._oFormUserAttrDialog.close();
 					}.bind(this),
 					error: function (e) {
+						Log.error(e);
 						MessageBox.error("Error has occured while updating record");
 					}
 				});
@@ -225,6 +225,7 @@ sap.ui.define([
 						this._oFormUserAttrDialog.close();
 					}.bind(this),
 					error: function (e) {
+						Log.error(e);
 						MessageBox.error("Error has occured while creating record");
 					}
 				});
@@ -275,7 +276,7 @@ sap.ui.define([
 			// Example validation rule
 			oModel.read(sPath, {
 				// Success callback function
-				success: function (oData, oResponse) {
+				success: function (oData) {
 					// oData contains the retrieved data
 					this.getView().byId("idPolicyDescription").setValue(oData.PolicyDesc);
 					// If reading an entity set, oData.results will contain an array of entities
@@ -321,7 +322,7 @@ sap.ui.define([
 				urlParameters: {
 					"$expand": "to_Attr"// Expand to_ActionItem
 				},
-				success: function (oData, oResponse) {
+				success: function (oData) {
 
 					var oModel = new JSONModel({ PolicyName: oCtx.Policy, items: oData.to_Attr.results });
 					this._oPopover.setModel(oModel, "popOverModel");
@@ -344,7 +345,7 @@ sap.ui.define([
 			this.getView().getModel("viewModel").setProperty("/FullScreen", true);
 			this.getView().getModel("viewModel").setProperty("/ExitFullScreen", false);
 		},
-		onAfterRendering: function (oEvent) {
+		onAfterRendering: function () {
 			this.getView().getModel().refresh();
 		}
 	});

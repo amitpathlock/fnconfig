@@ -3,12 +3,14 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"pl/dac/apps/fnconfig/const/PlDacConst",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/MessageToast"
+	"sap/m/MessageToast",
+	"sap/base/Log"
 ], function (
 	Controller,
 	PlDacConst,
 	JSONModel,
-	MessageToast
+	MessageToast,
+	Log
 ) {
 	"use strict";
 	return Controller.extend("pl.dac.apps.fnconfig.controller.Functionality", {
@@ -19,21 +21,20 @@ sap.ui.define([
 		/*
 		 #Event handler of sap.ui.core.routing.Route~patternMatched
 		*/
-		_onRouteMatched: function (oEvent) {
+		_onRouteMatched: function () {
 
 			var oView = this.getView(), oModel = oView.getModel();
 			oView.setModel(new JSONModel([]), "viewModel");
 			sap.ui.core.BusyIndicator.hide();
 			oModel.callFunction("/Func_Imp_Get_Status", {
 				method: "GET", // Or "POST" depending on your function import's HTTP method
-				success: function (oData, response) {
+				success: function (oData) {
 					oView.getModel("viewModel").setData(oData.results);
 
 				},
 				error: function (oError) {
-					/* eslint-disable no-console */
-					console.error("Function import failed:", oError);
-					/* eslint-enable no-console */
+					Log.error("Function import failed:"+ oError);
+					
 				}
 			});
 		},
@@ -53,16 +54,16 @@ sap.ui.define([
 			oModel.callFunction("/Func_Imp_Set_Status", {
 				method: "POST", // Or "POST" depending on your function import's HTTP method
 				urlParameters: oURLParameters,
-				success: function (oData, response) {
+				success: function () {
 					oView.setBusy(false);
 					oPage.getController()._loadActionSet();
 					MessageToast.show(oBundle.getText("msgswitchButtonMsg"));
 				},
 				error: function (oError) {
-					/* eslint-disable no-console */
+				
 					oView.setBusy(false);
-					console.error("Function import failed:", oError);
-					/* eslint-enable no-console */
+					Log.error("Function import failed:"+oError)
+					
 				}
 			});
 		},

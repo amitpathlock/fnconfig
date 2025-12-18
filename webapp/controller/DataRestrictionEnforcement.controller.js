@@ -23,7 +23,7 @@ sap.ui.define([
 			this._oRouter = this.getOwnerComponent().getRouter();
 			this._oRouter.getRoute("DataRestriction").attachPatternMatched(this._onRouteMatched, this);
 		},
-		onEditBtnPress: function (oEvent) {
+		onEditBtnPress: function () {
 			var oView = this.getView();
 			var oSelectedContextData = this.getView().byId("idTableDataRestrictionEnforcement").getSelectedItem().getBindingContext().getObject();
 			oSelectedContextData.IsActive = oSelectedContextData.IsActive == "" ? false : true;
@@ -45,7 +45,7 @@ sap.ui.define([
 			}
 			oView.getModel("viewModel").setProperty("/PolicyNameEnabled", false);
 		},
-		onAddBtnPress: function (oEvent) {
+		onAddBtnPress: function () {
 			var oView = this.getView();
 			oView.getModel("viewModel").setProperty("/Data", { Policy: "", PolicyResult: "", IsActive: false });
 			oView.getModel("viewModel").setProperty("/PolicyNameEnabled", true);
@@ -69,7 +69,7 @@ sap.ui.define([
 				this._oPolEnforcementRestrictionDailog.close();
 			}
 		},
-		_onRouteMatched: function (oEvent) {
+		_onRouteMatched: function () {
 
 			// this.getView().byId("idSmartTablePOPRestriction").setEnableCopy(false);
 			var oBundle = this.getView().getModel("i18n").getResourceBundle();
@@ -103,7 +103,7 @@ sap.ui.define([
 		/* ### A Method has been defined to handle table row selection change event.
 		* @param {sap.ui.base.Event} oEvent
 		 */
-		onTableSelectionChange: function (oEvent) {
+		onTableSelectionChange: function () {
 			var oView = this.getView();
 			oView.getModel("viewModel").setProperty("/EditButtonEnabled", true);
 			oView.getModel("viewModel").setProperty("/DeleteButtonEnabled", true);
@@ -191,9 +191,8 @@ sap.ui.define([
 		},
 
 		/* ### A Method has been defined to implement save/update operation.
-		* @param {sap.ui.base.Event} oEvent
 		*/
-		onSave: function (oEvent) {
+		onSave: function () {
 			var sPath;
 			var oEntry = this.getView().getModel("viewModel").getData().Data;
 			if (oEntry.Policy.trim() == "") {
@@ -215,6 +214,7 @@ sap.ui.define([
 						this._oPolEnforcementRestrictionDailog.close();
 					}.bind(this),
 					error: function (e) {
+						Log.error(e);
 						MessageBox.error("Error has occured while updating record");
 					}
 				});
@@ -257,13 +257,13 @@ sap.ui.define([
 				oBundle = oView.getModel("i18n").getResourceBundle();
 			oModel.read(sPath, // Path to the specific entity
 				{
-					success: function (oData, oResponse) {
+					success: function () {
 						that.__oInput.focus();
 						oView.getModel("viewModel").setProperty("/ErrorMessage", oBundle.getText("msgErrorDuplicateEntry", [oEntry.Policy]));
 						oView.getModel("viewModel").setProperty("/ErrorState", "Error");
 						return;
 					},
-					error: function (oError) {
+					error: function () {
 						that._createEntry(oEntry);
 					}
 				}
@@ -341,7 +341,7 @@ sap.ui.define([
 			// Example validation rule
 			oModel.read(sPath, {
 				// Success callback function
-				success: function (oData, oResponse) {
+				success: function (oData) {
 					// oData contains the retrieved data
 					if(bInputEditable){
 						that.__oInput.focus();
@@ -395,14 +395,14 @@ sap.ui.define([
 				urlParameters: {
 					"$expand": "to_Attr" // Expand to_ActionItem
 				},
-				success: function (oData, oResponse) {
+				success: function (oData) {
 					var oModel = new JSONModel({ PolicyName: oCtx.Policy, items: oData.to_Attr.results });
 					this._oPopover.setModel(oModel, "popOverModel");
 				}.bind(this),
 				error: function (oError) {
-					/* eslint-disable no-console */
-					console.error("Error reading policy details:", oError);
-					/* eslint-enable no-console */
+					
+					Log.error("Error reading policy details:"+ oError);
+					
 				}
 			});
 		},
@@ -453,6 +453,7 @@ sap.ui.define([
 						message = errorBody.error.errordetails[0].message;
 					}
 				} catch (e) {
+					Log.error(e);
 					// Handle cases where response body might not be valid JSON
 					message = $(oError.response.body).find('message').first().text();
 				}
