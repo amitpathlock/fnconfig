@@ -3,7 +3,7 @@ name: CI-Pipeline-validation
 on: 
   push:
     paths-ignore:
-      - '**/test/**'
+      - 'test/*'
 jobs:
   build:
     name: Initialize Dependencies
@@ -66,7 +66,7 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: my-build-artifact
+          name: build-artifact
           path: dist/ # The path to the directory or file(s) you want to upload
           # Optional: Configure retention days, e.g., 5 days
           retention-days: 5
