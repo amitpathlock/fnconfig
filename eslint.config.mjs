@@ -1,6 +1,6 @@
 import js from "@eslint/js";
 import globals from "globals";
-import jsdoc from 'eslint-plugin-jsdoc';
+import jsdoc from "eslint-plugin-jsdoc";
 import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig([
