@@ -17,9 +17,5 @@ export default defineConfig([
   ]),
   { files: ["**/*.{js,mjs,cjs}"], plugins: { js }, extends: ["js/recommended"],
    languageOptions: { globals: { "sap": true, "$": true ,"jQuery":true,"element":true,"hasher":true} } },
-   jsdoc.configs['flat/recommended'],
-  {
-    'jsdoc/require-description': 'warn',
-    'jsdoc/check-values': 'warn',
-  }
+  jsdoc.configs.recommended
 ]);
