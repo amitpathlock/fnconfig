@@ -30,8 +30,7 @@
     "unit-tests": "fiori run --open 'test/unit/unitTests.qunit.html'",
     "int-tests": "fiori run --open 'test/integration/opaTests.qunit.html'",
     "lint": "eslint .",
-    "lint:fix": "eslint --fix --ext .js,.jsx .",
-    "lint:json": "eslint 'src/**/*.ts' -f json -o reports/lint.json"
+    "lint:fix": "eslint --fix --ext .js,.jsx ."
   },
   "sapuxLayer": "CUSTOMER_BASE",
   "publishConfig": {

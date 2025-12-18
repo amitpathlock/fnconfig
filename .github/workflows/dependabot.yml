@@ -36,15 +36,8 @@ jobs:
         run: npm ci # Use npm ci for clean and fast installs in CI environments
 
       - name: ESLint Checks # Step 3: Run commands for EsLint Checks
-        run: yarn install --frozen-lockfile
-      - run: yarn lint:json
-        continue-on-error: true
-      - uses: ./
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          report: reports/lint.json
-          total-problems: '200'
-
+        run: yarn lint
+    
   Finalized-Build:
     needs: ESList-Checks
     name: Finalizing Build
