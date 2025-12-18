@@ -60,3 +60,11 @@ jobs:
         run: npm ci # Use npm ci for clean and fast installs in CI environments
       - name: Build Project # Step 5: Run the build command
         run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-build-artifact
+          path: dist/ # The path to the directory or file(s) you want to upload
+          # Optional: Configure retention days, e.g., 5 days
+          retention-days: 5
