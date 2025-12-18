@@ -1,0 +1,64 @@
+name: CI-Pipeline-validation
+
+on: push
+
+jobs:
+  build:
+    name: Initialize Dependencies
+    runs-on: ubuntu-latest # The type of runner machine to use
+
+    steps:
+      - name: Checkout to repository # Step 1: Get the code
+        uses: actions/checkout@v1 # Uses a prebuilt action to check out the repo
+
+      - name: Use Node.js ${{ matrix.node-version }} # Step 2: Set up the specific language environment
+        uses: actions/setup-node@v1  # Uses a prebuilt action to install Node
+        with:
+          node-version: ${{ matrix.node-version }} # Specify the version
+
+      - name: Dependency Initialization # Step 3: Run commands to install project dependencies
+        run: npm ci # Use npm ci for clean and fast installs in CI environments
+
+  ESList-Checks:
+    needs: build
+    name: ESLint Checks
+    runs-on: ubuntu-latest # The type of runner machine to use
+    steps:
+      - name: Checkout to repository # Step 1: Get the code
+        uses: actions/checkout@v1 # Uses a prebuilt action to check out the repo
+
+      - name: Use Node.js ${{ matrix.node-version }} # Step 2: Set up the specific language environment
+        uses: actions/setup-node@v1  # Uses a prebuilt action to install Node
+        with:
+          node-version: ${{ matrix.node-version }} # Specify the version
+
+      - name: Dependency Initialization # Step 3: Run commands to install project dependencies
+        run: npm ci # Use npm ci for clean and fast installs in CI environments
+
+      - name: ESLint Checks # Step 3: Run commands for EsLint Checks
+        run: yarn install --frozen-lockfile
+      - run: yarn lint:json
+        continue-on-error: true
+      - uses: ./
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          report: reports/lint.json
+          total-problems: '200'
+
+  Finalized-Build:
+    needs: ESList-Checks
+    name: Finalizing Build
+    runs-on: ubuntu-latest # The type of runner machine to use
+    steps:
+      - name: Checkout to repository # Step 1: Get the code
+        uses: actions/checkout@v1 # Uses a prebuilt action to check out the repo
+
+      - name: Use Node.js ${{ matrix.node-version }} # Step 2: Set up the specific language environment
+        uses: actions/setup-node@v1  # Uses a prebuilt action to install Node
+        with:
+          node-version: ${{ matrix.node-version }} # Specify the version
+
+      - name: Dependency Initialization # Step 3: Run commands to install project dependencies
+        run: npm ci # Use npm ci for clean and fast installs in CI environments
+      - name: Build Project # Step 5: Run the build command
+        run: npm run build
