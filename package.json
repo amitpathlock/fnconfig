@@ -34,10 +34,10 @@
   },
   "sapuxLayer": "CUSTOMER_BASE",
   "publishConfig": {
-    "@amitpathlock:registry": "https://registry.npmjs.org"
+    "@amitpathlock:registry": "https://npm.pkg.github.com/"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/amitpathlock/fnconfig.git"
+    "url": "git+https://github.com/amitpathlock/fnconfig.git"
   }
 }
