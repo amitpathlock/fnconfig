@@ -34,7 +34,7 @@
   },
   "sapuxLayer": "CUSTOMER_BASE",
   "publishConfig": {
-    "@amitpathlock:registry": "https://npm.pkg.github.com"
+    "@amitpathlock:registry": "https://registry.npmjs.org"
   },
   "repository": {
     "type": "git",
