@@ -1,5 +1,6 @@
 import js from "@eslint/js";
 import globals from "globals";
+import jsdoc from 'eslint-plugin-jsdoc';
 import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig([
@@ -16,4 +17,9 @@ export default defineConfig([
   ]),
   { files: ["**/*.{js,mjs,cjs}"], plugins: { js }, extends: ["js/recommended"],
    languageOptions: { globals: { "sap": true, "$": true ,"jQuery":true,"element":true,"hasher":true} } },
+   jsdoc.configs['flat/recommended'],
+  {
+    'jsdoc/require-description': 'warn',
+    'jsdoc/check-values': 'warn',
+  }
 ]);
