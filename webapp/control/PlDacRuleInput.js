@@ -1,9 +1,8 @@
 sap.ui.define([
     "sap/m/Input",
-    "sap/ui/core/Icon",
-    "sap/m/FlexItemData"
+    "sap/ui/core/Icon"
 ], function (
-    Input, Icon, FlexItemData
+    Input, Icon
 ) {
     "use strict";
 

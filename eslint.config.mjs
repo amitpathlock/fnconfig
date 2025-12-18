@@ -10,7 +10,9 @@ export default defineConfig([
     "dist/*", // ignore its content
     "!webapp/test/", // unignore `node_modules/mylibrary` directory
     "webapp/test/*" ,// ignore its content
-    "eslint.config.mjs"
+    "eslint.config.mjs",
+    "!webapp/localService/",
+    "webapp/localService/*"
   ]),
   { files: ["**/*.{js,mjs,cjs}"], plugins: { js }, extends: ["js/recommended"],
    languageOptions: { globals: { "sap": true, "$": true ,"jQuery":true,"element":true,"hasher":true} } },

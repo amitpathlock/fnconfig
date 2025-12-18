@@ -329,9 +329,7 @@ sap.ui.define([
 
 				}.bind(this),
 				error: function (oError) {
-					/* eslint-disable no-console */
-					console.error("Error reading policy details:", oError);
-					/* eslint-enable no-console */
+					Log.error("Error reading policy details:"+ oError);
 				}
 			});
 		},

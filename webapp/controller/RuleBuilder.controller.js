@@ -51,7 +51,7 @@ sap.ui.define([
 			this._readPolicyRulesDetails(sPolicyName);
 			this._loadReadOnlyPolicyRuleFragment();
 			var oModelSingleValues = new JSONModel();
-			oModelSingleValues.attachRequestCompleted(function (oEvent) {
+			oModelSingleValues.attachRequestCompleted(function () {
 				oView.getModel("SingleValues").setData(oModelSingleValues.getData());
 			});
 			oModelSingleValues.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/SingleValues.json"));
@@ -104,7 +104,7 @@ sap.ui.define([
 						RuleType: "Precondition",
 						CTypeID: aResults[iResult].CondId, Rules: []
 					};
-					oConditionRules["Rules"] = this._buildPrecondtion(aResults[iResult], iResult, null);
+					oConditionRules["Rules"] = this._buildPrecondtion(aResults[iResult], iResult);
 					oCondition.Condition.push(oConditionRules);
 					oCondition.Condition.push({
 						CType: "END IF",
@@ -122,7 +122,7 @@ sap.ui.define([
 								CTypeID: iResult,//aResults[iResult].CondId,
 								Rules: []
 							};
-							oConditionRules["Rules"] = this._buildRule(aResults[iResult], iResult, null);
+							oConditionRules["Rules"] = this._buildRule(aResults[iResult], iResult);
 							lArr.push(oConditionRules);
 
 						}
@@ -134,7 +134,7 @@ sap.ui.define([
 							Rules: []
 						};
 
-						oConditionRules["Rules"] = this._buildRule(aResults[iResult], iResult, "ELSE IF");
+						oConditionRules["Rules"] = this._buildRule(aResults[iResult], iResult, );
 						lArr.push(oConditionRules);
 					}
 				}
@@ -570,7 +570,7 @@ sap.ui.define([
 			oView.getModel("ruleModel").setData(oRuleData);
 		},
 		updateSingleValuesModel: function (aValues, aItems) {
-			var i;
+			var i,oData;
 			if (this._oRangeDialog) {
 				if (!Array.isArray(aValues)) {
 					aItems[0].Value = aValues.Value;
@@ -584,7 +584,8 @@ sap.ui.define([
 						aItems = aValues;
 					}
 				}
-				this.getView().getModel("SingleValues").setData(aItems);
+				oData = aItems;
+				this.getView().getModel("SingleValues").setData(oData);
 			}
 		},
 		onShowValueDialog: function (oEvent) {

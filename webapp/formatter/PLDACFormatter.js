@@ -20,7 +20,7 @@ sap.ui.define([], function () {
             }
             return false;
         },
-        handVisibilityConditionTypeIfElse: function (sValue, oContext) {
+        handVisibilityConditionTypeIfElse: function (sValue) {
             if (sValue == "ELSE IF") {
                 return true;
             }
@@ -62,13 +62,13 @@ sap.ui.define([], function () {
             }
             return false;
         },
-        handleANDVisibility: function (sValue, sRuleType) {
+        handleANDVisibility: function (sValue) {
             if (sValue == "AND" || sValue == "OR") {
                 return false;
             }
             return true;
         },
-        handDeleleVisibility: function (sRuleType) {
+        handDeleleVisibility: function () {
             //if(sRuleType=="Precondition"){
             //	return false;
             //}
@@ -113,7 +113,7 @@ sap.ui.define([], function () {
             }
             return true;
         },
-        editViewHandleIFBlockVisiblity: function (sConditionType, sRuleTtpe) {
+        editViewHandleIFBlockVisiblity: function (sConditionType) {
             if (sConditionType == "IF") {
                 return true;
             }

@@ -302,6 +302,7 @@ sap.ui.define([
 						message = errorBody.error.errordetails[0].message;
 					}
 				} catch (e) {
+					Log.error(e);
 					// Handle cases where response body might not be valid JSON
 					message = $(oError.response.body).find('message').first().text();
 				}
