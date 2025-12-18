@@ -1,7 +1,9 @@
 name: CI-Pipeline-validation
 
-on: push
-
+on: 
+  push:
+    paths-ignore:
+      - '**/test/**'
 jobs:
   build:
     name: Initialize Dependencies
