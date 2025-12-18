@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/amitpathlock/fnconfig.git"
+    "url": "git+ssh://github.com/amitpathlock/fnconfig.git"
   },
   "license": "MIT",
   "author": "Amit Kumar",
@@ -633,7 +633,7 @@
     "globals": "^16.5.0"
   },
   "publishConfig": {
-    "@fnconfig:registry": "https://npm.pkg.github.com/"
+    "@amitpathlock:registry": "https://npm.pkg.github.com"
   },
   "sapuxLayer": "CUSTOMER_BASE"
 }
