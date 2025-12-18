@@ -11,5 +11,6 @@ export default defineConfig([
     "!webapp/test/", // unignore `node_modules/mylibrary` directory
     "webapp/test/*" // ignore its content
   ]),
-  { files: ["**/*.{js,mjs,cjs}"], plugins: { js }, extends: ["js/recommended"], languageOptions: { globals: {"sap":true,"$":true} } },
+  { files: ["**/*.{js,mjs,cjs}"], plugins: { js }, extends: ["js/recommended"],
+   languageOptions: { globals: { "sap": true, "$": true ,"jQuery":true,"element":true,"hasher":true} } },
 ]);
