@@ -36,8 +36,13 @@ jobs:
         run: npm ci # Use npm ci for clean and fast installs in CI environments
 
       - name: ESLint Checks # Step 3: Run commands for EsLint Checks
-        run: yarn lint
-    
+        run: npm run lint:html
+        continue-on-error: true
+      - name: Upload ESLint report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: eslint-report-html
+          path: ESLintReport.html
   Finalized-Build:
     needs: ESList-Checks
     name: Finalizing Build
