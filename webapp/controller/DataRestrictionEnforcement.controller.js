@@ -336,13 +336,16 @@ sap.ui.define([
 		},
 		_validatePolicyInput: function (sValue) {
 			var oView = this.getView(), oModel = oView.getModel(), that = this,
-				sPath = "/PolicySet('" + sValue + "')";
+				sPath = "/PolicySet('" + sValue + "')",
+				bInputEditable = oView.getModel("viewModel").getProperty("/PolicyNameEnabled");
 			// Example validation rule
 			oModel.read(sPath, {
 				// Success callback function
 				success: function (oData, oResponse) {
 					// oData contains the retrieved data
-					that.__oInput.focus();
+					if(bInputEditable){
+						that.__oInput.focus();
+					}
 					oView.byId("idPolicyDescription").setValue(oData.PolicyDesc);
 					// If reading an entity set, oData.results will contain an array of entities
 					if (oData.PolicyDesc) {

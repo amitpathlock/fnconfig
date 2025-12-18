@@ -49,7 +49,7 @@ sap.ui.define([
             oFilter = new Filter("Status", FilterOperator.EQ, 1);
             aFilter = [oFilter];
             oModel.read(PlDacConst.ENTITY_SET_ACTION_PATH, {
-                filters: aFilter,
+             //   filters: aFilter,
                 urlParameters: {
                     "$expand": "to_ActionItem" // Expand to_ActionItem
                 },
