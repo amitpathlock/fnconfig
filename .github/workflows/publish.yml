@@ -29,9 +29,9 @@ jobs:
           registry-url: https://npm.pkg.github.com/
           scope: '@fnconfig'
       - run: npm ci
-      - run: echo '${{secrets.GITHUBTOKEN}}'
+      - run: echo ${{secrets.GITHUB_TOKEN}}
       - run: npm publish
       
         env:
-          NODE_AUTH_TOKEN: ${{secrets.GITHUBTOKEN}}
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
