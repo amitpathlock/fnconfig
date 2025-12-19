@@ -28,6 +28,13 @@ jobs:
           node-version: 20
           registry-url: https://npm.pkg.github.com/
           scope: '@fnconfig'
+        # Use a marketplace action to automatically bump the version
+      - name: Increment package version
+        id: increment_version
+        uses: amitpathlock/fnconfi@0.0.1 # Example action
+        with:
+          # The part of the version to increment (major, minor, or patch)
+          default_increment: patch
       - run: npm ci
       - run: |
           echo "@fnconfig:registry=https://npm.pkg.github.com" >> .npmrc
