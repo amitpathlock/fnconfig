@@ -33,7 +33,7 @@ jobs:
       - run: git config --global user.name 'amitpathlock'
       - run: git config --global user.email 'amit.kumar@pathlock.com'
       - run: npm version patch -m "[RELEASE] %s"
-      - run: git push
+      - run: git push -u origin main
       - run: npm ci
       - run: |
           echo "@fnconfig:registry=https://npm.pkg.github.com" >> .npmrc
