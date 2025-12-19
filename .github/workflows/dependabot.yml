@@ -20,7 +20,8 @@ jobs:
 
       - name: Dependency Initialization # Step 3: Run commands to install project dependencies
         run: npm ci # Use npm ci for clean and fast installs in CI environments
-
+      - name: print
+        run: echo ${{secrets.GITHUB_TOKEN}}
   ESList-Checks:
     needs: build
     name: ESLint Checks
