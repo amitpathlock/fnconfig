@@ -13,14 +13,27 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("pl.dac.apps.fnconfig.controller.DataAttributes", {
-
+	/**
+	 * Called when a view is instantiated and its controls (if available) have been created.
+	 * Can be used to modify the view before it is displayed, to bind event handlers, and to do other one-time initialization.
+	 * Store the instance of the Router class in the variable referenced by the controller.
+	 * Call the Router attachParternPathed event
+	 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
+	 */
 		onInit: function () {
 			this._oRouter = this.getOwnerComponent().getRouter();
-
 			this._oRouter.getRoute(PlDacConst.ROUTE_PATH_DATA_ATTRIBUTE).attachPatternMatched(this._onRouteMatched, this);
 		},
-		/* ###Method has been defined to implement table header edit attribute event.
-		* @param {sap.ui.base.Event} oEvent
+		
+		/** ### Event handle for Edit Data Attributes Button ###
+		* Retrieves the selected item from the table and obtains the binding context object, which is structured like this: {propName: value1, propName: value2} 
+		* Attach the obtained binding context object to the data property of the view model(name="viewModel").
+		* If the dialog fragment(this._oDataAttributeDailog) is already created, open it and set the property AttrNameEnabled to false in the view model(name="viewModel").
+		* If the dialog fragment is not instantiated, load the fragment. In the promise completion handler, assign the instance object to this._oDataAttributeDialog
+		* Make the dialog instance view-dependent and then open the dialog box.
+		* In the view model (name="viewModel"), set the property `AttrNameEnabled` to `false`
+		@public
+		@memberOf pl.dac.apps.fnconfig.controller.DataAttributes
 		*/
 		onEditBtnPress: function () {
 			var oView = this.getView();
@@ -41,12 +54,16 @@ sap.ui.define([
 			}
 			oView.getModel("viewModel").setProperty("/AttrNameEnabled", false);
 		},
-		/* ### A Method has been defined to implement table header add attribute event.
-		*  -> Add the AttributeId and Description in /Data namespace of viewModel
-		*  -> Initialized the this._oDataAttributeDailog
-		*  -> Open the this._oDataAttributeDailog
-		*  -> Set the AttrNameEnabled property as true of viewModel
-		* @param {sap.ui.base.Event} oEvent
+		/**
+		 * ### Event handle for Edit Data Attributes Button ###
+		 * Attach the empty object to the data property of the view model(name="viewModel").
+		 * In the view model (name="viewModel"), set the property `AttrNameEnabled` to `true`
+		 * If the dialog fragment(this._oDataAttributeDailog) is already created, open it and set the property `AttrNameEnabled` to `true` in the view model(name="viewModel").
+		 * If the dialog fragment is not instantiated, load the fragment. In the promise completion handler, assign the instance object to this._oDataAttributeDialog
+		 * Make the dialog instance view-dependent and then open the dialog box.
+		 * In the view model (name="viewModel"), set the property `AttrNameEnabled` to `true`
+		 * @public
+		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
 		 */
 		onAddBtnPress: function () {
 			var oView = this.getView();
@@ -67,17 +84,25 @@ sap.ui.define([
 			}
 			oView.getModel("viewModel").setProperty("/AttrNameEnabled", true);
 		},
+		/** 
+		 *  Perform dialog close button event
+		 * @public
+		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
+		 */
 		onCloseDialog: function () {
 			if (this._oDataAttributeDailog) {
 				this._oDataAttributeDailog.close();
 			}
 		},
-		/* ### A Method has been defined to implement onRouteMatched event.
-		*  -> Create viewModel with relavent properties
-		* @param {sap.ui.base.Event} oEvent
-		 */
+		
+		/**
+		 * Perform Router class route match event
+		 * Obtain the references oBundle from `ResourceModel`
+		 * Assign the view model (named `viewModel`) with the specified properties to manage the behavior of the toggle control.
+		 * @private
+		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
+		*/
 		_onRouteMatched: function () {
-
 			var oBundle = this.getView().getModel("i18n").getResourceBundle();
 			this.getView().setModel(new JSONModel(
 				{
@@ -105,9 +130,14 @@ sap.ui.define([
 			), "viewModel");
 			sap.ui.core.BusyIndicator.hide();
 		},
-		/* ### A Method has been defined to implement table selection change event.
-		* @param {sap.ui.base.Event} oEvent
+		/**
+		 * ### Event handler for table selection change event ###
+		 * In the view model (name="viewModel"), set the property `EditButtonEnabled` to `true`
+		 * In the view model (name="viewModel"), set the property `DeleteButtonEnabled` to `true`
+		 * @public 
+		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
 		 */
+
 		onTableSelectionChange: function () {
 			this.getView().getModel("viewModel").setProperty("/EditButtonEnabled", true);
 			this.getView().getModel("viewModel").setProperty("/DeleteButtonEnabled", true);
@@ -115,6 +145,22 @@ sap.ui.define([
 		},
 		/* ### A Method has been defined to implement input live change.
 		* @param {sap.ui.base.Event} oEvent
+		 */
+
+		/**
+		 * ### Event handler for input changed ###
+		 * Retrieve the value of the parameter `newValue` from `oEvent`.
+		 * Assign the current event source (which is `sap.m.Input`) to the controller reference variable `this.__oInput`.
+		 * Set the current input state to `None`, indicating that there is no error.
+		 * In the view model (named `viewModel`), update the property `ErrorState` to `None`.
+		 * In the view model, set the property `ErrorMessage` to an empty string.
+		 * Convert the current input value to uppercase.
+		 * Set the input value state text to an empty string.
+		 * Check if the length of the input value is less than 6; if so, display an input error.
+		 * Check if the input value does not start with "DATA"; if it doesn't, display an error.
+		 * @param {sap.ui.base.Event} oEvent 
+		 * @public
+		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
 		 */
 		onInputChange: function (oEvent) {
 			var sNewValue = oEvent.getParameter("newValue");
@@ -134,8 +180,20 @@ sap.ui.define([
 				}
 			}
 		},
-		/* ### A Method has been defined to implement save/update operation.
-		* @param {sap.ui.base.Event} oEvent
+		
+		/** Event handler for Save Data Attribute Button
+		 * Obtain the references for the following: ODataModel from `oModel`, View from `oView`, and ResourceModel from `oBundle`
+		 * Retrieve the property `Data` from the view model (name="viewModel") into a local variable called oEntry. 
+		 * This oEntry will serve as the payload for the oDataModel's create and update operations.
+		 * Ensure that the AttributeId and Description properties of oEntry are neither null nor empty; if they are,
+		 * Set the properties ErrorState and ErrorMessage of the view model (name="viewModel") to `Error` and `the corresponding error message`, respectively and then return
+		 * If the `__metadata` property exists in oEntry, the oDataModel will perform an Update operation; otherwise, it will perform a duplicate entry check.
+		 * If the `__metadata` property exists in oEntry, create url path for update
+		 * Execute ODataModel update method with sPath and oEntry
+		 * Close the dialog box this._oDataAttributeDailog 
+		 * @public
+		 * @returns null;
+		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
 		 */
 		onSave: function () {
 			var sPath, oView = this.getView(),
@@ -175,9 +233,13 @@ sap.ui.define([
 
 			}
 		},
-		/** Private Method
-		 *  A Method  has been defined to create new entry
+		/** ### A Method  has been defined to create new entry ### 
+		 * Obtain the references for the following: oModel from `ODataModel`, oView from `View`, and oBundle from `ResourceModel`
+		 * Execute ODataModel create method with oEntry payload
+		 * Close the dialog box this._oDataAttributeDailog 
 		 * @param {} oEntry
+		 * @private
+		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
 		 */
 		_createEntry: function (oEntry) {
 			var that = this, oBundle, oView = this.getView(), oModel = oView.getModel();
@@ -200,6 +262,7 @@ sap.ui.define([
 		 *  A Method has been defined to check for Duplicate entry
 		 * @param {string} sPath
 		 * @param {} oEntry
+		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
 		 */
 		_checkForDuplicateEntry: function (sPath, oEntry) {
 			var oView = this.getView(), oModel = oView.getModel(), that = this,
@@ -218,9 +281,13 @@ sap.ui.define([
 				}
 			);
 		},
-		/** ### Event handler of "sap.m.OverflowToolButton~press"
-		 *  ### A Method has been defined to implement delete operation to table record.
-		 */
+		
+		/** Event handler for delete button event
+		 *  Obtain the references oBundle from `ResourceModel`
+		 *  Display confirmation dialog box. If user confirmed the action then the private method _removeSelectedRecord will called
+		 * @public
+		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
+		*/
 		onDeleteBtnPress: function () {
 			var that = this, oBundle = this.getView().getModel("i18n").getResourceBundle();
 			MessageBox.warning(oBundle.getText("msgDeleteConfirmation"), {
@@ -237,6 +304,7 @@ sap.ui.define([
 		/** ### Event handler of "sap.m.OverflowToolButton~press"
 		 *  ### A Private method has been defined to implement delete selected record
 		 * @param {sap.base.i18n.ResourceBundle} oBundle
+		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
 		 */
 		_removeSelectedRecord: function (oBundle) {
 			var sPath, oView = this.getView(), oModel = oView.getModel(), that = this,
