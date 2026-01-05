@@ -12,8 +12,8 @@ sap.ui.define([
 
 	return BaseController.extend("pl.dac.apps.fnconfig.controller.Policies", {
 		onInit: function () {
-			this.oRouter = this.getOwnerComponent().getRouter();
-			this.oRouter.getRoute("Policies").attachPatternMatched(this._onRouteMatched, this);
+			this._oRouter = this.getOwnerComponent().getRouter();
+			this._oRouter.getRoute("Policies").attachPatternMatched(this._onRouteMatched, this);
 		},
 		onEditBtnPress: function () {
 			var oView = this.getView();
@@ -182,25 +182,25 @@ sap.ui.define([
 		},
 		onPressRuleLink: function (oEvent) {
 			var sPolicyName = oEvent.getSource().getCustomData()[0].getValue();
-			this.oRouter.navTo("PolicyRules", { PolicyName: sPolicyName });
+			this._oRouter.navTo("PolicyRules", { PolicyName: sPolicyName });
 			this.getView().getModel("layoutMode").setProperty("/layout", "ThreeColumnsEndExpanded");
 		},
-		handleFullScreen: function () {
-			this.getView().getModel("layoutMode").setProperty("/layout", "MidColumnFullScreen");
-			this.getView().getModel("viewModel").setProperty("/FullScreen", false);
-			this.getView().getModel("viewModel").setProperty("/ExitFullScreen", true);
+		// handleFullScreen: function () {
+		// 	this.getView().getModel("layoutMode").setProperty("/layout", "MidColumnFullScreen");
+		// 	this.getView().getModel("viewModel").setProperty("/FullScreen", false);
+		// 	this.getView().getModel("viewModel").setProperty("/ExitFullScreen", true);
 
-		},
-		handleExitFullScreen: function () {
-			this.getView().getModel("layoutMode").setProperty("/layout", "TwoColumnsMidExpanded");
-			this.getView().getModel("viewModel").setProperty("/FullScreen", true);
-			this.getView().getModel("viewModel").setProperty("/ExitFullScreen", false);
-		},
+		// },
+		// handleExitFullScreen: function () {
+		// 	this.getView().getModel("layoutMode").setProperty("/layout", "TwoColumnsMidExpanded");
+		// 	this.getView().getModel("viewModel").setProperty("/FullScreen", true);
+		// 	this.getView().getModel("viewModel").setProperty("/ExitFullScreen", false);
+		// },
 		//
-		handleClose: function () {
-			var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/endColumn/closeColumn");
-			this.oRouter.navTo("master", { layout: sNextLayout });
-		},
+		// handleClose: function () {
+		// 	//var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/endColumn/closeColumn");
+		// 	//this._oRouter.navTo("master", { layout: sNextLayout });
+		// },
 		onSort: function () {
 			var oView = this.getView(),
 				aStates = [undefined, "asc", "desc"],
