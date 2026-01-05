@@ -7,7 +7,7 @@
     xmlns:core="sap.ui.core"
     xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
     xmlns:smartTable="sap.ui.comp.smarttable"
-
+xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 	busyIndicatorDelay="0"
 >
 <!-- @ui5ignore -->
@@ -50,9 +50,9 @@
 			<OverflowToolbar design="Transparent">
 				<ToolbarSpacer/>
                  <!-- @ui5ignore -->
-                <OverflowToolbarButton icon="sap-icon://add" tooltip="Add Data Attributes" text="Add" press="onAddBtnPress"/>
+                <OverflowToolbarButton icon="sap-icon://add" tooltip="Add Data Attributes" text="Add" press="onAddPolicyEnforcementBtnPress"/>
 				 <!-- @ui5ignore -->
-                <OverflowToolbarButton icon="sap-icon://edit" tooltip="Edit Data Attributes" enabled="{viewModel>/EditButtonEnabled}" press="onEditBtnPress"/>
+                <OverflowToolbarButton icon="sap-icon://edit" tooltip="Edit Data Attributes" enabled="{viewModel>/EditButtonEnabled}" press="onEditPolicyEnforcementBtnPress"/>
                  <!-- @ui5ignore -->
                 <OverflowToolbarButton icon="sap-icon://delete" tooltip="Delete Data Attributes" enabled="{viewModel>/DeleteButtonEnabled}" press="onDeleteBtnPress"/>
                 	 <!-- @ui5ignore -->
@@ -96,7 +96,7 @@
                         </Column>
                         <Column width="0px">
                         <customData>
-									<core:CustomData key="p13nData" value='\{"columnKey": "PolicyDesc", "columnIndex":"3",  "leadingProperty": "to_Policy/PolicyDesc"}'/>
+									<core:CustomData key="p13nData" value='\{"columnKey": "PolicyDesc", "columnIndex":"3","navigationProperty":"to_Policy",  "leadingProperty": "to_Policy/PolicyDesc"}'/>
                                  
 								</customData>
                                 
@@ -106,7 +106,7 @@
                     </columns>
                     <!-- Data -->
                     <items>
-                        <ColumnListItem
+                        <ColumnListItem app:PolicyDesc="{to_Policy/PolicyDesc}"
                           
                         >
                            <cells>

@@ -9,22 +9,20 @@
             resizable="true"
             title="{viewModel>/Title}">
             <content>
+             <!-- @ui5ignore -->
                 <f:SimpleForm
                     editable="true"
-                    layout="ResponsiveGridLayout"
                     labelSpanXL="3"
                     labelSpanL="3"
                     labelSpanM="3"
-                    labelSpanS="12"
                     adjustLabelSpan="false"
                     emptySpanXL="4"
                     emptySpanL="4"
                     emptySpanM="4"
-                    emptySpanS="0"
                     columnsXL="1"
                     columnsL="1"
-                    columnsM="1"
-                    singleContainerFullSize="true">
+                    layout="ResponsiveGridLayout"
+                   >
                     <f:content>
                       <!-- @ui5ignore -->
                         <Label text="{viewModel>/Name}"  required="true"/>
@@ -44,7 +42,7 @@
                         liveChange="onInputChange"   value="{viewModel>/Data/Policy}" >
                         	<suggestionColumns>
 				<Column>
-					<Label text="Name"/>
+					<Label text="PName"/>
 				</Column>
 				<Column>
 					<Label text="Description"/>
@@ -53,7 +51,7 @@
 			<suggestionRows>
               <!-- @ui5ignore -->
 				<ColumnListItem >
-					<Label text="{Policy}" />
+					<Label text="{PolicyName}" />
 					<Label text="{PolicyDesc}" />
 				</ColumnListItem>
 			</suggestionRows>
@@ -76,10 +74,12 @@
                 </f:SimpleForm>
             </content>
             <beginButton>
-                <Button text="Save" press="onSave" />
+             <!-- @ui5ignore -->
+                <Button text="Save" press="onSavePolicyInforcement" />
             </beginButton>
             <endButton>
-                <Button text="Cancel" press="onCloseDialog" />
+             <!-- @ui5ignore -->
+                <Button text="Cancel" press="onCloseDialogPolicyInforcement" />
             </endButton>
         </Dialog>
     </core:FragmentDefinition>

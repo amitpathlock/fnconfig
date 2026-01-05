@@ -1,13 +1,13 @@
 
 sap.ui.define([
-    "sap/ui/core/mvc/Controller",
+    "pl/dac/apps/fnconfig/controller/BaseController",
     "pl/dac/apps/fnconfig/const/PlDacConst",
     "sap/ui/model/json/JSONModel",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/base/Log"
 ], function (
-    Controller,
+    BaseController,
     PlDacConst,
     JSONModel,
     Filter,
@@ -16,7 +16,7 @@ sap.ui.define([
 ) {
     "use strict";
 
-    return Controller.extend("pl.dac.apps.fnconfig.controller.Master", {
+    return BaseController.extend("pl.dac.apps.fnconfig.controller.Master", {
         onInit: function () {
             this._oRouter = this.getOwnerComponent().getRouter();
             sap.ui.core.BusyIndicator.show();

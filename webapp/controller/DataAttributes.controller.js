@@ -1,6 +1,6 @@
 
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	"pl/dac/apps/fnconfig/controller/BaseController",
 	"pl/dac/apps/fnconfig/const/PlDacConst",
 	"sap/ui/core/Fragment",
 	"sap/ui/model/json/JSONModel",
@@ -8,93 +8,25 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/base/Log"
 ], function (
-	Controller, PlDacConst, Fragment, JSONModel, MessageBox, Sorter, Log
+	BaseController, PlDacConst, Fragment, JSONModel, MessageBox, Sorter, Log
 ) {
 	"use strict";
 
-	return Controller.extend("pl.dac.apps.fnconfig.controller.DataAttributes", {
-	/**
-	 * Called when a view is instantiated and its controls (if available) have been created.
-	 * Can be used to modify the view before it is displayed, to bind event handlers, and to do other one-time initialization.
-	 * Store the instance of the Router class in the variable referenced by the controller.
-	 * Call the Router attachParternPathed event
-	 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
-	 */
+	return BaseController.extend("pl.dac.apps.fnconfig.controller.DataAttributes", {
+		/**
+		 * Called when a view is instantiated and its controls (if available) have been created.
+		 * Can be used to modify the view before it is displayed, to bind event handlers, and to do other one-time initialization.
+		 * Store the instance of the Router class in the variable referenced by the controller.
+		 * Call the Router attachParternPathed event
+		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
+		 */
 		onInit: function () {
 			this._oRouter = this.getOwnerComponent().getRouter();
 			this._oRouter.getRoute(PlDacConst.ROUTE_PATH_DATA_ATTRIBUTE).attachPatternMatched(this._onRouteMatched, this);
 		},
-		
-		/** ### Event handle for Edit Data Attributes Button ###
-		* Retrieves the selected item from the table and obtains the binding context object, which is structured like this: {propName: value1, propName: value2} 
-		* Attach the obtained binding context object to the data property of the view model(name="viewModel").
-		* If the dialog fragment(this._oDataAttributeDailog) is already created, open it and set the property AttrNameEnabled to false in the view model(name="viewModel").
-		* If the dialog fragment is not instantiated, load the fragment. In the promise completion handler, assign the instance object to this._oDataAttributeDialog
-		* Make the dialog instance view-dependent and then open the dialog box.
-		* In the view model (name="viewModel"), set the property `AttrNameEnabled` to `false`
-		@public
-		@memberOf pl.dac.apps.fnconfig.controller.DataAttributes
-		*/
-		onEditBtnPress: function () {
-			var oView = this.getView();
-			var oSelectedContextData = this.getView().byId("idTableDataAttributes").getSelectedItem().getBindingContext().getObject();
-			oView.getModel("viewModel").setProperty("/Data", oSelectedContextData);
-			if (!this._oDataAttributeDailog) {
-				Fragment.load({
-					id: oView.getId(),
-					name: "pl.dac.apps.fnconfig.fragments.DialogAttribute", // Path to your fragment
-					controller: this // Assign the current controller
-				}).then(function (oDialog) {
-					this._oDataAttributeDailog = oDialog;
-					oView.addDependent(oDialog); // Add dialog as dependent of the view
-					oDialog.open();
-				}.bind(this));
-			} else {
-				this._oDataAttributeDailog.open();
-			}
-			oView.getModel("viewModel").setProperty("/AttrNameEnabled", false);
-		},
-		/**
-		 * ### Event handle for Edit Data Attributes Button ###
-		 * Attach the empty object to the data property of the view model(name="viewModel").
-		 * In the view model (name="viewModel"), set the property `AttrNameEnabled` to `true`
-		 * If the dialog fragment(this._oDataAttributeDailog) is already created, open it and set the property `AttrNameEnabled` to `true` in the view model(name="viewModel").
-		 * If the dialog fragment is not instantiated, load the fragment. In the promise completion handler, assign the instance object to this._oDataAttributeDialog
-		 * Make the dialog instance view-dependent and then open the dialog box.
-		 * In the view model (name="viewModel"), set the property `AttrNameEnabled` to `true`
-		 * @public
-		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
-		 */
-		onAddBtnPress: function () {
-			var oView = this.getView();
-			oView.getModel("viewModel").setProperty("/Data", { AttributeId: "", Description: "" });
-			oView.getModel("viewModel").setProperty("/AttrNameEnabled", true);
-			if (!this._oDataAttributeDailog) {
-				Fragment.load({
-					id: oView.getId(),
-					name: "pl.dac.apps.fnconfig.fragments.DialogAttribute", // Path to your fragment
-					controller: this // Assign the current controller
-				}).then(function (oDialog) {
-					this._oDataAttributeDailog = oDialog;
-					oView.addDependent(oDialog); // Add dialog as dependent of the view
-					oDialog.open();
-				}.bind(this));
-			} else {
-				this._oDataAttributeDailog.open();
-			}
-			oView.getModel("viewModel").setProperty("/AttrNameEnabled", true);
-		},
-		/** 
-		 *  Perform dialog close button event
-		 * @public
-		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
-		 */
-		onCloseDialog: function () {
-			if (this._oDataAttributeDailog) {
-				this._oDataAttributeDailog.close();
-			}
-		},
-		
+
+
+
 		/**
 		 * Perform Router class route match event
 		 * Obtain the references oBundle from `ResourceModel`
@@ -103,8 +35,9 @@ sap.ui.define([
 		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
 		*/
 		_onRouteMatched: function () {
-			var oBundle = this.getView().getModel("i18n").getResourceBundle();
-			this.getView().setModel(new JSONModel(
+			var oView = this.getView(),
+				oBundle = oView.getModel("i18n").getResourceBundle();
+			oView.setModel(new JSONModel(
 				{
 					Name: oBundle.getText("lblAttribute"),
 					Description: oBundle.getText("lblDescription"),
@@ -125,62 +58,18 @@ sap.ui.define([
 					FullScreen: true,
 					ExitFullScreen: false,
 					ExitColumn: true,
-					SortOrder: "asc"
+					SortOrder: "asc",
+					AttributeType: "DATA",
+					SelectedContextData: null
 				}
 			), "viewModel");
 			sap.ui.core.BusyIndicator.hide();
-		},
-		/**
-		 * ### Event handler for table selection change event ###
-		 * In the view model (name="viewModel"), set the property `EditButtonEnabled` to `true`
-		 * In the view model (name="viewModel"), set the property `DeleteButtonEnabled` to `true`
-		 * @public 
-		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
-		 */
-
-		onTableSelectionChange: function () {
-			this.getView().getModel("viewModel").setProperty("/EditButtonEnabled", true);
-			this.getView().getModel("viewModel").setProperty("/DeleteButtonEnabled", true);
+			oView.byId("idTableDataAttributes").removeSelections(true);
 
 		},
-		/* ### A Method has been defined to implement input live change.
-		* @param {sap.ui.base.Event} oEvent
-		 */
 
-		/**
-		 * ### Event handler for input changed ###
-		 * Retrieve the value of the parameter `newValue` from `oEvent`.
-		 * Assign the current event source (which is `sap.m.Input`) to the controller reference variable `this.__oInput`.
-		 * Set the current input state to `None`, indicating that there is no error.
-		 * In the view model (named `viewModel`), update the property `ErrorState` to `None`.
-		 * In the view model, set the property `ErrorMessage` to an empty string.
-		 * Convert the current input value to uppercase.
-		 * Set the input value state text to an empty string.
-		 * Check if the length of the input value is less than 6; if so, display an input error.
-		 * Check if the input value does not start with "DATA"; if it doesn't, display an error.
-		 * @param {sap.ui.base.Event} oEvent 
-		 * @public
-		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
-		 */
-		onInputChange: function (oEvent) {
-			var sNewValue = oEvent.getParameter("newValue");
-			this.__oInput = oEvent.getSource();
-			this.__oInput.setValueState("None");
-			this.getView().getModel("viewModel").setProperty("/ErrorState", "None");
-			this.getView().getModel("viewModel").setProperty("/ErrorMessage", "");
-			this.__oInput.setValue(this.__oInput.getValue().toUpperCase());
-			this.__oInput.setValueStateText("");
-			if (sNewValue.length < 6) { // Example validation rule
-				this.getView().getModel("viewModel").setProperty("/ErrorState", "Error");
-				this.getView().getModel("viewModel").setProperty("/ErrorMessage", "Invalid input");
-			} else {
-				if (sNewValue.split(".")[0] != "DATA") {
-					this.getView().getModel("viewModel").setProperty("/ErrorState", "Error");
-					this.getView().getModel("viewModel").setProperty("/ErrorMessage", "An attribute name should begin with \"DATA.\" followed by the specific attribute name.");
-				}
-			}
-		},
-		
+
+
 		/** Event handler for Save Data Attribute Button
 		 * Obtain the references for the following: ODataModel from `oModel`, View from `oView`, and ResourceModel from `oBundle`
 		 * Retrieve the property `Data` from the view model (name="viewModel") into a local variable called oEntry. 
@@ -190,7 +79,7 @@ sap.ui.define([
 		 * If the `__metadata` property exists in oEntry, the oDataModel will perform an Update operation; otherwise, it will perform a duplicate entry check.
 		 * If the `__metadata` property exists in oEntry, create url path for update
 		 * Execute ODataModel update method with sPath and oEntry
-		 * Close the dialog box this._oDataAttributeDailog 
+		 * Close the dialog box this.oAttributeDialog 
 		 * @public
 		 * @returns null;
 		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
@@ -218,11 +107,11 @@ sap.ui.define([
 					success: function () {
 						MessageBox.success(oBundle.getText("msgDAUpdateSuccessfully", [oEntry.AttributeId]), { styleClass: "PlDacMessageBox" });
 						oModel.refresh();
-						this._oDataAttributeDailog.close();
+						this.oAttributeDialog.close();
 					}.bind(this),
 					error: function (oError) {
 						Log.error(oBundle.getText("msgErrorInUpdate") + oError);
-						that._oDataAttributeDailog.close();
+						that.oAttributeDialog.close();
 						that._displayErrorMessage(oError);
 
 					}
@@ -236,7 +125,7 @@ sap.ui.define([
 		/** ### A Method  has been defined to create new entry ### 
 		 * Obtain the references for the following: oModel from `ODataModel`, oView from `View`, and oBundle from `ResourceModel`
 		 * Execute ODataModel create method with oEntry payload
-		 * Close the dialog box this._oDataAttributeDailog 
+		 * Close the dialog box this.oAttributeDialog 
 		 * @param {} oEntry
 		 * @private
 		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
@@ -248,11 +137,11 @@ sap.ui.define([
 				success: function () {
 					MessageBox.success(oBundle.getText("msgDACreateSuccessfully", [oEntry.AttributeId]), { styleClass: "PlDacMessageBox" });
 					oView.getModel().refresh();
-					this._oDataAttributeDailog.close();
+					this.oAttributeDialog.close();
 				}.bind(this),
 				error: function (oError) {
 					Log.error(oBundle.getText("msgErrorInCreate") + oError);
-					that._oDataAttributeDailog.close();
+					that.oAttributeDialog.close();
 					that._displayErrorMessage(oError);
 
 				}
@@ -270,7 +159,7 @@ sap.ui.define([
 			oModel.read(sPath, // Path to the specific entity
 				{
 					success: function () {
-						that.__oInput.focus();
+						that.oInputAttributeName.focus();
 						oView.getModel("viewModel").setProperty("/ErrorMessage", oBundle.getText("msgErrorDuplicateEntry", [oEntry.AttributeId]));
 						oView.getModel("viewModel").setProperty("/ErrorState", "Error");
 						return;
@@ -281,34 +170,18 @@ sap.ui.define([
 				}
 			);
 		},
-		
-		/** Event handler for delete button event
-		 *  Obtain the references oBundle from `ResourceModel`
-		 *  Display confirmation dialog box. If user confirmed the action then the private method _removeSelectedRecord will called
-		 * @public
-		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
-		*/
-		onDeleteBtnPress: function () {
-			var that = this, oBundle = this.getView().getModel("i18n").getResourceBundle();
-			MessageBox.warning(oBundle.getText("msgDeleteConfirmation"), {
-				actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-				emphasizedAction: MessageBox.Action.OK,
-				styleClass: "PlDacMessageBox",
-				onClose: function (sAction) {
-					if (sAction == "OK") {
-						that._removeSelectedRecord(oBundle);
-					}
-				}
-			});
-		},
+
+
 		/** ### Event handler of "sap.m.OverflowToolButton~press"
 		 *  ### A Private method has been defined to implement delete selected record
 		 * @param {sap.base.i18n.ResourceBundle} oBundle
 		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
 		 */
-		_removeSelectedRecord: function (oBundle) {
+		removeSelectedRecord: function () {
 			var sPath, oView = this.getView(), oModel = oView.getModel(), that = this,
-				sAttributeId = oView.byId("idTableDataAttributes").getSelectedItem().getBindingContext().getObject().AttributeId;
+				oBundle = oView.getModel("i18n").getResourceBundle(),
+				sAttributeId =  oView.getModel("viewModel").getProperty("/SelectedContextData").AttributeId;
+			//	sAttributeId = oView.byId("idTableDataAttributes").getSelectedItem().getBindingContext().getObject().AttributeId;
 			sPath = PlDacConst.ENTITY_SET_DATAATTRIBUTE_PATH + "('" + sAttributeId + "')";
 			oModel.remove(sPath, {
 				success: function () {
@@ -320,25 +193,6 @@ sap.ui.define([
 					that._displayErrorMessage(oError);
 				}
 			});
-		},
-		/** ### Method has been defined to handle full sreen button event
-		 * Event handler of "sap.m.OverflowToolbarButton~press"
-		 */
-		handleFullScreen: function () {
-			var oView = this.getView();
-			oView.getModel("layoutMode").setProperty("/layout", "MidColumnFullScreen");
-			oView.getModel("viewModel").setProperty("/FullScreen", false);
-			oView.getModel("viewModel").setProperty("/ExitFullScreen", true);
-		},
-
-		/** ### Method has been defined to handle exit full sreen button event
-		 * Event handler of "sap.m.OverflowToolbarButton~press"
-		 */
-		handleExitFullScreen: function () {
-			var oView = this.getView();
-			oView.getModel("layoutMode").setProperty("/layout", "TwoColumnsMidExpanded");
-			oView.getModel("viewModel").setProperty("/FullScreen", true);
-			oView.getModel("viewModel").setProperty("/ExitFullScreen", false);
 		},
 
 		/*###Event handler of "sap.m.OverflowTolbarButton~press"

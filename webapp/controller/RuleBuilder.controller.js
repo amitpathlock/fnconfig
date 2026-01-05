@@ -1,5 +1,5 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	"pl/dac/apps/fnconfig/controller/BaseController",
 	"sap/ui/model/json/JSONModel",
 	"pl/dac/apps/fnconfig/helper/RuleBuilder",
 	"sap/ui/core/Fragment",
@@ -13,12 +13,12 @@ sap.ui.define([
 	"pl/dac/apps/fnconfig/control/Rule",
 	 "sap/base/Log"
 ], function (
-	Controller, JSONModel, RuleBuilder, Fragment, UIColumn, Column, Text, Label, ColumnListItem, PLDACFormatter, MessageToast, 
+	BaseController, JSONModel, RuleBuilder, Fragment, UIColumn, Column, Text, Label, ColumnListItem, PLDACFormatter, MessageToast, 
 	Rule,Log
 ) {
 	"use strict";
 
-	return Controller.extend("pl.dac.apps.fnconfig.controller.RuleBuilder", {
+	return BaseController.extend("pl.dac.apps.fnconfig.controller.RuleBuilder", {
 		formatter: PLDACFormatter,
 		onInit: function () {
 			this._oRouter = this.getOwnerComponent().getRouter();

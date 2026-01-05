@@ -44,7 +44,7 @@ xmlns:core="sap.ui.core"
                 enableAutoBinding="true"
                 demandPopin="true"
                 class="sapUiResponsiveContentPadding"
-              
+                
                 initiallyVisibleFields="AttributeId,Description"
             >
             <smartTable:customToolbar>
@@ -67,6 +67,7 @@ xmlns:core="sap.ui.core"
                     selectionChange="onTableSelectionChange"
                     growing="true"
                     growingThreshold="10"
+                    updateFinished="onTableUpdateFinished"
                 >
                     <!-- Header -->
                     <columns > </columns>

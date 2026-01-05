@@ -51,9 +51,9 @@
 			<OverflowToolbar design="Transparent">
 				<ToolbarSpacer/>
                  <!-- @ui5ignore -->
-                <OverflowToolbarButton icon="sap-icon://add" tooltip="Add Data Attributes" text="Add" press="onAddBtnPress"/>
+                <OverflowToolbarButton icon="sap-icon://add" tooltip="Add Data Attributes" text="Add" press="onAddPolicyEnforcementBtnPress"/>
 				 <!-- @ui5ignore -->
-                <OverflowToolbarButton icon="sap-icon://edit" tooltip="Edit Data Attributes" enabled="{viewModel>/EditButtonEnabled}" press="onEditBtnPress"/>
+                <OverflowToolbarButton icon="sap-icon://edit" tooltip="Edit Data Attributes" enabled="{viewModel>/EditButtonEnabled}" press="onEditPolicyEnforcementBtnPress"/>
                  <!-- @ui5ignore -->
                 <OverflowToolbarButton icon="sap-icon://delete" tooltip="Delete Data Attributes" enabled="{viewModel>/DeleteButtonEnabled}" press="onDeleteBtnPress"/>
                 

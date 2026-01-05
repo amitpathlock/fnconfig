@@ -30,7 +30,17 @@
                         valueState="{viewModel>/ErrorState}"
                         valueStateText="{viewModel>/ErrorMessage}"
                         
-                        liveChange="onInputChange"   value="{viewModel>/Data/AttributeId}"  placeholder="{viewModel>/PlaceHolder}"/>
+                        liveChange="onInputChange"   value="{viewModel>/Data/AttributeId}"  placeholder="{viewModel>/PlaceHolder}">
+                        <customData>
+                            <core:CustomData
+                                key="AttributType"
+                                value="{viewModel>/AttributeType}"
+                               
+                            >
+                                
+                            </core:CustomData>
+                        </customData>
+                        </Input>
                         <Label text="{viewModel>/Description}" required="true"/>
                         <Input value="{viewModel>/Data/Description}" 
                          valueState="{viewModel>/ErrorStateDesc}"

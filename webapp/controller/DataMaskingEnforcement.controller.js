@@ -1,6 +1,6 @@
 
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	"pl/dac/apps/fnconfig/controller/BaseController",
 	"sap/ui/core/Fragment",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageBox",
@@ -11,56 +11,56 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/base/Log"
 ], function (
-	Controller, Fragment, JSONModel, MessageBox, UIColumn, Column, Text, Label, ColumnListItem,Log
+	BaseController, Fragment, JSONModel, MessageBox, UIColumn, Column, Text, Label, ColumnListItem,Log
 ) {
 	"use strict";
 
-	return Controller.extend("pl.dac.apps.fnconfig.controller.DataRestrictionEnforcement", {
+	return BaseController.extend("pl.dac.apps.fnconfig.controller.DataMaskingEnforcement", {
 		onInit: function () {
 			this._oRouter = this.getOwnerComponent().getRouter();
 			this._oRouter.getRoute("DataMasking").attachPatternMatched(this._onRouteMatched, this);
 		},
-		onEditBtnPress: function () {
-			var oView = this.getView();
-			var oSelectedContextData = this.getView().byId("idTableDataMaskingEnforcement").getSelectedItem().getBindingContext().getObject();
+		// onEditEnforcementBtnPress: function () {
+		// 	var oView = this.getView();
+		// 	var oSelectedContextData = this.getView().byId("idTableDataMaskingEnforcement").getSelectedItem().getBindingContext().getObject();
 
-			oView.getModel("viewModel").setProperty("/Data", oSelectedContextData);
-			if (!this._oFormUserAttrDialog) {
-				Fragment.load({
-					id: oView.getId(),
-					name: "pl.dac.apps.fnconfig.fragments.DialogPolicyInforcement", // Path to your fragment
-					controller: this // Assign the current controller
-				}).then(function (oDialog) {
-					this._oFormUserAttrDialog = oDialog;
-					oView.addDependent(oDialog); // Add dialog as dependent of the view
-					oDialog.open();
-				}.bind(this));
-			} else {
-				this._oFormUserAttrDialog.open();
-			}
-			oView.getModel("viewModel").setProperty("/PolicyNameEnabled", false);
-		},
-		onAddBtnPress: function () {
-			var oView = this.getView();
-			oView.getModel("viewModel").setProperty("/Data", { Policy: "", PolicyResult: "", IsActive: false });
+		// 	oView.getModel("viewModel").setProperty("/Data", oSelectedContextData);
+		// 	if (!this.oPolicyInforcementDialog) {
+		// 		Fragment.load({
+		// 			id: oView.getId(),
+		// 			name: "pl.dac.apps.fnconfig.fragments.DialogPolicyInforcement", // Path to your fragment
+		// 			controller: this // Assign the current controller
+		// 		}).then(function (oDialog) {
+		// 			this.oPolicyInforcementDialog = oDialog;
+		// 			oView.addDependent(oDialog); // Add dialog as dependent of the view
+		// 			oDialog.open();
+		// 		}.bind(this));
+		// 	} else {
+		// 		this.oPolicyInforcementDialog.open();
+		// 	}
+		// 	oView.getModel("viewModel").setProperty("/PolicyNameEnabled", false);
+		// },
+		// onAddBtnPress: function () {
+		// 	var oView = this.getView();
+		// 	oView.getModel("viewModel").setProperty("/Data", { Policy: "", PolicyResult: "", IsActive: false });
 
-			if (!this._oFormUserAttrDialog) {
-				Fragment.load({
-					id: oView.getId(),
-					name: "pl.dac.apps.fnconfig.fragments.DialogPolicyInforcement", // Path to your fragment
-					controller: this // Assign the current controller
-				}).then(function (oDialog) {
-					this._oFormUserAttrDialog = oDialog;
-					oView.addDependent(oDialog); // Add dialog as dependent of the view
-					oDialog.open();
-				}.bind(this));
-			} else {
-				this._oFormUserAttrDialog.open();
-			}
-		},
+		// 	if (!this.oPolicyInforcementDialog) {
+		// 		Fragment.load({
+		// 			id: oView.getId(),
+		// 			name: "pl.dac.apps.fnconfig.fragments.DialogPolicyInforcement", // Path to your fragment
+		// 			controller: this // Assign the current controller
+		// 		}).then(function (oDialog) {
+		// 			this.oPolicyInforcementDialog = oDialog;
+		// 			oView.addDependent(oDialog); // Add dialog as dependent of the view
+		// 			oDialog.open();
+		// 		}.bind(this));
+		// 	} else {
+		// 		this.oPolicyInforcementDialog.open();
+		// 	}
+		// },
 		onCloseDialog: function () {
-			if (this._oFormUserAttrDialog) {
-				this._oFormUserAttrDialog.close();
+			if (this.oPolicyInforcementDialog) {
+				this.oPolicyInforcementDialog.close();
 			}
 		},
 		_onRouteMatched: function () {
@@ -88,7 +88,8 @@ sap.ui.define([
 					Action: "Action",
 					FullScreen: true,
 					ExitFullScreen: false,
-					ExitColumn: true
+					ExitColumn: true,
+					SelectedContextData: null
 				}
 			), "viewModel");
 			this.oVHDialogP = Fragment.load({
@@ -100,11 +101,11 @@ sap.ui.define([
 
 			});
 		},
-		onTableSelectionChange: function () {
-			this.getView().getModel("viewModel").setProperty("/EditButtonEnabled", true);
-			this.getView().getModel("viewModel").setProperty("/DeleteButtonEnabled", true);
+		// onTableSelectionChange: function () {
+		// 	this.getView().getModel("viewModel").setProperty("/EditButtonEnabled", true);
+		// 	this.getView().getModel("viewModel").setProperty("/DeleteButtonEnabled", true);
 
-		},
+		// },
 		// #region Value Help Dialog standard use case with filter bar without filter suggestions
 		onValueHelpRequested: function () {
 			var oColPolicyName, oColPolicyDesc;
@@ -209,7 +210,7 @@ sap.ui.define([
 					success: function () {
 						MessageBox.success("Entry has been updated");
 						this.getView().getModel().refresh();
-						this._oFormUserAttrDialog.close();
+						this.oPolicyInforcementDialog.close();
 					}.bind(this),
 					error: function (e) {
 						Log.error(e);
@@ -222,7 +223,7 @@ sap.ui.define([
 					success: function () {
 						MessageBox.success("Entry has been created");
 						this.getView().getModel().refresh();
-						this._oFormUserAttrDialog.close();
+						this.oPolicyInforcementDialog.close();
 					}.bind(this),
 					error: function (e) {
 						Log.error(e);
@@ -231,20 +232,20 @@ sap.ui.define([
 				});
 			}
 		},
-		onDeleteBtnPress: function () {
-			var that = this, oBundle = this.getView().getModel("i18n").getResourceBundle();
-			MessageBox.warning(oBundle.getText("msgDeleteConfirmation"), {
-				actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-				emphasizedAction: MessageBox.Action.OK,
-				onClose: function (sAction) {
-					if (sAction == "OK") {
-						that._removeSelectedRecord();
-					}
-				}
-			});
+		// onDeleteBtnPress: function () {
+		// 	var that = this, oBundle = this.getView().getModel("i18n").getResourceBundle();
+		// 	MessageBox.warning(oBundle.getText("msgDeleteConfirmation"), {
+		// 		actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+		// 		emphasizedAction: MessageBox.Action.OK,
+		// 		onClose: function (sAction) {
+		// 			if (sAction == "OK") {
+		// 				that._removeSelectedRecord();
+		// 			}
+		// 		}
+		// 	});
 
-		},
-		_removeSelectedRecord: function () {
+		// },
+		removeSelectedRecord: function () {
 			var oView = this.getView(), oModel = oView.getModel(), sPolicyName, sPath;
 			sPolicyName = oView.byId("idTableDataMaskingEnforcement").getSelectedItem().getBindingContext().getObject().PolicyName;
 			sPath = "/DataMaskingEnforcementSet('" + sPolicyName + "')";

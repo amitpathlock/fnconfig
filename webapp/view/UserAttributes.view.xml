@@ -68,6 +68,7 @@ xmlns:core="sap.ui.core"
                     selectionChange="onTableSelectionChange"
                     growing="true"
                     growingThreshold="10"
+                    updateFinished="onTableUpdateFinished"
                 >
               
                     <!-- Header -->

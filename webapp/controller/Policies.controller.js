@@ -1,16 +1,16 @@
 
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	"pl/dac/apps/fnconfig/controller/BaseController",
 	"sap/ui/core/Fragment",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageBox",
 	"sap/ui/model/Sorter"
 ], function (
-	Controller, Fragment, JSONModel, MessageBox,Sorter
+	BaseController, Fragment, JSONModel, MessageBox,Sorter
 ) {
 	"use strict";
 
-	return Controller.extend("pl.dac.apps.fnconfig.controller.Policies", {
+	return BaseController.extend("pl.dac.apps.fnconfig.controller.Policies", {
 		onInit: function () {
 			this.oRouter = this.getOwnerComponent().getRouter();
 			this.oRouter.getRoute("Policies").attachPatternMatched(this._onRouteMatched, this);

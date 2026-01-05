@@ -1,19 +1,19 @@
 
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	"pl/dac/apps/fnconfig/controller/BaseController",
 	"pl/dac/apps/fnconfig/const/PlDacConst",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageToast",
 	"sap/base/Log"
 ], function (
-	Controller,
+	BaseController,
 	PlDacConst,
 	JSONModel,
 	MessageToast,
 	Log
 ) {
 	"use strict";
-	return Controller.extend("pl.dac.apps.fnconfig.controller.Functionality", {
+	return BaseController.extend("pl.dac.apps.fnconfig.controller.Functionality", {
 		onInit: function () {
 			this._oRouter = this.getOwnerComponent().getRouter();
 			this._oRouter.getRoute(PlDacConst.ROUTE_PATH_FUNCTIONALITY).attachPatternMatched(this._onRouteMatched, this);

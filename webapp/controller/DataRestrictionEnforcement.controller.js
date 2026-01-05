@@ -1,6 +1,6 @@
 
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	"pl/dac/apps/fnconfig/controller/BaseController",
 	"pl/dac/apps/fnconfig/const/PlDacConst",
 	"sap/ui/core/Fragment",
 	"sap/ui/model/json/JSONModel",
@@ -13,62 +13,62 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/base/Log"
 ], function (
-	Controller, PlDacConst, Fragment, JSONModel, MessageBox, UIColumn, Column, Text, Label,
+	BaseController, PlDacConst, Fragment, JSONModel, MessageBox, UIColumn, Column, Text, Label,
 	ColumnListItem, Sorter, Log
 ) {
 	"use strict";
 
-	return Controller.extend("pl.dac.apps.fnconfig.controller.DataRestrictionEnforcement", {
+	return BaseController.extend("pl.dac.apps.fnconfig.controller.DataRestrictionEnforcement", {
 		onInit: function () {
 			this._oRouter = this.getOwnerComponent().getRouter();
 			this._oRouter.getRoute("DataRestriction").attachPatternMatched(this._onRouteMatched, this);
 		},
-		onEditBtnPress: function () {
-			var oView = this.getView();
-			var oSelectedContextData = this.getView().byId("idTableDataRestrictionEnforcement").getSelectedItem().getBindingContext().getObject();
-			oSelectedContextData.IsActive = oSelectedContextData.IsActive == "" ? false : true;
-			oView.getModel("viewModel").setProperty("/Data", oSelectedContextData);
-			if (!this._oPolEnforcementRestrictionDailog) {
-				Fragment.load({
-					id: oView.getId(),
-					name: "pl.dac.apps.fnconfig.fragments.DialogPolicyInforcement", // Path to your fragment
-					controller: this // Assign the current controller
-				}).then(function (oDialog) {
-					this._oPolEnforcementRestrictionDailog = oDialog;
-					oView.addDependent(this._oPolEnforcementRestrictionDailog); // Add dialog as dependent of the view
-					this._oPolEnforcementRestrictionDailog.open();
-					this._validatePolicyInput(oSelectedContextData.Policy);
-				}.bind(this));
-			} else {
-				this._oPolEnforcementRestrictionDailog.open();
-				this._validatePolicyInput(oSelectedContextData.Policy);
-			}
-			oView.getModel("viewModel").setProperty("/PolicyNameEnabled", false);
-		},
-		onAddBtnPress: function () {
-			var oView = this.getView();
-			oView.getModel("viewModel").setProperty("/Data", { Policy: "", PolicyResult: "", IsActive: false });
-			oView.getModel("viewModel").setProperty("/PolicyNameEnabled", true);
-			if (!this._oPolEnforcementRestrictionDailog) {
-				Fragment.load({
-					id: oView.getId(),
-					name: "pl.dac.apps.fnconfig.fragments.DialogPolicyInforcement", // Path to your fragment
-					controller: this // Assign the current controller
-				}).then(function (oDialog) {
-					this._oPolEnforcementRestrictionDailog = oDialog;
-					oView.addDependent(oDialog); // Add dialog as dependent of the view
-					oDialog.open();
-				}.bind(this));
-			} else {
-				this._oPolEnforcementRestrictionDailog.open();
+		// onEditBtnPress: function () {
+		// 	var oView = this.getView();
+		// 	var oSelectedContextData = this.getView().byId("idTableDataRestrictionEnforcement").getSelectedItem().getBindingContext().getObject();
+		// 	oSelectedContextData.IsActive = oSelectedContextData.IsActive == "" ? false : true;
+		// 	oView.getModel("viewModel").setProperty("/Data", oSelectedContextData);
+		// 	if (!this.oPolicyInforcementDialog) {
+		// 		Fragment.load({
+		// 			id: oView.getId(),
+		// 			name: "pl.dac.apps.fnconfig.fragments.DialogPolicyInforcement", // Path to your fragment
+		// 			controller: this // Assign the current controller
+		// 		}).then(function (oDialog) {
+		// 			this.oPolicyInforcementDialog = oDialog;
+		// 			oView.addDependent(this.oPolicyInforcementDialog); // Add dialog as dependent of the view
+		// 			this.oPolicyInforcementDialog.open();
+		// 			this._validatePolicyInput(oSelectedContextData.Policy);
+		// 		}.bind(this));
+		// 	} else {
+		// 		this.oPolicyInforcementDialog.open();
+		// 		this._validatePolicyInput(oSelectedContextData.Policy);
+		// 	}
+		// 	oView.getModel("viewModel").setProperty("/PolicyNameEnabled", false);
+		// },
+		// onAddBtnPress: function () {
+		// 	var oView = this.getView();
+		// 	oView.getModel("viewModel").setProperty("/Data", { Policy: "", PolicyResult: "", IsActive: false });
+		// 	oView.getModel("viewModel").setProperty("/PolicyNameEnabled", true);
+		// 	if (!this.oPolicyInforcementDialog) {
+		// 		Fragment.load({
+		// 			id: oView.getId(),
+		// 			name: "pl.dac.apps.fnconfig.fragments.DialogPolicyInforcement", // Path to your fragment
+		// 			controller: this // Assign the current controller
+		// 		}).then(function (oDialog) {
+		// 			this.oPolicyInforcementDialog = oDialog;
+		// 			oView.addDependent(oDialog); // Add dialog as dependent of the view
+		// 			oDialog.open();
+		// 		}.bind(this));
+		// 	} else {
+		// 		this.oPolicyInforcementDialog.open();
 
-			}
-		},
-		onCloseDialog: function () {
-			if (this._oPolEnforcementRestrictionDailog) {
-				this._oPolEnforcementRestrictionDailog.close();
-			}
-		},
+		// 	}
+		// },
+		// onCloseDialog: function () {
+		// 	if (this.oPolicyInforcementDialog) {
+		// 		this.oPolicyInforcementDialog.close();
+		// 	}
+		// },
 		_onRouteMatched: function () {
 
 			// this.getView().byId("idSmartTablePOPRestriction").setEnableCopy(false);
@@ -95,20 +95,13 @@ sap.ui.define([
 					FullScreen: true,
 					ExitFullScreen: false,
 					ExitColumn: true,
-					SortOrder: "asc"
+					SortOrder: "asc",
+					SelectedContextData:null
 				}
 			), "viewModel");
 			sap.ui.core.BusyIndicator.hide();
 		},
-		/* ### A Method has been defined to handle table row selection change event.
-		* @param {sap.ui.base.Event} oEvent
-		 */
-		onTableSelectionChange: function () {
-			var oView = this.getView();
-			oView.getModel("viewModel").setProperty("/EditButtonEnabled", true);
-			oView.getModel("viewModel").setProperty("/DeleteButtonEnabled", true);
-
-		},
+		
 		// #region Value Help Dialog standard use case with filter bar without filter suggestions
 		onValueHelpRequested: function () {
 			var oColPolicyName, oColPolicyDesc, that = this, oView = this.getView();
@@ -192,12 +185,12 @@ sap.ui.define([
 
 		/* ### A Method has been defined to implement save/update operation.
 		*/
-		onSave: function () {
-			var sPath;
-			var oEntry = this.getView().getModel("viewModel").getData().Data;
+		onSavePolicyInforcement: function () {
+			var sPath,oView=this.getView();
+			var oEntry = oView.getModel("viewModel").getData().Data;
 			if (oEntry.Policy.trim() == "") {
-				this.getView().getModel("viewModel").setProperty("/ErrorState", "Error");
-				this.getView().getModel("viewModel").setProperty("/ErrorMessage", "The mandatory field cannot be left blank.");
+				oView.getModel("viewModel").setProperty("/ErrorState", "Error");
+				oView.getModel("viewModel").setProperty("/ErrorMessage", "The mandatory field cannot be left blank.");
 				return;
 			}
 			delete oEntry.PolicyDesc;
@@ -211,7 +204,7 @@ sap.ui.define([
 					success: function () {
 						MessageBox.success("Entry has been updated");
 						this.getView().getModel().refresh();
-						this._oPolEnforcementRestrictionDailog.close();
+						this.oPolicyInforcementDialog.close();
 					}.bind(this),
 					error: function (e) {
 						Log.error(e);
@@ -238,11 +231,11 @@ sap.ui.define([
 				success: function () {
 					MessageBox.success(oBundle.getText("msgPolEnforcementSuccessful", [oEntry.Policy]), { styleClass: "PlDacMessageBox" });
 					oView.getModel().refresh();
-					this._oPolEnforcementRestrictionDailog.close();
+					this.oPolicyInforcementDialog.close();
 				}.bind(this),
 				error: function (oError) {
 					Log.error(oBundle.getText("msgErrorInCreate") + oError);
-					that._oPolEnforcementRestrictionDailog.close();
+					that.oPolicyInforcementDialog.close();
 					that._displayErrorMessage(oError);
 				}
 			});
@@ -274,26 +267,27 @@ sap.ui.define([
 		/** ### Event handler of "sap.m.OverflowToolButton~press"
 		 *  ### A Method has been defined to implement delete operation to table record.
 		 */
-		onDeleteBtnPress: function () {
-			var that = this, oBundle = this.getView().getModel("i18n").getResourceBundle();
-			MessageBox.warning(oBundle.getText("msgDeleteConfirmation"), {
-				actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-				emphasizedAction: MessageBox.Action.OK,
-				styleClass: "PlDacMessageBox",
-				onClose: function (sAction) {
-					if (sAction == "OK") {
-						that._removeSelectedRecord(oBundle);
-					}
-				}
-			});
-		},
+		// onDeleteBtnPress: function () {
+		// 	var that = this, oBundle = this.getView().getModel("i18n").getResourceBundle();
+		// 	MessageBox.warning(oBundle.getText("msgDeleteConfirmation"), {
+		// 		actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+		// 		emphasizedAction: MessageBox.Action.OK,
+		// 		styleClass: "PlDacMessageBox",
+		// 		onClose: function (sAction) {
+		// 			if (sAction == "OK") {
+		// 				that._removeSelectedRecord(oBundle);
+		// 			}
+		// 		}
+		// 	});
+		// },
 		/** ### Event handler of "sap.m.OverflowToolButton~press"
 		 *  ### A Private method has been defined to implement delete selected record
 		 * @param {sap.base.i18n.ResourceBundle} oBundle
 		 */
-		_removeSelectedRecord: function (oBundle) {
-			var oView = this.getView(), oModel = oView.getModel(), sPolicyName, sPath, that = this;
-			sPolicyName = oView.byId("idTableDataRestrictionEnforcement").getSelectedItem().getBindingContext().getObject().Policy;
+		removeSelectedRecord: function () {
+			var oView = this.getView(), oModel = oView.getModel(), sPath, that = this,
+			oBundle = oView.getModel("i18n").getResourceBundle(),
+			sPolicyName =  oView.getModel("viewModel").getProperty("/SelectedContextData").Policy;
 			sPath = PlDacConst.ENTITY_SET_DATARESTRICTIONENFORCEMENT + "('" + sPolicyName + "')";
 			oModel.remove(sPath, {
 				success: function () {
