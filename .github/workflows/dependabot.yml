@@ -3,7 +3,8 @@ name: CI-Pipeline-validation
 on: 
   push:
     paths-ignore:
-      - 'test/*'
+      - 'test/**'
+      - 'localService/**'
 jobs:
   build:
     name: Initialize Dependencies
