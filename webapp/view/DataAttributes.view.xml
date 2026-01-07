@@ -39,7 +39,7 @@ xmlns:core="sap.ui.core"
                 smartFilterId="smartFilterBar-da"
                 tableType="ResponsiveTable"
                 header="{i18n>titPIPSmartTableDataAttribute}"
-                beforeRebindTable="onBeforeRebindTable"
+              
                 persistencyKey="SmartTableAnalytical_Explored"
                 enableAutoBinding="true"
                 demandPopin="true"
