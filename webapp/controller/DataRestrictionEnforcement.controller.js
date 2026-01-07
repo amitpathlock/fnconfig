@@ -283,14 +283,14 @@ sap.ui.define([
 			this._oPolicyNameInput.setValue(this._oPolicyNameInput.getValue().toUpperCase());
 			this._oPolicyNameInput.setValueStateText("");
 			if (sNewValue.length > 6) {
-				this._validatePolicyInput(sNewValue);
+				this.validatePolicyInput(sNewValue);
 			}
 		},
 		onSuggestionItemSelected: function (oEvent) {
 			var oView = this.getView(),
 				oCtx = oEvent.getParameter("selectedRow").getBindingContext().getObject();
 			oView.getModel("viewModel").setProperty("/Data/PolicyDesc", oCtx.PolicyDesc);
-			this._validatePolicyInput(oCtx.Policy);
+			this.validatePolicyInput(oCtx.Policy);
 		},
 		/* ### A Method has been defined to add expand parameter in mBindingParams .
 		* @param {sap.ui.base.Event} oEvent
