@@ -299,7 +299,7 @@ sap.ui.define([
 		// 	var mBindingParams = oEvent.getParameter("bindingParams");
 		// 	mBindingParams.parameters["expand"] = "to_Policy";
 		// },
-		_validatePolicyInput: function (sValue) {
+		validatePolicyInput: function (sValue) {
 			var oView = this.getView(), oModel = oView.getModel(), that = this,
 				sPath = "/PolicySet('" + sValue + "')",
 				bInputEditable = oView.getModel("viewModel").getProperty("/PolicyNameEnabled");

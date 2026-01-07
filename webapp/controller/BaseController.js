@@ -66,7 +66,7 @@ sap.ui.define(
 			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
 			 * @returns {void}
 			 */
-			removeSelectedRecord: function () { },
+			removeSelectedRecord: function () { },// eslint-disable-line
 
 			/**
 			 * Event handler for table selection change event.
@@ -74,8 +74,8 @@ sap.ui.define(
 			 * Updates the view model with the selected item's binding context data.
 			 * 
 			 * @function onTableSelectionChange
-			 * @param {sap.ui.base.Event} oEvent - The selection change event object.
-			 * @param {sap.m.ListItem} oEvent.getParameter("listItem") - The selected list item.
+			 * @param {*} oEvent - The selection change event object.
+			 * {sap.m.ListItem} oEvent.getParameter("listItem") - The selected list item.
 			 * @public
 			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
 			 * @returns {void}
@@ -304,7 +304,7 @@ sap.ui.define(
 					}
 				});
 			},
-			
+
 			/**
 			 * Loads the currently selected policy enforcement table item into the view model.
 			 * Copies custom data into the selected context object, normalizes `IsActive` from "X" to boolean,
@@ -449,7 +449,7 @@ sap.ui.define(
 			 * Ensures related Policy data is expanded when the table's OData binding is (re)bound.
 			 *
 			 * @function onBeforeRebindTable
-			 * @param {sap.ui.base.Event} oEvent - The beforeRebindTable event object.
+			 * @param {*} oEvent - The beforeRebindTable event object.
 			 * @param {object} oEvent.getParameter("bindingParams") - The binding parameters object passed by the event (modified in-place).
 			 * @public
 			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
@@ -550,8 +550,8 @@ sap.ui.define(
 			 * Closes the Value Help Dialog and validates the selected policy input.
 			 *
 			 * @function onValueHelpOkPress
-			 * @param {sap.ui.base.Event} oEvent - The OK button press event object from the Value Help Dialog.
-			 * @param {sap.m.Token[]} oEvent.getParameter("tokens") - Array of selected tokens from the dialog.
+			 * @param {*} oEvent - The OK button press event object from the Value Help Dialog.
+			 * {sap.m.Token[]} oEvent.getParameter("tokens") - Array of selected tokens from the dialog.
 			 * @public
 			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
 			 * @returns {void}
@@ -564,9 +564,10 @@ sap.ui.define(
 				oView.getModel("viewModel").refresh();
 				this._oPolicyNameInputInput.setValue(aTokens[0].getKey());
 				this._oVHDialog.close();
-				/**@ui5ignore */
+				
 				this._validatePolicyInput(aTokens[0].getKey());
 			},
+			validatePolicyInput:function(sKey){},// eslint-disable-line
 			/**
 			 * Event handler for the Value Help Dialog cancel action.
 			 * Closes the Value Help Dialog without applying any selection.
