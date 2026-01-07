@@ -182,11 +182,14 @@ sap.ui.define([
 				return;
 			}
 			delete oEntry.PolicyDesc;
+			delete oEntry.PolicyName;
 			delete oEntry.to_Policy;
+			delete oEntry.to_Attr;
+			oEntry.IsActive = oEntry.IsActive?"X":"";
 			if (({}).hasOwnProperty.call(oEntry, "__metadata")) {
 				delete oEntry.__metadata;
-				delete oEntry.to_Attr;
-				oEntry.IsActive = oEntry.IsActive?"X":"";
+				
+				
 				sPath = PlDacConst.ENTITY_SET_DATARESTRICTIONENFORCEMENT + "('" + oEntry.Policy + "')";
 				this.getView().getModel().update(sPath, oEntry, {
 					success: function () {
@@ -194,6 +197,7 @@ sap.ui.define([
 						this.getView().getModel().refresh();
 						this.oPolicyInforcementDialog.close();
 						this.getView().getModel("viewModel").setProperty("/Data", {});
+						this.oPolicyEnforcementTable.removeSelections(true);
 					}.bind(this),
 					error: function (e) {
 						Log.error(e);
@@ -219,8 +223,10 @@ sap.ui.define([
 			oModel.create(PlDacConst.ENTITY_SET_DATARESTRICTIONENFORCEMENT, oEntry, {
 				success: function () {
 					MessageBox.success(oBundle.getText("msgPolEnforcementSuccessful", [oEntry.Policy]), { styleClass: "PlDacMessageBox" });
+					this.oPolicyEnforcementTable.removeSelections(true);
 					oView.getModel().refresh();
 					this.oPolicyInforcementDialog.close();
+					
 				}.bind(this),
 				error: function (oError) {
 					Log.error(oBundle.getText("msgErrorInCreate") + oError);

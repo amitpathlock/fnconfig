@@ -55,7 +55,7 @@ sap.ui.define(
 					}
 				});
 			},
-		
+
 			/**
 			 * Removes the selected record from the table.
 			 * This method is called after the user confirms the deletion action in the confirmation dialog.
@@ -82,12 +82,19 @@ sap.ui.define(
 			 */
 
 			onTableSelectionChange: function (oEvent) {
-				var oView = this.getView(), oModel = oView.getModel("viewModel"), oItem = oEvent.getParameter("listItem"),
+				var iCustomData, oView = this.getView(), oModel = oView.getModel("viewModel"), oItem = oEvent.getParameter("listItem"),
 					oSelectData = oItem.getBindingContext().getObject();
 				oModel.setProperty("/EditButtonEnabled", true);
 				oModel.setProperty("/DeleteButtonEnabled", true);
+
 				if (oItem.getCustomData() && oItem.getCustomData()[0]) {
-					oSelectData[oItem.getCustomData()[0].getKey()] = oItem.getCustomData()[0].getValue();
+					for (iCustomData = 0; iCustomData < oItem.getCustomData().length; iCustomData++) {
+						oSelectData[oItem.getCustomData()[iCustomData].getKey()] = oItem.getCustomData()[iCustomData].getValue();
+					}
+
+				}
+				if (({}).hasOwnProperty.call(oSelectData, "IsActive")) {
+					oSelectData.IsActive = oSelectData.IsActive == "X" ? true : false;
 				}
 				oModel.setProperty("/SelectedContextData", oSelectData);
 
@@ -281,17 +288,17 @@ sap.ui.define(
 
 			/** ###### POLICY INFORCEMENT POINT */
 
-				/**
-			 * Event handler for the delete attribute button press event.
-			 * Displays a confirmation dialog to the user before deleting the selected record.
-			 * If the user confirms the action (clicks OK), the `removeSelectedRecord` method is invoked.
-			 * 
-			 * @function onDeletePolicyEnforcementButtonPress
-			 * @public
-			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
-			 * @returns {void}
-			 */
-			onDeletePolicyEnforcementButtonPress:function(){
+			/**
+		 * Event handler for the delete attribute button press event.
+		 * Displays a confirmation dialog to the user before deleting the selected record.
+		 * If the user confirms the action (clicks OK), the `removeSelectedRecord` method is invoked.
+		 * 
+		 * @function onDeletePolicyEnforcementButtonPress
+		 * @public
+		 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
+		 * @returns {void}
+		 */
+			onDeletePolicyEnforcementButtonPress: function () {
 				var that = this, oBundle = this.getView().getModel("i18n").getResourceBundle();
 				MessageBox.warning(oBundle.getText("msgDeleteConfirmation"), {
 					actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
@@ -315,19 +322,25 @@ sap.ui.define(
 			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
 			 * @returns {void}
 			 */
-			_loadSelectedTableItemData:function(){
-				var oItem,oSelectData,oModel = this.getView().getModel("viewModel");
-				if(this.oPolicyEnforcementTable && this.oPolicyEnforcementTable.getSelectedItem()){
+			_loadSelectedTableItemData: function () {
+				var iCustomData, oItem, oSelectData, oModel = this.getView().getModel("viewModel");
+				if (this.oPolicyEnforcementTable && this.oPolicyEnforcementTable.getSelectedItem()) {
 					oItem = this.oPolicyEnforcementTable.getSelectedItem();
 					oSelectData = oItem.getBindingContext().getObject();
 					if (oItem.getCustomData() && oItem.getCustomData()[0]) {
-						oSelectData[oItem.getCustomData()[0].getKey()] = oItem.getCustomData()[0].getValue();
+						for (iCustomData = 0; iCustomData < oItem.getCustomData().length; iCustomData++) {
+							oSelectData[oItem.getCustomData()[iCustomData].getKey()] = oItem.getCustomData()[iCustomData].getValue();
+						}
+
 					}
-					oSelectData.IsActive = oSelectData.IsActive == "X" ? true : false;
+					if (({}).hasOwnProperty.call(oSelectData, "IsActive")) {
+						oSelectData.IsActive = oSelectData.IsActive == "X" ? true : false;
+					}
+
 					oModel.setProperty("/SelectedContextData", oSelectData);
-					
+
 				}
-				
+
 			},
 			/**
 			 * Event handler for the edit policy enforcement button press event.
@@ -342,8 +355,8 @@ sap.ui.define(
 			 * @returns {void}
 			 */
 			onEditPolicyEnforcementButtonPress: function () {
-				var oView = this.getView(),oSelectedContextData;
-				
+				var oView = this.getView(), oSelectedContextData;
+
 				this._loadSelectedTableItemData();
 				oSelectedContextData = oView.getModel("viewModel").getProperty("/SelectedContextData");
 				oView.getModel("viewModel").setProperty("/Data", oSelectedContextData);
@@ -458,6 +471,7 @@ sap.ui.define(
 			onBeforeRebindTable: function (oEvent) {
 				var mBindingParams = oEvent.getParameter("bindingParams");
 				mBindingParams.parameters["expand"] = "to_Policy";
+				mBindingParams.parameters["select"] = mBindingParams.parameters["select"] + ",Policy";
 			},
 
 			/**
@@ -472,7 +486,7 @@ sap.ui.define(
 			 * @returns {void}
 			 *
 			 * @description
-			 * - Retrieves the policy name input control reference and stores it in `this._oPolicyNameInputInput`
+			 * - Retrieves the policy name input control reference and stores it in `this._oPolicyNameInput`
 			 * - Creates a new Value Help Dialog fragment if not already instantiated
 			 * - Sets up range key fields for filtering
 			 * - Binds the dialog table to the OData `/PolicySet` path
@@ -483,7 +497,7 @@ sap.ui.define(
 			 */
 			onValueHelpRequested: function () {
 				var oColPolicyName, oColPolicyDesc, that = this, oView = this.getView();
-				this._oPolicyNameInputInput = oView.byId("idPolicyName");
+				this._oPolicyNameInput = oView.byId("idPolicyName");
 				if (!this._oVHDialog) {
 					this._oVHDialog = sap.ui.xmlfragment("pl.dac.apps.fnconfig.fragments.ValueHelp", this);
 					oView.addDependent(this._oVHDialog);
@@ -506,9 +520,9 @@ sap.ui.define(
 									}
 								}
 							});
-							oColPolicyName = new UIColumn({ label: new Label({ text: "Policy Name" }), template: new Text({ wrapping: false, text: "{Policy}" }) });
+							oColPolicyName = new UIColumn({ label: new Label({ text: "Policy Name" }), template: new Text({ wrapping: false, text: "{PolicyName}" }) });
 							oColPolicyName.data({
-								fieldName: "{Policy}"
+								fieldName: "{PolicyName}"
 							});
 							oTable.addColumn(oColPolicyName);
 
@@ -524,7 +538,7 @@ sap.ui.define(
 							oTable.bindAggregation("items", {
 								path: "/PolicySet",
 								template: new ColumnListItem({
-									cells: [new Label({ text: "{Policy}" }), new Label({ text: "{PolicyDesc}" })]
+									cells: [new Label({ text: "{PolicyName}" }), new Label({ text: "{PolicyDesc}" })]
 								}),
 								events: {
 									dataReceived: function () {
@@ -562,12 +576,12 @@ sap.ui.define(
 				oValue = aTokens[0].getCustomData()[0].getValue();
 				oView.getModel("viewModel").setProperty("/Data/PolicyDesc", oValue.PolicyDesc);
 				oView.getModel("viewModel").refresh();
-				this._oPolicyNameInputInput.setValue(aTokens[0].getKey());
+				this._oPolicyNameInput.setValue(aTokens[0].getKey());
 				this._oVHDialog.close();
-				
-				this._validatePolicyInput(aTokens[0].getKey());
+
+				this.validatePolicyInput(aTokens[0].getKey());
 			},
-			validatePolicyInput:function(sKey){},// eslint-disable-line
+			validatePolicyInput: function (sKey) { },// eslint-disable-line
 			/**
 			 * Event handler for the Value Help Dialog cancel action.
 			 * Closes the Value Help Dialog without applying any selection.

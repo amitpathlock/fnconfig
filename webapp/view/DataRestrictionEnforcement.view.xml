@@ -88,30 +88,44 @@ xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
                         </Column>
                          <Column >
                         <customData>
-									<core:CustomData key="p13nData" value='\{"columnKey": "Policy", "columnIndex":"2",  "leadingProperty": "Policy"}'/>
-                                 
+                                    
+									<core:CustomData key="p13nData" value='\{"columnKey": "PolicyName", "columnIndex":"2","navigationProperty":"to_Policy",  "leadingProperty": "to_Policy/PolicyName"}'/>    
 								</customData>
                              <Text text="{i18n>txtAction}" />   
                            
                         </Column>
                         <Column width="0px">
                         <customData>
-									<core:CustomData key="p13nData" value='\{"columnKey": "PolicyDesc", "columnIndex":"3","navigationProperty":"to_Policy",  "leadingProperty": "to_Policy/PolicyDesc"}'/>
-                                 
+									<core:CustomData key="p13nData" value='\{"columnKey": "PolicyDesc", "columnIndex":"3","navigationProperty":"to_Policy",  "leadingProperty": "to_Policy/PolicyDesc"}'/> 
 								</customData>
-                                
-                           
                         </Column>
                        
                     </columns>
                     <!-- Data -->
                     <items>
-                        <ColumnListItem app:PolicyDesc="{to_Policy/PolicyDesc}"
+                        <ColumnListItem 
                           
                         >
+                            <customData>
+                                <core:CustomData
+                                    key="PolicyName"
+                                    value="{to_Policy/PolicyName}"
+                                   
+                                >
+                                    
+                                </core:CustomData>
+                                <core:CustomData
+                                    key="PolicyDesc"
+                                    value="{to_Policy/PolicyDesc}"
+                                   
+                                >
+                                    
+                                </core:CustomData>
+                                
+                            </customData>
                            <cells>
                           
-                                <ObjectHeader title="{Policy}" class="plDacObjectHeader">
+                                <ObjectHeader title="{to_Policy/PolicyName}" class="plDacObjectHeader">
                                 <ObjectAttribute class="plDacObjectAttribute" title="Description" text="{to_Policy/PolicyDesc}" />
                                  <!-- @ui5ignore -->
                                 <ObjectAttribute text="{i18n>txtAssignedAttributes}" 	active="true" press=".onPressLink" >

@@ -12,15 +12,7 @@
              <!-- @ui5ignore -->
                 <f:SimpleForm
                     editable="true"
-                    labelSpanXL="3"
-                    labelSpanL="3"
-                    labelSpanM="3"
-                    adjustLabelSpan="false"
-                    emptySpanXL="4"
-                    emptySpanL="4"
-                    emptySpanM="4"
-                    columnsXL="1"
-                    columnsL="1"
+                   
                     layout="ResponsiveGridLayout"
                    >
                     <f:content>
@@ -42,7 +34,7 @@
                         liveChange="onInputChange"   value="{viewModel>/Data/Policy}" >
                         	<suggestionColumns>
 				<Column>
-					<Label text="PName"/>
+					<Label text="Policy Name"/>
 				</Column>
 				<Column>
 					<Label text="Description"/>
