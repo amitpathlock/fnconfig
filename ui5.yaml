@@ -29,3 +29,11 @@ server:
       configuration:
         component: pl.dac.apps.fnconfig
         ui5Theme: sap_fiori_3
+builder:
+  resources:
+    excludes:
+      - "/test/**"
+      - "/.github/**"
+      - "/node_modules/**"
+      - "/test-resources/**"
+      - "/localService/**"
