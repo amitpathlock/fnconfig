@@ -51,11 +51,11 @@ xmlns:core="sap.ui.core"
 			<OverflowToolbar design="Transparent">
 				<ToolbarSpacer/>
                 <!-- @ui5ignore -->
-                <OverflowToolbarButton icon="sap-icon://add" tooltip="{i18n>txtBtnAddUserAttribute}" text="Add" press="onAddBtnPress"/>
+                <OverflowToolbarButton icon="sap-icon://add" tooltip="{i18n>txtBtnAddUserAttribute}" text="Add" press="onAddAttributeButtonPress"/>
 				 <!-- @ui5ignore -->
-                <OverflowToolbarButton icon="sap-icon://edit" tooltip="{i18n>txtBtnEditUserAttribute}" enabled="{viewModel>/EditButtonEnabled}" press="onEditBtnPress"/>
+                <OverflowToolbarButton icon="sap-icon://edit" tooltip="{i18n>txtBtnEditUserAttribute}" enabled="{viewModel>/EditButtonEnabled}" press="onEditAttributeButtonPress"/>
                  <!-- @ui5ignore -->
-                <OverflowToolbarButton icon="sap-icon://delete" tooltip="{i18n>txtBtnDelUserAttribute}" enabled="{viewModel>/DeleteButtonEnabled}" press="onDeleteBtnPress"/>
+                <OverflowToolbarButton icon="sap-icon://delete" tooltip="{i18n>txtBtnDelUserAttribute}" enabled="{viewModel>/DeleteButtonEnabled}" press="onDeleteAttributeButtonPress"/>
 				 <!-- @ui5ignore -->
                 <OverflowToolbarButton icon="sap-icon://sort" tooltip="Sort" text="Sort" press="onSort"/>
 				

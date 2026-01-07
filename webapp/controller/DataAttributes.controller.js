@@ -84,7 +84,7 @@ sap.ui.define([
 		 * @returns null;
 		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
 		 */
-		onSave: function () {
+		onSaveAttributeDialog: function () {
 			var sPath, oView = this.getView(),
 				oModel = oView.getModel(), oBundle = oView.getModel("i18n").getResourceBundle(), oEntry, that = this;
 			oEntry = oView.getModel("viewModel").getData().Data;

@@ -70,9 +70,7 @@ sap.ui.define([
 		// 	}
 		// },
 		_onRouteMatched: function () {
-
-			// this.getView().byId("idSmartTablePOPRestriction").setEnableCopy(false);
-			var oBundle = this.getView().getModel("i18n").getResourceBundle();
+			var oView=this.getView(), oBundle = oView.getModel("i18n").getResourceBundle();
 			this.getView().setModel(new JSONModel(
 				{
 					Name: oBundle.getText("lblPolicyName"),
@@ -100,88 +98,78 @@ sap.ui.define([
 				}
 			), "viewModel");
 			sap.ui.core.BusyIndicator.hide();
+			this.oPolicyEnforcementTable = oView.byId("idTableDataRestrictionEnforcement");
 		},
 		
 		// #region Value Help Dialog standard use case with filter bar without filter suggestions
-		onValueHelpRequested: function () {
-			var oColPolicyName, oColPolicyDesc, that = this, oView = this.getView();
-			this._oPolicyDescription = oView.byId("idPolicyDescription");
-			this._oPolicyNameInput = oView.byId("idPolicyName");
-			if (!this.oVHDialog) {
-				this.oVHDialog = sap.ui.xmlfragment("pl.dac.apps.fnconfig.fragments.ValueHelp", this);
-				oView.addDependent(this.oVHDialog);
-				this.oVHDialog.setRangeKeyFields([{
-					label: "PolicyDesc",
-					key: "Polciy",
-					type: "string"
-				}]);
-				this.oVHDialog.getTableAsync().then(function (oTable) {
-					oTable.setModel(that.getView().getModel());
-					oTable.setSelectionMode("Single");
-					// For Desktop and tabled the default table is sap.ui.table.Table
-					if (oTable.bindRows) {
-						// Bind rows to the ODataModel and add columns
-						oTable.bindAggregation("rows", {
-							path: "/PolicySet",
-							events: {
-								dataReceived: function () {
-									that.oVHDialog.update();
-								}
-							}
-						});
-						oColPolicyName = new UIColumn({ label: new Label({ text: "Policy Name" }), template: new Text({ wrapping: false, text: "{Policy}" }) });
-						oColPolicyName.data({
-							fieldName: "{Policy}"
-						});
-						oTable.addColumn(oColPolicyName);
+		// onValueHelpRequested: function () {
+		// 	var oColPolicyName, oColPolicyDesc, that = this, oView = this.getView();
+		// 	this._oPolicyNameInputInput = oView.byId("idPolicyName");
+		// 	if (!this._oVHDialog) {
+		// 		this._oVHDialog = sap.ui.xmlfragment("pl.dac.apps.fnconfig.fragments.ValueHelp", this);
+		// 		oView.addDependent(this._oVHDialog);
+		// 		this._oVHDialog.setRangeKeyFields([{
+		// 			label: "PolicyDesc",
+		// 			key: "Polciy",
+		// 			type: "string"
+		// 		}]);
+		// 		this._oVHDialog.getTableAsync().then(function (oTable) {
+		// 			oTable.setModel(that.getView().getModel());
+		// 			oTable.setSelectionMode("Single");
+		// 			// For Desktop and tabled the default table is sap.ui.table.Table
+		// 			if (oTable.bindRows) {
+		// 				// Bind rows to the ODataModel and add columns
+		// 				oTable.bindAggregation("rows", {
+		// 					path: "/PolicySet",
+		// 					events: {
+		// 						dataReceived: function () {
+		// 							that._oVHDialog.update();
+		// 						}
+		// 					}
+		// 				});
+		// 				oColPolicyName = new UIColumn({ label: new Label({ text: "Policy Name" }), template: new Text({ wrapping: false, text: "{Policy}" }) });
+		// 				oColPolicyName.data({
+		// 					fieldName: "{Policy}"
+		// 				});
+		// 				oTable.addColumn(oColPolicyName);
 
-						oColPolicyDesc = new UIColumn({ label: new Label({ text: "Description" }), template: new Text({ wrapping: false, text: "{PolicyDesc}" }) });
-						oColPolicyDesc.data({
-							fieldName: "PolicyDesc"
-						});
-						oTable.addColumn(oColPolicyDesc);
-					}
-					// For Mobile the default table is sap.m.Table
-					if (oTable.bindItems) {
-						// Bind items to the ODataModel and add columns
-						oTable.bindAggregation("items", {
-							path: "/PolicySet",
-							template: new ColumnListItem({
-								cells: [new Label({ text: "{Policy}" }), new Label({ text: "{PolicyDesc}" })]
-							}),
-							events: {
-								dataReceived: function () {
-									that.oVHDialog.update();
-								}
-							}
-						});
-						oTable.addColumn(new Column({ header: new Label({ text: "Policy" }) }));
-						oTable.addColumn(new Column({ header: new Label({ text: "Description" }) }));
-					}
-					that.oVHDialog.update();
-				});
-				this.oVHDialog.open();
-			} else {
-				this.oVHDialog.open();
-			}
-		},
+		// 				oColPolicyDesc = new UIColumn({ label: new Label({ text: "Description" }), template: new Text({ wrapping: false, text: "{PolicyDesc}" }) });
+		// 				oColPolicyDesc.data({
+		// 					fieldName: "PolicyDesc"
+		// 				});
+		// 				oTable.addColumn(oColPolicyDesc);
+		// 			}
+		// 			// For Mobile the default table is sap.m.Table
+		// 			if (oTable.bindItems) {
+		// 				// Bind items to the ODataModel and add columns
+		// 				oTable.bindAggregation("items", {
+		// 					path: "/PolicySet",
+		// 					template: new ColumnListItem({
+		// 						cells: [new Label({ text: "{Policy}" }), new Label({ text: "{PolicyDesc}" })]
+		// 					}),
+		// 					events: {
+		// 						dataReceived: function () {
+		// 							that._oVHDialog.update();
+		// 						}
+		// 					}
+		// 				});
+		// 				oTable.addColumn(new Column({ header: new Label({ text: "Policy" }) }));
+		// 				oTable.addColumn(new Column({ header: new Label({ text: "Description" }) }));
+		// 			}
+		// 			that._oVHDialog.update();
+		// 		});
+		// 		this._oVHDialog.open();
+		// 	} else {
+		// 		this._oVHDialog.open();
+		// 	}
+		// },
 		/* ### A Method has been defined to handle ValueHelp ok button press.
 		* @param {sap.ui.base.Event} oEvent
 		 */
-		onValueHelpOkPress: function (oEvent) {
-			var oValue, aTokens = oEvent.getParameter("tokens"), oView = this.getView();
-			oValue = aTokens[0].getCustomData()[0].getValue();
-			oView.getModel("viewModel").setProperty("/Data/PolicyDesc", oValue.PolicyDesc);
-			oView.getModel("viewModel").refresh();
-			this._oPolicyNameInput.setValue(aTokens[0].getKey());
-			this.oVHDialog.close();
-			this._validatePolicyInput(aTokens[0].getKey());
-		},
+		
 		/* ### A Method has been defined to handle ValueHelp cancel buttton press event.
 		*/
-		onValueHelpCancelPress: function () {
-			this.oVHDialog.close();
-		},
+		//,
 
 		/* ### A Method has been defined to implement save/update operation.
 		*/
@@ -194,17 +182,18 @@ sap.ui.define([
 				return;
 			}
 			delete oEntry.PolicyDesc;
-
 			delete oEntry.to_Policy;
-
 			if (({}).hasOwnProperty.call(oEntry, "__metadata")) {
 				delete oEntry.__metadata;
+				delete oEntry.to_Attr;
+				oEntry.IsActive = oEntry.IsActive?"X":"";
 				sPath = PlDacConst.ENTITY_SET_DATARESTRICTIONENFORCEMENT + "('" + oEntry.Policy + "')";
 				this.getView().getModel().update(sPath, oEntry, {
 					success: function () {
 						MessageBox.success("Entry has been updated");
 						this.getView().getModel().refresh();
 						this.oPolicyInforcementDialog.close();
+						this.getView().getModel("viewModel").setProperty("/Data", {});
 					}.bind(this),
 					error: function (e) {
 						Log.error(e);
@@ -251,7 +240,7 @@ sap.ui.define([
 			oModel.read(sPath, // Path to the specific entity
 				{
 					success: function () {
-						that.__oInput.focus();
+						that._oPolicyNameInput.focus();
 						oView.getModel("viewModel").setProperty("/ErrorMessage", oBundle.getText("msgErrorDuplicateEntry", [oEntry.Policy]));
 						oView.getModel("viewModel").setProperty("/ErrorState", "Error");
 						return;
@@ -264,26 +253,7 @@ sap.ui.define([
 		},
 
 
-		/** ### Event handler of "sap.m.OverflowToolButton~press"
-		 *  ### A Method has been defined to implement delete operation to table record.
-		 */
-		// onDeleteBtnPress: function () {
-		// 	var that = this, oBundle = this.getView().getModel("i18n").getResourceBundle();
-		// 	MessageBox.warning(oBundle.getText("msgDeleteConfirmation"), {
-		// 		actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-		// 		emphasizedAction: MessageBox.Action.OK,
-		// 		styleClass: "PlDacMessageBox",
-		// 		onClose: function (sAction) {
-		// 			if (sAction == "OK") {
-		// 				that._removeSelectedRecord(oBundle);
-		// 			}
-		// 		}
-		// 	});
-		// },
-		/** ### Event handler of "sap.m.OverflowToolButton~press"
-		 *  ### A Private method has been defined to implement delete selected record
-		 * @param {sap.base.i18n.ResourceBundle} oBundle
-		 */
+		
 		removeSelectedRecord: function () {
 			var oView = this.getView(), oModel = oView.getModel(), sPath, that = this,
 			oBundle = oView.getModel("i18n").getResourceBundle(),
@@ -293,6 +263,7 @@ sap.ui.define([
 				success: function () {
 					MessageBox.success(oBundle.getText("msgPolEnforcementDeleteSucceful", [sPolicyName]), { styleClass: "PlDacMessageBox" });
 					oModel.refresh();
+					that.oPolicyEnforcementTable.removeSelections(true);
 				},
 				error: function (oError) {
 					Log.error(oBundle.getText("msgDAErrorInDelete") + oError);
@@ -305,12 +276,12 @@ sap.ui.define([
 		 */
 		onInputChange: function (oEvent) {
 			var sNewValue = oEvent.getParameter("newValue");
-			this.__oInput = oEvent.getSource();
-			this.__oInput.setValueState("None");
+			this._oPolicyNameInput = oEvent.getSource();
+			this._oPolicyNameInput.setValueState("None");
 			this.getView().getModel("viewModel").setProperty("/ErrorState", "None");
 			this.getView().getModel("viewModel").setProperty("/ErrorMessage", "");
-			this.__oInput.setValue(this.__oInput.getValue().toUpperCase());
-			this.__oInput.setValueStateText("");
+			this._oPolicyNameInput.setValue(this._oPolicyNameInput.getValue().toUpperCase());
+			this._oPolicyNameInput.setValueStateText("");
 			if (sNewValue.length > 6) {
 				this._validatePolicyInput(sNewValue);
 			}
@@ -324,10 +295,10 @@ sap.ui.define([
 		/* ### A Method has been defined to add expand parameter in mBindingParams .
 		* @param {sap.ui.base.Event} oEvent
 		 */
-		onBeforeRebindTable: function (oEvent) {
-			var mBindingParams = oEvent.getParameter("bindingParams");
-			mBindingParams.parameters["expand"] = "to_Policy";
-		},
+		// onBeforeRebindTable: function (oEvent) {
+		// 	var mBindingParams = oEvent.getParameter("bindingParams");
+		// 	mBindingParams.parameters["expand"] = "to_Policy";
+		// },
 		_validatePolicyInput: function (sValue) {
 			var oView = this.getView(), oModel = oView.getModel(), that = this,
 				sPath = "/PolicySet('" + sValue + "')",
@@ -338,7 +309,7 @@ sap.ui.define([
 				success: function (oData) {
 					// oData contains the retrieved data
 					if(bInputEditable){
-						that.__oInput.focus();
+						that._oPolicyNameInput.focus();
 					}
 					oView.byId("idPolicyDescription").setValue(oData.PolicyDesc);
 					// If reading an entity set, oData.results will contain an array of entities
@@ -400,24 +371,7 @@ sap.ui.define([
 				}
 			});
 		},
-		/** ### Method has been defined to handle full sreen button event
-		 * Event handler of "sap.m.OverflowToolbarButton~press"
-		 */
-		handleFullScreen: function () {
-			var oView = this.getView();
-			oView.getModel("layoutMode").setProperty("/layout", "MidColumnFullScreen");
-			oView.getModel("viewModel").setProperty("/FullScreen", false);
-			oView.getModel("viewModel").setProperty("/ExitFullScreen", true);
-		},
-		/** ### Method has been defined to handle exit full sreen button event
-		 * Event handler of "sap.m.OverflowToolbarButton~press"
-		 */
-		handleExitFullScreen: function () {
-			var oView = this.getView();
-			oView.getModel("layoutMode").setProperty("/layout", "TwoColumnsMidExpanded");
-			oView.getModel("viewModel").setProperty("/FullScreen", true);
-			oView.getModel("viewModel").setProperty("/ExitFullScreen", false);
-		},
+		
 		/*###Event handler of "sap.m.OverflowTolbarButton~press"
 		* ### A method has been defined to implement sorting in the Data Attribute table based on the AttributeId.
 		*/

@@ -63,7 +63,7 @@ sap.ui.define([
 		/* ### A Method has been defined to implement save/update operation.
 		* @param {sap.ui.base.Event} oEvent
 		 */
-		onSave: function () {
+		onSaveAttributeDialog: function () {
 			var sPath, oEntry,
 				oView = this.getView(),
 				oModel = oView.getModel(),
