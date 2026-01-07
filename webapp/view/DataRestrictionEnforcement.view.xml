@@ -127,7 +127,12 @@ xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
                                     tooltip="{=${IsActive}?'Active':'None'}"
                                     state="{=${IsActive}?'Success':'None'}"
                                      icon="{=${IsActive}?'sap-icon://status-positive':'sap-icon://status-inactive'}"        />
-                                    <Text text="{=${PolicyResult}==='A'? 'Allowed' :'Denied'}"/>
+                                     	<ObjectStatus
+							class="sapUiSmallMarginBottom"
+							text="{=${PolicyResult}==='A'? 'Allowed' :'Denied'}"
+							icon="{=${PolicyResult}==='A'? 'sap-icon://sys-enter-2' :'sap-icon://error'}"
+							state="{=${PolicyResult}==='A'? 'Success' :'Error'}" />
+                                   
 									
                                      
                                     
