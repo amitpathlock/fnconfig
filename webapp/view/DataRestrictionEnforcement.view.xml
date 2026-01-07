@@ -50,11 +50,11 @@ xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 			<OverflowToolbar design="Transparent">
 				<ToolbarSpacer/>
                  <!-- @ui5ignore -->
-                <OverflowToolbarButton icon="sap-icon://add" tooltip="Add Policy Inforecement Attributes" text="Add" press="onAddPolicyEnforcementBtnPress"/>
+                <OverflowToolbarButton icon="sap-icon://add" tooltip="{i18n>txtPolEnforcementAddBtnTooltip}" text="Add" press="onAddPolicyEnforcementBtnPress"/>
 				 <!-- @ui5ignore -->
-                <OverflowToolbarButton icon="sap-icon://edit" tooltip="Edit Policy Inforcement" enabled="{viewModel>/EditButtonEnabled}" press="onEditPolicyEnforcementButtonPress"/>
+                <OverflowToolbarButton icon="sap-icon://edit" tooltip="{i18n>txtPolEnforcementEditBtnTooltip}" enabled="{viewModel>/EditButtonEnabled}" press="onEditPolicyEnforcementButtonPress"/>
                  <!-- @ui5ignore -->
-                <OverflowToolbarButton icon="sap-icon://delete" tooltip="Delete Policy Inforecement" enabled="{viewModel>/DeleteButtonEnabled}" press="onDeletePolicyEnforcementButtonPress"/>
+                <OverflowToolbarButton icon="sap-icon://delete" tooltip="{i18n>txtPolEnforcementDelBtnTooltip}" enabled="{viewModel>/DeleteButtonEnabled}" press="onDeletePolicyEnforcementButtonPress"/>
                 	 <!-- @ui5ignore -->
                 <OverflowToolbarButton icon="sap-icon://sort" tooltip="Sort" text="Sort" press="onSort"/>
 				
