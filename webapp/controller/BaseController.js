@@ -68,7 +68,7 @@ sap.ui.define(
 			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
 			 * @returns {void}
 			 */
-			removeSelectedRecord: function () { },// eslint-disable-line
+			removeSelectedRecord: function () { },
 
 			/**
 			 * Event handler for table selection change event.
@@ -117,21 +117,21 @@ sap.ui.define(
 			 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
 			*/
 			onInputChange: function (oEvent) {
-				var sNewValue = oEvent.getParameter("newValue"), sAttributeType;
+				var oView =  this.getView(),sNewValue = oEvent.getParameter("newValue"), sAttributeType;
 				this.oInputAttributeName = oEvent.getSource();
 				sAttributeType = this.oInputAttributeName.getCustomData()[0].getValue();
 				this.oInputAttributeName.setValueState("None");
-				this.getView().getModel("viewModel").setProperty("/ErrorState", "None");
-				this.getView().getModel("viewModel").setProperty("/ErrorMessage", "");
+				oView.getModel("viewModel").setProperty("/ErrorState", "None");
+				oView.getModel("viewModel").setProperty("/ErrorMessage", "");
 				this.oInputAttributeName.setValue(this.oInputAttributeName.getValue().toUpperCase());
 				this.oInputAttributeName.setValueStateText("");
 				if (sNewValue.length < 6) { // Example validation rule
-					this.getView().getModel("viewModel").setProperty("/ErrorState", "Error");
-					this.getView().getModel("viewModel").setProperty("/ErrorMessage", "Invalid input");
+					oView.getModel("viewModel").setProperty("/ErrorState", "Error");
+					oView.getModel("viewModel").setProperty("/ErrorMessage", "Invalid input");
 				} else {
 					if (sNewValue.split(".")[0] != sAttributeType) {
-						this.getView().getModel("viewModel").setProperty("/ErrorState", "Error");
-						this.getView().getModel("viewModel").setProperty("/ErrorMessage", "An attribute name should begin with \"" + sAttributeType + "\" followed by the specific attribute name.");
+						oView.getModel("viewModel").setProperty("/ErrorState", "Error");
+						oView.getModel("viewModel").setProperty("/ErrorMessage", "An attribute name should begin with \"" + sAttributeType + "\" followed by the specific attribute name.");
 					}
 				}
 			},
@@ -170,6 +170,7 @@ sap.ui.define(
 
 				}
 			},
+			getView:function(){},
 			/**
 			 * Event handler for closing the attribute dialog.
 			 * Closes the attribute dialog if it has been instantiated.
@@ -520,7 +521,7 @@ sap.ui.define(
 			 * @returns {void}
 			 *
 			 * @description
-			 * - Retrieves the policy name input control reference and stores it in `this._oPolicyNameInput`
+			 * - Retrieves the policy name input control reference and stores it in `this.oPolicyNameInput`
 			 * - Creates a new Value Help Dialog fragment if not already instantiated
 			 * - Sets up range key fields for filtering
 			 * - Binds the dialog table to the OData `/PolicySet` path
@@ -531,7 +532,7 @@ sap.ui.define(
 			 */
 			onValueHelpRequested: function () {
 				var oColPolicyName, oColPolicyDesc, that = this, oView = this.getView();
-				this._oPolicyNameInput = oView.byId("idPolicyName");
+				this.oPolicyNameInput = oView.byId("idPolicyName");
 				if (!this._oVHDialog) {
 					this._oVHDialog = sap.ui.xmlfragment("pl.dac.apps.fnconfig.fragments.ValueHelp", this);
 					oView.addDependent(this._oVHDialog);
@@ -610,7 +611,7 @@ sap.ui.define(
 				oValue = aTokens[0].getCustomData()[0].getValue();
 				oView.getModel("viewModel").setProperty("/Data/PolicyDesc", oValue.PolicyDesc);
 				oView.getModel("viewModel").refresh();
-				this._oPolicyNameInput.setValue(aTokens[0].getKey());
+				this.oPolicyNameInput.setValue(aTokens[0].getKey());
 				this._oVHDialog.close();
 
 				this.validatePolicyInput(aTokens[0].getKey());

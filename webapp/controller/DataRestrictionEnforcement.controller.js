@@ -175,11 +175,11 @@ sap.ui.define([
 		/* ### A Method has been defined to implement save/update operation.
 		*/
 		onSavePolicyInforcement: function () {
-			var sPath,oView=this.getView();
-			var oEntry = oView.getModel("viewModel").getData().Data;
+			var sPath,oView=this.getView(),oModel = oView.getModel("viewModel");
+			var oEntry = oModel.getData().Data;
 			if (oEntry.Policy.trim() == "") {
-				oView.getModel("viewModel").setProperty("/ErrorState", "Error");
-				oView.getModel("viewModel").setProperty("/ErrorMessage", "The mandatory field cannot be left blank.");
+				oModel.setProperty("/ErrorState", "Error");
+				oModel.setProperty("/ErrorMessage", "The mandatory field cannot be left blank.");
 				return;
 			}
 			delete oEntry.PolicyDesc;
@@ -195,10 +195,12 @@ sap.ui.define([
 				this.getView().getModel().update(sPath, oEntry, {
 					success: function () {
 						MessageBox.success("Entry has been updated");
-						this.getView().getModel().refresh();
+						oView.getModel().refresh();
 						this.oPolicyInforcementDialog.close();
-						this.getView().getModel("viewModel").setProperty("/Data", {});
+						oModel.setProperty("/Data", {});
 						this.oPolicyEnforcementTable.removeSelections(true);
+						oModel.setProperty("/EditButtonEnabled", false);
+						oModel.setProperty("/DeleteButtonEnabled", false);
 					}.bind(this),
 					error: function (e) {
 						Log.error(e);
@@ -247,7 +249,7 @@ sap.ui.define([
 			oModel.read(sPath, // Path to the specific entity
 				{
 					success: function () {
-						that._oPolicyNameInput.focus();
+						that.oPolicyNameInput.focus();
 						oView.getModel("viewModel").setProperty("/ErrorMessage", oBundle.getText("msgErrorDuplicateEntry", [oEntry.Policy]));
 						oView.getModel("viewModel").setProperty("/ErrorState", "Error");
 						return;
@@ -271,6 +273,9 @@ sap.ui.define([
 					MessageBox.success(oBundle.getText("msgPolEnforcementDeleteSucceful", [sPolicyName]), { styleClass: "PlDacMessageBox" });
 					oModel.refresh();
 					that.oPolicyEnforcementTable.removeSelections(true);
+					oView.getModel("viewModel").setProperty("/Data", {});
+					oView.getModel("viewModel").setProperty("/EditButtonEnabled", false);
+					oView.getModel("viewModel").setProperty("/DeleteButtonEnabled", false);
 				},
 				error: function (oError) {
 					Log.error(oBundle.getText("msgDAErrorInDelete") + oError);
@@ -283,12 +288,12 @@ sap.ui.define([
 		 */
 		onInputChange: function (oEvent) {
 			var sNewValue = oEvent.getParameter("newValue");
-			this._oPolicyNameInput = oEvent.getSource();
-			this._oPolicyNameInput.setValueState("None");
+			this.oPolicyNameInput = oEvent.getSource();
+			this.oPolicyNameInput.setValueState("None");
 			this.getView().getModel("viewModel").setProperty("/ErrorState", "None");
 			this.getView().getModel("viewModel").setProperty("/ErrorMessage", "");
-			this._oPolicyNameInput.setValue(this._oPolicyNameInput.getValue().toUpperCase());
-			this._oPolicyNameInput.setValueStateText("");
+			this.oPolicyNameInput.setValue(this.oPolicyNameInput.getValue().toUpperCase());
+			this.oPolicyNameInput.setValueStateText("");
 			if (sNewValue.length > 6) {
 				this.validatePolicyInput(sNewValue);
 			}
@@ -316,7 +321,7 @@ sap.ui.define([
 				success: function (oData) {
 					// oData contains the retrieved data
 					if(bInputEditable){
-						that._oPolicyNameInput.focus();
+						that.oPolicyNameInput.focus();
 					}
 					oView.byId("idPolicyDescription").setValue(oData.PolicyDesc);
 					// If reading an entity set, oData.results will contain an array of entities
