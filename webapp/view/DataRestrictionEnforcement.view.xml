@@ -71,7 +71,13 @@
                      <!-- Rows -->
                     <items>
                         <ColumnListItem>
-
+                            <customData>
+                                <core:CustomData
+                                    key="PolicyName"
+                                    value="{to_Policy/PolicyName}"
+                                   />
+                                <core:CustomData key="PolicyDesc" value="{to_Policy/PolicyDesc}" />  
+                            </customData>
                             <cells>
                                 <ObjectHeader title="{to_Policy/PolicyName}" class="plDacObjectHeader">
                                     <ObjectAttribute class="plDacObjectAttribute" title="Description" text="{to_Policy/PolicyDesc}" />
