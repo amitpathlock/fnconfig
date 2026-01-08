@@ -344,7 +344,9 @@ sap.ui.define([
 		 */
 		onPressLink: function (oEvent) {
 			var oButton = oEvent.getSource();
+			var oPolicy = oEvent.getSource().getCustomData()[1].getValue();
 			var oCtx = oEvent.getSource().getCustomData()[0].getBindingContext().getObject();
+			oCtx["PolicyName"] = oPolicy.PolicyName;
 			if (!this._oPopover) {
 				Fragment.load({
 					name: "pl.dac.apps.fnconfig.fragments.AssignedAttrPopver",
@@ -373,7 +375,7 @@ sap.ui.define([
 					"$expand": "to_Attr" // Expand to_ActionItem
 				},
 				success: function (oData) {
-					var oModel = new JSONModel({ PolicyName: oCtx.Policy, items: oData.to_Attr.results });
+					var oModel = new JSONModel({ PolicyName: oCtx.PolicyName, items: oData.to_Attr.results });
 					this._oPopover.setModel(oModel, "popOverModel");
 				}.bind(this),
 				error: function (oError) {

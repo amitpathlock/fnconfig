@@ -58,7 +58,8 @@ sap.ui.define([
 				}
 			), "viewModel");
 			sap.ui.core.BusyIndicator.hide();
-			oView.byId("idTableUserAttributes").removeSelections(true);
+			this.oAttributeTable = oView.byId("idTableUserAttributes");
+			this.oAttributeTable.removeSelections(true);
 		},
 
 		/* ### A Method has been defined to implement save/update operation.
@@ -91,6 +92,10 @@ sap.ui.define([
 						MessageBox.success(oBundle.getText("msgUAUpdateSuccessfully", [oEntry.AttributeId]), { styleClass: "PlDacMessageBox" });
 						oModel.refresh();
 						that.oAttributeDialog.close();
+						this.oAttributeTable.removeSelections(true);
+						oView.getModel("viewModel").setProperty("/Data", {});
+						oView.getModel("viewModel").setProperty("/EditButtonEnabled", false);
+						oView.getModel("viewModel").setProperty("/DeleteButtonEnabled", false);
 					},
 					error: function (oError) {
 						Log.error(oBundle.getText("msgUAErrorInUAUpdate") + oError);
@@ -178,6 +183,10 @@ sap.ui.define([
 				success: function () {
 					MessageBox.success(oBundle.getText("msgUADeleteSucceful", [sAttributeId]), { styleClass: "PlDacMessageBox" });
 					oModel.refresh();
+					that.oAttributeTable.removeSelections(true);
+					oView.getModel("viewModel").setProperty("/Data", {});
+					oView.getModel("viewModel").setProperty("/EditButtonEnabled", false);
+					oView.getModel("viewModel").setProperty("/DeleteButtonEnabled", false);
 				},
 				error: function (oError) {
 					Log.error(oBundle.getText("msgUAErrorInDelete") + oError);

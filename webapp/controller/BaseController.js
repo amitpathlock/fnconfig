@@ -22,6 +22,7 @@ sap.ui.define(
 	 */
 		return BaseController.extend("pl.dac.apps.fnconfig.controller.BaseController", {
 			oPolicyEnforcementTable: null,
+			oAttributeTable:null,
 			/**
 			 * Controller initialization method called when the view is instantiated.
 			 * Can be used to modify the view before it is displayed, bind event handlers, and perform one-time initialization.
