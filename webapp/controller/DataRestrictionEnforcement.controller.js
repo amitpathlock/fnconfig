@@ -250,11 +250,15 @@ sap.ui.define([
 				{
 					success: function () {
 						that.oPolicyNameInput.focus();
+						that.oPolicyNameInput.setValueState("Error");
+						that.oPolicyNameInput.setValueStateText(oBundle.getText("msgErrorDuplicateEntry", [oEntry.Policy]));
 						oView.getModel("viewModel").setProperty("/ErrorMessage", oBundle.getText("msgErrorDuplicateEntry", [oEntry.Policy]));
 						oView.getModel("viewModel").setProperty("/ErrorState", "Error");
 						return;
 					},
 					error: function () {
+						that.oPolicyNameInput.setValueState("None");
+						that.oPolicyNameInput.setValueStateText("");
 						that._createEntry(oEntry);
 					}
 				}
