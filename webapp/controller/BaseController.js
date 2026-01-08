@@ -7,9 +7,11 @@ sap.ui.define(
 		"sap/m/Column",
 		"sap/m/Text",
 		"sap/m/Label",
-		"sap/m/ColumnListItem"
+		"sap/m/ColumnListItem",
+		"sap/m/OverflowToolbarButton",
+	"sap/m/ToolbarSpacer"
 	],
-	function (BaseController, MessageBox, Fragment, UIColumn, Column, Text, Label, ColumnListItem) {
+	function (BaseController, MessageBox, Fragment, UIColumn, Column, Text, Label, ColumnListItem,OverflowToolbarButton,ToolbarSpacer) {
 		"use strict";
 		/**
 	 * Called when a view is instantiated and its controls (if available) have been created.
@@ -284,6 +286,38 @@ sap.ui.define(
 				oView.getModel("layoutMode").setProperty("/layout", "TwoColumnsMidExpanded");
 				oView.getModel("viewModel").setProperty("/FullScreen", true);
 				oView.getModel("viewModel").setProperty("/ExitFullScreen", false);
+			},
+			addAddintionButtonIntoTheAttributeTableToolbar: function (oSmartTable) {
+				var oToolbar = oSmartTable.getToolbar();
+				if (oToolbar.getContent().length == 0) {
+					oToolbar.addContent(new ToolbarSpacer());
+					oToolbar.addContent(new OverflowToolbarButton({
+						text: "Add",
+						icon: "sap-icon://add",
+						tooltip: "{i18n>txtBtnAddDataAttribute}",
+						press: this.onAddAttributeButtonPress.bind(this)
+					}));
+					oToolbar.addContent(new OverflowToolbarButton({
+						text: "Edit",
+						icon: "sap-icon://edit",
+						enabled: "{viewModel>/EditButtonEnabled}",
+						tooltip: "{i18n>txtBtnEditDataAttribute}",
+						press: this.onEditAttributeButtonPress.bind(this)
+					}));
+					oToolbar.addContent(new OverflowToolbarButton({
+						text: "Delete",
+						icon: "sap-icon://delete",
+						enabled: "{viewModel>/DeleteButtonEnabled}",
+						tooltip: "{i18n>txtBtnDelDataAttribute}",
+						press: this.onDeleteAttributeButtonPress.bind(this)
+					}));
+					oToolbar.addContent(new OverflowToolbarButton({
+						text: "Sort",
+						icon: "sap-icon://sort",
+						tooltip: "Sort",
+						press: this.onSort.bind(this)
+					}));
+				}
 			},
 
 			/** ###### POLICY INFORCEMENT POINT */
@@ -593,7 +627,63 @@ sap.ui.define(
 			 */
 			onValueHelpCancelPress: function () {
 				this._oVHDialog.close();
-			}
+			},
+			/**
+			 * Adds action buttons (Add, Edit, Delete, Sort) to the Policy Enforcement SmartTable toolbar.
+			 * This method dynamically populates the toolbar with overflow buttons if it hasn't been initialized yet.
+			 * The buttons are bound to their respective event handlers and include proper icons, tooltips, and enable/disable states.
+			 *
+			 * @function addAddintionButtonIntoThePolicyEnforcementTableToolbar
+			 * @param {sap.ui.comp.smarttable.SmartTable} oSmartTable - The SmartTable control whose toolbar should be enhanced with action buttons.
+			 * @public
+			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
+			 * @returns {void}
+			 *
+			 * @description
+			 * - Retrieves the toolbar from the provided SmartTable
+			 * - Checks if the toolbar is empty (not yet initialized)
+			 * - If empty, adds the following controls in sequence:
+			 *   1. ToolbarSpacer - for spacing
+			 *   2. Add Button - opens the add policy enforcement dialog
+			 *   3. Edit Button - opens the edit policy enforcement dialog (enabled based on selection)
+			 *   4. Delete Button - deletes selected policy enforcement (enabled based on selection)
+			 *   5. Sort Button - triggers sort functionality
+			 * - All buttons are configured with appropriate icons, text, tooltips, and press event handlers
+			 * - Edit and Delete buttons are bound to the view model's button enable state
+			 */
+			addAddintionButtonIntoThePolicyEnforcementTableToolbar: function (oSmartTable) {
+				var oToolbar = oSmartTable.getToolbar();
+				if (oToolbar.getContent().length == 0) {
+					oToolbar.addContent(new ToolbarSpacer());
+					oToolbar.addContent(new OverflowToolbarButton({
+						text: "Add",
+						icon: "sap-icon://add",
+						tooltip: "{i18n>txtPolEnforcementAddBtnTooltip}",
+						press: this.onAddPolicyEnforcementBtnPress.bind(this)
+					}));
+					oToolbar.addContent(new OverflowToolbarButton({
+						text: "Edit",
+						icon: "sap-icon://edit",
+						enabled: "{viewModel>/EditButtonEnabled}",
+						tooltip: "{i18n>txtPolEnforcementEditBtnTooltip}",
+						press: this.onEditPolicyEnforcementButtonPress.bind(this)
+					}));
+					oToolbar.addContent(new OverflowToolbarButton({
+						text: "Delete",
+						icon: "sap-icon://delete",
+						enabled: "{viewModel>/DeleteButtonEnabled}",
+						tooltip: "{i18n>txtPolEnforcementDelBtnTooltip}",
+						press: this.onDeletePolicyEnforcementButtonPress.bind(this)
+					}));
+					oToolbar.addContent(new OverflowToolbarButton({
+						text: "Sort",
+						icon: "sap-icon://sort",
+						tooltip: "Sort",
+						press: this.onSort.bind(this)
+					}));
+				}
+			},
+			onSort:function(){},
 		});
 	}
 );

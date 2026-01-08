@@ -7,7 +7,7 @@
     xmlns:core="sap.ui.core"
     xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
     xmlns:smartTable="sap.ui.comp.smarttable"
-xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+
 	busyIndicatorDelay="0"
 >
 <!-- @ui5ignore -->
@@ -26,13 +26,21 @@ xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
     </Toolbar>
 </customHeader>
  <content>
+ 
  <!-- @ui5ignore -->
 	 <smartFilterBar:SmartFilterBar id="smartFilterBar-DataRestrictionEnforcementSet"
               enableBasicSearch="true"
                 entitySet="DataRestrictionEnforcementSet"
                 persistencyKey="SmartFilter_Explored"
-            />
-            <!-- @ui5ignore -->
+               
+     >
+     	<smartFilterBar:layoutData>
+					<FlexItemData shrinkFactor="0"/>
+				</smartFilterBar:layoutData>
+     </smartFilterBar:SmartFilterBar>
+           
+        
+         <!-- @ui5ignore -->
             <smartTable:SmartTable id="idSmartTablePOPRestriction"
              
                 entitySet="DataRestrictionEnforcementSet"
@@ -44,32 +52,18 @@ xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
                 demandPopin="true"
                 class="sapUiResponsiveContentPadding"
               beforeRebindTable="onBeforeRebindTable"
-              
+          placeToolbarInTable="true"
+        
             >
-            <smartTable:customToolbar>
-			<OverflowToolbar design="Transparent">
-				<ToolbarSpacer/>
-                 <!-- @ui5ignore -->
-                <OverflowToolbarButton icon="sap-icon://add" tooltip="{i18n>txtPolEnforcementAddBtnTooltip}" text="Add" press="onAddPolicyEnforcementBtnPress"/>
-				 <!-- @ui5ignore -->
-                <OverflowToolbarButton icon="sap-icon://edit" tooltip="{i18n>txtPolEnforcementEditBtnTooltip}" enabled="{viewModel>/EditButtonEnabled}" press="onEditPolicyEnforcementButtonPress"/>
-                 <!-- @ui5ignore -->
-                <OverflowToolbarButton icon="sap-icon://delete" tooltip="{i18n>txtPolEnforcementDelBtnTooltip}" enabled="{viewModel>/DeleteButtonEnabled}" press="onDeletePolicyEnforcementButtonPress"/>
-                	 <!-- @ui5ignore -->
-                <OverflowToolbarButton icon="sap-icon://sort" tooltip="Sort" text="Sort" press="onSort"/>
-				
-				
-			</OverflowToolbar>
-		</smartTable:customToolbar>
+            
+        
+        
          <!-- @ui5ignore -->
-                <Table mode="SingleSelectLeft" id="idTableDataRestrictionEnforcement"
-                growingThreshold="20" growing="true"
-                    alternateRowColors="true"
-                    sticky="ColumnHeaders,HeaderToolbar"
+                <Table mode="SingleSelectLeft" id="idTableDataRestrictionEnforcement" 
                     selectionChange="onTableSelectionChange"
+                    sticky="ColumnHeaders,HeaderToolbar"
                    
                 >
-              
                     <!-- Header -->
                     <columns >
                         <Column  width="70%">
@@ -157,7 +151,12 @@ xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
                         </ColumnListItem>
                     </items>
                 </Table>
+                
+               
             </smartTable:SmartTable>
+
+      
+        
  </content>
 </Page>
 </mvc:View>

@@ -23,6 +23,7 @@ sap.ui.define([
 		onInit: function () {
 			this._oRouter = this.getOwnerComponent().getRouter();
 			this._oRouter.getRoute(PlDacConst.ROUTE_PATH_DATA_ATTRIBUTE).attachPatternMatched(this._onRouteMatched, this);
+			this.addAddintionButtonIntoTheAttributeTableToolbar(this.getView().byId("idSmartTableDataAttributes"));
 		},
 
 

@@ -44,30 +44,20 @@ xmlns:core="sap.ui.core"
                 enableAutoBinding="true"
                 demandPopin="true"
                 class="sapUiResponsiveContentPadding"
-                
+                 placeToolbarInTable="true"
                 initiallyVisibleFields="AttributeId,Description"
+                
             >
-            <smartTable:customToolbar>
-			<OverflowToolbar design="Transparent">
-				<ToolbarSpacer/>
-                 <!-- @ui5ignore -->
-                <OverflowToolbarButton icon="sap-icon://add" tooltip="{i18n>txtBtnAddDataAttribute}" text="Add" press="onAddAttributeButtonPress"/>
-				 <!-- @ui5ignore -->
-                <OverflowToolbarButton icon="sap-icon://edit" tooltip="{i18n>txtBtnEditDataAttribute}" enabled="{viewModel>/EditButtonEnabled}" press="onEditAttributeButtonPress"/>
-                 <!-- @ui5ignore -->
-                <OverflowToolbarButton icon="sap-icon://delete" tooltip="{i18n>txtBtnDelDataAttribute}" enabled="{viewModel>/DeleteButtonEnabled}" press="onDeleteAttributeButtonPress"/>
-				 <!-- @ui5ignore -->
-                <OverflowToolbarButton icon="sap-icon://sort" tooltip="Sort" text="Sort" press="onSort"/>
-			</OverflowToolbar>
-		</smartTable:customToolbar>
+           
          <!-- @ui5ignore -->
                 <Table mode="SingleSelectLeft" id="idTableDataAttributes"
-                    alternateRowColors="true"
-                    sticky="ColumnHeaders,HeaderToolbar"
+                  
                     selectionChange="onTableSelectionChange"
-                    growing="true"
-                    growingThreshold="10"
                     updateFinished="onTableUpdateFinished"
+                    sticky="ColumnHeaders,HeaderToolbar"
+                    growing="true"
+                    growingThreshold="20"
+                    growingScrollToLoad="true"
                 >
                     <!-- Header -->
                     <columns > </columns>
