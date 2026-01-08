@@ -396,6 +396,8 @@ sap.ui.define(
 				this._loadSelectedTableItemData();
 				oSelectedContextData = oView.getModel("viewModel").getProperty("/SelectedContextData");
 				oView.getModel("viewModel").setProperty("/Data", oSelectedContextData);
+				oView.getModel("viewModel").setProperty("/ErrorMessage", "");
+				oView.getModel("viewModel").setProperty("/ErrorState", "None");
 				if (!this.oPolicyInforcementDialog) {
 					Fragment.load({
 						id: oView.getId(),
@@ -411,6 +413,7 @@ sap.ui.define(
 					this.oPolicyInforcementDialog.open();
 				}
 				oView.getModel("viewModel").setProperty("/PolicyNameEnabled", false);
+				
 			},
 
 			/**

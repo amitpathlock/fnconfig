@@ -246,14 +246,13 @@ sap.ui.define([
 		_checkForDuplicateEntry: function (sPath, oEntry) {
 			var oView = this.getView(), oModel = oView.getModel(), that = this,
 				oBundle = oView.getModel("i18n").getResourceBundle();
+			oView.getModel("viewModel").getProperty("/Data/IsActive")=="X"?oView.getModel("viewModel").setProperty("/Data/IsActive",true):oView.getModel("viewModel").setProperty("/Data/IsActive",false);
 			oModel.read(sPath, // Path to the specific entity
 				{
 					success: function () {
-						that.oPolicyNameInput.focus();
-						that.oPolicyNameInput.setValueState("Error");
-						that.oPolicyNameInput.setValueStateText(oBundle.getText("msgErrorDuplicateEntry", [oEntry.Policy]));
 						oView.getModel("viewModel").setProperty("/ErrorMessage", oBundle.getText("msgErrorDuplicateEntry", [oEntry.Policy]));
 						oView.getModel("viewModel").setProperty("/ErrorState", "Error");
+						that.oPolicyNameInput.focus();
 						return;
 					},
 					error: function () {
