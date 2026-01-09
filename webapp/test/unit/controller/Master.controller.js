@@ -1,7 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"pldacapps/fnconfig/controller/Master.controller"
+	"pl/dac/apps/fnconfig/controller/Master.controller"
 ], function (Controller) {
 	"use strict";
 

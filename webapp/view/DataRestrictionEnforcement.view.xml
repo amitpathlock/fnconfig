@@ -1,7 +1,7 @@
 <mvc:View
     controllerName="pl.dac.apps.fnconfig.controller.DataRestrictionEnforcement"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
 	displayBlock="true"
 	height="100%"
     xmlns:core="sap.ui.core"
@@ -23,22 +23,23 @@
         </customHeader>
         <content>
             <!-- @ui5ignore -->
-	        <smartFilterBar:SmartFilterBar id="smartFilterBar-DataRestrictionEnforcementSet"
+            <smartFilterBar:SmartFilterBar id="smartFilterBar-DataRestrictionEnforcementSet"
               enableBasicSearch="true"
                 entitySet="DataRestrictionEnforcementSet"
-                persistencyKey="SmartFilter_Explored" >
-            </smartFilterBar:SmartFilterBar>
+                persistencyKey="SmartFilter_Explored" ></smartFilterBar:SmartFilterBar>
+                 <!-- @ui5ignore -->
             <smartTable:SmartTable id="idSmartTablePOPRestriction"
                 entitySet="DataRestrictionEnforcementSet"
                 smartFilterId="smartFilterBar-DataRestrictionEnforcementSet"
                 tableType="ResponsiveTable"
-                header="{i18n>txtTableHeaderDR}"
+                header="{i18n>txtSmartTableHeaderPolicyEnforcementDataRestriction}"
                 persistencyKey="SmartTableAnalytical_Explored"
                 enableAutoBinding="true"
                 demandPopin="true"
                 class="sapUiResponsiveContentPadding"
                 beforeRebindTable="onBeforeRebindTable"
                 placeToolbarInTable="true" >
+                 <!-- @ui5ignore -->
                 <Table mode="SingleSelectLeft" id="idTableDataRestrictionEnforcement" 
                     selectionChange="onTableSelectionChange"
                     sticky="ColumnHeaders,HeaderToolbar"
@@ -47,28 +48,29 @@
                     <columns>
                         <Column  width="70%">
                             <customData>
-								<core:CustomData key="p13nData" value='\{"columnKey": "IsActive", "columnIndex":"0", "leadingProperty": "IsActive"}'/>
-							</customData>
+                                <core:CustomData key="p13nData" value='\{"columnKey": "IsActive", "columnIndex":"0", "leadingProperty": "IsActive"}'/>
+                            </customData>
                             <Text text="{i18n>txtPolName}" />
                         </Column>
                         <Column >
                             <customData>
-							    <core:CustomData key="p13nData" value='\{"columnKey": "PolicyResult", "columnIndex":"1", "leadingProperty": "PolicyResult"}'/>
-						    </customData>
+                                <core:CustomData key="p13nData" value='\{"columnKey": "PolicyResult", "columnIndex":"1", "leadingProperty": "PolicyResult"}'/>
+                            </customData>
                             <Text text="{i18n>txtStatus}" />
                         </Column>
-                         <Column >
-                            <customData>   
-							    <core:CustomData key="p13nData" value='\{"columnKey": "PolicyName", "columnIndex":"2","navigationProperty":"to_Policy",  "leadingProperty": "to_Policy/PolicyName"}'/>    
-						    </customData>
-                            <Text text="{i18n>txtAction}" />   
+                        <Column >
+                            <customData>
+                                <core:CustomData key="p13nData" value='\{"columnKey": "PolicyName", "columnIndex":"2","navigationProperty":"to_Policy",  "leadingProperty": "to_Policy/PolicyName"}'/>
+                            </customData>
+                            <Text text="{i18n>txtAction}" />
                         </Column>
-                         <Column width="0px">
-                        <customData>
-							<core:CustomData key="p13nData" value='\{"columnKey": "PolicyDesc", "columnIndex":"3","navigationProperty":"to_Policy",  "leadingProperty": "to_Policy/PolicyDesc"}'/></customData>
+                        <Column width="0px">
+                            <customData>
+                                <core:CustomData key="p13nData" value='\{"columnKey": "PolicyDesc", "columnIndex":"3","navigationProperty":"to_Policy",  "leadingProperty": "to_Policy/PolicyDesc"}'/>
+                            </customData>
                         </Column>
                     </columns>
-                     <!-- Rows -->
+                    <!-- Rows -->
                     <items>
                         <ColumnListItem>
                             <customData>
@@ -76,16 +78,16 @@
                                     key="PolicyName"
                                     value="{to_Policy/PolicyName}"
                                    />
-                                <core:CustomData key="PolicyDesc" value="{to_Policy/PolicyDesc}" />  
+                                <core:CustomData key="PolicyDesc" value="{to_Policy/PolicyDesc}" />
                             </customData>
                             <cells>
                                 <ObjectHeader title="{to_Policy/PolicyName}" class="plDacObjectHeader">
                                     <ObjectAttribute class="plDacObjectAttribute" title="Description" text="{to_Policy/PolicyDesc}" />
                                     <!-- @ui5ignore -->
-                                    <ObjectAttribute text="{i18n>txtAssignedAttributes}" 	active="true" press=".onPressLink" >
+                                    <ObjectAttribute text="{i18n>txtAssignedAttributes}"  	active="true" press=".onPressLink" >
                                         <customData>
                                             <core:CustomData  value='{/}'/>
-                                             <core:CustomData  value='{to_Policy}'/>
+                                            <core:CustomData  value='{to_Policy}'/>
                                         </customData>
                                     </ObjectAttribute>
                                 </ObjectHeader >

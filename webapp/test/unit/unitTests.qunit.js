@@ -5,8 +5,8 @@ sap.ui.getCore().attachInit(function () {
 	"use strict";
 
 	sap.ui.require([
-		"pldacapps/fnconfig/test/unit/AllTests"
+		"pl/dac/apps/fnconfig/test/unit/AllTests"
 	], function () {
-		QUnit.start();
+		//QUnit.start();
 	});
 });

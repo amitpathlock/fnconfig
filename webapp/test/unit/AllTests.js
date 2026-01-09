@@ -1,5 +1,5 @@
 sap.ui.define([
-	"pldacapps/fnconfig/test/unit/controller/Main.controller"
+	"pl/dac/apps/fnconfig/test/unit/controller/DataAttributes.controller"
 ], function () {
 	"use strict";
 });

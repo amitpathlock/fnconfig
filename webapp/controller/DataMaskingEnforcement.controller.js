@@ -19,6 +19,7 @@ sap.ui.define([
 		onInit: function () {
 			this._oRouter = this.getOwnerComponent().getRouter();
 			this._oRouter.getRoute("DataMasking").attachPatternMatched(this._onRouteMatched, this);
+			this.addAddintionButtonIntoThePolicyEnforcementTableToolbar(this.getView().byId("idSmartTableDataMaskingEnforcement"));
 		},
 		// onEditEnforcementBtnPress: function () {
 		// 	var oView = this.getView();
@@ -58,16 +59,16 @@ sap.ui.define([
 		// 		this.oPolicyInforcementDialog.open();
 		// 	}
 		// },
-		onCloseDialog: function () {
-			if (this.oPolicyInforcementDialog) {
-				this.oPolicyInforcementDialog.close();
-			}
-		},
+		// onCloseDialog: function () {
+		// 	if (this.oPolicyInforcementDialog) {
+		// 		this.oPolicyInforcementDialog.close();
+		// 	}
+		// },
 		_onRouteMatched: function () {
 			sap.ui.core.BusyIndicator.hide();
 			//this.getView().byId("idSmartTablePOPRestriction").setEnableCopy(false);
-			var oBundle = this.getView().getModel("i18n").getResourceBundle();
-			this.getView().setModel(new JSONModel(
+			var oView=this.getView(), oBundle = oView.getModel("i18n").getResourceBundle();
+			oView.setModel(new JSONModel(
 				{
 					Name: oBundle.getText("lblPolicyName"),
 					Description: oBundle.getText("lblDescription"),
@@ -92,6 +93,7 @@ sap.ui.define([
 					SelectedContextData: null
 				}
 			), "viewModel");
+			this.oPolicyEnforcementTable = oView.byId("idTableDataRestrictionEnforcement");
 			this.oVHDialogP = Fragment.load({
 				//	id: oView.getId(),
 				name: "pl.dac.apps.fnconfig.fragments.ValueHelp", // Path to your fragment
@@ -107,68 +109,68 @@ sap.ui.define([
 
 		// },
 		// #region Value Help Dialog standard use case with filter bar without filter suggestions
-		onValueHelpRequested: function () {
-			var oColPolicyName, oColPolicyDesc;
-			this._oPolicyNameInput = this.getView().byId("idPolicyName");
+		// onValueHelpRequested: function () {
+		// 	var oColPolicyName, oColPolicyDesc;
+		// 	this._oPolicyNameInput = this.getView().byId("idPolicyName");
 
-			this.oVHDialogP.then(function (oVHDialog) {
-				this.oVHDialog = oVHDialog;
-				this.getView().addDependent(oVHDialog);
-				// Set key fields for filtering in the Define Conditions Tab
-				oVHDialog.setRangeKeyFields([{
-					label: "Polciy",
-					key: "Polciy",
-					type: "string"
-				}]);
-				oVHDialog.getTableAsync().then(function (oTable) {
-					oTable.setModel(this.getView().getModel());
-					oTable.setSelectionMode("Single");
-					oTable.removeAllColumns();
-					// For Desktop and tabled the default table is sap.ui.table.Table
-					if (oTable.bindRows) {
-						// Bind rows to the ODataModel and add columns
-						oTable.bindAggregation("rows", {
-							path: "/PolicySet",
-							events: {
-								dataReceived: function () {
-									oVHDialog.update();
-								}
-							}
-						});
-						oColPolicyName = new UIColumn({ label: new Label({ text: "Policy Name" }), template: new Text({ wrapping: false, text: "{Policy}" }) });
-						oColPolicyName.data({
-							fieldName: "{Policy}"
-						});
-						oTable.addColumn(oColPolicyName);
+		// 	this.oVHDialogP.then(function (oVHDialog) {
+		// 		this.oVHDialog = oVHDialog;
+		// 		this.getView().addDependent(oVHDialog);
+		// 		// Set key fields for filtering in the Define Conditions Tab
+		// 		oVHDialog.setRangeKeyFields([{
+		// 			label: "Polciy",
+		// 			key: "Polciy",
+		// 			type: "string"
+		// 		}]);
+		// 		oVHDialog.getTableAsync().then(function (oTable) {
+		// 			oTable.setModel(this.getView().getModel());
+		// 			oTable.setSelectionMode("Single");
+		// 			oTable.removeAllColumns();
+		// 			// For Desktop and tabled the default table is sap.ui.table.Table
+		// 			if (oTable.bindRows) {
+		// 				// Bind rows to the ODataModel and add columns
+		// 				oTable.bindAggregation("rows", {
+		// 					path: "/PolicySet",
+		// 					events: {
+		// 						dataReceived: function () {
+		// 							oVHDialog.update();
+		// 						}
+		// 					}
+		// 				});
+		// 				oColPolicyName = new UIColumn({ label: new Label({ text: "Policy Name" }), template: new Text({ wrapping: false, text: "{Policy}" }) });
+		// 				oColPolicyName.data({
+		// 					fieldName: "{Policy}"
+		// 				});
+		// 				oTable.addColumn(oColPolicyName);
 
-						oColPolicyDesc = new UIColumn({ label: new Label({ text: "Description" }), template: new Text({ wrapping: false, text: "{PolicyDesc}" }) });
-						oColPolicyDesc.data({
-							fieldName: "PolicyDesc"
-						});
-						oTable.addColumn(oColPolicyDesc);
-					}
-					// For Mobile the default table is sap.m.Table
-					if (oTable.bindItems) {
-						// Bind items to the ODataModel and add columns
-						oTable.bindAggregation("items", {
-							path: "/PolicySet",
-							template: new ColumnListItem({
-								cells: [new Label({ text: "{Policy}" }), new Label({ text: "{PolicyDesc}" })]
-							}),
-							events: {
-								dataReceived: function () {
-									oVHDialog.update();
-								}
-							}
-						});
-						oTable.addColumn(new Column({ header: new Label({ text: "Policy" }) }));
-						oTable.addColumn(new Column({ header: new Label({ text: "Description" }) }));
-					}
-					oVHDialog.update();
-				}.bind(this));
-				oVHDialog.open();
-			}.bind(this));
-		},
+		// 				oColPolicyDesc = new UIColumn({ label: new Label({ text: "Description" }), template: new Text({ wrapping: false, text: "{PolicyDesc}" }) });
+		// 				oColPolicyDesc.data({
+		// 					fieldName: "PolicyDesc"
+		// 				});
+		// 				oTable.addColumn(oColPolicyDesc);
+		// 			}
+		// 			// For Mobile the default table is sap.m.Table
+		// 			if (oTable.bindItems) {
+		// 				// Bind items to the ODataModel and add columns
+		// 				oTable.bindAggregation("items", {
+		// 					path: "/PolicySet",
+		// 					template: new ColumnListItem({
+		// 						cells: [new Label({ text: "{Policy}" }), new Label({ text: "{PolicyDesc}" })]
+		// 					}),
+		// 					events: {
+		// 						dataReceived: function () {
+		// 							oVHDialog.update();
+		// 						}
+		// 					}
+		// 				});
+		// 				oTable.addColumn(new Column({ header: new Label({ text: "Policy" }) }));
+		// 				oTable.addColumn(new Column({ header: new Label({ text: "Description" }) }));
+		// 			}
+		// 			oVHDialog.update();
+		// 		}.bind(this));
+		// 		oVHDialog.open();
+		// 	}.bind(this));
+		// },
 		loadFragment: function (oData) {
 			var oView = this.getView(), that = this;
 			Fragment.load({
@@ -180,21 +182,21 @@ sap.ui.define([
 
 			});
 		},
-		onValueHelpOkPress: function (oEvent) {
-			var aTokens = oEvent.getParameter("tokens");
-			this._oPolicyNameInput.setValue(aTokens[0].getKey());
-			this.oVHDialog.close();
-			this._validatePolicyInput(aTokens[0].getKey());
-		},
+		// onValueHelpOkPress: function (oEvent) {
+		// 	var aTokens = oEvent.getParameter("tokens");
+		// 	this._oPolicyNameInput.setValue(aTokens[0].getKey());
+		// 	this.oVHDialog.close();
+		// 	this._validatePolicyInput(aTokens[0].getKey());
+		// },
 
-		onValueHelpCancelPress: function () {
-			this.oVHDialog.close();
-		},
+		// onValueHelpCancelPress: function () {
+		// 	this.oVHDialog.close();
+		// },
 
 		onValueHelpAfterClose: function () {
 			//this.oVHDialog.destroy();
 		},
-		onSave: function () {
+		onSavePolicyInforcement: function () {
 			var sPath;
 			var oEntry = this.getView().getModel("viewModel").getData().Data;
 			if (oEntry.Policy.trim() == "") {

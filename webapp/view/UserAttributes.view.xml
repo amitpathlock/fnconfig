@@ -1,32 +1,30 @@
 <mvc:View
 	controllerName="pl.dac.apps.fnconfig.controller.UserAttributes"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
 	displayBlock="true"
 	height="100%"
     xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
     xmlns:smartTable="sap.ui.comp.smarttable"
-xmlns:core="sap.ui.core"
+    xmlns:core="sap.ui.core"
 	busyIndicatorDelay="0"
 >
-<!-- @ui5ignore -->
-<Page  >
-<customHeader>
-<Toolbar design="Transparent" class="plDacToolbar">
-    
-        <core:Icon src="sap-icon://person-placeholder" />
-        <Title text="{i18n>titPIPUserAttributePage}"/>
-        <ToolbarSpacer/>
-        <!-- @ui5ignore -->
-        	<OverflowToolbarButton type="Transparent" icon="sap-icon://full-screen" press="handleFullScreen" tooltip="Enter Full Screen Mode" visible="{viewModel>/FullScreen}"/>
-			<!-- @ui5ignore -->
-            <OverflowToolbarButton type="Transparent" icon="sap-icon://exit-full-screen" press="handleExitFullScreen" tooltip="Exit Full Screen Mode" visible="{viewModel>/ExitFullScreen}"/>
-			
-    </Toolbar>
-</customHeader>
- <content>
- <!-- @ui5ignore -->
-	 <smartFilterBar:SmartFilterBar
+    <!-- @ui5ignore -->
+    <Page  >
+        <customHeader>
+            <Toolbar design="Transparent" class="plDacToolbar">
+                <core:Icon src="sap-icon://person-placeholder" />
+                <Title text="{i18n>titPIPUserAttributePage}"/>
+                <ToolbarSpacer/>
+                <!-- @ui5ignore -->
+                <OverflowToolbarButton type="Transparent" icon="sap-icon://full-screen" press="handleFullScreen" tooltip="Enter Full Screen Mode" visible="{viewModel>/FullScreen}"/>
+                <!-- @ui5ignore -->
+                <OverflowToolbarButton type="Transparent" icon="sap-icon://exit-full-screen" press="handleExitFullScreen" tooltip="Exit Full Screen Mode" visible="{viewModel>/ExitFullScreen}"/>
+            </Toolbar>
+        </customHeader>
+        <content>
+            <!-- @ui5ignore -->
+            <smartFilterBar:SmartFilterBar
               id="smartFilterBar-ua"
                entitySet="UserAttrSet"
                 persistencyKey="SmartFilterBar_Explored"
@@ -47,8 +45,7 @@ xmlns:core="sap.ui.core"
                  placeToolbarInTable="true"
                 initiallyVisibleFields="AttributeId,Description"
             >
-           
-         <!-- @ui5ignore -->
+                <!-- @ui5ignore -->
                 <Table mode="SingleSelectLeft" id="idTableUserAttributes"
                     alternateRowColors="true"
                     sticky="ColumnHeaders,HeaderToolbar"
@@ -57,21 +54,19 @@ xmlns:core="sap.ui.core"
                     growingThreshold="20"
                     updateFinished="onTableUpdateFinished"
                 >
-              
                     <!-- Header -->
                     <columns ></columns>
                     <!-- Data -->
                     <items>
                         <ColumnListItem >
-                           <cells>
-									<ObjectIdentifier title="{AttributeId}"/>
-									<Text text="{Description}"/>
-									
-								</cells>
+                            <cells>
+                                <ObjectIdentifier title="{AttributeId}"/>
+                                <Text text="{Description}"/>
+                            </cells>
                         </ColumnListItem>
                     </items>
                 </Table>
             </smartTable:SmartTable>
- </content>
-</Page>
+        </content>
+    </Page>
 </mvc:View>
