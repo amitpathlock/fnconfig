@@ -29,6 +29,7 @@ server:
       configuration:
         component: pl.dac.apps.fnconfig
         ui5Theme: sap_fiori_3
+   
 builder:
   resources:
     excludes:

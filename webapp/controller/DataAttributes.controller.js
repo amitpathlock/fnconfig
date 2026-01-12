@@ -118,7 +118,7 @@ sap.ui.define([
 					error: function (oError) {
 						Log.error(oBundle.getText("msgErrorInUpdate") + oError);
 						that.oAttributeDialog.close();
-						that._displayErrorMessage(oError);
+						that.displayErrorMessage(oError);
 
 					}
 				});
@@ -148,7 +148,7 @@ sap.ui.define([
 				error: function (oError) {
 					Log.error(oBundle.getText("msgErrorInCreate") + oError);
 					that.oAttributeDialog.close();
-					that._displayErrorMessage(oError);
+					that.displayErrorMessage(oError);
 
 				}
 			});
@@ -200,7 +200,7 @@ sap.ui.define([
 				},
 				error: function (oError) {
 					Log.error(oBundle.getText("msgDAErrorInDelete") + oError);
-					that._displayErrorMessage(oError);
+					that.displayErrorMessage(oError);
 				}
 			});
 		},
@@ -208,39 +208,39 @@ sap.ui.define([
 		/*###Event handler of "sap.m.OverflowTolbarButton~press"
 		* ### A method has been defined to implement sorting in the Data Attribute table based on the AttributeId.
 		 */
-		onSort: function () {
-			var oView = this.getView();
-			if (oView.getModel("viewModel").getProperty("/SortOrder") == "asc") {
-				oView.getModel("viewModel").setProperty("/SortOrder", "desc");
-				oView.byId("idTableDataAttributes").getBinding("items").sort([new Sorter("AttributeId", false)]);
-			} else {
-				oView.getModel("viewModel").setProperty("/SortOrder", "asc");
-				oView.byId("idTableDataAttributes").getBinding("items").sort([new Sorter("AttributeId", true)]);
-			}
-		},
+		// onSort: function () {
+		// 	var oView = this.getView();
+		// 	if (oView.getModel("viewModel").getProperty("/SortOrder") == "asc") {
+		// 		oView.getModel("viewModel").setProperty("/SortOrder", "desc");
+		// 		oView.byId("idTableDataAttributes").getBinding("items").sort([new Sorter("AttributeId", false)]);
+		// 	} else {
+		// 		oView.getModel("viewModel").setProperty("/SortOrder", "asc");
+		// 		oView.byId("idTableDataAttributes").getBinding("items").sort([new Sorter("AttributeId", true)]);
+		// 	}
+		// },
 		/** Private method
 		 * ### A method has been defined to show an error message when an exception occurs ###
 		 * ### during CRUD operations in the OData Model.
 		 * @param {} oError
 		 */
-		_displayErrorMessage: function (oError) {
-			var message = "An unknown error occurred.";
-			if (oError && oError.responseText) {
-				try {
-					var errorBody = JSON.parse(oError.responseText);
-					if (errorBody.error && errorBody.error.message && errorBody.error.message.value) {
-						message = errorBody.error.message.value;
-					} else if (errorBody.error && errorBody.error.errordetails && errorBody.error.errordetails.length > 0) {
-						message = errorBody.error.errordetails[0].message;
-					}
-				} catch (e) {
-					Log.error(e);
-					// Handle cases where response body might not be valid JSON
-					message = $(oError.response.body).find('message').first().text();
-				}
-			}
-			MessageBox.error(message, { styleClass: "PlDacMessageBox" }); // Display using sap.m.MessageBox
-		},
+		// _displayErrorMessage: function (oError) {
+		// 	var message = "An unknown error occurred.";
+		// 	if (oError && oError.responseText) {
+		// 		try {
+		// 			var errorBody = JSON.parse(oError.responseText);
+		// 			if (errorBody.error && errorBody.error.message && errorBody.error.message.value) {
+		// 				message = errorBody.error.message.value;
+		// 			} else if (errorBody.error && errorBody.error.errordetails && errorBody.error.errordetails.length > 0) {
+		// 				message = errorBody.error.errordetails[0].message;
+		// 			}
+		// 		} catch (e) {
+		// 			Log.error(e);
+		// 			// Handle cases where response body might not be valid JSON
+		// 			message = $(oError.response.body).find('message').first().text();
+		// 		}
+		// 	}
+		// 	MessageBox.error(message, { styleClass: "PlDacMessageBox" }); // Display using sap.m.MessageBox
+		// },
 		onAfterRendering: function () {
 			sap.ui.core.BusyIndicator.hide();
 		}

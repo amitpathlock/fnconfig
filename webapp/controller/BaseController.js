@@ -9,20 +9,17 @@ sap.ui.define(
 		"sap/m/Label",
 		"sap/m/ColumnListItem",
 		"sap/m/OverflowToolbarButton",
-	"sap/m/ToolbarSpacer"
+		"sap/m/ToolbarSpacer",
+		"sap/ui/model/Sorter",
+		"sap/base/Log",
+		"sap/m/Token"
 	],
-	function (BaseController, MessageBox, Fragment, UIColumn, Column, Text, Label, ColumnListItem,OverflowToolbarButton,ToolbarSpacer) {
+	function (BaseController, MessageBox, Fragment, UIColumn, Column, Text, Label,
+		ColumnListItem, OverflowToolbarButton, ToolbarSpacer, Sorter, Log,Token) {
 		"use strict";
-		/**
-	 * Called when a view is instantiated and its controls (if available) have been created.
-	 * Can be used to modify the view before it is displayed, to bind event handlers, and to do other one-time initialization.
-	 * Store the instance of the Router class in the variable referenced by the controller.
-	 * Call the Router attachParternPathed event
-	 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
-	 */
 		return BaseController.extend("pl.dac.apps.fnconfig.controller.BaseController", {
 			oPolicyEnforcementTable: null,
-			oAttributeTable:null,
+			oAttributeTable: null,
 			/**
 			 * Controller initialization method called when the view is instantiated.
 			 * Can be used to modify the view before it is displayed, bind event handlers, and perform one-time initialization.
@@ -41,11 +38,11 @@ sap.ui.define(
 			 * If the user confirms the action (clicks OK), the `removeSelectedRecord` method is invoked.
 			 * 
 			 * @function onDeleteAttributeButtonPress
-			 * @public
+			 * @private
 			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
 			 * @returns {void}
 			 */
-			onDeleteAttributeButtonPress: function () {
+			_onDeleteAttributeButtonPress: function () {
 				var that = this, oBundle = this.getView().getModel("i18n").getResourceBundle();
 				MessageBox.warning(oBundle.getText("msgDeleteConfirmation"), {
 					actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
@@ -118,7 +115,7 @@ sap.ui.define(
 			 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
 			*/
 			onInputChange: function (oEvent) {
-				var oView =  this.getView(),sNewValue = oEvent.getParameter("newValue"), sAttributeType;
+				var oView = this.getView(), sNewValue = oEvent.getParameter("newValue"), sAttributeType;
 				this.oInputAttributeName = oEvent.getSource();
 				sAttributeType = this.oInputAttributeName.getCustomData()[0].getValue();
 				this.oInputAttributeName.setValueState("None");
@@ -142,12 +139,12 @@ sap.ui.define(
 			 * Sets up the view model with default data and enables the attribute name input field.
 			 * Loads and displays the attribute dialog fragment if not already instantiated.
 			 *
-			 * @function onAddAttributeButtonPress
-			 * @public
+			 * @function _onAddAttributeButtonPress
+			 * @private
 			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
 			 * @returns {void}
 			 */
-			onAddAttributeButtonPress: function () {
+			_onAddAttributeButtonPress: function () {
 				var oView = this.getView();
 				oView.getModel("viewModel").setProperty("/Data", { AttributeId: "", Description: "" });
 				oView.getModel("viewModel").setProperty("/AttrNameEnabled", true);
@@ -171,7 +168,7 @@ sap.ui.define(
 
 				}
 			},
-			getView:function(){},
+			
 			/**
 			 * Event handler for closing the attribute dialog.
 			 * Closes the attribute dialog if it has been instantiated.
@@ -192,12 +189,12 @@ sap.ui.define(
 			 * Disables the attribute name input field since editing an existing attribute name is not allowed.
 			 * Loads and displays the attribute dialog fragment if not already instantiated.
 			 *
-			 * @function onEditAttributeButtonPress
-			 * @public
+			 * @function _onEditAttributeButtonPress
+			 * @private
 			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
 			 * @returns {void}
 			 */
-			onEditAttributeButtonPress: function () {
+			_onEditAttributeButtonPress: function () {
 				var oView = this.getView(), oViewModel = oView.getModel("viewModel"),
 					oSelectedContextData = oViewModel.getProperty("/SelectedContextData");
 				oView.getModel("viewModel").setProperty("/Data", oSelectedContextData);
@@ -297,44 +294,78 @@ sap.ui.define(
 						text: "Add",
 						icon: "sap-icon://add",
 						tooltip: "{i18n>txtBtnAddDataAttribute}",
-						press: this.onAddAttributeButtonPress.bind(this)
+						press: this._onAddAttributeButtonPress.bind(this)
 					}));
 					oToolbar.addContent(new OverflowToolbarButton({
 						text: "Edit",
 						icon: "sap-icon://edit",
 						enabled: "{viewModel>/EditButtonEnabled}",
 						tooltip: "{i18n>txtBtnEditDataAttribute}",
-						press: this.onEditAttributeButtonPress.bind(this)
+						press: this._onEditAttributeButtonPress.bind(this)
 					}));
 					oToolbar.addContent(new OverflowToolbarButton({
 						text: "Delete",
 						icon: "sap-icon://delete",
 						enabled: "{viewModel>/DeleteButtonEnabled}",
 						tooltip: "{i18n>txtBtnDelDataAttribute}",
-						press: this.onDeleteAttributeButtonPress.bind(this)
+						press: this._onDeleteAttributeButtonPress.bind(this)
 					}));
 					oToolbar.addContent(new OverflowToolbarButton({
 						text: "Sort",
 						icon: "sap-icon://sort",
 						tooltip: "Sort",
-						press: this.onSort.bind(this)
+						press: this._onAttributeTableSortButtonPress.bind(this)
 					}));
 				}
 			},
+			/**
+			 * Event handler for the Attributes sort button press event.
+			 * Toggles the sort order of the table between ascending and descending based on the Policy field.
+			 * Updates the view model with the current sort order state.
+			 *
+			 * @function _onAttributeTableSortButtonPress
+			 * @param {sap.ui.base.Event} oEvent - The button press event object.
+			 * @private
+			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
+			 * @returns {void}
+			 *
+			 * @description
+			 * - Retrieves the table reference from the event source's parent hierarchy
+			 * - Checks current sort order from view model (`/SortOrder`)
+			 * - If current order is "asc":
+			 *   - Sets sort order to "desc" in view model
+			 *   - Sorts table by "Policy" field in descending order (false)
+			 * - If current order is "desc" or not set:
+			 *   - Sets sort order to "asc" in view model
+			 *   - Sorts table by "Policy" field in ascending order (true)
+			 * - Uses sap.ui.model.Sorter to apply sorting to the table items binding
+			 */
+			_onAttributeTableSortButtonPress: function (oEvent) {
+				var oView = this.getView(), oViewModel = oView.getModel("viewModel"),
+					oTable = oEvent.getSource().getParent().getParent();
+				if (oViewModel.getProperty("/SortOrder") == "asc") {
+					oViewModel.setProperty("/SortOrder", "desc");
+					oTable.getBinding("items").sort([new Sorter("AttributeId", false)]);
+				} else {
+					oViewModel.setProperty("/SortOrder", "asc");
+					oTable.getBinding("items").sort([new Sorter("AttributeId", true)]);
+				}
+			},
+
 
 			/** ###### POLICY INFORCEMENT POINT */
 
 			/**
-		 * Event handler for the delete attribute button press event.
-		 * Displays a confirmation dialog to the user before deleting the selected record.
-		 * If the user confirms the action (clicks OK), the `removeSelectedRecord` method is invoked.
-		 * 
-		 * @function onDeletePolicyEnforcementButtonPress
-		 * @public
-		 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
-		 * @returns {void}
-		 */
-			onDeletePolicyEnforcementButtonPress: function () {
+			 * Event handler for the delete attribute button press event.
+			 * Displays a confirmation dialog to the user before deleting the selected record.
+			 * If the user confirms the action (clicks OK), the `removeSelectedRecord` method is invoked.
+			 * 
+			 * @function _onDeletePolicyEnforcementButtonPress
+			 * @private
+			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
+			 * @returns {void}
+			 */
+			_onDeletePolicyEnforcementButtonPress: function () {
 				var that = this, oBundle = this.getView().getModel("i18n").getResourceBundle();
 				MessageBox.warning(oBundle.getText("msgDeleteConfirmation"), {
 					actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
@@ -385,12 +416,12 @@ sap.ui.define(
 			 * Disables the policy name input field since editing an existing policy name is not allowed.
 			 * Loads and displays the policy enforcement dialog fragment if not already instantiated.
 			 *
-			 * @function onEditPolicyEnforcementBtnPress
-			 * @public
+			 * @function _onEditPolicyEnforcementBtnPress
+			 * @private
 			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
 			 * @returns {void}
 			 */
-			onEditPolicyEnforcementButtonPress: function () {
+			_onEditPolicyEnforcementButtonPress: function () {
 				var oView = this.getView(), oSelectedContextData;
 
 				this._loadSelectedTableItemData();
@@ -423,13 +454,13 @@ sap.ui.define(
 			 * Clears any previous error states in the view model.
 			 * Loads and displays the policy enforcement dialog fragment if not already instantiated.
 			 *
-			 * @function onAddPolicyEnforcementBtnPress
-			 * @public
+			 * @function _onAddPolicyEnforcementBtnPress
+			 * @private
 			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
 			 * @returns {void}
 			 */
-			onAddPolicyEnforcementBtnPress: function () {
-				var oView = this.getView();
+			_onAddPolicyEnforcementBtnPress: function () {
+				var  oView = this.getView();
 				oView.getModel("viewModel").setProperty("/Data", { Policy: "", PolicyResult: "", IsActive: false });
 				oView.getModel("viewModel").setProperty("/PolicyNameEnabled", true);
 				oView.getModel("viewModel").setProperty("/ErrorState", "None");
@@ -441,12 +472,13 @@ sap.ui.define(
 						controller: this // Assign the current controller
 					}).then(function (oDialog) {
 						this.oPolicyInforcementDialog = oDialog;
-						this.oPolicyInforcementDialog.attachAfterOpen(this._onPolicyEnforcementDialogOnAfterShow, this);
 						oView.addDependent(oDialog); // Add dialog as dependent of the view
+						this.oPolicyNameInput = oView.byId("idPEPPolicyName");
 						oDialog.open();
 
 					}.bind(this));
 				} else {
+					this.oPolicyNameInput = oView.byId("idPEPPolicyName");
 					this.oPolicyInforcementDialog.open();
 				}
 			},
@@ -462,16 +494,16 @@ sap.ui.define(
 			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
 			 * @returns {void}
 			 */
-			_onPolicyEnforcementDialogOnAfterShow: function (oEvent) {
-				var oDailog = oEvent.getSource(),
+			onBeforePEPDialogOpened: function (oEvent) {
+				var oDailog = oEvent.getSource(), oView= this.getView(),oData=oView.getModel("viewModel").getProperty("/Data"),
 					oForm = oDailog.getContent()[0].getAggregation("form"),
 					aFormElements = oForm.getAggregation("formContainers")[0].getAggregation("formElements");
 				if (aFormElements[0].getAggregation("fields")[0].getEnabled()) {
 					aFormElements[0].getAggregation("fields")[0].focus();
 				} else {
 					aFormElements[2].getAggregation("fields")[0].focus();
+					aFormElements[0].getAggregation("fields")[0].setTokens([new Token({text:oData.PolicyName+" ("+oData.PolicyDesc+")"})])
 				}
-
 			},
 			onSavePolicyInforcement: function () {
 
@@ -494,6 +526,10 @@ sap.ui.define(
 						oView.getModel("viewModel").setProperty("/SelectedContextData", this.oPolicyEnforcementTable.getSelectedItem().getBindingContext().getObject());
 					}
 					this.oPolicyInforcementDialog.close();
+					this.oPolicyEnforcementTable.removeSelections(true);
+					if(this.oPolicyNameInput){
+						this.oPolicyNameInput.removeAllTokens();
+					}
 				}
 			},
 			/**
@@ -512,7 +548,12 @@ sap.ui.define(
 				mBindingParams.parameters["expand"] = "to_Policy";
 				mBindingParams.parameters["select"] = mBindingParams.parameters["select"] + ",Policy";
 			},
-
+			onBeforePEPDialogClosed:function(){
+				var oView= this.getView();
+				oView.getModel("viewModel").setProperty("/EditButtonEnabled",false);
+				oView.getModel("viewModel").setProperty("/DeleteButtonEnabled",false);
+				this.getView().byId("idPEPPolicyName").removeAllTokens();
+			},
 			/**
 			 * Event handler for the Value Help Dialog request.
 			 * Initializes and displays a Value Help Dialog for policy selection.
@@ -536,10 +577,11 @@ sap.ui.define(
 			 */
 			onValueHelpRequested: function () {
 				var oColPolicyName, oColPolicyDesc, that = this, oView = this.getView();
-				this.oPolicyNameInput = oView.byId("idPolicyName");
+				
 				if (!this._oVHDialog) {
 					this._oVHDialog = sap.ui.xmlfragment("pl.dac.apps.fnconfig.fragments.ValueHelp", this);
 					oView.addDependent(this._oVHDialog);
+					this.oPolicyNameInput = oView.byId("idPEPPolicyName");
 					this._oVHDialog.setRangeKeyFields([{
 						label: "PolicyDesc",
 						key: "Polciy",
@@ -614,13 +656,66 @@ sap.ui.define(
 				var oValue, aTokens = oEvent.getParameter("tokens"), oView = this.getView();
 				oValue = aTokens[0].getCustomData()[0].getValue();
 				oView.getModel("viewModel").setProperty("/Data/PolicyDesc", oValue.PolicyDesc);
+				
 				oView.getModel("viewModel").refresh();
-				this.oPolicyNameInput.setValue(aTokens[0].getKey());
 				this._oVHDialog.close();
-
 				this.validatePolicyInput(aTokens[0].getKey());
 			},
-			validatePolicyInput: function (sKey) { },// eslint-disable-line
+			/**
+			 * Validates a policy identifier by checking if it exists in the OData service.
+			 * Reads the policy data from the backend and updates the UI accordingly.
+			 * On success, clears error states and populates the policy description field.
+			 * On error, sets error state and displays the error message.
+			 *
+			 * @function validatePolicyInput
+			 * @param {string} sPolicy - The policy identifier to validate against the PolicySet entity.
+			 * @public
+			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
+			 * @returns {void}
+			 *
+			 * @description
+			 * - Constructs OData path: `/PolicySet('{sPolicy}')`
+			 * - Makes an OData read request to validate the policy
+			 * - Success callback:
+			 *   - Sets focus to policy name input if field is editable
+			 *   - Updates policy description field with retrieved `PolicyDesc` value
+			 *   - Clears error state (`/ErrorState` → "None", `/ErrorMessage` → "")
+			 * - Error callback:
+			 *   - Clears policy description field
+			 *   - Sets error state (`/ErrorState` → "Error")
+			 *   - Displays error message from OData response
+			 */
+			validatePolicyInput: function (sPolicy) {
+				var oView = this.getView(), oDataModel = oView.getModel(),
+					oViewModel = oView.getModel("viewModel"),
+					sPath = "/PolicySet('" + sPolicy + "')",
+					bInputEditable = oViewModel.getProperty("/PolicyNameEnabled");
+					oViewModel.setProperty("/Data/Policy",sPolicy);
+				// Example validation rule
+				oDataModel.read(sPath, {
+					// Success callback function
+					success: function (oData) {
+						// oData contains the retrieved data
+						if (bInputEditable) {
+							this.oPolicyNameInput.focus();
+						}
+						
+						oView.byId("idPEPPolicyName").setTokens([new Token({text:oData.PolicyName+" ("+oData.PolicyDesc+")"})]);
+						// If reading an entity set, oData.results will contain an array of entities
+						if (oData.PolicyDesc) {
+							oViewModel.setProperty("/ErrorState", "None");
+							oViewModel.setProperty("/ErrorMessage", "");
+						}
+					}.bind(this),
+					// Error callback function
+					error: function (oError) {
+						// oError contains details about the error
+						//oView.byId("idPEPPolicyDescription").setText("");
+						oViewModel.setProperty("/ErrorState", "Error");
+						oViewModel.setProperty("/ErrorMessage", JSON.parse(oError.responseText).error.message.value);
+					}
+				});
+			},
 			/**
 			 * Event handler for the Value Help Dialog cancel action.
 			 * Closes the Value Help Dialog without applying any selection.
@@ -630,7 +725,7 @@ sap.ui.define(
 			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
 			 * @returns {void}
 			 */
-			onValueHelpCancelPress: function () {
+			onPolEnfocementPolcyVHCancelPress: function () {
 				this._oVHDialog.close();
 			},
 			/**
@@ -664,31 +759,144 @@ sap.ui.define(
 						text: "Add",
 						icon: "sap-icon://add",
 						tooltip: "{i18n>txtPolEnforcementAddBtnTooltip}",
-						press: this.onAddPolicyEnforcementBtnPress.bind(this)
+						press: this._onAddPolicyEnforcementBtnPress.bind(this)
 					}));
 					oToolbar.addContent(new OverflowToolbarButton({
 						text: "Edit",
 						icon: "sap-icon://edit",
 						enabled: "{viewModel>/EditButtonEnabled}",
 						tooltip: "{i18n>txtPolEnforcementEditBtnTooltip}",
-						press: this.onEditPolicyEnforcementButtonPress.bind(this)
+						press: this._onEditPolicyEnforcementButtonPress.bind(this)
 					}));
 					oToolbar.addContent(new OverflowToolbarButton({
 						text: "Delete",
 						icon: "sap-icon://delete",
 						enabled: "{viewModel>/DeleteButtonEnabled}",
 						tooltip: "{i18n>txtPolEnforcementDelBtnTooltip}",
-						press: this.onDeletePolicyEnforcementButtonPress.bind(this)
+						press: this._onDeletePolicyEnforcementButtonPress.bind(this)
 					}));
 					oToolbar.addContent(new OverflowToolbarButton({
 						text: "Sort",
 						icon: "sap-icon://sort",
 						tooltip: "Sort",
-						press: this.onSort.bind(this)
+						press: this._onPolicyEnforcementSortButtonPress.bind(this)
 					}));
 				}
 			},
-			onSort:function(){},
+			/**
+			 * Displays an error message to the user by parsing OData error responses.
+			 * Extracts error messages from various possible locations in the error object and displays them in a MessageBox.
+			 * Handles both JSON-formatted error responses and XML-formatted responses as fallback.
+			 *
+			 * @function displayErrorMessage
+			 * @param {object} oError - The error object returned from OData operations.
+			 * @param {string} [oError.responseText] - The response text containing error details in JSON or XML format.
+			 * @public
+			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
+			 * @returns {void}
+			 *
+			 * @description
+			 * Error extraction priority:
+			 * 1. Attempts to parse `oError.responseText` as JSON
+			 * 2. Looks for error message in `errorBody.error.message.value`
+			 * 3. Falls back to `errorBody.error.errordetails[0].message`
+			 * 4. If JSON parsing fails, extracts message from XML using jQuery selector
+			 * 5. Defaults to "An unknown error occurred." if no error details found
+			 * - Logs parsing errors using sap.base.Log
+			 * - Displays the final error message using sap.m.MessageBox with custom style class "PlDacMessageBox"
+			 */
+			displayErrorMessage: function (oError) {
+				var message = "An unknown error occurred.";
+				if (oError && oError.responseText) {
+					try {
+						var errorBody = JSON.parse(oError.responseText);
+						if (errorBody.error && errorBody.error.message && errorBody.error.message.value) {
+							message = errorBody.error.message.value;
+						} else if (errorBody.error && errorBody.error.errordetails && errorBody.error.errordetails.length > 0) {
+							message = errorBody.error.errordetails[0].message;
+						}
+					} catch (e) {
+						Log.error(e);
+						// Handle cases where response body might not be valid JSON
+						message = $(oError.response.body).find('message').first().text();
+					}
+				}
+				MessageBox.error(message, { styleClass: "PlDacMessageBox" }); // Display using sap.m.MessageBox
+			},
+			/**
+			 * Event handler for the Policy Enforcement sort button press event.
+			 * Toggles the sort order of the table between ascending and descending based on the Policy field.
+			 * Updates the view model with the current sort order state.
+			 *
+			 * @function _onPolicyEnforcementSortButtonPress
+			 * @param {sap.ui.base.Event} oEvent - The button press event object.
+			 * @private
+			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
+			 * @returns {void}
+			 *
+			 * @description
+			 * - Retrieves the table reference from the event source's parent hierarchy
+			 * - Checks current sort order from view model (`/SortOrder`)
+			 * - If current order is "asc":
+			 *   - Sets sort order to "desc" in view model
+			 *   - Sorts table by "Policy" field in descending order (false)
+			 * - If current order is "desc" or not set:
+			 *   - Sets sort order to "asc" in view model
+			 *   - Sorts table by "Policy" field in ascending order (true)
+			 * - Uses sap.ui.model.Sorter to apply sorting to the table items binding
+			 */
+			_onPolicyEnforcementSortButtonPress: function (oEvent) {
+				var oView = this.getView(), oViewModel = oView.getModel("viewModel"),
+					oTable = oEvent.getSource().getParent().getParent();
+				if (oViewModel.getProperty("/SortOrder") == "asc") {
+					oViewModel.setProperty("/SortOrder", "desc");
+					oTable.getBinding("items").sort([new Sorter("Policy", false)]);
+				} else {
+					oViewModel.setProperty("/SortOrder", "asc");
+					oTable.getBinding("items").sort([new Sorter("Policy", true)]);
+				}
+			},
+			onSuggestionItemSelected: function (oEvent) {
+				var oView = this.getView(),
+					oCtx = oEvent.getParameter("selectedRow").getBindingContext().getObject();
+			//	this.oPolicyNameInput = oView.byId("idPEPPolicyName");
+				oView.getModel("viewModel").setProperty("/Data/PolicyDesc", oCtx.PolicyDesc);
+				this.validatePolicyInput(oCtx.Policy);
+			},
+			/**
+			 * Event handler for the policy name input change event.
+			 * Validates and formats the policy name input as the user types.
+			 * Converts input to uppercase and triggers validation when the input length exceeds 6 characters.
+			 *
+			 * @function onPolicyNameInputChange
+			 * @param {*} oEvent - The input change event object.
+			 * @param {string} oEvent.getParameter("newValue") - The new value entered by the user.
+			 * @public
+			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
+			 * @returns {void}
+			 *
+			 * @description
+			 * - Retrieves the new input value from the event
+			 * - Clears any existing error states on the input control and view model
+			 * - Converts the input value to uppercase
+			 * - Clears the value state text
+			 * - If the input length exceeds 6 characters:
+			 *   - Calls `validatePolicyInput()` to check if the policy exists in the backend
+			 * - Updates view model properties:
+			 *   - `/ErrorState` → "None"
+			 *   - `/ErrorMessage` → ""
+			 */
+			onPolicyNameInputChange: function (oEvent) {
+				var oView = this.getView(), sNewValue = oEvent.getParameter("newValue"), oViewModel = oView.getModel("viewModel"),
+					oInput = oEvent.getSource();
+				oViewModel.setProperty("/ErrorState", "None");
+				oViewModel.setProperty("/ErrorMessage", "");
+				oInput.setValue(oInput.getValue().toUpperCase());
+				this.oPolicyNameInput = oInput;
+				if (sNewValue.length > 6) {
+					this.validatePolicyInput(sNewValue);
+				}
+			}
 		});
 	}
 );

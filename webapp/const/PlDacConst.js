@@ -5,6 +5,7 @@ sap.ui.define([], function () {
         ENTITY_SET_DATAATTRIBUTE_PATH:"/DataAttrSet",
         ENTITY_SET_USERATTRIBUTE_PATH:"/UserAttrSet",
         ENTITY_SET_DATARESTRICTIONENFORCEMENT:"/DataRestrictionEnforcementSet",
+        ENTITY_SET_DATAMASKINGENFORCEMENT:"/DataMaskingEnforcementSet",
         ROUTE_PATH_INFO:"Info",
         ROUTE_PATH_MASTER:"RouteMaster",
         ROUTE_PATH_FUNCTIONALITY:"Functionality",

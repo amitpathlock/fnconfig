@@ -42,12 +42,12 @@
                 enableAutoBinding="true"
                 demandPopin="true"
                 class="sapUiResponsiveContentPadding"
-                requestAtLeastFields="Policy,PolicyResult,IsActive"
+                requestAtLeastFields="Policy,PolicyResult,IsActive,AttributeId"
                 beforeRebindTable="onBeforeRebindTable"
                placeToolbarInTable="true"
             >
             <!-- @ui5ignore -->
-                <Table mode="SingleSelectLeft" id="idTableDataRestrictionEnforcement" 
+                <Table mode="SingleSelectLeft" id="idTableDataMaskingEnforcement" 
                     selectionChange="onTableSelectionChange"
                     sticky="ColumnHeaders,HeaderToolbar"
                 >
@@ -91,11 +91,8 @@
                                 <ObjectHeader title="{to_Policy/PolicyName}" class="plDacObjectHeader">
                                     <ObjectAttribute class="plDacObjectAttribute" title="Description" text="{to_Policy/PolicyDesc}" />
                                     <!-- @ui5ignore -->
-                                    <ObjectAttribute text="{i18n>txtAssignedAttributes}"  	active="true" press=".onPressLink" >
-                                        <customData>
-                                            <core:CustomData  value='{/}'/>
-                                            <core:CustomData  value='{to_Policy}'/>
-                                        </customData>
+                                    <ObjectAttribute  title="Attribute" text="{AttributeId}"  	 >
+                                       
                                     </ObjectAttribute>
                                 </ObjectHeader >
                                 <ObjectStatus tooltip="{=${IsActive}?'Active':'None'}" state="{=${IsActive}?'Success':'None'}" icon="{=${IsActive}?'sap-icon://status-positive':'sap-icon://status-inactive'}" />
