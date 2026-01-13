@@ -72,7 +72,7 @@
                     </columns>
                     <!-- Rows -->
                     <items>
-                        <ColumnListItem>
+                        <ColumnListItem >
                             <customData>
                                 <core:CustomData
                                     key="PolicyName"
@@ -81,10 +81,10 @@
                                 <core:CustomData key="PolicyDesc" value="{to_Policy/PolicyDesc}" />
                             </customData>
                             <cells>
-                                <ObjectHeader title="{to_Policy/PolicyName}" class="plDacObjectHeader">
-                                    <ObjectAttribute class="plDacObjectAttribute" title="Description" text="{to_Policy/PolicyDesc}" />
+                                <ObjectHeader title="{to_Policy/PolicyName}" class="plDacObjectHeader plDacPolicyName">
+                                    <ObjectAttribute class="plDacObjectAttribute"  title="Description" text="{to_Policy/PolicyDesc}" />
                                     <!-- @ui5ignore -->
-                                    <ObjectAttribute text="{i18n>txtAssignedAttributes}"  	active="true" press=".onPressLink" >
+                                    <ObjectAttribute text="{i18n>txtAssignedAttributes}"  class="plDacAssignedAttribute" 	active="true" press=".onPressLink" >
                                         <customData>
                                             <core:CustomData  value='{/}'/>
                                             <core:CustomData  value='{to_Policy}'/>

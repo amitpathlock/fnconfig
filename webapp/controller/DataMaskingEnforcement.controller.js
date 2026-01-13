@@ -352,6 +352,9 @@ sap.ui.define([
 						oViewModel.setProperty("/AttrErrorState", "None");
 						oViewModel.setProperty("/AttrErrorMessage", "");
 						oViewModel.setProperty("/Data/AttributeId", oData.AttributeId);
+					}else{
+						oViewModel.setProperty("/AttrErrorState", "Error");
+						oViewModel.setProperty("/AttrErrorMessage", JSON.parse(oData.responseText).error.message.value);
 					}
 				}.bind(this),
 				// Error callback function

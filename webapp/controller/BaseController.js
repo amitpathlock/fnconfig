@@ -508,6 +508,9 @@ sap.ui.define(
 					aFormElements = oForm.getAggregation("formContainers")[0].getAggregation("formElements");
 				if (aFormElements[0].getAggregation("fields")[0].getEnabled()) {
 					aFormElements[0].getAggregation("fields")[0].focus();
+					if(oView.getModel("viewModel").getProperty("/VisibleAttribute")){
+						aFormElements[1].getAggregation("fields")[0].removeAllTokens();
+					}
 				} else {
 					aFormElements[2].getAggregation("fields")[0].focus();
 					aFormElements[0].getAggregation("fields")[0].setTokens([new Token({text:oData.PolicyName+" ("+oData.PolicyDesc+")"})])

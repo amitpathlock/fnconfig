@@ -88,10 +88,10 @@
                                 <core:CustomData key="PolicyDesc" value="{to_Policy/PolicyDesc}" />
                             </customData>
                             <cells>
-                                <ObjectHeader title="{to_Policy/PolicyName}" class="plDacObjectHeader">
+                                <ObjectHeader title="{to_Policy/PolicyName}" class="plDacObjectHeader plDacPolicyName">
                                     <ObjectAttribute class="plDacObjectAttribute" title="Description" text="{to_Policy/PolicyDesc}" />
                                     <!-- @ui5ignore -->
-                                    <ObjectAttribute  title="Attribute" text="{AttributeId}"  	 >
+                                    <ObjectAttribute  title="Attribute" text="{AttributeId}" class="plDacAttributeId" 	 >
                                        
                                     </ObjectAttribute>
                                 </ObjectHeader >

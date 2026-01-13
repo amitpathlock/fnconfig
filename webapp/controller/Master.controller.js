@@ -49,9 +49,9 @@ sap.ui.define([
         _loadActionSet: function () {
             var oFilter, aFilter, oModel = this.getOwnerComponent().getModel();
             oFilter = new Filter("Status", FilterOperator.EQ, 1);
-            //  aFilter = [oFilter];
+              aFilter = [oFilter];
             oModel.read(PlDacConst.ENTITY_SET_ACTION_PATH, {
-                //  filters: aFilter,
+                  filters: aFilter,
                 urlParameters: {
                     "$expand": "to_ActionItem" // Expand to_ActionItem
                 },
