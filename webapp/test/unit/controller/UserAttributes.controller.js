@@ -1,5 +1,5 @@
 sap.ui.define([
-    "pl/dac/apps/fnconfig/controller/DataAttributes.controller",
+    "pl/dac/apps/fnconfig/controller/UserAttributes.controller",
     "sap/ui/base/ManagedObject",
     "sap/ui/core/mvc/View",
     "sap/ui/model/json/JSONModel",
@@ -7,7 +7,7 @@ sap.ui.define([
     "sap/m/MessageBox",
      "sap/ui/comp/smarttable/SmartTable"
 ], function(
-    DataAttributesController,
+    UserAttributesController,
     ManagedObject,
     View,
     JSONModel,
@@ -17,10 +17,10 @@ sap.ui.define([
 ) {
     "use strict";
 
-    QUnit.module("DataAttributes Controller", {
+    QUnit.module("UserAttributes Controller", {
         beforeEach: function() {
             // Create controller instance
-            this.oController = new DataAttributesController();
+            this.oController = new UserAttributesController();
             
             // Create mock view
            this.oViewStub = new View({});
@@ -97,7 +97,7 @@ sap.ui.define([
              this.oViewStub.setModel(this.oViewModel, "viewModel");
              this.oViewStub.setModel(oI18nModelStub, "i18n");
              this.oViewStub.setModel(this.oODataModel);
-            this.oSmartTable = new SmartTable("idTableDataAttributes", {
+            this.oSmartTable = new SmartTable("idTableUserAttributes", {
             entitySet: "DataAttributeSet",
             tableType: "ResponsiveTable",
             showRowCount: true,
@@ -130,7 +130,7 @@ sap.ui.define([
             
             // Mock table
             
-            sinon.stub(this.oViewStub, "byId").withArgs("idTableDataAttributes").returns(this.oTable);
+            sinon.stub(this.oViewStub, "byId").withArgs("idTableUserAttributes").returns(this.oTable);
           //  sinon.stub(this.oViewStub, "getModel").withArgs("viewModel").returns(this.oViewModel);
         },
         afterEach: function() {

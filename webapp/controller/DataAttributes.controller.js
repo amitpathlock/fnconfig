@@ -67,7 +67,10 @@ sap.ui.define([
 			), "viewModel");
 			sap.ui.core.BusyIndicator.hide();
 			this.oAttributeTable = oView.byId("idTableDataAttributes");
-			this.oAttributeTable.removeSelections(true);
+			if(this.oAttributeTable){
+				this.oAttributeTable.removeSelections(true);
+			}
+			
 		},
 
 
@@ -110,7 +113,7 @@ sap.ui.define([
 						MessageBox.success(oBundle.getText("msgDAUpdateSuccessfully", [oEntry.AttributeId]), { styleClass: "PlDacMessageBox" });
 						oModel.refresh();
 						this.oAttributeDialog.close();
-						this.oAttributeTable.removeSelections(true);
+						oView.byId("idTableDataAttributes").removeSelections(true);
 						oView.getModel("viewModel").setProperty("/Data", {});
 						oView.getModel("viewModel").setProperty("/EditButtonEnabled", false);
 						oView.getModel("viewModel").setProperty("/DeleteButtonEnabled", false);
@@ -193,7 +196,7 @@ sap.ui.define([
 				success: function () {
 					MessageBox.success(oBundle.getText("msgDADeleteSucceful", [sAttributeId]), { styleClass: "PlDacMessageBox" });
 					oModel.refresh();
-					that.oAttributeTable.removeSelections(true);
+					oView.byId("idTableDataAttributes").removeSelections(true);
 					oView.getModel("viewModel").setProperty("/Data", {});
 					oView.getModel("viewModel").setProperty("/EditButtonEnabled", false);
 					oView.getModel("viewModel").setProperty("/DeleteButtonEnabled", false);
@@ -208,16 +211,16 @@ sap.ui.define([
 		/*###Event handler of "sap.m.OverflowTolbarButton~press"
 		* ### A method has been defined to implement sorting in the Data Attribute table based on the AttributeId.
 		 */
-		// onSort: function () {
-		// 	var oView = this.getView();
-		// 	if (oView.getModel("viewModel").getProperty("/SortOrder") == "asc") {
-		// 		oView.getModel("viewModel").setProperty("/SortOrder", "desc");
-		// 		oView.byId("idTableDataAttributes").getBinding("items").sort([new Sorter("AttributeId", false)]);
-		// 	} else {
-		// 		oView.getModel("viewModel").setProperty("/SortOrder", "asc");
-		// 		oView.byId("idTableDataAttributes").getBinding("items").sort([new Sorter("AttributeId", true)]);
-		// 	}
-		// },
+		onSort: function () {
+			var oView = this.getView();
+			if (oView.getModel("viewModel").getProperty("/SortOrder") == "asc") {
+				oView.getModel("viewModel").setProperty("/SortOrder", "desc");
+				oView.byId("idTableDataAttributes").getBinding("items").sort([new Sorter("AttributeId", false)]);
+			} else {
+				oView.getModel("viewModel").setProperty("/SortOrder", "asc");
+				oView.byId("idTableDataAttributes").getBinding("items").sort([new Sorter("AttributeId", true)]);
+			}
+		},
 		/** Private method
 		 * ### A method has been defined to show an error message when an exception occurs ###
 		 * ### during CRUD operations in the OData Model.

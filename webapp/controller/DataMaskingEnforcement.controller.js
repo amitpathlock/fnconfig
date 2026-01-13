@@ -97,7 +97,8 @@ sap.ui.define([
 					ExitFullScreen: false,
 					ExitColumn: true,
 					SelectedContextData: null,
-					VisibleAttribute: true
+					VisibleAttribute: true,
+					AttributeNameEnabled:true
 				}
 			), "viewModel");
 			this.oPolicyEnforcementTable = oView.byId("idTableDataMaskingEnforcement");
@@ -128,7 +129,7 @@ sap.ui.define([
 		*/
 		onSavePolicyInforcement: function () {
 			var sPath, oView = this.getView(), oViewModel = oView.getModel("viewModel");
-			var oEntry = oViewModel.getData().Data;
+			var oEntry = oViewModel.getData().Data,sUriKey;
 			if (oEntry.Policy.trim() == "") {
 				oViewModel.setProperty("/ErrorState", "Error");
 				oViewModel.setProperty("/ErrorMessage", "The mandatory field cannot be left blank.");
@@ -141,16 +142,19 @@ sap.ui.define([
 			oEntry.IsActive = oEntry.IsActive ? "X" : "";
 			if (({}).hasOwnProperty.call(oEntry, "__metadata")) {
 				delete oEntry.__metadata;
-				sPath = "/DataMaskingEnforcementSet('" + oEntry.Policy + "')";
+				sUriKey = oEntry.Policy+"~"+oEntry.AttributeId;
+				sPath = "/DataMaskingEnforcementSet('" + sUriKey + "')";
 				oView.getModel().update(sPath, oEntry, {
 					success: function () {
 						MessageBox.success("Entry has been updated");
-						oView.getModel().refresh();
-						this.oPolicyInforcementDialog.close();
+						
+						
 						oViewModel.setProperty("/Data", {});
+						this.oPolicyInforcementDialog.close();
 						this.oPolicyEnforcementTable.removeSelections(true);
 						oViewModel.setProperty("/EditButtonEnabled", false);
 						oViewModel.setProperty("/DeleteButtonEnabled", false);
+						oView.getModel().refresh();
 					}.bind(this),
 					error: function (e) {
 						Log.error(e);
@@ -516,10 +520,12 @@ sap.ui.define([
 		 * this.removeSelectedRecord();
 		 */
 		removeSelectedRecord: function () {
-			var oView = this.getView(), oDataModel = oView.getModel(),
-				oViewModel = oView.getModel("viewModel"), sPolicyName, sPath;
-			sPolicyName = oView.byId("idTableDataMaskingEnforcement").getSelectedItem().getBindingContext().getObject().PolicyName;
-			sPath = "/DataMaskingEnforcementSet('" + sPolicyName + "')";
+			var oView = this.getView(), oDataModel = oView.getModel(),oCTx,
+				oViewModel = oView.getModel("viewModel"), sUriKey, sPath;
+			oCTx = oView.byId("idTableDataMaskingEnforcement").getSelectedItem().getBindingContext().getObject();
+			
+			sUriKey = oCTx.Policy+"~"+oCTx.AttributeId;
+			sPath = "/DataMaskingEnforcementSet('" + sUriKey + "')";
 			oDataModel.remove(sPath, {
 				success: function () {
 					MessageBox.success("Entry has been deleted");

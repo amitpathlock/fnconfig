@@ -64,6 +64,7 @@
                     <!-- @ui5ignore -->
                     <MultiInput  id="idPEPAttributes"  visible="{viewModel>/VisibleAttribute}"
                         showSuggestion="true"
+                        enabled="{viewModel>/AttributeNameEnabled}"
                         showValueHelp="true"  width="100%"
                          valueState="{viewModel>/AttrErrorState}"
                         valueStateText="{viewModel>/AttrErrorMessage}"

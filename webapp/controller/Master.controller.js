@@ -49,37 +49,42 @@ sap.ui.define([
         _loadActionSet: function () {
             var oFilter, aFilter, oModel = this.getOwnerComponent().getModel();
             oFilter = new Filter("Status", FilterOperator.EQ, 1);
-          //  aFilter = [oFilter];
+            //  aFilter = [oFilter];
             oModel.read(PlDacConst.ENTITY_SET_ACTION_PATH, {
-              //  filters: aFilter,
+                //  filters: aFilter,
                 urlParameters: {
                     "$expand": "to_ActionItem" // Expand to_ActionItem
                 },
                 success: function (oData) {
                     var lArr = [], i, j;
-                    for (i = 0; i < oData.results.length; i++) {
-                        var lNodes = [], oNode = {};
-                        for (j = 0; j < oData.results[i].to_ActionItem.results.length; j++) {
-                            lNodes.push({
-                                Name: oData.results[i].to_ActionItem.results[j].Text,
-                                Icon: oData.results[i].to_ActionItem.results[j].Icon,
-                                Target: oData.results[i].to_ActionItem.results[j].Target
-                            });
+                    if (oData && ({}).hasOwnProperty.call(oData, "results")) {
+                        for (i = 0; i < oData.results.length; i++) {
+                            var lNodes = [], oNode = {};
+                            for (j = 0; j < oData.results[i].to_ActionItem.results.length; j++) {
+                                lNodes.push({
+                                    Name: oData.results[i].to_ActionItem.results[j].Text,
+                                    Icon: oData.results[i].to_ActionItem.results[j].Icon,
+                                    Target: oData.results[i].to_ActionItem.results[j].Target
+                                });
+                            }
+                            oNode["Name"] = oData.results[i].Text;
+                            oNode["Icon"] = oData.results[i].Icon;
+                            oNode["Target"] = oData.results[i].Target;
+                            if (lNodes.length > 0) {
+                                oNode["nodes"] = lNodes;
+                            }
+                            lArr.push(oNode);
                         }
-                        oNode["Name"] = oData.results[i].Text;
-                        oNode["Icon"] = oData.results[i].Icon;
-                        oNode["Target"] = oData.results[i].Target;
-                        if (lNodes.length > 0) {
-                            oNode["nodes"] = lNodes;
-                        }
-                        lArr.push(oNode);
+                    }else{
+                        Log.error("Error"+oData);
                     }
+
                     var oJSONModel = new JSONModel(lArr);
                     this.getView().setModel(oJSONModel, "actionData"); // Set local JSON model
                     sap.ui.core.BusyIndicator.hide();
                 }.bind(this), // Bind 'this' to the controller context
                 error: function (oError) {
-                    Log.error("Read failed:"+ oError);
+                    Log.error("Read failed:" + oError);
                     sap.ui.core.BusyIndicator.hide();
                 }
             });

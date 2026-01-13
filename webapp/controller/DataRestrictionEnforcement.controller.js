@@ -140,7 +140,6 @@ sap.ui.define([
 				oView.getModel().update(sPath, oEntry, {
 					success: function () {
 						MessageBox.success("Entry has been updated");
-
 						oViewModel.setProperty("/Data", {});
 						this.oPolicyInforcementDialog.close();
 						this.oPolicyEnforcementTable.removeSelections(true);

@@ -150,6 +150,7 @@ sap.ui.define(
 				oView.getModel("viewModel").setProperty("/AttrNameEnabled", true);
 				oView.getModel("viewModel").setProperty("/ErrorState", "None");
 				oView.getModel("viewModel").setProperty("/ErrorMessage", "");
+				
 				if (!this.oAttributeDialog) {
 					Fragment.load({
 						id: oView.getId(),
@@ -198,6 +199,7 @@ sap.ui.define(
 				var oView = this.getView(), oViewModel = oView.getModel("viewModel"),
 					oSelectedContextData = oViewModel.getProperty("/SelectedContextData");
 				oView.getModel("viewModel").setProperty("/Data", oSelectedContextData);
+				
 				if (!this.oAttributeDialog) {
 					Fragment.load({
 						id: oView.getId(),
@@ -429,6 +431,9 @@ sap.ui.define(
 				oView.getModel("viewModel").setProperty("/Data", oSelectedContextData);
 				oView.getModel("viewModel").setProperty("/ErrorMessage", "");
 				oView.getModel("viewModel").setProperty("/ErrorState", "None");
+				if(oView.getModel("viewModel").getProperty("/VisibleAttribute")){
+					oView.getModel("viewModel").setProperty("/AttributeNameEnabled",false);
+				}
 				if (!this.oPolicyInforcementDialog) {
 					Fragment.load({
 						id: oView.getId(),
@@ -465,6 +470,9 @@ sap.ui.define(
 				oView.getModel("viewModel").setProperty("/PolicyNameEnabled", true);
 				oView.getModel("viewModel").setProperty("/ErrorState", "None");
 				oView.getModel("viewModel").setProperty("/ErrorMessage", "");
+				if(oView.getModel("viewModel").getProperty("/VisibleAttribute")){
+					oView.getModel("viewModel").setProperty("/AttributeNameEnabled",true);
+				}
 				if (!this.oPolicyInforcementDialog) {
 					Fragment.load({
 						id: oView.getId(),
@@ -503,12 +511,15 @@ sap.ui.define(
 				} else {
 					aFormElements[2].getAggregation("fields")[0].focus();
 					aFormElements[0].getAggregation("fields")[0].setTokens([new Token({text:oData.PolicyName+" ("+oData.PolicyDesc+")"})])
+					if(({}).hasOwnProperty.call(oData,"AttributeId")){
+						this._validateAttibuteInput(oData.AttributeId);
+					}
 				}
 			},
 			onSavePolicyInforcement: function () {
 
 			},
-
+			
 			/**
 			 * Event handler for closing the policy enforcement dialog.
 			 * Restores the view model with the selected policy enforcement item's binding context data if an item is selected.
