@@ -434,6 +434,7 @@ sap.ui.define(
 				if(oView.getModel("viewModel").getProperty("/VisibleAttribute")){
 					oView.getModel("viewModel").setProperty("/AttributeNameEnabled",false);
 				}
+				this.clearValidationError();
 				if (!this.oPolicyInforcementDialog) {
 					Fragment.load({
 						id: oView.getId(),
@@ -473,6 +474,7 @@ sap.ui.define(
 				if(oView.getModel("viewModel").getProperty("/VisibleAttribute")){
 					oView.getModel("viewModel").setProperty("/AttributeNameEnabled",true);
 				}
+				this.clearValidationError();
 				if (!this.oPolicyInforcementDialog) {
 					Fragment.load({
 						id: oView.getId(),
@@ -545,6 +547,7 @@ sap.ui.define(
 						this.oPolicyNameInput.removeAllTokens();
 					}
 				}
+				this.clearValidationError();
 			},
 			/**
 			 * Event handler for the SmartTable `beforeRebindTable` event.

@@ -87,6 +87,8 @@ sap.ui.define([
 					PolicyNameEnabled: true,
 					AttrErrorState: "None",
 					AttrErrorMessage: "",
+					ActionErrorState: "None",
+					ActionErrorMessage: "",
 					ErrorState: "None",
 					ErrorMessage: "",
 					ErrorStateDesc: "None",
@@ -133,6 +135,19 @@ sap.ui.define([
 			if (oEntry.Policy.trim() == "") {
 				oViewModel.setProperty("/ErrorState", "Error");
 				oViewModel.setProperty("/ErrorMessage", "The mandatory field cannot be left blank.");
+				oView.byId("idPEPPolicyName").focus();
+				return;
+			}
+			if (!({}).hasOwnProperty.call(oEntry,"AttributeId") || oEntry.AttributeId.trim() == "") {
+				oViewModel.setProperty("/AttrErrorState", "Error");
+				oViewModel.setProperty("/AttrErrorMessage", "The mandatory field cannot be left blank.");
+				oView.byId("idPEPAttributes").focus();
+				return;
+			}
+			if(oEntry.PolicyResult==""){
+				oViewModel.setProperty("/ActionErrorState", "Error");
+				oViewModel.setProperty("/ActionErrorMessage", "The mandatory field cannot be left blank.");
+				oView.byId("idPEPActionResult").focus();
 				return;
 			}
 			delete oEntry.PolicyDesc;
@@ -162,8 +177,17 @@ sap.ui.define([
 					}
 				});
 			} else {
-				this._checkForDuplicateEntry(PlDacConst.ENTITY_SET_DATAMASKINGENFORCEMENT + "('" + oEntry.Policy + "')", oEntry);
+				//this._checkForDuplicateEntry(PlDacConst.ENTITY_SET_DATAMASKINGENFORCEMENT + "('" + oEntry.Policy + "')", oEntry);
 			}
+		},
+		clearValidationError:function(){
+			var oView = this.getView(),oViewModel= oView.getModel("viewModel");
+			oViewModel.setProperty("/ErrorState", "None");
+			oViewModel.setProperty("/ErrorMessage", "");
+			oViewModel.setProperty("/AttrErrorState", "None");
+			oViewModel.setProperty("/AttrErrorMessage", "");
+			oViewModel.setProperty("/ActionErrorState", "None");
+			oViewModel.setProperty("/ActionErrorMessage", "");
 		},
 		/**
 		 * Event handler triggered when the attribute value help is requested.

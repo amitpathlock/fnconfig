@@ -129,6 +129,12 @@ sap.ui.define([
 				oViewModel.setProperty("/ErrorMessage", "The mandatory field cannot be left blank.");
 				return;
 			}
+			if(oEntry.PolicyResult==""){
+				oViewModel.setProperty("/ActionErrorState", "Error");
+				oViewModel.setProperty("/ActionErrorMessage", "The mandatory field cannot be left blank.");
+				oView.byId("idPEPActionResult").focus();
+				return;
+			}
 			delete oEntry.PolicyDesc;
 			delete oEntry.PolicyName;
 			delete oEntry.to_Policy;
@@ -398,6 +404,13 @@ sap.ui.define([
 					Log.error("Error reading policy details:" + oError);
 				}
 			});
+		},
+		clearValidationError:function(){
+			var oView = this.getView(),oViewModel= oView.getModel("viewModel");
+			oViewModel.setProperty("/ErrorState", "None");
+			oViewModel.setProperty("/ErrorMessage", "");
+			oViewModel.setProperty("/ActionErrorState", "None");
+			oViewModel.setProperty("/ActionErrorMessage", "");
 		},
 		/**
 		 * Lifecycle hook called after the controller's view is rendered.

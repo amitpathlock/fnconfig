@@ -95,7 +95,11 @@
                      <!-- @ui5ignore -->
                    
                     <Label text="{viewModel>/Action}" required="true"/>
-                    <Select 	selectedKey="{viewModel>/Data/PolicyResult}">
+                      <!-- @ui5ignore -->
+                    <Select 	selectedKey="{viewModel>/Data/PolicyResult}" id="idPEPActionResult"
+                     valueState="{viewModel>/ActionErrorState}"
+                        valueStateText="{viewModel>/ActionErrorMessage}"
+                    >
                         <items>
                             <core:Item key="" text="" />
                             <core:Item key="A" text="ALLOWED" />

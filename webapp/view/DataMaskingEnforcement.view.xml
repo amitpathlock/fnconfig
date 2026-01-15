@@ -15,7 +15,7 @@
         <customHeader>
             <Toolbar design="Transparent" class="plDacToolbar">
                 <core:Icon src="sap-icon://product" />
-                <Title text="{i18n>titPolInforcementDataRestriction}"/>
+                <Title text="{i18n>titPolInforcementDataMasking}"/>
                 <ToolbarSpacer/>
                 <!-- @ui5ignore -->
                 <OverflowToolbarButton type="Transparent" icon="sap-icon://full-screen" press="handleFullScreen" tooltip="Enter Full Screen Mode" visible="{viewModel>/FullScreen}"/>
