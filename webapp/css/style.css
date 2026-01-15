@@ -429,11 +429,13 @@ ul.plDacSections {
 .plDacObjectHeader .sapMOH{padding:0.3rem;}
 .plDacObjectHeader .sapMOHBottomRow{margin-top:1px;}
 .plDacObjectHeader .sapMOHBottomRow .sapMOHAttrRow{margin-top:1px;}
-/*
+.plDacDynamicPageTitle{background: #23c375 !important;}
+.plDacDynamicPageTitle .sapMTitleNoWrap{color:#fff;font-size: 17px !important;}
+.plDacDynamicPageTitle .sapUiIcon{color:#fff;}
+.plDacDynamicPageTitle .sapMLabelTextWrapper{color:#fff;}
 .plDacPolicyName .sapMTextLineClamp{ font-weight: 700 !important; color: #0854a0 !important;}
-.plDacAttributeId>.sapMObjectAttributeText{color: #ff6900 !important;}
+/* .plDacAttributeId>.sapMObjectAttributeText{color: #ff6900 !important;} */
 .plDacAssignedAttribute>span{color: rgb(20 135 82 ) !important;}
-.plDacObjectAttribute>.sapMObjectAttributeText{color:#fcb900 !important;}
+/* .plDacObjectAttribute>.sapMObjectAttributeText{color:#fcb900 !important;}
 .plDacObjectAttribute>.sapMObjectAttributeTitle{color:#02478b !important;}
-.plDacAttributeId>.sapMObjectAttributeTitle{color:#02478b !important;}
-*/
+.plDacAttributeId>.sapMObjectAttributeTitle{color:#02478b !important;} */

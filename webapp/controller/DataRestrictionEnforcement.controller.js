@@ -388,10 +388,10 @@ sap.ui.define([
 			sPath = "/DataRestrictionEnforcementSet(Policy='" + oCtx.Policy + "')";
 			oModel.read(sPath, {
 				urlParameters: {
-					"$expand": "to_Attr" // Expand to_ActionItem
+					"$expand": "to_Attr,to_Policy" // Expand to_ActionItem
 				},
 				success: function (oData) {
-					var oModel = new JSONModel({ PolicyName: oCtx.PolicyName, items: oData.to_Attr.results });
+					var oModel = new JSONModel({ PolicyName: oCtx.PolicyName, PolicyDesc:oData.to_Policy.PolicyDesc, items: oData.to_Attr.results });
 					this._oPopover.setModel(oModel, "popOverModel");
 				}.bind(this),
 				error: function (oError) {
