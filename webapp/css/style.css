@@ -433,6 +433,7 @@ ul.plDacSections {
 .plDacDynamicPageTitle .sapMTitleNoWrap{color:#fff;font-size: 17px !important;}
 .plDacDynamicPageTitle .sapUiIcon{color:#fff;}
 .plDacDynamicPageTitle .sapMLabelTextWrapper{color:#fff;}
+.plDacDynamicPageTitle .sapMLabel {color:#fff !important;}
 .plDacPolicyName .sapMTextLineClamp{ font-weight: 700 !important; color: #0854a0 !important;}
 /* .plDacAttributeId>.sapMObjectAttributeText{color: #ff6900 !important;} */
 .plDacAssignedAttribute>span{color: rgb(20 135 82 ) !important;}
