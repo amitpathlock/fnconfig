@@ -177,7 +177,7 @@ sap.ui.define([
 					}
 				});
 			} else {
-				//this._checkForDuplicateEntry(PlDacConst.ENTITY_SET_DATAMASKINGENFORCEMENT + "('" + oEntry.Policy + "')", oEntry);
+				this._checkForDuplicateEntry(PlDacConst.ENTITY_SET_DATAMASKINGENFORCEMENT + "('" + oEntry.Policy + "')", oEntry);
 			}
 		},
 		clearValidationError:function(){
@@ -502,12 +502,17 @@ sap.ui.define([
 		 * });
 		 */
 		_createEntry: function (oEntry) {
-			var oBundle, oView = this.getView(), oDataModel = oView.getModel(),oViewModel=oView.getModel("viewModel");
+			var sMSGUri,oBundle, oView = this.getView(), oDataModel = oView.getModel(),oViewModel=oView.getModel("viewModel");
 			oEntry.IsActive = oEntry.IsActive == true ? 'X' : '';
 			oBundle = oView.getModel("i18n").getResourceBundle();
+			if(oViewModel.getProperty("/SelectedContextData") && oViewModel.getProperty("/SelectedContextData").PolicyName){
+				sMSGUri = oViewModel.getProperty("/SelectedContextData").PolicyName +"~"+oEntry.AttributeId;
+			}else{
+				sMSGUri = oEntry.Policy+"~"+oEntry.AttributeId;
+			}
 			oDataModel.create(PlDacConst.ENTITY_SET_DATAMASKINGENFORCEMENT, oEntry, {
 				success: function () {
-					MessageBox.success(oBundle.getText("msgPolEnforcementSuccessful", [oEntry.Policy]), { styleClass: "PlDacMessageBox" });
+					MessageBox.success(oBundle.getText("msgPolEnforcementSuccessful", [sMSGUri]), { styleClass: "PlDacMessageBox" });
 					this.oPolicyEnforcementTable.removeSelections(true);
 					oViewModel.setProperty("/Data", {});
 					this.oPolicyInforcementDialog.close();
@@ -547,20 +552,27 @@ sap.ui.define([
 		 * this.removeSelectedRecord();
 		 */
 		removeSelectedRecord: function () {
-			var oView = this.getView(), oDataModel = oView.getModel(),oCTx,
+			var sMSGUri, oView = this.getView(), oDataModel = oView.getModel(),oCTx,oBundle = oView.getModel("i18n").getResourceBundle(),
 				oViewModel = oView.getModel("viewModel"), sUriKey, sPath;
 			oCTx = oView.byId("idTableDataMaskingEnforcement").getSelectedItem().getBindingContext().getObject();
 			
 			sUriKey = oCTx.Policy+"~"+oCTx.AttributeId;
+			if(oViewModel.getProperty("/SelectedContextData") && oViewModel.getProperty("/SelectedContextData").PolicyName){
+				sMSGUri = oViewModel.getProperty("/SelectedContextData").PolicyName +"~"+oCTx.AttributeId;
+			}else{
+				sMSGUri = oCTx.Policy+"~"+oCTx.AttributeId;
+			}
 			sPath = "/DataMaskingEnforcementSet('" + sUriKey + "')";
 			oDataModel.remove(sPath, {
 				success: function () {
-					MessageBox.success("Entry has been deleted");
-					oDataModel.refresh();
+					MessageBox.success(oBundle.getText("msgPolEnforcementDeleteSucceful", [sMSGUri]), { styleClass: "PlDacMessageBox" });
+				
+					
 					this.oPolicyEnforcementTable.removeSelections(true);
 					oViewModel.setProperty("/Data", {});
 					oViewModel.setProperty("/EditButtonEnabled", false);
 					oViewModel.setProperty("/DeleteButtonEnabled", false);
+					oDataModel.refresh();
 				}.bind(this),
 				error: function () {
 					MessageBox.error("Error has occured while removing record");
