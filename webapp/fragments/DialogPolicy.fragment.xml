@@ -1,52 +1,30 @@
-    <core:FragmentDefinition
-        xmlns="sap.m"
-        xmlns:core="sap.ui.core"
-        xmlns:f="sap.ui.layout.form">
-        <Dialog
-            icon="{viewModel>/Icon}"
-            title="{viewModel>/Title}">
-            <content>
-                <f:SimpleForm
-                    editable="true"
-                    layout="ResponsiveGridLayout"
-                    labelSpanXL="3"
-                    labelSpanL="3"
-                    labelSpanM="3"
-                    labelSpanS="12"
-                    adjustLabelSpan="false"
-                    emptySpanXL="4"
-                    emptySpanL="4"
-                    emptySpanM="4"
-                    emptySpanS="0"
-                    columnsXL="1"
-                    columnsL="1"
-                    columnsM="1"
-                    singleContainerFullSize="false">
-                    <f:content>
-                      <!-- @ui5ignore -->
-                        <Label text="{viewModel>/Name}"  required="true"/>
-                         <!-- @ui5ignore -->
-                        <Input enabled="{viewModel>/PolicyNameEnabled}" 
-                        valueState="{viewModel>/ErrorState}"
-                        valueStateText="{viewModel>/ErrorMessage}"
-                        
-                        liveChange="onInputChange"   value="{viewModel>/Data/PolicyName}" />
-                       <Label text="{viewModel>/Description}" required="true"/>
-                        <Input value="{viewModel>/Data/PolicyDesc}" 
-                         valueState="{viewModel>/ErrorStateDesc}"
-                        valueStateText="{viewModel>/ErrorMessageDesc}"
-                         />
-                        <!-- Add more form fields as needed -->
-                    </f:content>
-                </f:SimpleForm>
-            </content>
-            <beginButton>
-             <!-- @ui5ignore -->
-                <Button text="Save" press="onSave" />
-            </beginButton>
-            <endButton>
-             <!-- @ui5ignore -->
-                <Button text="Cancel" press="onCloseDialog" />
-            </endButton>
-        </Dialog>
-    </core:FragmentDefinition>
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:f="sap.ui.layout.form">
+   <!-- @ui5ignore -->
+   <Dialog class="PlDacDailogBox" 
+   beforeOpen="onBeforePolAdminPolicyDialogOpened"
+   contentWidth="600px" resizable="true" icon="{viewModel&gt;/Icon}" title="{viewModel&gt;/Title}">
+      <content>
+         <!-- @ui5ignore -->
+         <f:SimpleForm editable="true" labelSpanXL="12" labelSpanL="12" labelSpanM="12" labelSpanS="12" layout="ResponsiveGridLayout" singleContainerFullSize="false">
+            <f:content>
+               <!-- @ui5ignore -->
+               <Label text="{viewModel&gt;/Name}" required="true" />
+               <!-- @ui5ignore -->
+               <Input id="idPolAdminPolName" enabled="{viewModel&gt;/PolicyNameEnabled}" valueState="{viewModel&gt;/PolNameErrorState}" valueStateText="{viewModel&gt;/PolNameErrorMessage}" liveChange="onInputChange" value="{viewModel&gt;/Data/PolicyName}" />
+               <Label text="{viewModel&gt;/Description}" required="true" />
+              <!-- @ui5ignore -->
+               <Input id="idPolAdminPolDesc" value="{viewModel&gt;/Data/PolicyDesc}" valueState="{viewModel&gt;/PolDescErrorState}" valueStateText="{viewModel&gt;/PolDescErrorMessage}" />
+               <!-- Add more form fields as needed -->
+            </f:content>
+         </f:SimpleForm>
+      </content>
+      <beginButton>
+         <!-- @ui5ignore -->
+         <Button text="Save" press="onSavePolAdminPolicy" />
+      </beginButton>
+      <endButton>
+         <!-- @ui5ignore -->
+         <Button text="Cancel" press="onCloseDialog" />
+      </endButton>
+   </Dialog>
+</core:FragmentDefinition>

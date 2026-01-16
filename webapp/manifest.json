@@ -49,9 +49,9 @@
             "libs": {
                 "sap.m": {},
                 "sap.ui.core": {},
-                "sap.ui.comp":{"lazy": true},
-                "sap.ui.table":{"lazy": true},
-                "sap.f":{"lazy": true}
+                "sap.ui.comp":{},
+                "sap.ui.table":{},
+                "sap.f":{}
             }
         },
         "contentDensities": {

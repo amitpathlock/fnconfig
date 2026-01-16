@@ -124,6 +124,10 @@ sap.ui.define([
 		onSavePolicyInforcement: function () {
 			var sPath, oView = this.getView(), oViewModel = oView.getModel("viewModel");
 			var oEntry = oViewModel.getData().Data;
+			if(oViewModel.getProperty("/ErrorState")=="Error"){
+				oView.byId("idPEPPolicyName").focus();
+				return;
+			}
 			if (oEntry.Policy.trim() == "") {
 				oViewModel.setProperty("/ErrorState", "Error");
 				oViewModel.setProperty("/ErrorMessage", "The mandatory field cannot be left blank.");

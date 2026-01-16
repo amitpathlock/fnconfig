@@ -4,9 +4,19 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageBox",
-	"sap/ui/model/Sorter"
+	"sap/ui/model/Sorter",
+	"sap/m/ToolbarSpacer",
+	"sap/m/OverflowToolbarButton",
+	"pl/dac/apps/fnconfig/const/PlDacConst"
 ], function (
-	BaseController, Fragment, JSONModel, MessageBox,Sorter
+	BaseController,
+	Fragment,
+	JSONModel,
+	MessageBox,
+	Sorter,
+	ToolbarSpacer,
+	OverflowToolbarButton,
+	PlDacConst
 ) {
 	"use strict";
 
@@ -14,55 +24,115 @@ sap.ui.define([
 		onInit: function () {
 			this._oRouter = this.getOwnerComponent().getRouter();
 			this._oRouter.getRoute("Policies").attachPatternMatched(this._onRouteMatched, this);
-		},
-		onEditBtnPress: function () {
-			var oView = this.getView();
-			var oSelectedContextData = this.getView().byId("idTablePolicies").getSelectedItem().getBindingContext().getObject();
+			this._addAddintionButtonIntoThePolicyAdministratorTableToolbar(this.getView().byId("idSmartPolAdminTable"));
 
-			oView.getModel("viewModel").setProperty("/Data", oSelectedContextData);
-			if (!this._oFormUserAttrDialog) {
-				Fragment.load({
-					id: oView.getId(),
-					name: "pl.dac.apps.fnconfig.fragments.DialogPolicy", // Path to your fragment
-					controller: this // Assign the current controller
-				}).then(function (oDialog) {
-					this._oFormUserAttrDialog = oDialog;
-					oView.addDependent(oDialog); // Add dialog as dependent of the view
-					oDialog.open();
-				}.bind(this));
-			} else {
-				this._oFormUserAttrDialog.open();
-			}
-			oView.getModel("viewModel").setProperty("/PolicyNameEnabled", false);
 		},
-		onAddBtnPress: function () {
+		/**
+			 * Adds action buttons (Add, Edit, Delete, Sort) to the Policy Enforcement SmartTable toolbar.
+			 * This method dynamically populates the toolbar with overflow buttons if it hasn't been initialized yet.
+			 * The buttons are bound to their respective event handlers and include proper icons, tooltips, and enable/disable states.
+			 *
+			 * @function addAddintionButtonIntoThePolicyEnforcementTableToolbar
+			 * @param {sap.ui.comp.smarttable.SmartTable} oSmartTable - The SmartTable control whose toolbar should be enhanced with action buttons.
+			 * @private
+			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
+			 * @returns {void}
+			 *
+			 * @description
+			 * - Retrieves the toolbar from the provided SmartTable
+			 * - Checks if the toolbar is empty (not yet initialized)
+			 * - If empty, adds the following controls in sequence:
+			 *   1. ToolbarSpacer - for spacing
+			 *   2. Add Button - opens the add policy enforcement dialog
+			 *   3. Edit Button - opens the edit policy enforcement dialog (enabled based on selection)
+			 *   4. Delete Button - deletes selected policy enforcement (enabled based on selection)
+			 *   5. Sort Button - triggers sort functionality
+			 * - All buttons are configured with appropriate icons, text, tooltips, and press event handlers
+			* - Edit and Delete buttons are bound to the view model's button enable state
+		*/
+		_addAddintionButtonIntoThePolicyAdministratorTableToolbar: function (oSmartTable) {
+			var oToolbar = oSmartTable.getToolbar();
+			if (oToolbar.getContent().length == 0) {
+				oToolbar.addContent(new ToolbarSpacer());
+				oToolbar.addContent(new OverflowToolbarButton({
+					text: "Add",
+					icon: "sap-icon://add",
+					tooltip: "{i18n>toolTipAddPolicy}",
+					press: this._onAddPolicyPolAdminButtonPress.bind(this)
+				}));
+				oToolbar.addContent(new OverflowToolbarButton({
+					text: "Edit",
+					icon: "sap-icon://edit",
+					enabled: "{viewModel>/EditButtonEnabled}",
+					tooltip: "{i18n>toolTipEditPolicy}",
+					press: this._onEditPolicyPoladminButtonPress.bind(this)
+				}));
+				oToolbar.addContent(new OverflowToolbarButton({
+					text: "Delete",
+					icon: "sap-icon://delete",
+					enabled: "{viewModel>/DeleteButtonEnabled}",
+					tooltip: "{i18n>toolTipDelPolicy}",
+					press: this._onDeletePolicyPolAdminButtonPress.bind(this)
+				}));
+				oToolbar.addContent(new OverflowToolbarButton({
+					text: "Sort",
+					icon: "sap-icon://sort",
+					tooltip: "Sort",
+					//press: this._onPolicyEnforcementSortButtonPress.bind(this)
+				}));
+			}
+		},
+		_onAddPolicyPolAdminButtonPress: function () {
 			var oView = this.getView();
 			oView.getModel("viewModel").setProperty("/Data", { PolicyName: "", PolicyDesc: "", Policy: "" });
 
-			if (!this._oFormUserAttrDialog) {
+			if (!this._oDialogPolAdminPolicies) {
 				Fragment.load({
 					id: oView.getId(),
 					name: "pl.dac.apps.fnconfig.fragments.DialogPolicy", // Path to your fragment
 					controller: this // Assign the current controller
 				}).then(function (oDialog) {
-					this._oFormUserAttrDialog = oDialog;
+					this._oDialogPolAdminPolicies = oDialog;
 					oView.addDependent(oDialog); // Add dialog as dependent of the view
 					oDialog.open();
 				}.bind(this));
 			} else {
-				this._oFormUserAttrDialog.open();
+				this._oDialogPolAdminPolicies.open();
 			}
 		},
+		_onEditPolicyPoladminButtonPress: function () {
+			var oView = this.getView();
+			var oSelectedContextData =oView.byId("idTablePolAdminPolicies").getSelectedItem().getBindingContext().getObject();
+
+			oView.getModel("viewModel").setProperty("/Data", oSelectedContextData);
+			if (!this._oDialogPolAdminPolicies) {
+				Fragment.load({
+					id: oView.getId(),
+					name: "pl.dac.apps.fnconfig.fragments.DialogPolicy", // Path to your fragment
+					controller: this // Assign the current controller
+				}).then(function (oDialog) {
+					this._oDialogPolAdminPolicies = oDialog;
+					oView.addDependent(oDialog); // Add dialog as dependent of the view
+					oDialog.open();
+				}.bind(this));
+			} else {
+				this._oDialogPolAdminPolicies.open();
+			}
+			oView.getModel("viewModel").setProperty("/PolicyNameEnabled", false);
+		},
+	
 		onCloseDialog: function () {
-			if (this._oFormUserAttrDialog) {
-				this._oFormUserAttrDialog.close();
+			var oView = this.getView();
+			if (this._oDialogPolAdminPolicies) {
+				this._oDialogPolAdminPolicies.close();
+				oView.byId("idTablePolicies").removeSelections(true);
 			}
 		},
 		_onRouteMatched: function () {
-			//	this.getView().byId("idSmartTablePolicies").setEnableCopy(false);
-			var oBundle = this.getView().getModel("i18n").getResourceBundle();
+			
+			var oView=this.getView(), oBundle = oView.getModel("i18n").getResourceBundle();
 
-			this.getView().setModel(new JSONModel(
+			oView.setModel(new JSONModel(
 				{
 					Name: oBundle.getText("lblPolicyName"),
 					Description: oBundle.getText("lblDescription"),
@@ -76,10 +146,10 @@ sap.ui.define([
 						PolicyDesc: ""
 					},
 					PolicyNameEnabled: true,
-					ErrorState: "None",
-					ErrorMessage: "",
-					ErrorStateDesc: "None",
-					ErrorMessageDesc: "",
+					PolNameErrorState: "None",
+					PolNameErrorMessage: "",
+					PolDescErrorState: "None",
+					PolDescErrorMessage: "",
 					DeleteButtonEnabled: false,
 					FullScreen: true,
 					ExitFullScreen: false,
@@ -90,71 +160,105 @@ sap.ui.define([
 			sap.ui.core.BusyIndicator.hide();
 		},
 		onTableSelectionChange: function () {
-			this.getView().getModel("viewModel").setProperty("/EditButtonEnabled", true);
-			this.getView().getModel("viewModel").setProperty("/DeleteButtonEnabled", true);
+			var oView = this.getView();
+			oView.getModel("viewModel").setProperty("/EditButtonEnabled", true);
+			oView.getModel("viewModel").setProperty("/DeleteButtonEnabled", true);
 
 		},
-		onInputChange: function () {
-			/*var sNewValue = oEvent.getParameter("newValue");
-			var oInput = oEvent.getSource();
-			oInput.setValueState("None");
-			this.getView().getModel("viewModel").setProperty("/ErrorState", "None");
-			this.getView().getModel("viewModel").setProperty("/ErrorMessage", "");
-			oInput.setValue(oInput.getValue().toUpperCase());
-			oInput.setValueStateText("");
-			if (sNewValue.length < 6) { // Example validation rule
-				this.getView().getModel("viewModel").setProperty("/ErrorState", "Error");
-				this.getView().getModel("viewModel").setProperty("/ErrorMessage", "Invalid input");
-			} else {
-				if (sNewValue.split(".")[0] != "USER") {
-					this.getView().getModel("viewModel").setProperty("/ErrorState", "Error");
-					this.getView().getModel("viewModel").setProperty("/ErrorMessage", "An attribute name should begin with \"USER.\" followed by the specific attribute name.");
-				}
-			}*/
-		},
-		onSave: function () {
-			var sPath;
-			var oEntry = this.getView().getModel("viewModel").getData().Data;
+	
+		onSavePolAdminPolicy: function () {
+			var sPath, oView = this.getView(), oViewModel = oView.getModel("viewModel"),
+				oDataModel = oView.getModel();
+			var oEntry = oViewModel.getProperty("/Data");
 			if (oEntry.PolicyName.trim() == "") {
-				this.getView().getModel("viewModel").setProperty("/ErrorState", "Error");
-				this.getView().getModel("viewModel").setProperty("/ErrorMessage", "The mandatory field cannot be left blank.");
+				oViewModel.setProperty("/PolNameErrorState", "Error");
+				oViewModel.setProperty("/PolNameErrorMessage", "The mandatory field cannot be left blank.");
+				oView.byId("idPolAdminPolName").focus();
 				return;
 			}
 			if (oEntry.PolicyDesc.trim() == "") {
-				this.getView().getModel("viewModel").setProperty("/ErrorStateDesc", "Error");
-				this.getView().getModel("viewModel").setProperty("/ErrorMessageDesc", "The mandatory field cannot be left blank.");
+				oViewModel.setProperty("/PolDescErrorState", "Error");
+				oViewModel.setProperty("/PolDescErrorMessage", "The mandatory field cannot be left blank.");
+				oView.byId("idPolAdminPolDesc").focus();
 				return;
 			}
 			if (({}).hasOwnProperty.call(oEntry, "__metadata")) {
 
 				sPath = "/PolicySet('" + oEntry.Policy + "')";
-				this.getView().getModel().update(sPath, oEntry, {
+				oDataModel.update(sPath, oEntry, {
 					success: function () {
 						MessageBox.success("Entry has been updated");
-						this.getView().getModel().refresh();
-						this._oFormUserAttrDialog.close();
+						oView.byId("idTablePolicies").removeSelections(true);
+						oDataModel.refresh();
+						this._oDialogPolAdminPolicies.close();
 					}.bind(this),
 					error: function () {
 						MessageBox.error("Error has occured while updating record");
 					}
 				});
 			} else {
-				sPath = '/PolicySet';
 				oEntry.Policy = oEntry.PolicyName;
-				this.getView().getModel().create(sPath, oEntry, {
+				this._checkForDuplicateEntry(PlDacConst.ENTITY_SET_POLICIES + "(" + oEntry.Policy + ")", oEntry);
+				
+			}
+		},
+		onBeforePolAdminPolicyDialogOpened: function (oEvent) {
+			var oDailog = oEvent.getSource(), oView = this.getView(), oData = oView.getModel("viewModel").getProperty("/Data"),
+				oForm = oDailog.getContent()[0].getAggregation("form"),
+				aFormElements = oForm.getAggregation("formContainers")[0].getAggregation("formElements");
+			if (aFormElements[0].getAggregation("fields")[0].getEnabled()) {
+				aFormElements[0].getAggregation("fields")[0].focus();
+			} else {
+				aFormElements[1].getAggregation("fields")[0].focus();
+			}
+			this._removelAllValidationError();
+		},
+		_removelAllValidationError:function(){
+			var oView = this.getView();
+			oView.getModel("viewModel").setProperty("/PolNameErrorMessage", "");
+			oView.getModel("viewModel").setProperty("/PolNameErrorState", "None");
+			oView.getModel("viewModel").setProperty("/PolDescErrorMessage", "");
+			oView.getModel("viewModel").setProperty("/PolDescErrorState", "None");
+					
+		},
+		_checkForDuplicateEntry: function (sPath, oEntry) {
+			var oView = this.getView(), oDataModel = oView.getModel(), that = this,
+				oBundle = oView.getModel("i18n").getResourceBundle();
+			oDataModel.read(sPath, // Path to the specific entity
+				{
+					success: function (oData) {
+						if (oData && oData.Policy != "") {
+							oView.getModel("viewModel").setProperty("/PolNameErrorMessage", oBundle.getText("msgErrorDuplicateEntry", [oData.to_Policy.PolicyName]));
+							oView.getModel("viewModel").setProperty("/PolNameErrorState", "Error");
+						} else {
+								that._createEntry(oEntry);
+						}
+						that.oPolicyNameInput.focus();
+						return;
+					},
+					error: function () {
+						oView.getModel("viewModel").setProperty("/PolNameErrorMessage", "");
+						oView.getModel("viewModel").setProperty("/PolNameErrorState", "None");
+						that._createEntry(oEntry);
+					}
+				}
+			);
+		},
+		_createEntry:function(oEntry){
+			var oView=this.getView(),oDataModel = oView.getModel();
+			oDataModel.create(PlDacConst.ENTITY_SET_POLICIES, oEntry, {
 					success: function () {
 						MessageBox.success("Entry has been created");
-						this.getView().getModel().refresh();
-						this._oFormUserAttrDialog.close();
+						oDataModel.refresh();
+						this._oDialogPolAdminPolicies.close();
 					}.bind(this),
 					error: function () {
 						MessageBox.error("Error has occured while creating record");
 					}
 				});
-			}
 		},
-		onDeleteBtnPress: function () {
-			var that = this,oBundle = this.getView().getModel("i18n").getResourceBundle();
+		_onDeletePolicyPolAdminButtonPress: function () {
+			var that = this, oBundle = this.getView().getModel("i18n").getResourceBundle();
 			MessageBox.warning(oBundle.getText("msgDeleteConfirmation"), {
 				actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
 				emphasizedAction: MessageBox.Action.OK,
@@ -168,7 +272,7 @@ sap.ui.define([
 		},
 		_removeSelectedRecord: function () {
 			var sPolicy, sPath, oView = this.getView(), oModel = oView.getModel();
-			sPolicy = oView.byId("idTablePolicies").getSelectedItem().getBindingContext().getObject().Policy;
+			sPolicy = oView.byId("idTablePolAdminPolicies").getSelectedItem().getBindingContext().getObject().Policy;
 			sPath = "/PolicySet('" + sPolicy + "')";
 			oModel.remove(sPath, {
 				success: function () {

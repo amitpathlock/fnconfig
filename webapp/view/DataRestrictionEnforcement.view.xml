@@ -1,103 +1,74 @@
-<mvc:View
-    controllerName="pl.dac.apps.fnconfig.controller.DataRestrictionEnforcement"
-    xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m"
-	displayBlock="true"
-	height="100%"
-    xmlns:core="sap.ui.core"
-    xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
-    xmlns:smartTable="sap.ui.comp.smarttable"
-	busyIndicatorDelay="0"
->
-    <Page>
-        <customHeader>
-            <Toolbar design="Transparent" class="plDacToolbar">
-                <core:Icon src="sap-icon://product" />
-                <Title text="{i18n>titPolInforcementDataRestriction}"/>
-                <ToolbarSpacer/>
-                <!-- @ui5ignore -->
-                <OverflowToolbarButton type="Transparent" icon="sap-icon://full-screen" press="handleFullScreen" tooltip="Enter Full Screen Mode" visible="{viewModel>/FullScreen}"/>
-                <!-- @ui5ignore -->
-                <OverflowToolbarButton type="Transparent" icon="sap-icon://exit-full-screen" press="handleExitFullScreen" tooltip="Exit Full Screen Mode" visible="{viewModel>/ExitFullScreen}"/>
-            </Toolbar>
-        </customHeader>
-        <content>
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar" xmlns:smartTable="sap.ui.comp.smarttable" controllerName="pl.dac.apps.fnconfig.controller.DataRestrictionEnforcement" displayBlock="true" height="100%" busyIndicatorDelay="0">
+   <Page>
+      <customHeader>
+         <Toolbar design="Transparent" class="plDacToolbar">
+            <core:Icon src="sap-icon://product" />
+            <Title text="{i18n&gt;titPolInforcementDataRestriction}" />
+            <ToolbarSpacer />
             <!-- @ui5ignore -->
-            <smartFilterBar:SmartFilterBar id="smartFilterBar-DataRestrictionEnforcementSet"
-              enableBasicSearch="true"
-                entitySet="DataRestrictionEnforcementSet"
-                persistencyKey="SmartFilter_Explored" ></smartFilterBar:SmartFilterBar>
-                 <!-- @ui5ignore -->
-            <smartTable:SmartTable id="idSmartTablePOPRestriction"
-                entitySet="DataRestrictionEnforcementSet"
-                smartFilterId="smartFilterBar-DataRestrictionEnforcementSet"
-                tableType="ResponsiveTable"
-                header="{i18n>txtSmartTableHeaderPolicyEnforcementDataRestriction}"
-                persistencyKey="SmartTableAnalytical_Explored"
-                enableAutoBinding="true"
-                demandPopin="true"
-                class="sapUiResponsiveContentPadding"
-                beforeRebindTable="onBeforeRebindTable"
-                placeToolbarInTable="true" >
-                 <!-- @ui5ignore -->
-                <Table mode="SingleSelectLeft" id="idTableDataRestrictionEnforcement" 
-                    selectionChange="onTableSelectionChange"
-                    sticky="ColumnHeaders,HeaderToolbar"
-                >
-                    <!-- Header -->
-                    <columns>
-                        <Column  width="70%">
-                            <customData>
-                                <core:CustomData key="p13nData" value='\{"columnKey": "IsActive", "columnIndex":"0", "leadingProperty": "IsActive"}'/>
-                            </customData>
-                            <Text text="{i18n>txtPolName}" />
-                        </Column>
-                        <Column >
-                            <customData>
-                                <core:CustomData key="p13nData" value='\{"columnKey": "PolicyResult", "columnIndex":"1", "leadingProperty": "PolicyResult"}'/>
-                            </customData>
-                            <Text text="{i18n>txtStatus}" />
-                        </Column>
-                        <Column >
-                            <customData>
-                                <core:CustomData key="p13nData" value='\{"columnKey": "PolicyName", "columnIndex":"2","navigationProperty":"to_Policy",  "leadingProperty": "to_Policy/PolicyName"}'/>
-                            </customData>
-                            <Text text="{i18n>txtAction}" />
-                        </Column>
-                        <Column width="0px">
-                            <customData>
-                                <core:CustomData key="p13nData" value='\{"columnKey": "PolicyDesc", "columnIndex":"3","navigationProperty":"to_Policy",  "leadingProperty": "to_Policy/PolicyDesc"}'/>
-                            </customData>
-                        </Column>
-                    </columns>
-                    <!-- Rows -->
-                    <items>
-                        <ColumnListItem >
-                            <customData>
-                                <core:CustomData
-                                    key="PolicyName"
-                                    value="{to_Policy/PolicyName}"
-                                   />
-                                <core:CustomData key="PolicyDesc" value="{to_Policy/PolicyDesc}" />
-                            </customData>
-                            <cells>
-                                <ObjectHeader title="{to_Policy/PolicyName}" class="plDacObjectHeader plDacPolicyName">
-                                    <ObjectAttribute class="plDacObjectAttribute"  title="Description" text="{to_Policy/PolicyDesc}" />
-                                    <!-- @ui5ignore -->
-                                    <ObjectAttribute text="{i18n>txtAssignedAttributes}"  class="plDacAssignedAttribute" 	active="true" press=".onPressLink" >
-                                        <customData>
-                                            <core:CustomData  value='{/}'/>
-                                            <core:CustomData  value='{to_Policy}'/>
-                                        </customData>
-                                    </ObjectAttribute>
-                                </ObjectHeader >
-                                <ObjectStatus tooltip="{=${IsActive}?'Active':'None'}" state="{=${IsActive}?'Success':'None'}" icon="{=${IsActive}?'sap-icon://status-positive':'sap-icon://status-inactive'}" />
-                                <ObjectStatus class="sapUiSmallMarginBottom" text="{=${PolicyResult}==='A'? 'Allowed' :'Denied'}" icon="{=${PolicyResult}==='A'? 'sap-icon://sys-enter-2' :'sap-icon://error'}" state="{=${PolicyResult}==='A'? 'Success' :'Error'}" />
-                            </cells>
-                        </ColumnListItem>
-                    </items>
-                </Table>
-            </smartTable:SmartTable>
-        </content>
-    </Page>
+            <OverflowToolbarButton type="Transparent" icon="sap-icon://full-screen" press="handleFullScreen" tooltip="Enter Full Screen Mode" visible="{viewModel&gt;/FullScreen}" />
+            <!-- @ui5ignore -->
+            <OverflowToolbarButton type="Transparent" icon="sap-icon://exit-full-screen" press="handleExitFullScreen" tooltip="Exit Full Screen Mode" visible="{viewModel&gt;/ExitFullScreen}" />
+         </Toolbar>
+      </customHeader>
+      <content>
+         <!-- @ui5ignore -->
+         <smartFilterBar:SmartFilterBar id="smartFilterBar-DataRestrictionEnforcementSet" enableBasicSearch="true" entitySet="DataRestrictionEnforcementSet" persistencyKey="SmartFilter_Explored" />
+         <!-- @ui5ignore -->
+         <smartTable:SmartTable id="idSmartTablePOPRestriction" showTablePersonalisation="false" entitySet="DataRestrictionEnforcementSet" smartFilterId="smartFilterBar-DataRestrictionEnforcementSet" tableType="ResponsiveTable" header="{i18n&gt;txtSmartTableHeaderPolicyEnforcementDataRestriction}" persistencyKey="SmartTableAnalytical_Explored" enableAutoBinding="true" demandPopin="true" class="sapUiResponsiveContentPadding" beforeRebindTable="onBeforeRebindTable" placeToolbarInTable="true">
+            <!-- @ui5ignore -->
+            <Table mode="SingleSelectLeft" id="idTableDataRestrictionEnforcement" selectionChange="onTableSelectionChange" sticky="ColumnHeaders,HeaderToolbar" growingScrollToLoad="true" growing="true" growingThreshold="20">
+               <!-- Header -->
+               <columns>
+                  <Column width="70%">
+                     <customData>
+                        <core:CustomData key="p13nData" value="\{&quot;columnKey&quot;: &quot;IsActive&quot;, &quot;columnIndex&quot;:&quot;0&quot;, &quot;leadingProperty&quot;: &quot;IsActive&quot;}" />
+                     </customData>
+                     <Text text="{i18n&gt;txtPolName}" />
+                  </Column>
+                  <Column>
+                     <customData>
+                        <core:CustomData key="p13nData" value="\{&quot;columnKey&quot;: &quot;PolicyResult&quot;, &quot;columnIndex&quot;:&quot;1&quot;, &quot;leadingProperty&quot;: &quot;PolicyResult&quot;}" />
+                     </customData>
+                     <Text text="{i18n&gt;txtStatus}" />
+                  </Column>
+                  <Column>
+                     <customData>
+                        <core:CustomData key="p13nData" value="\{&quot;columnKey&quot;: &quot;PolicyName&quot;, &quot;columnIndex&quot;:&quot;2&quot;,&quot;navigationProperty&quot;:&quot;to_Policy&quot;,  &quot;leadingProperty&quot;: &quot;to_Policy/PolicyName&quot;}" />
+                     </customData>
+                     <Text text="{i18n&gt;txtAction}" />
+                  </Column>
+                  <Column width="0px">
+                     <customData>
+                        <core:CustomData key="p13nData" value="\{&quot;columnKey&quot;: &quot;PolicyDesc&quot;, &quot;columnIndex&quot;:&quot;3&quot;,&quot;navigationProperty&quot;:&quot;to_Policy&quot;,  &quot;leadingProperty&quot;: &quot;to_Policy/PolicyDesc&quot;}" />
+                     </customData>
+                  </Column>
+               </columns>
+               <!-- Rows -->
+               <items>
+                  <ColumnListItem>
+                     <customData>
+                        <core:CustomData key="PolicyName" value="{to_Policy/PolicyName}" />
+                        <core:CustomData key="PolicyDesc" value="{to_Policy/PolicyDesc}" />
+                     </customData>
+                     <cells>
+                        <ObjectHeader title="{to_Policy/PolicyName}" class="plDacObjectHeader plDacPolicyName">
+                           <ObjectAttribute class="plDacObjectAttribute" title="Description" text="{to_Policy/PolicyDesc}" />
+                           <!-- @ui5ignore -->
+                           <ObjectAttribute text="{i18n&gt;txtAssignedAttributes}" class="plDacAssignedAttribute" active="true" press=".onPressLink">
+                              <customData>
+                                 <core:CustomData value="{/}" />
+                                 <core:CustomData value="{to_Policy}" />
+                              </customData>
+                           </ObjectAttribute>
+                        </ObjectHeader>
+                        <ObjectStatus tooltip="{=${IsActive}?'Active':'None'}" state="{=${IsActive}?'Success':'None'}" icon="{=${IsActive}?'sap-icon://status-positive':'sap-icon://status-inactive'}" />
+                        <ObjectStatus class="sapUiSmallMarginBottom" text="{=${PolicyResult}==='A'? 'Allowed' :'Denied'}" icon="{=${PolicyResult}==='A'? 'sap-icon://sys-enter-2' :'sap-icon://error'}" state="{=${PolicyResult}==='A'? 'Success' :'Error'}" />
+                     </cells>
+                  </ColumnListItem>
+               </items>
+            </Table>
+         </smartTable:SmartTable>
+      </content>
+   </Page>
 </mvc:View>

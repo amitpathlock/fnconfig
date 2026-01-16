@@ -703,11 +703,12 @@ sap.ui.define(
 			 *   - Displays error message from OData response
 			 */
 			validatePolicyInput: function (sPolicy) {
-				var oView = this.getView(), oDataModel = oView.getModel(),
+				var oBundle, oView = this.getView(), oDataModel = oView.getModel(),
 					oViewModel = oView.getModel("viewModel"),
 					sPath = "/PolicySet('" + sPolicy + "')",
 					bInputEditable = oViewModel.getProperty("/PolicyNameEnabled");
 					oViewModel.setProperty("/Data/Policy",sPolicy);
+					oBundle = oView.getModel("i18n").getResourceBundle();
 				// Example validation rule
 				oDataModel.read(sPath, {
 					// Success callback function
@@ -725,11 +726,11 @@ sap.ui.define(
 						}
 					}.bind(this),
 					// Error callback function
-					error: function (oError) {
+					error: function () {
 						// oError contains details about the error
 						//oView.byId("idPEPPolicyDescription").setText("");
-						oViewModel.setProperty("/ErrorState", "Error");
-						oViewModel.setProperty("/ErrorMessage", JSON.parse(oError.responseText).error.message.value);
+						oViewModel.setProperty("/ErrorState", "Error");//
+						oViewModel.setProperty("/ErrorMessage", oBundle.getText("policyNotFound",[sPolicy]));
 					}
 				});
 			},
