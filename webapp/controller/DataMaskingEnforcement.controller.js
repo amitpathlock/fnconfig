@@ -132,6 +132,14 @@ sap.ui.define([
 		onSavePolicyInforcement: function () {
 			var sPath, oView = this.getView(), oViewModel = oView.getModel("viewModel");
 			var oEntry = oViewModel.getData().Data,sUriKey;
+			if(oViewModel.getProperty("/ErrorState")=="Error"){
+				oView.byId("idPEPPolicyName").focus();
+				return;
+			}
+			if(oViewModel.getProperty("/AttrErrorState")=="Error"){
+				oView.byId("idPEPAttributes").focus();
+				return;
+			}
 			if (oEntry.Policy.trim() == "") {
 				oViewModel.setProperty("/ErrorState", "Error");
 				oViewModel.setProperty("/ErrorMessage", "The mandatory field cannot be left blank.");
@@ -364,10 +372,11 @@ sap.ui.define([
 		 * this._validateAttibuteInput("ATTR001");
 		 */
 		_validateAttibuteInput: function (sAttribute) {
-			var oView = this.getView(), oDataModel = oView.getModel(),
+			var oBundle,oView = this.getView(), oDataModel = oView.getModel(),
 				oViewModel = oView.getModel("viewModel"),
 				sPath = "/AttrSet('" + sAttribute + "')";
 				oViewModel.setProperty("/Data/AttributeId",sAttribute);
+				oBundle = oView.getModel("i18n").getResourceBundle();
 			oDataModel.read(sPath, {
 				// Success callback function
 				success: function (oData) {
@@ -378,14 +387,15 @@ sap.ui.define([
 						oViewModel.setProperty("/Data/AttributeId", oData.AttributeId);
 					}else{
 						oViewModel.setProperty("/AttrErrorState", "Error");
-						oViewModel.setProperty("/AttrErrorMessage", JSON.parse(oData.responseText).error.message.value);
+						oViewModel.setProperty("/AttrErrorMessage", oBundle.getText("attributeNotFound",[sAttribute]));
 					}
 				}.bind(this),
 				// Error callback function
-				error: function (oError) {
+				error: function () {//
 					// oError contains details about the error
 					oViewModel.setProperty("/AttrErrorState", "Error");
-					oViewModel.setProperty("/AttrErrorMessage", JSON.parse(oError.responseText).error.message.value);
+					oViewModel.setProperty("/AttrErrorMessage", oBundle.getText("attributeNotFound",[sAttribute]));
+					
 				}
 			});
 		},

@@ -122,24 +122,26 @@ sap.ui.define([
 		 * /// <Button text="Save" press=".onSavePolicyInforcement">
 		 */
 		onSavePolicyInforcement: function () {
-			var sPath, oView = this.getView(), oViewModel = oView.getModel("viewModel");
-			var oEntry = oViewModel.getData().Data;
+			var sPolicyName, oBundle,sPath,oEntry, oView = this.getView(), oViewModel = oView.getModel("viewModel");
+			oEntry = oViewModel.getData().Data;
+			oBundle = oView.getModel("i18n").getResourceBundle();
 			if(oViewModel.getProperty("/ErrorState")=="Error"){
 				oView.byId("idPEPPolicyName").focus();
 				return;
 			}
 			if (oEntry.Policy.trim() == "") {
 				oViewModel.setProperty("/ErrorState", "Error");
-				oViewModel.setProperty("/ErrorMessage", "The mandatory field cannot be left blank.");
+				oViewModel.setProperty("/ErrorMessage", oBundle.getText("policyNameMandatory"));
 				oView.byId("idPEPPolicyName").focus();
 				return;
 			}
 			if(oEntry.PolicyResult==""){
 				oViewModel.setProperty("/ActionErrorState", "Error");
-				oViewModel.setProperty("/ActionErrorMessage", "The mandatory field cannot be left blank.");
+				oViewModel.setProperty("/ActionErrorMessage", oBundle.getText("policyNameMandatory"));
 				oView.byId("idPEPActionResult").focus();
 				return;
 			}
+			sPolicyName = oEntry.PolicyName;
 			delete oEntry.PolicyDesc;
 			delete oEntry.PolicyName;
 			delete oEntry.to_Policy;
@@ -150,7 +152,7 @@ sap.ui.define([
 				sPath = PlDacConst.ENTITY_SET_DATARESTRICTIONENFORCEMENT + "('" + oEntry.Policy + "')";
 				oView.getModel().update(sPath, oEntry, {
 					success: function () {
-						MessageBox.success("Entry has been updated");
+						MessageBox.success(oBundle.getText("msgPoEnforcementUpdateSuccessfully",[sPolicyName]));
 						oViewModel.setProperty("/Data", {});
 						this.oPolicyInforcementDialog.close();
 						this.oPolicyEnforcementTable.removeSelections(true);
