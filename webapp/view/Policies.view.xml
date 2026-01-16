@@ -4,19 +4,19 @@
       <customHeader>
          <Toolbar design="Transparent" class="plDacToolbar">
             <core:Icon src="sap-icon://documents" />
-            <Title text="{i18n&gt;titPolicyAdministrationPointPolicies}" />
+            <Title text="{i18n>titPolicyAdministrationPointPolicies}" />
             <ToolbarSpacer />
             <!-- @ui5ignore -->
-            <OverflowToolbarButton type="Transparent" icon="sap-icon://full-screen" press="handleFullScreen" tooltip="Enter Full Screen Mode" visible="{viewModel&gt;/FullScreen}" />
+            <OverflowToolbarButton type="Transparent" icon="sap-icon://full-screen" press="handleFullScreen" tooltip="Enter Full Screen Mode" visible="{viewModel>/FullScreen}" />
             <!-- @ui5ignore -->
-            <OverflowToolbarButton type="Transparent" icon="sap-icon://exit-full-screen" press="handleExitFullScreen" tooltip="Exit Full Screen Mode" visible="{viewModel&gt;/ExitFullScreen}" />
+            <OverflowToolbarButton type="Transparent" icon="sap-icon://exit-full-screen" press="handleExitFullScreen" tooltip="Exit Full Screen Mode" visible="{viewModel>/ExitFullScreen}" />
          </Toolbar>
       </customHeader>
       <content>
          <!-- @ui5ignore -->
          <smartFilterBar:SmartFilterBar id="smartFilterBar-Policy" entitySet="UserAttrSet" persistencyKey="SmartFilterBar_Explored" enableBasicSearch="true" />
          <!-- @ui5ignore -->
-         <smartTable:SmartTable id="idSmartPolAdminTable" entitySet="PolicySet" smartFilterId="smartFilterBar-Policy" tableType="ResponsiveTable" header="{i18n&gt;titPolAdminPolicies}" persistencyKey="SmartTableAnalytical_Explored" enableAutoBinding="true" demandPopin="true" class="sapUiResponsiveContentPadding" requestAtLeastFields="Policy,PolicyDesc" placeToolbarInTable="true">
+         <smartTable:SmartTable id="idSmartPolAdminTable" entitySet="PolicySet" smartFilterId="smartFilterBar-Policy" tableType="ResponsiveTable" header="{i18n>titPolAdminPolicies}" persistencyKey="SmartTableAnalytical_Explored" enableAutoBinding="true" demandPopin="true" class="sapUiResponsiveContentPadding" requestAtLeastFields="Policy,PolicyDesc" placeToolbarInTable="true">
             <!-- @ui5ignore -->
             <Table mode="SingleSelectLeft" id="idTablePolAdminPolicies" selectionChange="onTableSelectionChange" sticky="ColumnHeaders,HeaderToolbar" growingScrollToLoad="true" growing="true" growingThreshold="20">
                <!-- Header -->

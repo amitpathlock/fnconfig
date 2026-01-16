@@ -437,6 +437,10 @@ ul.plDacSections {
 .plDacPolicyName .sapMTextLineClamp{ font-weight: 700 !important; color: #0854a0 !important;}
 /* .plDacAttributeId>.sapMObjectAttributeText{color: #ff6900 !important;} */
 .plDacAssignedAttribute>span{color: rgb(20 135 82 ) !important;}
+
+.plDacLabelMarginTop{margin-top:9px;}
+.plDacCheckBoxMarginTop>div{margin-top:10px;margin-bottom: 8px;}
+.plDacCheckBoxMarginTop>label{margin-top:10px;margin-bottom: 8px;}
 /* .plDacObjectAttribute>.sapMObjectAttributeText{color:#fcb900 !important;}
 .plDacObjectAttribute>.sapMObjectAttributeTitle{color:#02478b !important;}
 .plDacAttributeId>.sapMObjectAttributeTitle{color:#02478b !important;} */

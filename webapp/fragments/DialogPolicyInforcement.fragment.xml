@@ -10,7 +10,7 @@
             class="PlDacDailogBox"
             beforeClose="onBeforePEPDialogClosed"
             beforeOpen="onBeforePEPDialogOpened"
-            resizable="true"
+           
             title="{viewModel>/Title}">
            
         <content>
@@ -60,7 +60,7 @@
                     <!-- <ObjectStatus title="Policy DESC" text="{viewModel>/Data/PolicyDesc}"  id="idPEPPolicyDescription" /> -->
                     <!-- @ui5ignore -->
                     <!-- <Input  id="idPolicyDescription" value="{viewModel>/Data/PolicyDesc}" enabled="false"/> -->
-                    <Label text="{viewModel>/Attribute}" required="true" visible="{viewModel>/VisibleAttribute}" />
+                    <Label text="{viewModel>/Attribute}" class="plDacLabelMarginTop" required="true" visible="{viewModel>/VisibleAttribute}" />
                     <!-- @ui5ignore -->
                     <MultiInput  id="idPEPAttributes"  visible="{viewModel>/VisibleAttribute}"
                         showSuggestion="true"
@@ -94,7 +94,7 @@
                     </MultiInput>
                      <!-- @ui5ignore -->
                    
-                    <Label text="{viewModel>/Action}" required="true"/>
+                    <Label text="{viewModel>/Action}" required="true" class="plDacLabelMarginTop"/>
                       <!-- @ui5ignore -->
                     <Select 	selectedKey="{viewModel>/Data/PolicyResult}" id="idPEPActionResult"
                      valueState="{viewModel>/ActionErrorState}"
@@ -106,7 +106,7 @@
                             <core:Item key="D" text="DENY" />
                         </items>
                     </Select>
-                    <CheckBox text="Is Active" selected="{viewModel>/Data/IsActive}" />
+                    <CheckBox text="Is Active" selected="{viewModel>/Data/IsActive}" class="plDacCheckBoxMarginTop" />
                     <!-- Add more form fields as needed -->
                 </f:content>
             </f:SimpleForm>

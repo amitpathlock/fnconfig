@@ -11,12 +11,12 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/ColumnListItem",
 	"sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator",
+	"sap/ui/model/FilterOperator",
 	"sap/base/Log",
 	"sap/m/Token"
 ], function (
 	BaseController, PlDacConst, Fragment, JSONModel, MessageBox, UIColumn, Column, Text, Label,
-	 ColumnListItem,Filter,FilterOperator, Log,Token
+	ColumnListItem, Filter, FilterOperator, Log, Token
 ) {
 	"use strict";
 
@@ -100,7 +100,7 @@ sap.ui.define([
 					ExitColumn: true,
 					SelectedContextData: null,
 					VisibleAttribute: true,
-					AttributeNameEnabled:true
+					AttributeNameEnabled: true
 				}
 			), "viewModel");
 			this.oPolicyEnforcementTable = oView.byId("idTableDataMaskingEnforcement");
@@ -130,31 +130,32 @@ sap.ui.define([
 		* /// <Button text="Save" press=".onSavePolicyInforcement">
 		*/
 		onSavePolicyInforcement: function () {
-			var sPath, oView = this.getView(), oViewModel = oView.getModel("viewModel");
-			var oEntry = oViewModel.getData().Data,sUriKey;
-			if(oViewModel.getProperty("/ErrorState")=="Error"){
+			var oBundle,oEntry,sUriKey, sPath, oView = this.getView(), oViewModel = oView.getModel("viewModel");
+			 oEntry = oViewModel.getData().Data;
+			oBundle = oView.getModel("i18n").getResourceBundle();
+			if (oViewModel.getProperty("/ErrorState") == "Error") {
 				oView.byId("idPEPPolicyName").focus();
 				return;
 			}
-			if(oViewModel.getProperty("/AttrErrorState")=="Error"){
+			if (oViewModel.getProperty("/AttrErrorState") == "Error") {
 				oView.byId("idPEPAttributes").focus();
 				return;
 			}
 			if (oEntry.Policy.trim() == "") {
 				oViewModel.setProperty("/ErrorState", "Error");
-				oViewModel.setProperty("/ErrorMessage", "The mandatory field cannot be left blank.");
+				oViewModel.setProperty("/ErrorMessage", oBundle.getText("policyNameMandatory"));
 				oView.byId("idPEPPolicyName").focus();
 				return;
 			}
-			if (!({}).hasOwnProperty.call(oEntry,"AttributeId") || oEntry.AttributeId.trim() == "") {
+			if (!({}).hasOwnProperty.call(oEntry, "AttributeId") || oEntry.AttributeId.trim() == "") {
 				oViewModel.setProperty("/AttrErrorState", "Error");
-				oViewModel.setProperty("/AttrErrorMessage", "The mandatory field cannot be left blank.");
+				oViewModel.setProperty("/AttrErrorMessage", oBundle.getText("msgErrorAttributeNameMandatory"));
 				oView.byId("idPEPAttributes").focus();
 				return;
 			}
-			if(oEntry.PolicyResult==""){
+			if (oEntry.PolicyResult == "") {
 				oViewModel.setProperty("/ActionErrorState", "Error");
-				oViewModel.setProperty("/ActionErrorMessage", "The mandatory field cannot be left blank.");
+				oViewModel.setProperty("/ActionErrorMessage", oBundle.getText("msgErrorResultNameMandatory"));
 				oView.byId("idPEPActionResult").focus();
 				return;
 			}
@@ -165,13 +166,13 @@ sap.ui.define([
 			oEntry.IsActive = oEntry.IsActive ? "X" : "";
 			if (({}).hasOwnProperty.call(oEntry, "__metadata")) {
 				delete oEntry.__metadata;
-				sUriKey = oEntry.Policy+"~"+oEntry.AttributeId;
+				sUriKey = oEntry.Policy + "~" + oEntry.AttributeId;
 				sPath = "/DataMaskingEnforcementSet('" + sUriKey + "')";
 				oView.getModel().update(sPath, oEntry, {
 					success: function () {
 						MessageBox.success("Entry has been updated");
-						
-						
+
+
 						oViewModel.setProperty("/Data", {});
 						this.oPolicyInforcementDialog.close();
 						this.oPolicyEnforcementTable.removeSelections(true);
@@ -188,8 +189,8 @@ sap.ui.define([
 				this._checkForDuplicateEntry(PlDacConst.ENTITY_SET_DATAMASKINGENFORCEMENT + "('" + oEntry.Policy + "')", oEntry);
 			}
 		},
-		clearValidationError:function(){
-			var oView = this.getView(),oViewModel= oView.getModel("viewModel");
+		clearValidationError: function () {
+			var oView = this.getView(), oViewModel = oView.getModel("viewModel");
 			oViewModel.setProperty("/ErrorState", "None");
 			oViewModel.setProperty("/ErrorMessage", "");
 			oViewModel.setProperty("/AttrErrorState", "None");
@@ -372,30 +373,30 @@ sap.ui.define([
 		 * this._validateAttibuteInput("ATTR001");
 		 */
 		_validateAttibuteInput: function (sAttribute) {
-			var oBundle,oView = this.getView(), oDataModel = oView.getModel(),
+			var oBundle, oView = this.getView(), oDataModel = oView.getModel(),
 				oViewModel = oView.getModel("viewModel"),
 				sPath = "/AttrSet('" + sAttribute + "')";
-				oViewModel.setProperty("/Data/AttributeId",sAttribute);
-				oBundle = oView.getModel("i18n").getResourceBundle();
+			oViewModel.setProperty("/Data/AttributeId", sAttribute);
+			oBundle = oView.getModel("i18n").getResourceBundle();
 			oDataModel.read(sPath, {
 				// Success callback function
 				success: function (oData) {
 					if (oData.Description) {
-						oView.byId("idPEPAttributes").setTokens([new Token({text:sAttribute+" ("+oData.Description,key:sAttribute+")"})]);
+						oView.byId("idPEPAttributes").setTokens([new Token({ text: sAttribute + " (" + oData.Description, key: sAttribute + ")" })]);
 						oViewModel.setProperty("/AttrErrorState", "None");
 						oViewModel.setProperty("/AttrErrorMessage", "");
 						oViewModel.setProperty("/Data/AttributeId", oData.AttributeId);
-					}else{
+					} else {
 						oViewModel.setProperty("/AttrErrorState", "Error");
-						oViewModel.setProperty("/AttrErrorMessage", oBundle.getText("attributeNotFound",[sAttribute]));
+						oViewModel.setProperty("/AttrErrorMessage", oBundle.getText("msgErrorAttributeNotFound", [sAttribute]));
 					}
 				}.bind(this),
 				// Error callback function
 				error: function () {//
 					// oError contains details about the error
 					oViewModel.setProperty("/AttrErrorState", "Error");
-					oViewModel.setProperty("/AttrErrorMessage", oBundle.getText("attributeNotFound",[sAttribute]));
-					
+					oViewModel.setProperty("/AttrErrorMessage", oBundle.getText("msgErrorAttributeNotFound", [sAttribute]));
+
 				}
 			});
 		},
@@ -427,25 +428,25 @@ sap.ui.define([
 		 */
 		_checkForDuplicateEntry: function (sPath, oEntry) {
 			var oView = this.getView(), oModel = oView.getModel(), oViewModel = oView.getModel("viewModel"),
-				oBundle = oView.getModel("i18n").getResourceBundle(),oPolicy,aFilters,oAttribute;
+				oBundle = oView.getModel("i18n").getResourceBundle(), oPolicy, aFilters, oAttribute;
 			oViewModel.getProperty("/Data/IsActive") == "X" ? oViewModel.setProperty("/Data/IsActive", true) : oViewModel.setProperty("/Data/IsActive", false);
-			 oPolicy = new Filter("Policy", FilterOperator.EQ, oEntry.Policy);
-			 oAttribute = new Filter("AttributeId", FilterOperator.EQ, oEntry.AttributeId);
-			 aFilters =[oPolicy,oAttribute];
+			oPolicy = new Filter("Policy", FilterOperator.EQ, oEntry.Policy);
+			oAttribute = new Filter("AttributeId", FilterOperator.EQ, oEntry.AttributeId);
+			aFilters = [oPolicy, oAttribute];
 			oModel.read("/DataMaskingEnforcementSet", // Path to the specific entity
 				{
 					filters: aFilters,
-					 urlParameters: {
-                    "$expand": "to_Policy" // Expand to_ActionItem
-                },
+					urlParameters: {
+						"$expand": "to_Policy" // Expand to_ActionItem
+					},
 					success: function (oData) {
-						if(oData && oData.results.length>0){
+						if (oData && oData.results.length > 0) {
 							oViewModel.setProperty("/ErrorMessage", oBundle.getText("msgErrorDuplicateEntry", [oData.results[0].to_Policy.PolicyName]));
 							oViewModel.setProperty("/ErrorState", "Error");
 							this.oPolicyNameInput.focus();
-						}else{
+						} else {
 							this._createEntry(oEntry);
-						}	
+						}
 						return;
 					}.bind(this),
 					error: function () {
@@ -475,13 +476,22 @@ sap.ui.define([
 		 * /// <Input liveChange=".onPEPAttributeNameInputChange">
 		 */
 		onPEPAttributeNameInputChange: function (oEvent) {
-			var oView = this.getView(), sNewValue = oEvent.getParameter("newValue"), oViewModel = oView.getModel("viewModel"),
+			var oBundle, oView = this.getView(), sNewValue = oEvent.getParameter("newValue"), oViewModel = oView.getModel("viewModel"),
 				oInput = oEvent.getSource();
+			oBundle = oView.getModel("i18n").getResourceBundle();
 			oViewModel.setProperty("/AttrErrorState", "None");
 			oViewModel.setProperty("/AttrErrorMessage", "");
 			oInput.setValue(oInput.getValue().toUpperCase());
 			if (sNewValue.length > 6) {
 				this._validateAttibuteInput(sNewValue);
+			} else {
+				oViewModel.setProperty("/Data/Policy", "");
+				oViewModel.setProperty("/ErrorState", "Error");
+				if (sNewValue.length == 0) {
+					oViewModel.setProperty("/ErrorMessage", oBundle.getText("msgErrorAttributeNameMandatory"));
+				} else {
+					oViewModel.setProperty("/ErrorMessage", oBundle.getText("msgErrorAttributeNameInvalid"));
+				}
 			}
 		},
 		/**
@@ -512,13 +522,13 @@ sap.ui.define([
 		 * });
 		 */
 		_createEntry: function (oEntry) {
-			var sMSGUri,oBundle, oView = this.getView(), oDataModel = oView.getModel(),oViewModel=oView.getModel("viewModel");
+			var sMSGUri, oBundle, oView = this.getView(), oDataModel = oView.getModel(), oViewModel = oView.getModel("viewModel");
 			oEntry.IsActive = oEntry.IsActive == true ? 'X' : '';
 			oBundle = oView.getModel("i18n").getResourceBundle();
-			if(oViewModel.getProperty("/SelectedContextData") && oViewModel.getProperty("/SelectedContextData").PolicyName){
-				sMSGUri = oViewModel.getProperty("/SelectedContextData").PolicyName +"~"+oEntry.AttributeId;
-			}else{
-				sMSGUri = oEntry.Policy+"~"+oEntry.AttributeId;
+			if (oViewModel.getProperty("/SelectedContextData") && oViewModel.getProperty("/SelectedContextData").PolicyName) {
+				sMSGUri = oViewModel.getProperty("/SelectedContextData").PolicyName + "~" + oEntry.AttributeId;
+			} else {
+				sMSGUri = oEntry.Policy + "~" + oEntry.AttributeId;
 			}
 			oDataModel.create(PlDacConst.ENTITY_SET_DATAMASKINGENFORCEMENT, oEntry, {
 				success: function () {
@@ -562,22 +572,22 @@ sap.ui.define([
 		 * this.removeSelectedRecord();
 		 */
 		removeSelectedRecord: function () {
-			var sMSGUri, oView = this.getView(), oDataModel = oView.getModel(),oCTx,oBundle = oView.getModel("i18n").getResourceBundle(),
+			var sMSGUri, oView = this.getView(), oDataModel = oView.getModel(), oCTx, oBundle = oView.getModel("i18n").getResourceBundle(),
 				oViewModel = oView.getModel("viewModel"), sUriKey, sPath;
 			oCTx = oView.byId("idTableDataMaskingEnforcement").getSelectedItem().getBindingContext().getObject();
-			
-			sUriKey = oCTx.Policy+"~"+oCTx.AttributeId;
-			if(oViewModel.getProperty("/SelectedContextData") && oViewModel.getProperty("/SelectedContextData").PolicyName){
-				sMSGUri = oViewModel.getProperty("/SelectedContextData").PolicyName +"~"+oCTx.AttributeId;
-			}else{
-				sMSGUri = oCTx.Policy+"~"+oCTx.AttributeId;
+
+			sUriKey = oCTx.Policy + "~" + oCTx.AttributeId;
+			if (oViewModel.getProperty("/SelectedContextData") && oViewModel.getProperty("/SelectedContextData").PolicyName) {
+				sMSGUri = oViewModel.getProperty("/SelectedContextData").PolicyName + "~" + oCTx.AttributeId;
+			} else {
+				sMSGUri = oCTx.Policy + "~" + oCTx.AttributeId;
 			}
 			sPath = "/DataMaskingEnforcementSet('" + sUriKey + "')";
 			oDataModel.remove(sPath, {
 				success: function () {
 					MessageBox.success(oBundle.getText("msgPolEnforcementDeleteSucceful", [sMSGUri]), { styleClass: "PlDacMessageBox" });
-				
-					
+
+
 					this.oPolicyEnforcementTable.removeSelections(true);
 					oViewModel.setProperty("/Data", {});
 					oViewModel.setProperty("/EditButtonEnabled", false);

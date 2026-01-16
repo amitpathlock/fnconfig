@@ -131,13 +131,13 @@ sap.ui.define([
 			}
 			if (oEntry.Policy.trim() == "") {
 				oViewModel.setProperty("/ErrorState", "Error");
-				oViewModel.setProperty("/ErrorMessage", oBundle.getText("policyNameMandatory"));
+				oViewModel.setProperty("/ErrorMessage", oBundle.getText("msgErrorPolicyNameMandatory"));
 				oView.byId("idPEPPolicyName").focus();
 				return;
 			}
 			if(oEntry.PolicyResult==""){
 				oViewModel.setProperty("/ActionErrorState", "Error");
-				oViewModel.setProperty("/ActionErrorMessage", oBundle.getText("policyNameMandatory"));
+				oViewModel.setProperty("/ActionErrorMessage", oBundle.getText("msgErrorResultNameMandatory"));
 				oView.byId("idPEPActionResult").focus();
 				return;
 			}

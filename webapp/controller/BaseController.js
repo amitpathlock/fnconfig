@@ -735,7 +735,7 @@ sap.ui.define(
 						//oView.byId("idPEPPolicyDescription").setText("");
 						oViewModel.getProperty("/Data/Policy","");
 						oViewModel.setProperty("/ErrorState", "Error");//
-						oViewModel.setProperty("/ErrorMessage", oBundle.getText("policyNotFound",[sPolicy]));
+						oViewModel.setProperty("/ErrorMessage", oBundle.getText("msgErrorPolicyNotFound",[sPolicy]));
 					}
 				});
 			},
@@ -920,16 +920,13 @@ sap.ui.define(
 				if (sNewValue.length > 6) {
 					this.validatePolicyInput(sNewValue);
 				}else{
-					oViewModel.getProperty("/Data/Policy","");
+					oViewModel.setProperty("/Data/Policy","");
 					oViewModel.setProperty("/ErrorState", "Error");
 					if(sNewValue.length==0){
-						oViewModel.setProperty("/ErrorMessage", oBundle.getText("policyNameMandatory"));
+						oViewModel.setProperty("/ErrorMessage", oBundle.getText("msgErrorPolicyNameMandatory"));
 					}else{
-						oViewModel.setProperty("/ErrorMessage", oBundle.getText("policyNameInvalid"));
-					}
-					
-					
-					
+						oViewModel.setProperty("/ErrorMessage", oBundle.getText("msgErrorPolicyNameInvalid"));
+					}	
 				}
 			}
 		});
