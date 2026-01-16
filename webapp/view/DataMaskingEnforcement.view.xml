@@ -45,6 +45,7 @@
                 requestAtLeastFields="Policy,PolicyResult,IsActive,AttributeId"
                 beforeRebindTable="onBeforeRebindTable"
                placeToolbarInTable="true"
+               showTablePersonalisation="false"
             >
             <!-- @ui5ignore -->
                 <Table mode="SingleSelectLeft" id="idTableDataMaskingEnforcement" 
