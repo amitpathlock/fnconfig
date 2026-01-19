@@ -46,14 +46,13 @@
                 beforeRebindTable="onBeforeRebindTable"
                placeToolbarInTable="true"
                showTablePersonalisation="false"
+              
             >
             <!-- @ui5ignore -->
                 <Table mode="SingleSelectLeft" id="idTableDataMaskingEnforcement" 
                     selectionChange="onTableSelectionChange"
                     sticky="ColumnHeaders,HeaderToolbar"
-                    growingScrollToLoad="true"
-                    growing="true"
-                    growingThreshold="20"
+                   growingScrollToLoad="true" growing="true" 
                 >
                     <!-- Header -->
                     <columns>

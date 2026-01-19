@@ -15,7 +15,15 @@
          <!-- @ui5ignore -->
          <smartFilterBar:SmartFilterBar id="smartFilterBar-DataRestrictionEnforcementSet" enableBasicSearch="true" entitySet="DataRestrictionEnforcementSet" persistencyKey="SmartFilter_Explored" />
          <!-- @ui5ignore -->
-         <smartTable:SmartTable id="idSmartTablePOPRestriction" showTablePersonalisation="false" entitySet="DataRestrictionEnforcementSet" smartFilterId="smartFilterBar-DataRestrictionEnforcementSet" tableType="ResponsiveTable" header="{i18n>txtSmartTableHeaderPolicyEnforcementDataRestriction}" persistencyKey="SmartTableAnalytical_Explored" enableAutoBinding="true" demandPopin="true" class="sapUiResponsiveContentPadding" beforeRebindTable="onBeforeRebindTable" placeToolbarInTable="true">
+         <smartTable:SmartTable id="idSmartTablePOPRestriction" 
+         showTablePersonalisation="false"
+          entitySet="DataRestrictionEnforcementSet"
+          smartFilterId="smartFilterBar-DataRestrictionEnforcementSet" 
+          tableType="ResponsiveTable" 
+          header="{i18n>txtSmartTableHeaderPolicyEnforcementDataRestriction}"
+           persistencyKey="SmartTableAnalytical_Explored" 
+           enableAutoBinding="true"
+            demandPopin="true" class="sapUiResponsiveContentPadding" beforeRebindTable="onBeforeRebindTable" placeToolbarInTable="true">
             <!-- @ui5ignore -->
             <Table mode="SingleSelectLeft" id="idTableDataRestrictionEnforcement" selectionChange="onTableSelectionChange" sticky="ColumnHeaders,HeaderToolbar" growingScrollToLoad="true" growing="true" growingThreshold="20">
                <!-- Header -->
