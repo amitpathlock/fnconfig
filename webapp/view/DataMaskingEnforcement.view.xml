@@ -51,6 +51,9 @@
                 <Table mode="SingleSelectLeft" id="idTableDataMaskingEnforcement" 
                     selectionChange="onTableSelectionChange"
                     sticky="ColumnHeaders,HeaderToolbar"
+                    growingScrollToLoad="true"
+                    growing="true"
+                    growingThreshold="20"
                 >
                     <!-- Header -->
                     <columns>
