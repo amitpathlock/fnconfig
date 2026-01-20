@@ -494,7 +494,7 @@ sap.ui.define(
 					this.oPolicyInforcementDialog.open();
 				}
 			},
-
+			clearValidationError:function(){},
 			/**
 			 * Private event handler called when the policy enforcement dialog is opened.
 			 * Sets focus to the first enabled form field, or to the third field if the first is disabled.
@@ -721,7 +721,7 @@ sap.ui.define(
 						if (bInputEditable) {
 							this.oPolicyNameInput.focus();
 						}
-						
+						oView.byId("idPEPPolicyName").setValue("");
 						oView.byId("idPEPPolicyName").setTokens([new Token({text:oData.PolicyName+" ("+oData.PolicyDesc+")"})]);
 						// If reading an entity set, oData.results will contain an array of entities
 						if (oData.PolicyDesc) {
@@ -918,7 +918,7 @@ sap.ui.define(
 				oInput.setValue(oInput.getValue().toUpperCase());
 				this.oPolicyNameInput = oInput;
 				if (sNewValue.length > 6) {
-					this.validatePolicyInput(sNewValue);
+					this.validatePolicyInput(sNewValue.toUpperCase());
 				}else{
 					oViewModel.setProperty("/Data/Policy","");
 					oViewModel.setProperty("/ErrorState", "Error");
