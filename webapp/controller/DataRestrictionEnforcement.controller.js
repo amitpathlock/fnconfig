@@ -40,6 +40,42 @@ sap.ui.define([
 			this._oRouter.getRoute("DataRestriction").attachPatternMatched(this._onRouteMatched, this);
 			this.addAddintionButtonIntoThePolicyEnforcementTableToolbar(this.getView().byId("idSmartTablePOPRestriction"));
 		},
+		onBeforeExport: function (oEvent) {
+			var mExportSettings = oEvent.getParameter("exportSettings");
+
+			var aColumns = mExportSettings.workbook.columns;
+
+			// Define your desired order by column 'property' or 'label'
+			var aDesiredOrder = ["to_Policy/PolicyName", "to_Policy/PolicyDesc", "IsActive", "PolicyResult"];
+			var aReorderedColumns = [];
+			aDesiredOrder.forEach(function (sProperty) {
+				var oColumn = aColumns.find(function (oCol) {
+					return oCol.property === sProperty;
+				});
+				if (oColumn) {
+					aReorderedColumns.push(oColumn);
+				}
+			});
+
+			// Add any other columns that are part of the original export but not in the specific order
+			// (optional, depending on your requirement)
+
+			// Assign the newly ordered array back to the export configuration
+			mExportSettings.workbook.columns = aReorderedColumns
+			// Check if the configuration and columns exist
+			if (mExportSettings && mExportSettings.workbook.columns) {
+				// Iterate over the columns and change the label property
+				mExportSettings.workbook.columns.forEach(function (oColumn) {
+					// Use a switch statement or if/else if to target specific properties
+					switch (oColumn.property) {
+						case "to_Policy/PolicyDesc":
+							oColumn.label = "PolicyDesc"; // Set the new column name
+							break;
+						// Add more cases as needed for other columns
+					}
+				});
+			}
+		},
 		/**
 		 * Route matched event handler for the DataRestriction route.
 		 * 
@@ -122,10 +158,10 @@ sap.ui.define([
 		 * /// <Button text="Save" press=".onSavePolicyInforcement">
 		 */
 		onSavePolicyInforcement: function () {
-			var sPolicyName, oBundle,sPath,oEntry, oView = this.getView(), oViewModel = oView.getModel("viewModel");
+			var sPolicyName, oBundle, sPath, oEntry, oView = this.getView(), oViewModel = oView.getModel("viewModel");
 			oEntry = oViewModel.getData().Data;
 			oBundle = oView.getModel("i18n").getResourceBundle();
-			if(oViewModel.getProperty("/ErrorState")=="Error"){
+			if (oViewModel.getProperty("/ErrorState") == "Error") {
 				oView.byId("idPEPPolicyName").focus();
 				return;
 			}
@@ -135,7 +171,7 @@ sap.ui.define([
 				oView.byId("idPEPPolicyName").focus();
 				return;
 			}
-			if(oEntry.PolicyResult==""){
+			if (oEntry.PolicyResult == "") {
 				oViewModel.setProperty("/ActionErrorState", "Error");
 				oViewModel.setProperty("/ActionErrorMessage", oBundle.getText("msgErrorResultNameMandatory"));
 				oView.byId("idPEPActionResult").focus();
@@ -146,13 +182,14 @@ sap.ui.define([
 			delete oEntry.PolicyName;
 			delete oEntry.to_Policy;
 			delete oEntry.to_Attr;
+			//oView.byId("idPEPIsActive")
 			oEntry.IsActive = oEntry.IsActive ? "X" : "";
 			if (({}).hasOwnProperty.call(oEntry, "__metadata")) {
 				delete oEntry.__metadata;
 				sPath = PlDacConst.ENTITY_SET_DATARESTRICTIONENFORCEMENT + "('" + oEntry.Policy + "')";
 				oView.getModel().update(sPath, oEntry, {
 					success: function () {
-						MessageBox.success(oBundle.getText("msgPoEnforcementUpdateSuccessfully",[sPolicyName]));
+						MessageBox.success(oBundle.getText("msgPoEnforcementUpdateSuccessfully", [sPolicyName]));
 						oViewModel.setProperty("/Data", {});
 						this.oPolicyInforcementDialog.close();
 						this.oPolicyEnforcementTable.removeSelections(true);
@@ -404,7 +441,7 @@ sap.ui.define([
 					"$expand": "to_Attr,to_Policy" // Expand to_ActionItem
 				},
 				success: function (oData) {
-					var oModel = new JSONModel({ PolicyName: oCtx.PolicyName, PolicyDesc:oData.to_Policy.PolicyDesc, items: oData.to_Attr.results });
+					var oModel = new JSONModel({ PolicyName: oCtx.PolicyName, PolicyDesc: oData.to_Policy.PolicyDesc, items: oData.to_Attr.results });
 					this._oPopover.setModel(oModel, "popOverModel");
 				}.bind(this),
 				error: function (oError) {
@@ -412,8 +449,8 @@ sap.ui.define([
 				}
 			});
 		},
-		clearValidationError:function(){
-			var oView = this.getView(),oViewModel= oView.getModel("viewModel");
+		clearValidationError: function () {
+			var oView = this.getView(), oViewModel = oView.getModel("viewModel");
 			oViewModel.setProperty("/ErrorState", "None");
 			oViewModel.setProperty("/ErrorMessage", "");
 			oViewModel.setProperty("/ActionErrorState", "None");

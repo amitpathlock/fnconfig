@@ -106,7 +106,8 @@
                             <core:Item key="D" text="DENY" />
                         </items>
                     </Select>
-                    <CheckBox text="Is Active" selected="{viewModel>/Data/IsActive}" class="plDacCheckBoxMarginTop" />
+                     <!-- @ui5ignore -->
+                    <CheckBox text="Is Active" id="idPEPIsActive" selected="{viewModel>/Data/IsActive}" class="plDacCheckBoxMarginTop" />
                     <!-- Add more form fields as needed -->
                 </f:content>
             </f:SimpleForm>

@@ -20,6 +20,7 @@
           entitySet="DataRestrictionEnforcementSet"
           smartFilterId="smartFilterBar-DataRestrictionEnforcementSet" 
           tableType="ResponsiveTable" 
+          beforeExport="onBeforeExport"
           header="{i18n>txtSmartTableHeaderPolicyEnforcementDataRestriction}"
            persistencyKey="SmartTableAnalytical_Explored" 
            enableAutoBinding="true"
@@ -30,27 +31,31 @@
                <!-- Header -->
                <columns>
                   <Column width="70%">
-                     <customData>
-                        <core:CustomData key="p13nData" value="\{&quot;columnKey&quot;: &quot;IsActive&quot;, &quot;columnIndex&quot;:&quot;0&quot;, &quot;leadingProperty&quot;: &quot;IsActive&quot;}" />
+                    <customData>
+                        <core:CustomData key="p13nData" value='\{"columnKey": "PolicyName", "columnIndex":"0","navigationProperty":"to_Policy",  "leadingProperty": "to_Policy/PolicyName"}' />
                      </customData>
                      <Text text="{i18n>txtPolName}" />
                   </Column>
-                  <Column>
-                     <customData>
-                        <core:CustomData key="p13nData" value="\{&quot;columnKey&quot;: &quot;PolicyResult&quot;, &quot;columnIndex&quot;:&quot;1&quot;, &quot;leadingProperty&quot;: &quot;PolicyResult&quot;}" />
+                  
+                  <Column width="15%">
+                   <customData>
+                        <core:CustomData key="p13nData" value='\{"columnKey": "IsActive", "columnIndex":"1", "leadingProperty": "IsActive"}' />
                      </customData>
+                    
                      <Text text="{i18n>txtStatus}" />
                   </Column>
-                  <Column>
-                     <customData>
-                        <core:CustomData key="p13nData" value="\{&quot;columnKey&quot;: &quot;PolicyName&quot;, &quot;columnIndex&quot;:&quot;2&quot;,&quot;navigationProperty&quot;:&quot;to_Policy&quot;,  &quot;leadingProperty&quot;: &quot;to_Policy/PolicyName&quot;}" />
+                  <Column width="15%">
+                   <customData>
+                        <core:CustomData key="p13nData" value='\{"columnKey": "PolicyResult", "columnIndex":"2", "leadingProperty": "PolicyResult"}' />
                      </customData>
+                     
                      <Text text="{i18n>txtAction}" />
                   </Column>
                   <Column width="0px">
                      <customData>
-                        <core:CustomData key="p13nData" value="\{&quot;columnKey&quot;: &quot;PolicyDesc&quot;, &quot;columnIndex&quot;:&quot;3&quot;,&quot;navigationProperty&quot;:&quot;to_Policy&quot;,  &quot;leadingProperty&quot;: &quot;to_Policy/PolicyDesc&quot;}" />
+                        <core:CustomData key="p13nData" value='\{"columnKey": "PolicyDesc", "columnIndex":"3","navigationProperty":"to_Policy",  "leadingProperty": "to_Policy/PolicyDesc"}' />
                      </customData>
+                      
                   </Column>
                </columns>
                <!-- Rows -->

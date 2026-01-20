@@ -567,7 +567,7 @@ sap.ui.define(
 			onBeforeRebindTable: function (oEvent) {
 				var mBindingParams = oEvent.getParameter("bindingParams");
 				mBindingParams.parameters["expand"] = "to_Policy";
-				mBindingParams.parameters["select"] = mBindingParams.parameters["select"] + ",Policy";
+				mBindingParams.parameters["select"] = mBindingParams.parameters["select"] + ",Policy,to_Policy/PolicyDesc";
 			},
 			onBeforePEPDialogClosed:function(){
 				var oView= this.getView();
