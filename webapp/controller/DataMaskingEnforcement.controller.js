@@ -166,7 +166,7 @@ sap.ui.define([
 		* /// <Button text="Save" press=".onSavePolicyInforcement">
 		*/
 		onSavePolicyInforcement: function () {
-			var oBundle, oEntry, sUriKey, sPath, oView = this.getView(), oViewModel = oView.getModel("viewModel");
+			var oBundle, oEntry, sPolicyName, sUriKey, sPath, oView = this.getView(), oViewModel = oView.getModel("viewModel");
 			oEntry = oViewModel.getData().Data;
 			oBundle = oView.getModel("i18n").getResourceBundle();
 			if (oViewModel.getProperty("/ErrorState") == "Error") {
@@ -195,6 +195,7 @@ sap.ui.define([
 				oView.byId("idPEPActionResult").focus();
 				return;
 			}
+			sPolicyName = oEntry.PolicyName +"~"+oEntry.AttributeId;
 			delete oEntry.PolicyDesc;
 			delete oEntry.PolicyName;
 			delete oEntry.to_Policy;
@@ -207,9 +208,7 @@ sap.ui.define([
 				sPath = "/DataMaskingEnforcementSet('" + sUriKey + "')";
 				oView.getModel().update(sPath, oEntry, {
 					success: function () {
-						MessageBox.success("Entry has been updated");
-
-
+						MessageBox.success(oBundle.getText("msgPoEnforcementUpdateSuccessfully",[sPolicyName]));
 						oViewModel.setProperty("/Data", {});
 						this.oPolicyInforcementDialog.close();
 						this.oPolicyEnforcementTable.removeSelections(true);
@@ -627,8 +626,6 @@ sap.ui.define([
 			oDataModel.remove(sPath, {
 				success: function () {
 					MessageBox.success(oBundle.getText("msgPolEnforcementDeleteSucceful", [sMSGUri]), { styleClass: "PlDacMessageBox" });
-
-
 					this.oPolicyEnforcementTable.removeSelections(true);
 					oViewModel.setProperty("/Data", {});
 					oViewModel.setProperty("/EditButtonEnabled", false);
