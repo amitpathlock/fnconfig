@@ -105,6 +105,42 @@ sap.ui.define([
 			), "viewModel");
 			this.oPolicyEnforcementTable = oView.byId("idTableDataMaskingEnforcement");
 		},
+		onBeforePEPDataMaskingExport: function (oEvent) {
+			var mExportSettings = oEvent.getParameter("exportSettings");
+
+			var aColumns = mExportSettings.workbook.columns;
+
+			// Define your desired order by column 'property' or 'label'
+			var aDesiredOrder = ["to_Policy/PolicyName", "to_Policy/PolicyDesc","AttributeId", "IsActive", "PolicyResult"];
+			var aReorderedColumns = [];
+			aDesiredOrder.forEach(function (sProperty) {
+				var oColumn = aColumns.find(function (oCol) {
+					return oCol.property === sProperty;
+				});
+				if (oColumn) {
+					aReorderedColumns.push(oColumn);
+				}
+			});
+
+			// Add any other columns that are part of the original export but not in the specific order
+			// (optional, depending on your requirement)
+
+			// Assign the newly ordered array back to the export configuration
+			mExportSettings.workbook.columns = aReorderedColumns
+			// Check if the configuration and columns exist
+			if (mExportSettings && mExportSettings.workbook.columns) {
+				// Iterate over the columns and change the label property
+				mExportSettings.workbook.columns.forEach(function (oColumn) {
+					// Use a switch statement or if/else if to target specific properties
+					switch (oColumn.property) {
+						case "to_Policy/PolicyDesc":
+							oColumn.label = "PolicyDesc"; // Set the new column name
+							break;
+						// Add more cases as needed for other columns
+					}
+				});
+			}
+		},
 		/**
 		 * Saves or updates a data masking policy enforcement entry in the OData model.
 		 * 
@@ -130,8 +166,8 @@ sap.ui.define([
 		* /// <Button text="Save" press=".onSavePolicyInforcement">
 		*/
 		onSavePolicyInforcement: function () {
-			var oBundle,oEntry,sUriKey, sPath, oView = this.getView(), oViewModel = oView.getModel("viewModel");
-			 oEntry = oViewModel.getData().Data;
+			var oBundle, oEntry, sUriKey, sPath, oView = this.getView(), oViewModel = oView.getModel("viewModel");
+			oEntry = oViewModel.getData().Data;
 			oBundle = oView.getModel("i18n").getResourceBundle();
 			if (oViewModel.getProperty("/ErrorState") == "Error") {
 				oView.byId("idPEPPolicyName").focus();
@@ -387,10 +423,10 @@ sap.ui.define([
 						oViewModel.setProperty("/AttrErrorState", "None");
 						oViewModel.setProperty("/AttrErrorMessage", "");
 						oViewModel.setProperty("/Data/AttributeId", oData.AttributeId);
-						if(oView.byId("idPEPPolicyName").getTokens()[0]){
-							oViewModel.setProperty("/Data/Policy",oView.byId("idPEPPolicyName").getTokens()[0].getKey());
+						if (oView.byId("idPEPPolicyName").getTokens()[0]) {
+							oViewModel.setProperty("/Data/Policy", oView.byId("idPEPPolicyName").getTokens()[0].getKey());
 						}
-						
+
 					} else {
 						oViewModel.setProperty("/AttrErrorState", "Error");
 						oViewModel.setProperty("/AttrErrorMessage", oBundle.getText("msgErrorAttributeNotFound", [sAttribute]));
@@ -446,7 +482,7 @@ sap.ui.define([
 					},
 					success: function (oData) {
 						if (oData && oData.results.length > 0) {
-							oViewModel.setProperty("/ErrorMessage", oBundle.getText("msgErrorDuplicateEntry", [oData.results[0].to_Policy.PolicyName +"~"+oEntry.AttributeId]));
+							oViewModel.setProperty("/ErrorMessage", oBundle.getText("msgErrorDuplicateEntry", [oData.results[0].to_Policy.PolicyName + "~" + oEntry.AttributeId]));
 							oViewModel.setProperty("/ErrorState", "Error");
 							this.oPolicyNameInput.focus();
 						} else {

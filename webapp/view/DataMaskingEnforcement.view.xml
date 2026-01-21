@@ -46,7 +46,7 @@
                 beforeRebindTable="onBeforeRebindTable"
                placeToolbarInTable="true"
                showTablePersonalisation="false"
-              
+              beforeExport="onBeforePEPDataMaskingExport"
             >
             <!-- @ui5ignore -->
                 <Table mode="SingleSelectLeft" id="idTableDataMaskingEnforcement" 
@@ -76,12 +76,12 @@
                             </customData>
                             <Text text="{i18n>txtAction}" />
                         </Column>
-                         <!-- <Column visible="false">
+                         <Column width="0px">
                             <customData>
                                 <core:CustomData key="p13nData" value='\{"columnKey": "AttributeId", "columnIndex":"4", "leadingProperty": "AttributeId"}'/>
                             </customData>
                             
-                        </Column> -->
+                        </Column>
                         <Column width="0px" >
                             <customData>
                                 <core:CustomData key="p13nData" value='\{"columnKey": "PolicyDesc", "columnIndex":"3","navigationProperty":"to_Policy",  "leadingProperty": "to_Policy/PolicyDesc"}'/>
