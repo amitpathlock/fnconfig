@@ -38,9 +38,9 @@ sap.ui.define([
 		onInit: function () {
 			this._oRouter = this.getOwnerComponent().getRouter();
 			this._oRouter.getRoute("DataRestriction").attachPatternMatched(this._onRouteMatched, this);
-			this.addAddintionButtonIntoThePolicyEnforcementTableToolbar(this.getView().byId("idSmartTablePOPRestriction"));
+			this.addAdditionalButtonIntoThePolicyEnforcementTableToolbar(this.getView().byId("idSmartTablePOPRestriction"));
 		},
-		onBeforeExport: function (oEvent) {
+		onBeforePEPDataRestrictionExport: function (oEvent) {
 			var mExportSettings = oEvent.getParameter("exportSettings");
 
 			var aColumns = mExportSettings.workbook.columns;

@@ -20,7 +20,7 @@
           entitySet="DataRestrictionEnforcementSet"
           smartFilterId="smartFilterBar-DataRestrictionEnforcementSet" 
           tableType="ResponsiveTable" 
-          beforeExport="onBeforeExport"
+          beforeExport="onBeforePEPDataRestrictionExport"
           header="{i18n>txtSmartTableHeaderPolicyEnforcementDataRestriction}"
            persistencyKey="SmartTableAnalytical_Explored" 
            enableAutoBinding="true"

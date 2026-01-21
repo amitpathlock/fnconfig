@@ -40,7 +40,7 @@ sap.ui.define([
 		onInit: function () {
 			this._oRouter = this.getOwnerComponent().getRouter();
 			this._oRouter.getRoute("DataMasking").attachPatternMatched(this._onRouteMatched, this);
-			this.addAddintionButtonIntoThePolicyEnforcementTableToolbar(this.getView().byId("idSmartTableDataMaskingEnforcement"));
+			this.addAdditionalButtonIntoThePolicyEnforcementTableToolbar(this.getView().byId("idSmartTableDataMaskingEnforcement"));
 		},
 		/**
 		 * Route matched event handler for the DataMasking route.
@@ -77,7 +77,7 @@ sap.ui.define([
 					Description: oBundle.getText("lblDescription"),
 					Attribute: "Attribute",
 					Icon: "sap-icon://locked",
-					Title: oBundle.getText("titPolInforcementDataRestriction"),
+					Title: oBundle.getText("titPolInforcementDataMasking"),
 					PlaceHolder: "",
 					EditButtonEnabled: false,
 					Payload: {
@@ -143,7 +143,7 @@ sap.ui.define([
 			}
 			if (oEntry.Policy.trim() == "") {
 				oViewModel.setProperty("/ErrorState", "Error");
-				oViewModel.setProperty("/ErrorMessage", oBundle.getText("policyNameMandatory"));
+				oViewModel.setProperty("/ErrorMessage", oBundle.getText("msgErrorPolicyNameMandatory"));
 				oView.byId("idPEPPolicyName").focus();
 				return;
 			}
@@ -163,6 +163,7 @@ sap.ui.define([
 			delete oEntry.PolicyName;
 			delete oEntry.to_Policy;
 			delete oEntry.to_Attr;
+			oEntry.Policy = oEntry.Policy.split("~")[0];
 			oEntry.IsActive = oEntry.IsActive ? "X" : "";
 			if (({}).hasOwnProperty.call(oEntry, "__metadata")) {
 				delete oEntry.__metadata;
@@ -386,6 +387,10 @@ sap.ui.define([
 						oViewModel.setProperty("/AttrErrorState", "None");
 						oViewModel.setProperty("/AttrErrorMessage", "");
 						oViewModel.setProperty("/Data/AttributeId", oData.AttributeId);
+						if(oView.byId("idPEPPolicyName").getTokens()[0]){
+							oViewModel.setProperty("/Data/Policy",oView.byId("idPEPPolicyName").getTokens()[0].getKey());
+						}
+						
 					} else {
 						oViewModel.setProperty("/AttrErrorState", "Error");
 						oViewModel.setProperty("/AttrErrorMessage", oBundle.getText("msgErrorAttributeNotFound", [sAttribute]));
@@ -430,7 +435,7 @@ sap.ui.define([
 			var oView = this.getView(), oModel = oView.getModel(), oViewModel = oView.getModel("viewModel"),
 				oBundle = oView.getModel("i18n").getResourceBundle(), oPolicy, aFilters, oAttribute;
 			oViewModel.getProperty("/Data/IsActive") == "X" ? oViewModel.setProperty("/Data/IsActive", true) : oViewModel.setProperty("/Data/IsActive", false);
-			oPolicy = new Filter("Policy", FilterOperator.EQ, oEntry.Policy);
+			oPolicy = new Filter("Policy", FilterOperator.EQ, oEntry.Policy.split("~")[0]);
 			oAttribute = new Filter("AttributeId", FilterOperator.EQ, oEntry.AttributeId);
 			aFilters = [oPolicy, oAttribute];
 			oModel.read("/DataMaskingEnforcementSet", // Path to the specific entity
@@ -441,7 +446,7 @@ sap.ui.define([
 					},
 					success: function (oData) {
 						if (oData && oData.results.length > 0) {
-							oViewModel.setProperty("/ErrorMessage", oBundle.getText("msgErrorDuplicateEntry", [oData.results[0].to_Policy.PolicyName]));
+							oViewModel.setProperty("/ErrorMessage", oBundle.getText("msgErrorDuplicateEntry", [oData.results[0].to_Policy.PolicyName +"~"+oEntry.AttributeId]));
 							oViewModel.setProperty("/ErrorState", "Error");
 							this.oPolicyNameInput.focus();
 						} else {
@@ -486,11 +491,11 @@ sap.ui.define([
 				this._validateAttibuteInput(sNewValue);
 			} else {
 				oViewModel.setProperty("/Data/Policy", "");
-				oViewModel.setProperty("/ErrorState", "Error");
+				oViewModel.setProperty("/AttrErrorState", "Error");
 				if (sNewValue.length == 0) {
-					oViewModel.setProperty("/ErrorMessage", oBundle.getText("msgErrorAttributeNameMandatory"));
+					oViewModel.setProperty("/AttrErrorMessage", oBundle.getText("msgErrorAttributeNameMandatory"));
 				} else {
-					oViewModel.setProperty("/ErrorMessage", oBundle.getText("msgErrorAttributeNameInvalid"));
+					oViewModel.setProperty("/AttrErrorMessage", oBundle.getText("msgErrorAttributeNameInvalid"));
 				}
 			}
 		},

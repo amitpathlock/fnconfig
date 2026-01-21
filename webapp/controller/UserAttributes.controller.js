@@ -21,7 +21,7 @@ sap.ui.define([
 		onInit: function () {
 			this.oRouter = this.getOwnerComponent().getRouter();
 			this.oRouter.getRoute(PlDacConst.ROUTE_PATH_USER_ATTRIBUTE).attachPatternMatched(this._onRouteMatched, this);
-			this.addAddintionButtonIntoTheAttributeTableToolbar(this.getView().byId("idSmartTableUserAttribute"));
+			this.addAdditionalButtonIntoTheAttributeTableToolbar(this.getView().byId("idSmartTableUserAttribute"));
 		},
 
 		/* ### A Method has been defined to implement onRouteMatched event.

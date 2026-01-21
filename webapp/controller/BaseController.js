@@ -288,7 +288,7 @@ sap.ui.define(
 				oView.getModel("viewModel").setProperty("/FullScreen", true);
 				oView.getModel("viewModel").setProperty("/ExitFullScreen", false);
 			},
-			addAddintionButtonIntoTheAttributeTableToolbar: function (oSmartTable) {
+			addAdditionalButtonIntoTheAttributeTableToolbar: function (oSmartTable) {
 				var oToolbar = oSmartTable.getToolbar();
 				if (oToolbar.getContent().length == 0) {
 					oToolbar.addContent(new ToolbarSpacer());
@@ -443,7 +443,7 @@ sap.ui.define(
 						controller: this // Assign the current controller
 					}).then(function (oDialog) {
 						this.oPolicyInforcementDialog = oDialog;
-						this.oPolicyInforcementDialog.attachAfterOpen(this._onPolicyEnforcementDialogOnAfterShow, this);
+					//	this.oPolicyInforcementDialog.attachAfterOpen(this._onPolicyEnforcementDialogOnAfterShow, this);
 						oView.addDependent(oDialog); // Add dialog as dependent of the view
 						oDialog.open();
 					}.bind(this));
@@ -500,7 +500,7 @@ sap.ui.define(
 			 * Sets focus to the first enabled form field, or to the third field if the first is disabled.
 			 * Retrieves the form elements from the dialog and manages focus management for better UX.
 			 *
-			 * @function _onPolicyEnforcementDialogOnAfterShow
+			 * @function onBeforePEPDialogOpened
 			 * @param {sap.ui.base.Event} oEvent - The afterOpen event object from the dialog.
 			 * @private
 			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
@@ -518,7 +518,7 @@ sap.ui.define(
 				} else {
 					aFormElements[2].getAggregation("fields")[0].focus();
 					aFormElements[0].getAggregation("fields")[0].setValue("");
-					aFormElements[0].getAggregation("fields")[0].setTokens([new Token({text:oData.PolicyName+" ("+oData.PolicyDesc+")"})])
+					aFormElements[0].getAggregation("fields")[0].setTokens([new Token({key:oData.Policy.split("~")[0],text:oData.PolicyName+" ("+oData.PolicyDesc+")"})])
 					if(({}).hasOwnProperty.call(oData,"AttributeId")){
 						this._validateAttibuteInput(oData.AttributeId);
 					}
@@ -721,8 +721,9 @@ sap.ui.define(
 						if (bInputEditable) {
 							this.oPolicyNameInput.focus();
 						}
-						oView.byId("idPEPPolicyName").setValue("");
-						oView.byId("idPEPPolicyName").setTokens([new Token({text:oData.PolicyName+" ("+oData.PolicyDesc+")"})]);
+						//oView.byId("idPEPPolicyName").setValue("");
+						//oViewModel.setProperty("/Data/Policy",sPolicy);
+						oView.byId("idPEPPolicyName").setTokens([new Token({key:sPolicy,text:oData.PolicyName+" ("+oData.PolicyDesc+")"})]);
 						// If reading an entity set, oData.results will contain an array of entities
 						if (oData.PolicyDesc) {
 							oViewModel.setProperty("/ErrorState", "None");
@@ -774,7 +775,7 @@ sap.ui.define(
 			 * - All buttons are configured with appropriate icons, text, tooltips, and press event handlers
 			 * - Edit and Delete buttons are bound to the view model's button enable state
 			 */
-			addAddintionButtonIntoThePolicyEnforcementTableToolbar: function (oSmartTable) {
+			addAdditionalButtonIntoThePolicyEnforcementTableToolbar: function (oSmartTable) {
 				var oToolbar = oSmartTable.getToolbar();
 				if (oToolbar.getContent().length == 0) {
 					oToolbar.addContent(new ToolbarSpacer());
@@ -884,6 +885,7 @@ sap.ui.define(
 					oCtx = oEvent.getParameter("selectedRow").getBindingContext().getObject();
 			//	this.oPolicyNameInput = oView.byId("idPEPPolicyName");
 				oView.getModel("viewModel").setProperty("/Data/PolicyDesc", oCtx.PolicyDesc);
+				oView.getModel("viewModel").setProperty("/Data/Policy", oCtx.Policy);
 				this.validatePolicyInput(oCtx.Policy);
 			},
 			/**
