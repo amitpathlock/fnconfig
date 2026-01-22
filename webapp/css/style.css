@@ -256,7 +256,7 @@ span.sapMBtnInner.sapMBtnReject {
     font-size: 15px;
 }
 
-.plDacRuleBackground>.sapMFlexBoxBGTransparent {}
+
 
 .plDacRuleBackground>.sapMFlexBoxBGTransparent:nth-child(1) {
     padding-top: 17px;
@@ -412,6 +412,8 @@ ul.plDacSections {
 
 .PlDacDailogBox>header>div>div {
     background: #23c375 !important;
+    margin-left: 1rem;
+    text-align: left;
 }
 .PlDacDailogBox>header>div {
     background: #23c375 !important;
