@@ -76,7 +76,7 @@ sap.ui.define([
 					Name: oBundle.getText("lblPolicyName"),
 					Description: oBundle.getText("lblDescription"),
 					Attribute: "Attribute",
-					Icon: "sap-icon://locked",
+					Icon: "sap-icon://hide",
 					Title: oBundle.getText("titPolInforcementDataMasking"),
 					PlaceHolder: "",
 					EditButtonEnabled: false,
