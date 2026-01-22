@@ -403,7 +403,7 @@ sap.ui.define([
 					this._oPopover = oPopover;
 					this.getView().addDependent(this._oPopover);
 					this._loadPopOverData(oCtx);
-					this._oPopover.openBy(this._oButton);
+					//this._oPopover.openBy(this._oButton);
 				}.bind(this));
 			} else {
 				sap.ui.getCore().byId("idAssignedAttribures").setBusy(true);
