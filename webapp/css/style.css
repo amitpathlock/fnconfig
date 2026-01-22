@@ -412,9 +412,13 @@ ul.plDacSections {
 
 .PlDacDailogBox>header>div>div {
     background: #23c375 !important;
-    margin-left: 1rem;
-    text-align: left;
+   
 }
+.PlDacDailogBox>header>div>div>div {
+    text-align: left;
+    margin-left: 13px;
+}
+
 .PlDacDailogBox>header>div {
     background: #23c375 !important;
 }
