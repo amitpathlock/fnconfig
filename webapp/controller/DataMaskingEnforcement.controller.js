@@ -420,7 +420,7 @@ sap.ui.define([
 				success: function (oData) {
 					if (oData.Description) {
 						oView.byId("idPEPAttributes").setValue("");
-						oView.byId("idPEPAttributes").setTokens([new Token({ text: sAttribute.toUpperCase() + " (" + oData.Description, key: sAttribute + ")" })]);
+						oView.byId("idPEPAttributes").setTokens([new Token({key: sAttribute, text: sAttribute.toUpperCase() + " (" + oData.Description + ")" })]);
 						oViewModel.setProperty("/AttrErrorState", "None");
 						oViewModel.setProperty("/AttrErrorMessage", "");
 						oViewModel.setProperty("/Data/AttributeId", oData.AttributeId);
