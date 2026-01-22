@@ -616,7 +616,7 @@ sap.ui.define([
 				oViewModel = oView.getModel("viewModel"), sUriKey, sPath;
 			oCTx = oView.byId("idTableDataMaskingEnforcement").getSelectedItem().getBindingContext().getObject();
 
-			sUriKey = oCTx.Policy + "~" + oCTx.AttributeId;
+			sUriKey = oCTx.Policy.split("~").length>1?oCTx.Policy: oCTx.Policy + "~" + oCTx.AttributeId;
 			if (oViewModel.getProperty("/SelectedContextData") && oViewModel.getProperty("/SelectedContextData").PolicyName) {
 				sMSGUri = oViewModel.getProperty("/SelectedContextData").PolicyName + "~" + oCTx.AttributeId;
 			} else {
