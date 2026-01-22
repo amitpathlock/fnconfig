@@ -102,7 +102,7 @@
                     >
                         <items>
                             <core:Item key="" text="" />
-                            <core:Item key="A" text="ALLOWED" />
+                            <core:Item key="A" text="ALLOW" />
                             <core:Item key="D" text="DENY" />
                         </items>
                     </Select>

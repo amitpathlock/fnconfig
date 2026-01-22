@@ -107,7 +107,7 @@
                                     </ObjectAttribute>
                                 </ObjectHeader >
                                 <ObjectStatus tooltip="{=${IsActive}?'Active':'None'}" state="{=${IsActive}?'Success':'None'}" icon="{=${IsActive}?'sap-icon://status-positive':'sap-icon://status-inactive'}" />
-                                <ObjectStatus class="sapUiSmallMarginBottom" text="{=${PolicyResult}==='A'? 'Allowed' :'Denied'}" icon="{=${PolicyResult}==='A'? 'sap-icon://sys-enter-2' :'sap-icon://error'}" state="{=${PolicyResult}==='A'? 'Success' :'Error'}" />
+                                <ObjectStatus class="sapUiSmallMarginBottom" text="{=${PolicyResult}==='A'? 'Allow' :'Deny'}" icon="{=${PolicyResult}==='A'? 'sap-icon://sys-enter-2' :'sap-icon://error'}" state="{=${PolicyResult}==='A'? 'Success' :'Error'}" />
                             </cells>
                         </ColumnListItem>
                     </items>
