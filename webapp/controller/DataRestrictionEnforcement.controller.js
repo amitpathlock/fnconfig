@@ -391,7 +391,7 @@ sap.ui.define([
 		 * /// <Link press=".onPressLink" customData="...">
 		 */
 		onPressLink: function (oEvent) {
-			var oButton = oEvent.getSource();
+			this._oButton = oEvent.getSource();
 			var oPolicy = oEvent.getSource().getCustomData()[1].getValue();
 			var oCtx = oEvent.getSource().getCustomData()[0].getBindingContext().getObject();
 			oCtx["PolicyName"] = oPolicy.PolicyName;
@@ -403,11 +403,12 @@ sap.ui.define([
 					this._oPopover = oPopover;
 					this.getView().addDependent(this._oPopover);
 					this._loadPopOverData(oCtx);
-					this._oPopover.openBy(oButton);
+					this._oPopover.openBy(this._oButton);
 				}.bind(this));
 			} else {
+				sap.ui.getCore().byId("idAssignedAttribures").setBusy(true);
 				this._loadPopOverData(oCtx);
-				this._oPopover.openBy(oButton);
+
 			}
 		},
 		/**
@@ -441,8 +442,13 @@ sap.ui.define([
 					"$expand": "to_Attr,to_Policy" // Expand to_ActionItem
 				},
 				success: function (oData) {
-					var oModel = new JSONModel({ PolicyName: oCtx.PolicyName, PolicyDesc: oData.to_Policy.PolicyDesc, items: oData.to_Attr.results });
-					this._oPopover.setModel(oModel, "popOverModel");
+					sap.ui.getCore().byId("idAssignedAttribures").setBusy(false);
+					if(this._oPopover.getModel("popOverModel")){
+						this._oPopover.getModel("popOverModel").setData({ PolicyName: oCtx.PolicyName, PolicyDesc: oData.to_Policy.PolicyDesc, items: oData.to_Attr.results });
+					}else{
+						this._oPopover.setModel(new JSONModel({ PolicyName: oCtx.PolicyName, PolicyDesc: oData.to_Policy.PolicyDesc, items: oData.to_Attr.results }), "popOverModel");
+					}
+					this._oPopover.openBy(this._oButton);
 				}.bind(this),
 				error: function (oError) {
 					Log.error("Error reading policy details:" + oError);
@@ -455,6 +461,10 @@ sap.ui.define([
 			oViewModel.setProperty("/ErrorMessage", "");
 			oViewModel.setProperty("/ActionErrorState", "None");
 			oViewModel.setProperty("/ActionErrorMessage", "");
+		},
+		onAfterCloseAssignedAttributePopOver:function(){
+			this._oPopover.destroy();
+			this._oPopover=null;
 		},
 		/**
 		 * Lifecycle hook called after the controller's view is rendered.

@@ -1,9 +1,13 @@
 <core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:f="sap.f">
-   <Popover showHeader="false" class="PlDacPopover" placement="Auto" resizable="true" contentHeight="280px" contentWidth="430px">
+ <!-- @ui5ignore -->
+   <Popover showHeader="false"
+   afterClose="onAfterCloseAssignedAttributePopOver"
+    class="PlDacPopover" placement="Auto" resizable="true" contentHeight="280px" contentWidth="430px">
       <content>
          <f:DynamicPage class="sapUiNoContentPadding">
             <f:content>
-               <Table items="{    path: 'popOverModel&gt;/items'   }">
+             <!-- @ui5ignore -->
+               <Table id="idAssignedAttribures" items="{    path: 'popOverModel>/items'   }" noDataText="No data found"> 
                   <columns>
                      <Column>
                         <Text text="Attribute Name" />
@@ -14,8 +18,8 @@
                   </columns>
                   <ColumnListItem>
                      <cells>
-                        <Text text="{popOverModel&gt;AttributeId}" />
-                        <Text text="{popOverModel&gt;Description}" />
+                        <Text text="{popOverModel>AttributeId}" />
+                        <Text text="{popOverModel>Description}" />
                      </cells>
                   </ColumnListItem>
                </Table>
@@ -25,14 +29,14 @@
                   <f:heading>
                      <HBox alignItems="Center">
                         <core:Icon src="sap-icon://fx" class="sapUiTinyMarginEnd" />
-                        <Title text="{popOverModel&gt;/PolicyName}" level="H2" />
+                        <Title text="{popOverModel>/PolicyName}" level="H2" />
                      </HBox>
                   </f:heading>
                   <f:expandedContent>
-                     <Label  text="{popOverModel&gt;/PolicyDesc}" />
+                     <Label  text="{popOverModel>/PolicyDesc}" />
                   </f:expandedContent>
                   <f:snappedContent>
-                     <Label  text="{popOverModel&gt;/PolicyDesc}" />
+                     <Label  text="{popOverModel>/PolicyDesc}" />
                   </f:snappedContent>
                </f:DynamicPageTitle>
             </f:title>
