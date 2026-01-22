@@ -196,13 +196,14 @@ sap.ui.define([
 				return;
 			}
 			sPolicyName = oEntry.PolicyName +"~"+oEntry.AttributeId;
-			delete oEntry.PolicyDesc;
-			delete oEntry.PolicyName;
+			
 			delete oEntry.to_Policy;
 			delete oEntry.to_Attr;
 			oEntry.Policy = oEntry.Policy.split("~")[0];
 			oEntry.IsActive = oEntry.IsActive ? "X" : "";
 			if (({}).hasOwnProperty.call(oEntry, "__metadata")) {
+				delete oEntry.PolicyDesc;
+				delete oEntry.PolicyName;
 				delete oEntry.__metadata;
 				sUriKey = oEntry.Policy + "~" + oEntry.AttributeId;
 				sPath = "/DataMaskingEnforcementSet('" + sUriKey + "')";
@@ -411,14 +412,15 @@ sap.ui.define([
 		_validateAttibuteInput: function (sAttribute) {
 			var oBundle, oView = this.getView(), oDataModel = oView.getModel(),
 				oViewModel = oView.getModel("viewModel"),
-				sPath = "/AttrSet('" + sAttribute + "')";
+				sPath = "/AttrSet('" + sAttribute.toUpperCase() + "')";
 			oViewModel.setProperty("/Data/AttributeId", sAttribute);
 			oBundle = oView.getModel("i18n").getResourceBundle();
 			oDataModel.read(sPath, {
 				// Success callback function
 				success: function (oData) {
 					if (oData.Description) {
-						oView.byId("idPEPAttributes").setTokens([new Token({ text: sAttribute + " (" + oData.Description, key: sAttribute + ")" })]);
+						oView.byId("idPEPAttributes").setValue("");
+						oView.byId("idPEPAttributes").setTokens([new Token({ text: sAttribute.toUpperCase() + " (" + oData.Description, key: sAttribute + ")" })]);
 						oViewModel.setProperty("/AttrErrorState", "None");
 						oViewModel.setProperty("/AttrErrorMessage", "");
 						oViewModel.setProperty("/Data/AttributeId", oData.AttributeId);
@@ -565,11 +567,13 @@ sap.ui.define([
 			var sMSGUri, oBundle, oView = this.getView(), oDataModel = oView.getModel(), oViewModel = oView.getModel("viewModel");
 			oEntry.IsActive = oEntry.IsActive == true ? 'X' : '';
 			oBundle = oView.getModel("i18n").getResourceBundle();
-			if (oViewModel.getProperty("/SelectedContextData") && oViewModel.getProperty("/SelectedContextData").PolicyName) {
-				sMSGUri = oViewModel.getProperty("/SelectedContextData").PolicyName + "~" + oEntry.AttributeId;
-			} else {
-				sMSGUri = oEntry.Policy + "~" + oEntry.AttributeId;
-			}
+			// if (oViewModel.getProperty("/SelectedContextData") && oViewModel.getProperty("/SelectedContextData").PolicyName) {
+			// 	sMSGUri = oViewModel.getProperty("/SelectedContextData").PolicyName + "~" + oEntry.AttributeId;
+			// } else {
+				sMSGUri = oEntry.PolicyName + "~" + oEntry.AttributeId;
+			//}
+			delete oEntry.PolicyDesc;
+			delete oEntry.PolicyName;
 			oDataModel.create(PlDacConst.ENTITY_SET_DATAMASKINGENFORCEMENT, oEntry, {
 				success: function () {
 					MessageBox.success(oBundle.getText("msgPolEnforcementSuccessful", [sMSGUri]), { styleClass: "PlDacMessageBox" });

@@ -721,8 +721,8 @@ sap.ui.define(
 						if (bInputEditable) {
 							this.oPolicyNameInput.focus();
 						}
-						//oView.byId("idPEPPolicyName").setValue("");
-						//oViewModel.setProperty("/Data/Policy",sPolicy);
+						oView.byId("idPEPPolicyName").setValue("");
+						oViewModel.setProperty("/Data/PolicyName",oData.PolicyName);
 						oView.byId("idPEPPolicyName").setTokens([new Token({key:sPolicy,text:oData.PolicyName+" ("+oData.PolicyDesc+")"})]);
 						// If reading an entity set, oData.results will contain an array of entities
 						if (oData.PolicyDesc) {
