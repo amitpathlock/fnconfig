@@ -15,7 +15,7 @@ sap.ui.define(
 		"sap/m/Token"
 	],
 	function (BaseController, MessageBox, Fragment, UIColumn, Column, Text, Label,
-		ColumnListItem, OverflowToolbarButton, ToolbarSpacer, Sorter, Log,Token) {
+		ColumnListItem, OverflowToolbarButton, ToolbarSpacer, Sorter, Log, Token) {
 		"use strict";
 		return BaseController.extend("pl.dac.apps.fnconfig.controller.BaseController", {
 			oPolicyEnforcementTable: null,
@@ -150,7 +150,7 @@ sap.ui.define(
 				oView.getModel("viewModel").setProperty("/AttrNameEnabled", true);
 				oView.getModel("viewModel").setProperty("/ErrorState", "None");
 				oView.getModel("viewModel").setProperty("/ErrorMessage", "");
-				
+
 				if (!this.oAttributeDialog) {
 					Fragment.load({
 						id: oView.getId(),
@@ -169,7 +169,7 @@ sap.ui.define(
 
 				}
 			},
-			
+
 			/**
 			 * Event handler for closing the attribute dialog.
 			 * Closes the attribute dialog if it has been instantiated.
@@ -199,7 +199,7 @@ sap.ui.define(
 				var oView = this.getView(), oViewModel = oView.getModel("viewModel"),
 					oSelectedContextData = oViewModel.getProperty("/SelectedContextData");
 				oView.getModel("viewModel").setProperty("/Data", oSelectedContextData);
-				
+
 				if (!this.oAttributeDialog) {
 					Fragment.load({
 						id: oView.getId(),
@@ -424,16 +424,16 @@ sap.ui.define(
 			 * @returns {void}
 			 */
 			_onEditPolicyEnforcementButtonPress: function () {
-				var oView = this.getView(), oSelectedContextData,oViewModel=oView.getModel("viewModel");
-				
+				var oView = this.getView(), oSelectedContextData, oViewModel = oView.getModel("viewModel");
+
 				this._loadSelectedTableItemData();
 				oSelectedContextData = oView.getModel("viewModel").getProperty("/SelectedContextData");
 				oViewModel.setProperty("/Data", oSelectedContextData);
 				oViewModel.setProperty("/ErrorMessage", "");
 				oViewModel.setProperty("/ErrorState", "None");
-				oViewModel.setProperty("/PolicyNameEnabled",false);
-				if(oViewModel.getProperty("/VisibleAttribute")){
-					oViewModel.setProperty("/AttributeNameEnabled",false);
+				oViewModel.setProperty("/PolicyNameEnabled", false);
+				if (oViewModel.getProperty("/VisibleAttribute")) {
+					oViewModel.setProperty("/AttributeNameEnabled", false);
 				}
 				this.clearValidationError();
 				if (!this.oPolicyInforcementDialog) {
@@ -443,7 +443,7 @@ sap.ui.define(
 						controller: this // Assign the current controller
 					}).then(function (oDialog) {
 						this.oPolicyInforcementDialog = oDialog;
-					//	this.oPolicyInforcementDialog.attachAfterOpen(this._onPolicyEnforcementDialogOnAfterShow, this);
+						//	this.oPolicyInforcementDialog.attachAfterOpen(this._onPolicyEnforcementDialogOnAfterShow, this);
 						oView.addDependent(oDialog); // Add dialog as dependent of the view
 						oDialog.open();
 					}.bind(this));
@@ -451,7 +451,7 @@ sap.ui.define(
 					this.oPolicyInforcementDialog.open();
 				}
 				oView.getModel("viewModel").setProperty("/PolicyNameEnabled", false);
-				
+
 			},
 
 			/**
@@ -467,14 +467,14 @@ sap.ui.define(
 			 * @returns {void}
 			 */
 			_onAddPolicyEnforcementBtnPress: function () {
-				var  oView = this.getView(),oViewModel=oView.getModel("viewModel");
+				var oView = this.getView(), oViewModel = oView.getModel("viewModel");
 				oViewModel.setProperty("/Data", { Policy: "", PolicyResult: "", IsActive: false });
 				oViewModel.setProperty("/PolicyNameEnabled", true);
 				oViewModel.setProperty("/ErrorState", "None");
 				oViewModel.setProperty("/ErrorMessage", "");
-				oViewModel.setProperty("/PolicyNameEnabled",true);
-				if(oViewModel.getProperty("/VisibleAttribute")){
-					oViewModel.setProperty("/AttributeNameEnabled",true);
+				oViewModel.setProperty("/PolicyNameEnabled", true);
+				if (oViewModel.getProperty("/VisibleAttribute")) {
+					oViewModel.setProperty("/AttributeNameEnabled", true);
 				}
 				this.clearValidationError();
 				if (!this.oPolicyInforcementDialog) {
@@ -494,7 +494,7 @@ sap.ui.define(
 					this.oPolicyInforcementDialog.open();
 				}
 			},
-			clearValidationError:function(){},
+			clearValidationError: function () { },
 			/**
 			 * Private event handler called when the policy enforcement dialog is opened.
 			 * Sets focus to the first enabled form field, or to the third field if the first is disabled.
@@ -507,19 +507,19 @@ sap.ui.define(
 			 * @returns {void}
 			 */
 			onBeforePEPDialogOpened: function (oEvent) {
-				var oDailog = oEvent.getSource(), oView= this.getView(),oData=oView.getModel("viewModel").getProperty("/Data"),
+				var oDailog = oEvent.getSource(), oView = this.getView(), oData = oView.getModel("viewModel").getProperty("/Data"),
 					oForm = oDailog.getContent()[0].getAggregation("form"),
 					aFormElements = oForm.getAggregation("formContainers")[0].getAggregation("formElements");
 				if (aFormElements[0].getAggregation("fields")[0].getEnabled()) {
 					aFormElements[0].getAggregation("fields")[0].focus();
-					if(oView.getModel("viewModel").getProperty("/VisibleAttribute")){
+					if (oView.getModel("viewModel").getProperty("/VisibleAttribute")) {
 						aFormElements[1].getAggregation("fields")[0].removeAllTokens();
 					}
 				} else {
 					aFormElements[2].getAggregation("fields")[0].focus();
 					aFormElements[0].getAggregation("fields")[0].setValue("");
-					aFormElements[0].getAggregation("fields")[0].setTokens([new Token({key:oData.Policy.split("~")[0],text:oData.PolicyName+" ("+oData.PolicyDesc+")"})])
-					if(({}).hasOwnProperty.call(oData,"AttributeId")){
+					aFormElements[0].getAggregation("fields")[0].setTokens([new Token({ key: oData.Policy.split("~")[0], text: oData.PolicyName + " (" + oData.PolicyDesc + ")" })])
+					if (({}).hasOwnProperty.call(oData, "AttributeId")) {
 						this._validateAttibuteInput(oData.AttributeId);
 					}
 				}
@@ -527,7 +527,7 @@ sap.ui.define(
 			onSavePolicyInforcement: function () {
 
 			},
-			
+
 			/**
 			 * Event handler for closing the policy enforcement dialog.
 			 * Restores the view model with the selected policy enforcement item's binding context data if an item is selected.
@@ -547,7 +547,7 @@ sap.ui.define(
 					oView.byId("idPEPPolicyName").setValue("");
 					this.oPolicyInforcementDialog.close();
 					this.oPolicyEnforcementTable.removeSelections(true);
-					if(this.oPolicyNameInput){
+					if (this.oPolicyNameInput) {
 						this.oPolicyNameInput.removeAllTokens();
 					}
 				}
@@ -569,10 +569,10 @@ sap.ui.define(
 				mBindingParams.parameters["expand"] = "to_Policy";
 				mBindingParams.parameters["select"] = mBindingParams.parameters["select"] + ",Policy,to_Policy/PolicyDesc";
 			},
-			onBeforePEPDialogClosed:function(){
-				var oView= this.getView();
-				oView.getModel("viewModel").setProperty("/EditButtonEnabled",false);
-				oView.getModel("viewModel").setProperty("/DeleteButtonEnabled",false);
+			onBeforePEPDialogClosed: function () {
+				var oView = this.getView();
+				oView.getModel("viewModel").setProperty("/EditButtonEnabled", false);
+				oView.getModel("viewModel").setProperty("/DeleteButtonEnabled", false);
 				this.getView().byId("idPEPPolicyName").removeAllTokens();
 			},
 			/**
@@ -598,7 +598,7 @@ sap.ui.define(
 			 */
 			onValueHelpRequested: function () {
 				var oColPolicyName, oColPolicyDesc, that = this, oView = this.getView();
-				
+
 				if (!this._oVHDialog) {
 					this._oVHDialog = sap.ui.xmlfragment("pl.dac.apps.fnconfig.fragments.ValueHelp", this);
 					oView.addDependent(this._oVHDialog);
@@ -677,7 +677,7 @@ sap.ui.define(
 				var oValue, aTokens = oEvent.getParameter("tokens"), oView = this.getView();
 				oValue = aTokens[0].getCustomData()[0].getValue();
 				oView.getModel("viewModel").setProperty("/Data/PolicyDesc", oValue.PolicyDesc);
-				
+
 				oView.getModel("viewModel").refresh();
 				this._oVHDialog.close();
 				this.validatePolicyInput(aTokens[0].getKey());
@@ -711,8 +711,8 @@ sap.ui.define(
 					oViewModel = oView.getModel("viewModel"),
 					sPath = "/PolicySet('" + sPolicy + "')",
 					bInputEditable = oViewModel.getProperty("/PolicyNameEnabled");
-					oViewModel.setProperty("/Data/Policy",sPolicy);
-					oBundle = oView.getModel("i18n").getResourceBundle();
+				oViewModel.setProperty("/Data/Policy", sPolicy);
+				oBundle = oView.getModel("i18n").getResourceBundle();
 				// Example validation rule
 				oDataModel.read(sPath, {
 					// Success callback function
@@ -722,8 +722,8 @@ sap.ui.define(
 							this.oPolicyNameInput.focus();
 						}
 						oView.byId("idPEPPolicyName").setValue("");
-						oViewModel.setProperty("/Data/PolicyName",oData.PolicyName);
-						oView.byId("idPEPPolicyName").setTokens([new Token({key:sPolicy,text:oData.PolicyName+" ("+oData.PolicyDesc+")"})]);
+						oViewModel.setProperty("/Data/PolicyName", oData.PolicyName);
+						oView.byId("idPEPPolicyName").setTokens([new Token({ key: sPolicy, text: oData.PolicyName + " (" + oData.PolicyDesc + ")" })]);
 						// If reading an entity set, oData.results will contain an array of entities
 						if (oData.PolicyDesc) {
 							oViewModel.setProperty("/ErrorState", "None");
@@ -734,9 +734,9 @@ sap.ui.define(
 					error: function () {
 						// oError contains details about the error
 						//oView.byId("idPEPPolicyDescription").setText("");
-						oViewModel.getProperty("/Data/Policy","");
+						oViewModel.getProperty("/Data/Policy", "");
 						oViewModel.setProperty("/ErrorState", "Error");//
-						oViewModel.setProperty("/ErrorMessage", oBundle.getText("msgErrorPolicyNotFound",[sPolicy]));
+						oViewModel.setProperty("/ErrorMessage", oBundle.getText("msgErrorPolicyNotFound", [sPolicy]));
 					}
 				});
 			},
@@ -880,10 +880,21 @@ sap.ui.define(
 					oTable.getBinding("items").sort([new Sorter("Policy", true)]);
 				}
 			},
+			onPEPPolicyTokenUpdated: function (oEvent) {
+
+				if (oEvent.getParameter("type") == "removedAll") {
+					var oBundle, oView = this.getView(), oViewModel = oView.getModel("viewModel");
+					oBundle = oView.getModel("i18n").getResourceBundle();
+					oViewModel.setProperty("/ErrorState", "Error");
+					oViewModel.setProperty("/ErrorMessage", oBundle.getText("msgErrorPolicyNameMandatory"));
+					oView.byId("idPEPPolicyName").focus();
+				}
+
+			},
 			onSuggestionItemSelected: function (oEvent) {
 				var oView = this.getView(),
 					oCtx = oEvent.getParameter("selectedRow").getBindingContext().getObject();
-			//	this.oPolicyNameInput = oView.byId("idPEPPolicyName");
+				//	this.oPolicyNameInput = oView.byId("idPEPPolicyName");
 				oView.getModel("viewModel").setProperty("/Data/PolicyDesc", oCtx.PolicyDesc);
 				oView.getModel("viewModel").setProperty("/Data/Policy", oCtx.Policy);
 				this.validatePolicyInput(oCtx.Policy);
@@ -912,7 +923,7 @@ sap.ui.define(
 			 *   - `/ErrorMessage` → ""
 			 */
 			onPolicyNameInputChange: function (oEvent) {
-				var oView = this.getView(),oBundle, sNewValue = oEvent.getParameter("newValue"), oViewModel = oView.getModel("viewModel"),
+				var oView = this.getView(), oBundle, sNewValue = oEvent.getParameter("newValue"), oViewModel = oView.getModel("viewModel"),
 					oInput = oEvent.getSource();
 				oBundle = oView.getModel("i18n").getResourceBundle();
 				oViewModel.setProperty("/ErrorState", "None");
@@ -921,14 +932,14 @@ sap.ui.define(
 				this.oPolicyNameInput = oInput;
 				if (sNewValue.length > 6) {
 					this.validatePolicyInput(sNewValue.toUpperCase());
-				}else{
-					oViewModel.setProperty("/Data/Policy","");
+				} else {
+					oViewModel.setProperty("/Data/Policy", "");
 					oViewModel.setProperty("/ErrorState", "Error");
-					if(sNewValue.length==0){
+					if (sNewValue.length == 0) {
 						oViewModel.setProperty("/ErrorMessage", oBundle.getText("msgErrorPolicyNameMandatory"));
-					}else{
+					} else {
 						oViewModel.setProperty("/ErrorMessage", oBundle.getText("msgErrorPolicyNameInvalid"));
-					}	
+					}
 				}
 			}
 		});

@@ -141,6 +141,15 @@ sap.ui.define([
 				});
 			}
 		},
+		onPEPAttributeTokenUpdated:function(oEvent){
+			if (oEvent.getParameter("type") == "removedAll") {
+					var oBundle, oView = this.getView(), oViewModel = oView.getModel("viewModel");
+					oBundle = oView.getModel("i18n").getResourceBundle();
+					oViewModel.setProperty("/AttrErrorState", "Error");
+					oViewModel.setProperty("/AttrErrorMessage", oBundle.getText("msgErrorAttributeNameMandatory"));
+					oView.byId("idPEPAttributes").focus();
+				}
+		},
 		/**
 		 * Saves or updates a data masking policy enforcement entry in the OData model.
 		 * 

@@ -30,7 +30,7 @@
                     <MultiInput enabled="{viewModel>/PolicyNameEnabled}"  id="idPEPPolicyName"
                         showSuggestion="true"
                         showValueHelp="true"
-                      
+                       tokenChange="onPEPPolicyTokenUpdated"
                         valueHelpRequest=".onValueHelpRequested"
                         valueState="{viewModel>/ErrorState}"
                         valueStateText="{viewModel>/ErrorMessage}"
@@ -66,6 +66,7 @@
                         showSuggestion="true"
                         enabled="{viewModel>/AttributeNameEnabled}"
                         showValueHelp="true"  width="100%"
+                       tokenChange="onPEPAttributeTokenUpdated"
                          valueState="{viewModel>/AttrErrorState}"
                         valueStateText="{viewModel>/AttrErrorMessage}"
                         valueHelpRequest=".onPEPAttributeVHRequested" 
