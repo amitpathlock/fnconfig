@@ -509,13 +509,15 @@ sap.ui.define(
 			 * @returns {void}
 			 */
 			onBeforePEPDialogOpened: function (oEvent) {
-				var oDailog = oEvent.getSource(), oView = this.getView(), oData = oView.getModel("viewModel").getProperty("/Data"),
+				var oDailog = oEvent.getSource(), oView = this.getView(),oViewModel =oView.getModel("viewModel"), oData = oViewModel.getProperty("/Data"),
 					oForm = oDailog.getContent()[0].getAggregation("form"),
 					aFormElements = oForm.getAggregation("formContainers")[0].getAggregation("formElements");
 				if (aFormElements[0].getAggregation("fields")[0].getEnabled()) {
 					aFormElements[0].getAggregation("fields")[0].focus();
-					if (oView.getModel("viewModel").getProperty("/VisibleAttribute")) {
+					if (oViewModel.getProperty("/VisibleAttribute")) {
 						aFormElements[1].getAggregation("fields")[0].removeAllTokens();
+						oViewModel.setProperty("/AttrErrorState", "None");
+						oViewModel.setProperty("/AttrErrorMessage", "");
 					}
 				} else {
 					aFormElements[2].getAggregation("fields")[0].focus();
