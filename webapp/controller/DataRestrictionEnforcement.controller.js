@@ -69,7 +69,7 @@ sap.ui.define([
 					// Use a switch statement or if/else if to target specific properties
 					switch (oColumn.property) {
 						case "to_Policy/PolicyDesc":
-							oColumn.label = "PolicyDesc"; // Set the new column name
+							oColumn.label = "Policy Description"; // Set the new column name
 							oColumn.width =27;
 							break;
 						case "to_Policy/PolicyName":
