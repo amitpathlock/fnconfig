@@ -431,8 +431,8 @@ ul.plDacSections {
 .PlDacPopover .sapMTBStandard span{
     color:#fff !important;
 }
-.plDacObjectHeader{padding: 5px 12px !important;}
-.plDacObjectHeader .sapMOH{padding:0.3rem;}
+.plDacObjectHeader{padding: 0px 0px !important;}
+.plDacObjectHeader .sapMOH{padding:0.1rem;}
 .plDacObjectHeader .sapMOHBottomRow{margin-top:1px;}
 .plDacObjectHeader .sapMOHBottomRow .sapMOHAttrRow{margin-top:1px;}
 .plDacDynamicPageTitle{background: #23c375 !important;}
@@ -450,4 +450,7 @@ ul.plDacSections {
 /* .plDacObjectAttribute>.sapMObjectAttributeText{color:#fcb900 !important;}
 .plDacObjectAttribute>.sapMObjectAttributeTitle{color:#02478b !important;}
 .plDacAttributeId>.sapMObjectAttributeTitle{color:#02478b !important;} */
+/* .sapMListTblAlternateRowColors  .sapMListTblSelCol:first-child{
+   padding: 0 0.1rem !important;
+} */
 

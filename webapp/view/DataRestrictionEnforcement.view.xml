@@ -27,7 +27,7 @@
             demandPopin="true" class="sapUiResponsiveContentPadding"
              beforeRebindTable="onBeforeRebindTable" placeToolbarInTable="true">
             <!-- @ui5ignore -->
-            <Table mode="SingleSelectLeft" id="idTableDataRestrictionEnforcement" selectionChange="onTableSelectionChange" sticky="ColumnHeaders,HeaderToolbar" growingScrollToLoad="true" growing="true" growingThreshold="20">
+            <Table mode="SingleSelectLeft" id="idTableDataRestrictionEnforcement" alternateRowColors="true" selectionChange="onTableSelectionChange" sticky="ColumnHeaders,HeaderToolbar" growingScrollToLoad="true" growing="true" growingThreshold="20">
                <!-- Header -->
                <columns>
                   <Column width="70%">

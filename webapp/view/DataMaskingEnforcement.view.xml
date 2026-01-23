@@ -51,12 +51,12 @@
             <!-- @ui5ignore -->
                 <Table mode="SingleSelectLeft" id="idTableDataMaskingEnforcement" 
                     selectionChange="onTableSelectionChange"
-                    sticky="ColumnHeaders,HeaderToolbar" 
+                    sticky="ColumnHeaders,HeaderToolbar" alternateRowColors="true"
                    growingScrollToLoad="true" growing="true" 
                 >
                     <!-- Header -->
                     <columns>
-                        <Column  width="43%" headerMenu="columnHeaderMenu">
+                        <Column  width="43%" headerMenu="columnHeaderMenu" hAlign="Left">
                             <customData>
                                 <core:CustomData key="p13nData" value='\{"columnKey": "PolicyName", "sortProperty": "Policy", "columnIndex":"0","navigationProperty":"to_Policy",  "leadingProperty": "to_Policy/PolicyName"}'/>
                                
