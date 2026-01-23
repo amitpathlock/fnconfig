@@ -136,6 +136,13 @@ sap.ui.define([
 					switch (oColumn.property) {
 						case "to_Policy/PolicyDesc":
 							oColumn.label = "PolicyDesc"; // Set the new column name
+							oColumn.width =27;
+							break;
+						case "to_Policy/PolicyName":
+							oColumn.width =27;
+						break;
+						case "AttributeId":
+							oColumn.width =27;
 							break;
 						// Add more cases as needed for other columns
 					}
