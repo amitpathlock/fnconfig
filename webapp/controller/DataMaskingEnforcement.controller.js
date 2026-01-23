@@ -142,7 +142,7 @@ sap.ui.define([
 			}
 		},
 		onPEPAttributeTokenUpdated:function(oEvent){
-			if (oEvent.getParameter("type") == "removedAll") {
+			if (oEvent.getParameter("type") == "removedAll" ||oEvent.getParameter("type")=="removed") {
 					var oBundle, oView = this.getView(), oViewModel = oView.getModel("viewModel");
 					oBundle = oView.getModel("i18n").getResourceBundle();
 					oViewModel.setProperty("/AttrErrorState", "Error");
