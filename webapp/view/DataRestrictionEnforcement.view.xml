@@ -32,15 +32,11 @@
                <columns>
                   <Column width="70%">
                     <customData>
-                        <core:CustomData key="p13nData" value='\{"columnKey": "PolicyName", "columnIndex":"0","navigationProperty":"to_Policy",  "leadingProperty": "to_Policy/PolicyName"}' />
+                        <core:CustomData key="p13nData" value='\{"columnKey": "PolicyName","sortProperty": "Policy", "columnIndex":"0","navigationProperty":"to_Policy",  "leadingProperty": "to_Policy/PolicyName"}' />
                      </customData>
-                     <HBox>
+                    
                                  <Text text="{i18n>txtPolName}" class="sapUiSmallMarginEnd" />
-                                 <!-- @ui5ignore -->
-                                 <core:Icon src="sap-icon://sort-ascending" class="plDacSortIcon" press="onPressPolNameSortASC"  />
-                                 <!-- @ui5ignore -->
-                                 <core:Icon src="sap-icon://sort-descending"  class="plDacSortIcon" press="onPressPolNameSortDESC"/>
-                            </HBox>
+                         
                   </Column>
                    <Column width="15%" hAlign="Center">
                    <customData>
