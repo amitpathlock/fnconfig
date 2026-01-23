@@ -13,10 +13,11 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/base/Log",
-	"sap/m/Token"
+	"sap/m/Token",
+	"sap/ui/model/Sorter"
 ], function (
 	BaseController, PlDacConst, Fragment, JSONModel, MessageBox, UIColumn, Column, Text, Label,
-	ColumnListItem, Filter, FilterOperator, Log, Token
+	ColumnListItem, Filter, FilterOperator, Log, Token,Sorter
 ) {
 	"use strict";
 
@@ -111,7 +112,7 @@ sap.ui.define([
 			var aColumns = mExportSettings.workbook.columns;
 
 			// Define your desired order by column 'property' or 'label'
-			var aDesiredOrder = ["to_Policy/PolicyName", "to_Policy/PolicyDesc","AttributeId", "IsActive", "PolicyResult"];
+			var aDesiredOrder = ["to_Policy/PolicyName", "to_Policy/PolicyDesc", "AttributeId", "IsActive", "PolicyResult"];
 			var aReorderedColumns = [];
 			aDesiredOrder.forEach(function (sProperty) {
 				var oColumn = aColumns.find(function (oCol) {
@@ -141,14 +142,14 @@ sap.ui.define([
 				});
 			}
 		},
-		onPEPAttributeTokenUpdated:function(oEvent){
-			if (oEvent.getParameter("type") == "removedAll" ||oEvent.getParameter("type")=="removed") {
-					var oBundle, oView = this.getView(), oViewModel = oView.getModel("viewModel");
-					oBundle = oView.getModel("i18n").getResourceBundle();
-					oViewModel.setProperty("/AttrErrorState", "Error");
-					oViewModel.setProperty("/AttrErrorMessage", oBundle.getText("msgErrorAttributeNameMandatory"));
-					oView.byId("idPEPAttributes").focus();
-				}
+		onPEPAttributeTokenUpdated: function (oEvent) {
+			if (oEvent.getParameter("type") == "removedAll" || oEvent.getParameter("type") == "removed") {
+				var oBundle, oView = this.getView(), oViewModel = oView.getModel("viewModel");
+				oBundle = oView.getModel("i18n").getResourceBundle();
+				oViewModel.setProperty("/AttrErrorState", "Error");
+				oViewModel.setProperty("/AttrErrorMessage", oBundle.getText("msgErrorAttributeNameMandatory"));
+				oView.byId("idPEPAttributes").focus();
+			}
 		},
 		/**
 		 * Saves or updates a data masking policy enforcement entry in the OData model.
@@ -204,8 +205,8 @@ sap.ui.define([
 				oView.byId("idPEPActionResult").focus();
 				return;
 			}
-			sPolicyName = oEntry.PolicyName +"~"+oEntry.AttributeId;
-			
+			sPolicyName = oEntry.PolicyName + "~" + oEntry.AttributeId;
+
 			delete oEntry.to_Policy;
 			delete oEntry.to_Attr;
 			oEntry.Policy = oEntry.Policy.split("~")[0];
@@ -218,7 +219,7 @@ sap.ui.define([
 				sPath = "/DataMaskingEnforcementSet('" + sUriKey + "')";
 				oView.getModel().update(sPath, oEntry, {
 					success: function () {
-						MessageBox.success(oBundle.getText("msgPoEnforcementUpdateSuccessfully",[sPolicyName]));
+						MessageBox.success(oBundle.getText("msgPoEnforcementUpdateSuccessfully", [sPolicyName]));
 						oViewModel.setProperty("/Data", {});
 						this.oPolicyInforcementDialog.close();
 						this.oPolicyEnforcementTable.removeSelections(true);
@@ -429,7 +430,7 @@ sap.ui.define([
 				success: function (oData) {
 					if (oData.Description) {
 						oView.byId("idPEPAttributes").setValue("");
-						oView.byId("idPEPAttributes").setTokens([new Token({key: sAttribute, text: sAttribute.toUpperCase() + " (" + oData.Description + ")" })]);
+						oView.byId("idPEPAttributes").setTokens([new Token({ key: sAttribute, text: sAttribute.toUpperCase() + " (" + oData.Description + ")" })]);
 						oViewModel.setProperty("/AttrErrorState", "None");
 						oViewModel.setProperty("/AttrErrorMessage", "");
 						oViewModel.setProperty("/Data/AttributeId", oData.AttributeId);
@@ -579,7 +580,7 @@ sap.ui.define([
 			// if (oViewModel.getProperty("/SelectedContextData") && oViewModel.getProperty("/SelectedContextData").PolicyName) {
 			// 	sMSGUri = oViewModel.getProperty("/SelectedContextData").PolicyName + "~" + oEntry.AttributeId;
 			// } else {
-				sMSGUri = oEntry.PolicyName + "~" + oEntry.AttributeId;
+			sMSGUri = oEntry.PolicyName + "~" + oEntry.AttributeId;
 			//}
 			delete oEntry.PolicyDesc;
 			delete oEntry.PolicyName;
@@ -629,7 +630,7 @@ sap.ui.define([
 				oViewModel = oView.getModel("viewModel"), sUriKey, sPath;
 			oCTx = oView.byId("idTableDataMaskingEnforcement").getSelectedItem().getBindingContext().getObject();
 
-			sUriKey = oCTx.Policy.split("~").length>1?oCTx.Policy: oCTx.Policy + "~" + oCTx.AttributeId;
+			sUriKey = oCTx.Policy.split("~").length > 1 ? oCTx.Policy : oCTx.Policy + "~" + oCTx.AttributeId;
 			if (oViewModel.getProperty("/SelectedContextData") && oViewModel.getProperty("/SelectedContextData").PolicyName) {
 				sMSGUri = oViewModel.getProperty("/SelectedContextData").PolicyName + "~" + oCTx.AttributeId;
 			} else {

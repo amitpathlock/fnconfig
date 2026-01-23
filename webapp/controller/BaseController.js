@@ -312,12 +312,12 @@ sap.ui.define(
 						tooltip: "{i18n>txtBtnDelDataAttribute}",
 						press: this._onDeleteAttributeButtonPress.bind(this)
 					}));
-					oToolbar.addContent(new OverflowToolbarButton({
-						text: "Sort",
-						icon: "sap-icon://sort",
-						tooltip: "Sort",
-						press: this._onAttributeTableSortButtonPress.bind(this)
-					}));
+					// oToolbar.addContent(new OverflowToolbarButton({
+					// 	text: "Sort",
+					// 	icon: "sap-icon://sort",
+					// 	tooltip: "Sort",
+					// 	press: this._onAttributeTableSortButtonPress.bind(this)
+					// }));
 				}
 			},
 			/**
@@ -803,12 +803,12 @@ sap.ui.define(
 						tooltip: "{i18n>txtPolEnforcementDelBtnTooltip}",
 						press: this._onDeletePolicyEnforcementButtonPress.bind(this)
 					}));
-					oToolbar.addContent(new OverflowToolbarButton({
-						text: "Sort",
-						icon: "sap-icon://sort",
-						tooltip: "Sort",
-						press: this._onPolicyEnforcementSortButtonPress.bind(this)
-					}));
+					// oToolbar.addContent(new OverflowToolbarButton({
+					// 	text: "Sort",
+					// 	icon: "sap-icon://sort",
+					// 	tooltip: "Sort",
+					// 	press: this._onPolicyEnforcementSortButtonPress.bind(this)
+					// }));
 				}
 			},
 			/**
