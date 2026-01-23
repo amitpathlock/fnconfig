@@ -472,6 +472,8 @@ sap.ui.define(
 				oViewModel.setProperty("/PolicyNameEnabled", true);
 				oViewModel.setProperty("/ErrorState", "None");
 				oViewModel.setProperty("/ErrorMessage", "");
+				oViewModel.setProperty("/AttrErrorState", "None");
+				oViewModel.setProperty("/AttrErrorMessage", "");
 				oViewModel.setProperty("/PolicyNameEnabled", true);
 				if (oViewModel.getProperty("/VisibleAttribute")) {
 					oViewModel.setProperty("/AttributeNameEnabled", true);
