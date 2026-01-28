@@ -485,8 +485,9 @@ ul.plDacSections {
     
 }
 
-.sapMSwtDisabled{
- opacity: 1;
-}
+
 .plDacHBoxMarginTop{margin-top: 17px;}
 .plDacSelectMarginBottom{margin-bottom: 14px !important ;}
+.plDacSwitchDisabledOpacity .sapMSwtDisabled{
+opacity: 0.7;
+}

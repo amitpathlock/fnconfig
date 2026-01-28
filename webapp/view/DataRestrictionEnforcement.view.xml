@@ -27,7 +27,8 @@
             demandPopin="true" class="sapUiResponsiveContentPadding"
              beforeRebindTable="onBeforeRebindTable" placeToolbarInTable="true">
             <!-- @ui5ignore -->
-            <Table mode="SingleSelectLeft" id="idTableDataRestrictionEnforcement" alternateRowColors="true" selectionChange="onTableSelectionChange" sticky="ColumnHeaders,HeaderToolbar" growingScrollToLoad="true" growing="true" growingThreshold="20">
+            <Table mode="SingleSelectLeft" id="idTableDataRestrictionEnforcement" alternateRowColors="true" selectionChange="onTableSelectionChange" sticky="ColumnHeaders,HeaderToolbar" growingScrollToLoad="true" growing="true" growingThreshold="20"
+           >
                <!-- Header -->
                <columns>
                   <Column width="70%">
@@ -42,16 +43,16 @@
                      </customData>
                      <Text text="{i18n>txtAction}"  />
                   </Column>
-                  <Column width="15%" hAlign="Center">
+                  <Column width="15%" hAlign="Center"  >
                    <customData>
-                        <core:CustomData key="p13nData" value='\{"columnKey": "IsActive", "columnIndex":"2","sortProperty": "IsActive", "leadingProperty": "IsActive"}' />
+                        <core:CustomData key="p13nData"  value='\{"columnKey": "IsActive", "columnIndex":"2","sortProperty": "IsActive", "leadingProperty": "IsActive"}' />
                      </customData>
                         <Text text="{i18n>txtStatus}" />
                   </Column>  
                </columns>
                <!-- Rows -->
                <items>
-                  <ColumnListItem>
+                  <ColumnListItem class="plDacSwitchDisabledOpacity">
                      <customData>
                         <core:CustomData key="PolicyName" value="{to_Policy/PolicyName}" />
                         <core:CustomData key="PolicyDesc" value="{to_Policy/PolicyDesc}" />
@@ -69,7 +70,7 @@
                         </ObjectHeader>
                         <!-- <ObjectStatus tooltip="{=${IsActive}?'Active':'None'}" state="{=${IsActive}?'Success':'None'}" icon="{=${IsActive}?'sap-icon://status-positive':'sap-icon://status-inactive'}" /> -->
                         <ObjectStatus class="sapUiSmallMarginBottom" text="{=${PolicyResult}==='A'? 'Allow' :'Deny'}"  state="{=${PolicyResult}==='A'? 'Success' :'Error'}" />
-                    <Switch type="AcceptReject" tooltip="{=${IsActive}?'Active':'Inactive'}" state="{=${IsActive}?true:false}" enabled="false" class="plDacSwitchBtnDisabled"/>
+                    <Switch type="AcceptReject" tooltip="{=${IsActive}?'Active':'Inactive'}" state="{=${IsActive}?true:false}" enabled="false" />
                                
                      </cells>  
                   </ColumnListItem>

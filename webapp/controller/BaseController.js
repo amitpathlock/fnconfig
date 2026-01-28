@@ -835,38 +835,29 @@ sap.ui.define(
 				MessageBox.error(message, { styleClass: "PlDacMessageBox" }); // Display using sap.m.MessageBox
 			},
 			/**
-			 * Event handler for the Policy Enforcement sort button press event.
-			 * Toggles the sort order of the table between ascending and descending based on the Policy field.
-			 * Updates the view model with the current sort order state.
-			 *
-			 * @function _onPolicyEnforcementSortButtonPress
-			 * @param {sap.ui.base.Event} oEvent - The button press event object.
-			 * @private
+			 * Event handler triggered when policy tokens are updated (added or removed).
+			 * 
+			 * @public
+			 * @param {} oEvent - The token update event object
+			 * @param {} oEvent.getParameter("type") - The type of token update ("removed", "removedAll", "added", etc.)
 			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
 			 * @returns {void}
-			 *
+			 * 
 			 * @description
-			 * - Retrieves the table reference from the event source's parent hierarchy
-			 * - Checks current sort order from view model (`/SortOrder`)
-			 * - If current order is "asc":
-			 *   - Sets sort order to "desc" in view model
-			 *   - Sorts table by "Policy" field in descending order (false)
-			 * - If current order is "desc" or not set:
-			 *   - Sets sort order to "asc" in view model
-			 *   - Sorts table by "Policy" field in ascending order (true)
-			 * - Uses sap.ui.model.Sorter to apply sorting to the table items binding
+			 * This method handles token updates for the policy input field by:
+			 * - Checking if the update type is "removedAll" or "removed"
+			 * - When tokens are removed:
+			 *   - Setting the policy error state to "Error"
+			 *   - Displaying a mandatory field error message
+			 *   - Setting focus back to the policy name input field
+			 * 
+			 * This ensures that the policy field remains mandatory and provides immediate
+			 * feedback when the user removes the selected policy.
+			 * 
+			 * @example
+			 * /// Automatically called when tokens are added/removed from the MultiInput
+			 * /// <MultiInput tokenUpdate=".onPEPPolicyTokenUpdated">
 			 */
-			_onPolicyEnforcementSortButtonPress: function (oEvent) {
-				var oView = this.getView(), oViewModel = oView.getModel("viewModel"),
-					oTable = oEvent.getSource().getParent().getParent();
-				if (oViewModel.getProperty("/SortOrder") == "asc") {
-					oViewModel.setProperty("/SortOrder", "desc");
-					oTable.getBinding("items").sort([new Sorter("Policy", false)]);
-				} else {
-					oViewModel.setProperty("/SortOrder", "asc");
-					oTable.getBinding("items").sort([new Sorter("Policy", true)]);
-				}
-			},
 			onPEPPolicyTokenUpdated: function (oEvent) {
 
 				if (oEvent.getParameter("type") == "removedAll" || oEvent.getParameter("type") == "removed") {
@@ -878,6 +869,29 @@ sap.ui.define(
 				}
 
 			},
+			/**
+			 * Event handler triggered when a suggestion item is selected from the policy name input field.
+			 * 
+			 * @public
+			 * @param {sap.ui.base.Event} oEvent - The suggestion item selection event object
+			 * @param {sap.m.ColumnListItem} oEvent.getParameter("selectedRow") - The selected row from the suggestion list
+			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
+			 * @returns {void}
+			 * 
+			 * @description
+			 * This method handles the selection of a policy from the suggestion list by:
+			 * - Retrieving the selected policy context object from the binding context
+			 * - Extracting the PolicyDesc and Policy properties from the context
+			 * - Updating the view model with the selected policy description and identifier
+			 * - Calling validatePolicyInput to validate and process the selected policy
+			 * 
+			 * This provides a convenient way for users to select policies from the auto-suggestion
+			 * dropdown without having to open the full value help dialog.
+			 * 
+			 * @example
+			 * /// Automatically called when user selects a policy from suggestion list
+			 * /// <MultiInput showSuggestion="true" suggestionItemSelected=".onSuggestionItemSelected">
+			 */
 			onSuggestionItemSelected: function (oEvent) {
 				var oView = this.getView(),
 					oCtx = oEvent.getParameter("selectedRow").getBindingContext().getObject();

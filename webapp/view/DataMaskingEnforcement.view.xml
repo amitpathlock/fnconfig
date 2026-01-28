@@ -96,7 +96,7 @@
                     </columns>
                     <!-- Rows -->
                     <items>
-                        <ColumnListItem>
+                        <ColumnListItem class="plDacSwitchDisabledOpacity">
                             <customData>
                                 <core:CustomData
                                     key="PolicyName"

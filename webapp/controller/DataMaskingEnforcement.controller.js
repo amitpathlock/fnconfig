@@ -141,6 +141,28 @@ sap.ui.define([
 				}
 			});
 		},
+		/**
+		 * Event handler triggered when the manage masking pattern button is pressed.
+		 * 
+		 * @private
+		 * @returns {void}
+		 * 
+		 * @description
+		 * This method opens the masking pattern management dialog by:
+		 * - Checking if the masking pattern dialog has been instantiated
+		 * - If not created yet:
+		 *   - Loading the ManageMaskingPattern fragment asynchronously
+		 *   - Adding the dialog as a dependent of the view
+		 *   - Opening the dialog after it's loaded
+		 * - If already created:
+		 *   - Directly opening the existing dialog instance
+		 * 
+		 * The dialog allows users to view and manage masking patterns for selected attributes.
+		 * 
+		 * @example
+		 * /// Called when user clicks the manage masking pattern button
+		 * /// <Button text="Manage Pattern" press="._onManageMaskingPatternBtnPress">
+		 */
 		_onManageMaskingPatternBtnPress: function () {
 			var oView = this.getView();
 			if (!this._oMaskingPatternDialog) {
@@ -159,6 +181,27 @@ sap.ui.define([
 
 			}
 		},
+		/**
+		 * Event handler to close the masking pattern dialog and reset its state.
+		 * 
+		 * @public
+		 * @returns {void}
+		 * 
+		 * @description
+		 * This method closes the masking pattern dialog and performs cleanup by:
+		 * - Removing all selections from the policy enforcement table
+		 * - Resetting Edit and Delete button states to disabled
+		 * - Clearing all pattern data fields in the view model:
+		 *   - AttributeId
+		 *   - Description
+		 *   - MaskPattern
+		 * - Closing the masking pattern dialog
+		 * 
+		 * @example
+		 * /// Called when user clicks close/cancel button in the masking pattern dialog
+		 * /// <Button text="Close" press=".onCloseMaskingPatternDialog">
+		 */
+
 		onCloseMaskingPatternDialog: function () {
 			var oView = this.getView(), oViewModel = oView.getModel("viewModel");
 			this.oPolicyEnforcementTable.removeSelections(true);
@@ -170,8 +213,37 @@ sap.ui.define([
 			this._oMaskingPatternDialog.close();
 
 		},
+		/**
+		 * Saves the masking pattern configuration for a selected attribute.
+		 * 
+		 * @public
+		 * @returns {void}
+		 * 
+		 * @description
+		 * This method handles saving masking pattern assignments to attributes by:
+		 * - Validating that a masking pattern has been selected (mandatory field check)
+		 * - Constructing URL parameters with the selected MaskPattern and AttributeId
+		 * - Calling the Func_Imp_Update_Attr_Pattern function import via POST
+		 * - On success:
+		 *   - Clearing table selections
+		 *   - Resetting Edit/Delete button states to disabled
+		 *   - Clearing pattern error state and messages
+		 *   - Closing the masking pattern dialog
+		 *   - Refreshing the OData model
+		 *   - Displaying success message
+		 * - On error:
+		 *   - Displaying error message for failed pattern update
+		 * 
+		 * @fires sap.m.MessageBox#success - Shows success message when pattern is updated
+		 * @fires sap.m.MessageBox#error - Shows error message if update fails
+		 * 
+		 * @example
+		 * /// Called when user clicks save button in the masking pattern dialog
+		 * /// <Button text="Save" press=".onSaveMasnkingPatternDialog">
+		 */
+
 		onSaveMasnkingPatternDialog: function () {
-			var oBundle, oView = this.getView(),oURLParameters, oViewModel = oView.getModel("viewModel"),
+			var oBundle, oView = this.getView(), oURLParameters, oViewModel = oView.getModel("viewModel"),
 				oDataModel = oView.getModel();
 			oBundle = oView.getModel("i18n").getResourceBundle();
 			if (oViewModel.getProperty("/PatternData/MaskPattern") == "") {
@@ -180,7 +252,7 @@ sap.ui.define([
 				oView.byId("idPatternSelect").focus();
 				return;
 			}
-			
+
 			oURLParameters = {
 				// ParameterName: Value
 				"MaskPattern": oViewModel.getProperty("/PatternData/MaskPattern"), // Example variable
@@ -208,11 +280,58 @@ sap.ui.define([
 					MessageBox.error(oBundle.getText("msgErrorMaskingPatternUpdate"));
 					// Handle the error case
 				}.bind(this)
-			});			
+			});
 		},
+		/**
+		 * Event handler triggered before the masking pattern dialog opens.
+		 * 
+		 * @public
+		 * @returns {void}
+		 * 
+		 * @description
+		 * This method prepares the masking pattern dialog before it opens by:
+		 * - Loading the masking pattern details for the currently selected attribute
+		 * - Calling loadMaskingPatternDetailsByAttributeId to populate the dialog with existing pattern data
+		 * 
+		 * The method ensures the dialog displays the current masking pattern associated with the selected
+		 * attribute when the dialog is opened for editing or viewing.
+		 * 
+		 * @example
+		 * /// Automatically called by the dialog's beforeOpen event
+		 * /// <Dialog beforeOpen=".onMaskingPatternDialogBeforeOpen">
+		 */
 		onMaskingPatternDialogBeforeOpen: function () {
 			this.loadMaskingPatternDetailsByAttributeId();
 		},
+		/**
+		 * Event handler triggered before exporting data masking policy enforcement data.
+		 * 
+		 * @public
+		 * @param {sap.ui.base.Event} oEvent - The export event object
+		 * @param {object} oEvent.getParameter("exportSettings") - Export settings containing workbook configuration
+		 * @returns {void}
+		 * 
+		 * @description
+		 * This method customizes the export settings before data is exported by:
+		 * - Retrieving the export settings and column configuration from the event
+		 * - Reordering columns according to a predefined sequence:
+		 *   - to_Policy/PolicyName
+		 *   - to_Policy/PolicyDesc
+		 *   - AttributeId
+		 *   - IsActive
+		 *   - PolicyResult
+		 * - Customizing column properties:
+		 *   - Setting custom labels (e.g., "Policy Description" for PolicyDesc)
+		 *   - Setting column widths to 27 for specific columns
+		 * - Applying the modified column configuration back to the export settings
+		 * 
+		 * This ensures the exported spreadsheet has a consistent, user-friendly layout with properly
+		 * ordered and formatted columns.
+		 * 
+		 * @example
+		 * /// Automatically called by the SmartTable before export
+		 * /// <smartTable:SmartTable beforeExport=".onBeforePEPDataMaskingExport">
+		 */
 		onBeforePEPDataMaskingExport: function (oEvent) {
 			var mExportSettings = oEvent.getParameter("exportSettings");
 
@@ -256,6 +375,29 @@ sap.ui.define([
 				});
 			}
 		},
+		/**
+		 * Event handler triggered when attribute tokens are updated (added or removed).
+		 * 
+		 * @public
+		 * @param {sap.ui.base.Event} oEvent - The token update event object
+		 * @param {string} oEvent.getParameter("type") - The type of token update ("removed", "removedAll", "added", etc.)
+		 * @returns {void}
+		 * 
+		 * @description
+		 * This method handles token updates for the attribute input field by:
+		 * - Checking if the update type is "removedAll" or "removed"
+		 * - When tokens are removed:
+		 *   - Setting the attribute error state to "Error"
+		 *   - Displaying a mandatory field error message
+		 *   - Setting focus back to the attribute input field
+		 * 
+		 * This ensures that the attribute field remains mandatory and provides immediate
+		 * feedback when the user removes the selected attribute.
+		 * 
+		 * @example
+		 * /// Automatically called when tokens are added/removed from the MultiInput
+		 * /// <MultiInput tokenUpdate=".onPEPAttributeTokenUpdated">
+		 */
 		onPEPAttributeTokenUpdated: function (oEvent) {
 			if (oEvent.getParameter("type") == "removedAll" || oEvent.getParameter("type") == "removed") {
 				var oBundle, oView = this.getView(), oViewModel = oView.getModel("viewModel");
@@ -350,7 +492,27 @@ sap.ui.define([
 				this._checkForDuplicateEntry(PlDacConst.ENTITY_SET_DATAMASKINGENFORCEMENT + "('" + oEntry.Policy + "')", oEntry);
 			}
 		},
-
+		/**
+		 * Clears all validation error states and messages in the view model.
+		 * 
+		 * @public
+		 * @returns {void}
+		 * 
+		 * @description
+		 * This method resets all error states and error messages in the view model by:
+		 * - Clearing the general error state and message (ErrorState, ErrorMessage)
+		 * - Clearing the attribute error state and message (AttrErrorState, AttrErrorMessage)
+		 * - Clearing the action/result error state and message (ActionErrorState, ActionErrorMessage)
+		 * - Setting all error states to "None"
+		 * - Setting all error messages to empty strings
+		 * 
+		 * This is typically called when opening dialogs or resetting forms to ensure a clean state
+		 * without any lingering validation errors from previous operations.
+		 * 
+		 * @example
+		 * /// Called before opening a new policy enforcement dialog
+		 * this.clearValidationError();
+		 */
 		clearValidationError: function () {
 			var oView = this.getView(), oViewModel = oView.getModel("viewModel");
 			oViewModel.setProperty("/ErrorState", "None");
