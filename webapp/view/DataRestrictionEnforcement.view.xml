@@ -38,13 +38,13 @@
                   </Column>
                    <Column width="15%" hAlign="Center">
                    <customData>
-                        <core:CustomData key="p13nData" value='\{"columnKey": "PolicyResult", "columnIndex":"1", "leadingProperty": "PolicyResult"}' />
+                        <core:CustomData key="p13nData" value='\{"columnKey": "PolicyResult", "columnIndex":"1","sortProperty": "PolicyResult", "leadingProperty": "PolicyResult"}' />
                      </customData>
                      <Text text="{i18n>txtAction}"  />
                   </Column>
                   <Column width="15%" hAlign="Center">
                    <customData>
-                        <core:CustomData key="p13nData" value='\{"columnKey": "IsActive", "columnIndex":"2", "leadingProperty": "IsActive"}' />
+                        <core:CustomData key="p13nData" value='\{"columnKey": "IsActive", "columnIndex":"2","sortProperty": "IsActive", "leadingProperty": "IsActive"}' />
                      </customData>
                         <Text text="{i18n>txtStatus}" />
                   </Column>  

@@ -467,16 +467,18 @@ ul.plDacSections {
      */
 .plDacMaskingPattern .sapMBtnInner{
     
-    background-image: url("/assets/pattern.svg");
+    background-image: url("../assets/mask_pattern_a.png");
     background-repeat: no-repeat;
     background-position: center;
+    background-size: 1.5rem 1.5rem;
    
 }
 .plDacMaskingPattern .sapMBtnInner:hover {
    
-      background-image: url("/assets/patternw-nobg.svg") !important;
+      background-image: url("../assets/mask_pattern_b.png") !important;
      background-repeat: no-repeat !important;
     background-position: center !important;
+    background-size: 1.5rem 1.5rem !important;
     
 }
 

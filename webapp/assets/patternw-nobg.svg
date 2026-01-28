@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="#fff" style="background: transparent;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="#fff" style="background: red;">
  
   <!-- Eye -->
 <path d="M256 128C140 128 44 256 44 256s96 128 212 128 212-128 212-128-96-128-212-128zm0 212a84 84 0 1 1 84-84 84 84 0 0 1-84 84z"/>
