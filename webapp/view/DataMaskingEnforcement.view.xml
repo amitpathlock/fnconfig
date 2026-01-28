@@ -56,7 +56,7 @@
                 >
                     <!-- Header -->
                     <columns>
-                        <Column  width="43%" headerMenu="columnHeaderMenu" hAlign="Left">
+                        <Column  width="43%" hAlign="Left">
                             <customData>
                                 <core:CustomData key="p13nData" value='\{"columnKey": "PolicyName", "sortProperty": "Policy", "columnIndex":"0","navigationProperty":"to_Policy",  "leadingProperty": "to_Policy/PolicyName"}'/>
                                

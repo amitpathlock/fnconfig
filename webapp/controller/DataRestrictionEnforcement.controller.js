@@ -36,6 +36,7 @@ sap.ui.define([
 		 * /// Automatically called by the UI5 framework during controller instantiation
 		 */
 		onInit: function () {
+			this.bShowMaskPattern=false;
 			this._oRouter = this.getOwnerComponent().getRouter();
 			this._oRouter.getRoute("DataRestriction").attachPatternMatched(this._onRouteMatched, this);
 			this.addAdditionalButtonIntoThePolicyEnforcementTableToolbar(this.getView().byId("idSmartTablePOPRestriction"));
@@ -182,13 +183,14 @@ sap.ui.define([
 			}
 			sPolicyName = oEntry.PolicyName;
 			delete oEntry.PolicyDesc;
-			delete oEntry.PolicyName;
+			
 			delete oEntry.to_Policy;
 			delete oEntry.to_Attr;
 			//oView.byId("idPEPIsActive")
 			oEntry.IsActive = oEntry.IsActive ? "X" : "";
 			if (({}).hasOwnProperty.call(oEntry, "__metadata")) {
 				delete oEntry.__metadata;
+				delete oEntry.PolicyName;
 				sPath = PlDacConst.ENTITY_SET_DATARESTRICTIONENFORCEMENT + "('" + oEntry.Policy + "')";
 				oView.getModel().update(sPath, oEntry, {
 					success: function () {
@@ -235,12 +237,14 @@ sap.ui.define([
  */
 		_createEntry: function (oEntry) {
 			var that = this, oBundle, oView = this.getView(), oDataModel = oView.getModel(),
-				oViewModel = oView.getModel("viewModel");
+				oViewModel = oView.getModel("viewModel"),sPolicyName;
 			oEntry.IsActive = oEntry.IsActive == true ? 'X' : '';
 			oBundle = oView.getModel("i18n").getResourceBundle();
+			sPolicyName = oEntry.PolicyName;
+			delete oEntry.PolicyName;
 			oDataModel.create(PlDacConst.ENTITY_SET_DATARESTRICTIONENFORCEMENT, oEntry, {
 				success: function () {
-					MessageBox.success(oBundle.getText("msgPolEnforcementSuccessful", [oEntry.Policy]), { styleClass: "PlDacMessageBox" });
+					MessageBox.success(oBundle.getText("msgPolEnforcementSuccessful", [sPolicyName]), { styleClass: "PlDacMessageBox" });
 					this.oPolicyEnforcementTable.removeSelections(true);
 					oViewModel.setProperty("/Data", {});
 					this.oPolicyInforcementDialog.close();
@@ -332,7 +336,7 @@ sap.ui.define([
 		removeSelectedRecord: function () {
 			var oView = this.getView(), oModel = oView.getModel(), sPath, that = this,
 				oBundle = oView.getModel("i18n").getResourceBundle(),
-				sPolicyName = oView.getModel("viewModel").getProperty("/SelectedContextData").Policy;
+				sPolicyName = oView.getModel("viewModel").getProperty("/SelectedContextData").PolicyName;
 			sPath = PlDacConst.ENTITY_SET_DATARESTRICTIONENFORCEMENT + "('" + sPolicyName + "')";
 			oModel.remove(sPath, {
 				success: function () {

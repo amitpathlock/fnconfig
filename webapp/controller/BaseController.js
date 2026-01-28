@@ -19,6 +19,7 @@ sap.ui.define(
 		"use strict";
 		return BaseController.extend("pl.dac.apps.fnconfig.controller.BaseController", {
 			oPolicyEnforcementTable: null,
+			bShowMaskPattern: false,
 			oAttributeTable: null,
 			/**
 			 * Controller initialization method called when the view is instantiated.
@@ -197,9 +198,12 @@ sap.ui.define(
 			 */
 			_onEditAttributeButtonPress: function () {
 				var oView = this.getView(), oViewModel = oView.getModel("viewModel"),
-					oSelectedContextData = oViewModel.getProperty("/SelectedContextData");
-				oView.getModel("viewModel").setProperty("/Data", oSelectedContextData);
 
+					oSelectedContextData = oViewModel.getProperty("/SelectedContextData");
+				oViewModel.setProperty("/Data", oSelectedContextData);
+				oViewModel.setProperty("/PatternAttributeId", "");
+					oViewModel.setProperty("/PatternAttributeDesc","");
+					oViewModel.setProperty("/MaskPattern", "");
 				if (!this.oAttributeDialog) {
 					Fragment.load({
 						id: oView.getId(),
@@ -312,47 +316,10 @@ sap.ui.define(
 						tooltip: "{i18n>txtBtnDelDataAttribute}",
 						press: this._onDeleteAttributeButtonPress.bind(this)
 					}));
-					// oToolbar.addContent(new OverflowToolbarButton({
-					// 	text: "Sort",
-					// 	icon: "sap-icon://sort",
-					// 	tooltip: "Sort",
-					// 	press: this._onAttributeTableSortButtonPress.bind(this)
-					// }));
+					
 				}
 			},
-			/**
-			 * Event handler for the Attributes sort button press event.
-			 * Toggles the sort order of the table between ascending and descending based on the Policy field.
-			 * Updates the view model with the current sort order state.
-			 *
-			 * @function _onAttributeTableSortButtonPress
-			 * @param {sap.ui.base.Event} oEvent - The button press event object.
-			 * @private
-			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
-			 * @returns {void}
-			 *
-			 * @description
-			 * - Retrieves the table reference from the event source's parent hierarchy
-			 * - Checks current sort order from view model (`/SortOrder`)
-			 * - If current order is "asc":
-			 *   - Sets sort order to "desc" in view model
-			 *   - Sorts table by "Policy" field in descending order (false)
-			 * - If current order is "desc" or not set:
-			 *   - Sets sort order to "asc" in view model
-			 *   - Sorts table by "Policy" field in ascending order (true)
-			 * - Uses sap.ui.model.Sorter to apply sorting to the table items binding
-			 */
-			_onAttributeTableSortButtonPress: function (oEvent) {
-				var oView = this.getView(), oViewModel = oView.getModel("viewModel"),
-					oTable = oEvent.getSource().getParent().getParent();
-				if (oViewModel.getProperty("/SortOrder") == "asc") {
-					oViewModel.setProperty("/SortOrder", "desc");
-					oTable.getBinding("items").sort([new Sorter("AttributeId", false)]);
-				} else {
-					oViewModel.setProperty("/SortOrder", "asc");
-					oTable.getBinding("items").sort([new Sorter("AttributeId", true)]);
-				}
-			},
+	
 
 
 			/** ###### POLICY INFORCEMENT POINT */
@@ -434,6 +401,10 @@ sap.ui.define(
 				oViewModel.setProperty("/PolicyNameEnabled", false);
 				if (oViewModel.getProperty("/VisibleAttribute")) {
 					oViewModel.setProperty("/AttributeNameEnabled", false);
+					oViewModel.setProperty("/PatternAttributeId","");
+					oViewModel.setProperty("/PatternAttributeDesc", "");
+					oViewModel.setProperty("/MaskPattern", "");
+					this.loadMaskingPatternDetailsByAttributeId();
 				}
 				this.clearValidationError();
 				if (!this.oPolicyInforcementDialog) {
@@ -509,10 +480,11 @@ sap.ui.define(
 			 * @returns {void}
 			 */
 			onBeforePEPDialogOpened: function (oEvent) {
-				var oDailog = oEvent.getSource(), oView = this.getView(),oViewModel =oView.getModel("viewModel"), oData = oViewModel.getProperty("/Data"),
+				var oDailog = oEvent.getSource(), oView = this.getView(), oViewModel = oView.getModel("viewModel"), oData = oViewModel.getProperty("/Data"),
 					oForm = oDailog.getContent()[0].getAggregation("form"),
 					aFormElements = oForm.getAggregation("formContainers")[0].getAggregation("formElements");
-				if (aFormElements[0].getAggregation("fields")[0].getEnabled()) {
+					
+					if (aFormElements[0].getAggregation("fields")[0].getEnabled()) {
 					aFormElements[0].getAggregation("fields")[0].focus();
 					if (oViewModel.getProperty("/VisibleAttribute")) {
 						aFormElements[1].getAggregation("fields")[0].removeAllTokens();
@@ -524,10 +496,13 @@ sap.ui.define(
 					aFormElements[0].getAggregation("fields")[0].setValue("");
 					aFormElements[0].getAggregation("fields")[0].setTokens([new Token({ key: oData.Policy.split("~")[0], text: oData.PolicyName + " (" + oData.PolicyDesc + ")" })])
 					if (({}).hasOwnProperty.call(oData, "AttributeId")) {
-						this._validateAttibuteInput(oData.AttributeId);
+						this.validateAttibuteInput(oData.AttributeId);
+						this.loadMaskingPatternDetailsByAttributeId();
 					}
 				}
 			},
+			loadMaskingPatternDetailsByAttributeId:function(){},
+			validateAttibuteInput:function(sAttributeId){ sAttributeId;},
 			onSavePolicyInforcement: function () {
 
 			},
@@ -783,6 +758,17 @@ sap.ui.define(
 				var oToolbar = oSmartTable.getToolbar();
 				if (oToolbar.getContent().length == 0) {
 					oToolbar.addContent(new ToolbarSpacer());
+					if (this.bShowMaskPattern) {
+						var btn = new OverflowToolbarButton({
+							text: "Mask Pattern",
+							tooltip: "{i18n>txtMaskingPattern}",
+							enabled: "{viewModel>/EditButtonEnabled}",
+							press: this.getView().getController()._onManageMaskingPatternBtnPress.bind(this)
+						});
+					//	btn.setIcon(jQuery.sap.getModulePath("pl.dac.apps.fnconfig") + "/assets/pattern.svg")
+						btn.addStyleClass("plDacMaskingPattern");
+						oToolbar.addContent(btn);
+					}
 					oToolbar.addContent(new OverflowToolbarButton({
 						text: "Add",
 						icon: "sap-icon://add",
@@ -803,14 +789,11 @@ sap.ui.define(
 						tooltip: "{i18n>txtPolEnforcementDelBtnTooltip}",
 						press: this._onDeletePolicyEnforcementButtonPress.bind(this)
 					}));
-					// oToolbar.addContent(new OverflowToolbarButton({
-					// 	text: "Sort",
-					// 	icon: "sap-icon://sort",
-					// 	tooltip: "Sort",
-					// 	press: this._onPolicyEnforcementSortButtonPress.bind(this)
-					// }));
+					
 				}
 			},
+			
+			
 			/**
 			 * Displays an error message to the user by parsing OData error responses.
 			 * Extracts error messages from various possible locations in the error object and displays them in a MessageBox.
@@ -886,7 +869,7 @@ sap.ui.define(
 			},
 			onPEPPolicyTokenUpdated: function (oEvent) {
 
-				if (oEvent.getParameter("type") == "removedAll" ||oEvent.getParameter("type")=="removed") {
+				if (oEvent.getParameter("type") == "removedAll" || oEvent.getParameter("type") == "removed") {
 					var oBundle, oView = this.getView(), oViewModel = oView.getModel("viewModel");
 					oBundle = oView.getModel("i18n").getResourceBundle();
 					oViewModel.setProperty("/ErrorState", "Error");

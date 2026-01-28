@@ -54,21 +54,21 @@
     background: #fff;
 }
 
-.plDacToolbar {
+/* .plDacToolbar {
     background: #24b770 !important;
 }
 
 .plDacToolbar .sapUiIcon {
     color: #fff;
-}
+} */
 
-.plDacToolbar .sapMTitle {
+/* .plDacToolbar .sapMTitle {
     color: #fff !important;
-}
+} */
 
-.plDacToolbar .sapMBtnCustomIcon {
+/* .plDacToolbar .sapMBtnCustomIcon {
     color: #fff !important;
-}
+} */
 
 .sapMSTIIcon {
     color: #1a9459;
@@ -109,6 +109,7 @@
 
 .sapMBtnGhost:hover {
     color: #fff !important;
+    
 }
 
 .sapMBtnDisabled:hover {
@@ -384,13 +385,13 @@ ul.plDacSections {
     font-weight: 700;
     color: #24b770;
 }
-.sapMMessageToast{
+/* .sapMMessageToast{
     color: #fff !important;
     background: #23c375 !important;
     border-color:#23c375 !important;
     box-shadow: 0 0 0 0.0625rem #24b770a3, 0 0.625rem 1.875rem 0 #37da8bc9;
     border-radius: 0.25rem;
-}
+} */
 .plDacLabelWidth{
         width: 110px;
         color: #32363a;
@@ -399,7 +400,7 @@ ul.plDacSections {
     border-bottom: 1px solid #1a9459;
 
 }
-.PlDacMessageBox>header>div>div {
+/* .PlDacMessageBox>header>div>div {
     background: #23c375 !important;
 }
 .PlDacMessageBox>header>div {
@@ -408,18 +409,18 @@ ul.plDacSections {
 }
 .PlDacMessageBox .sapMBarPH span{
     color:#fff !important;
-}
+} */
 
-.PlDacDailogBox>header>div>div {
+/* .PlDacDailogBox>header>div>div {
     background: #23c375 !important;
    
-}
+} */
 .PlDacDailogBox>header>div>div>div {
     text-align: left;
     margin-left: 13px;
 }
 
-.PlDacDailogBox>header>div {
+/* .PlDacDailogBox>header>div {
     background: #23c375 !important;
 }
 .PlDacDailogBox .sapMBarPH span{
@@ -430,17 +431,17 @@ ul.plDacSections {
 }
 .PlDacPopover .sapMTBStandard span{
     color:#fff !important;
-}
+} */
 .plDacObjectHeader{padding: 0px 0px !important;}
 .plDacObjectHeader .sapMOH{padding:0.1rem;}
 .plDacObjectHeader .sapMOHBottomRow{margin-top:1px;}
 .plDacObjectHeader .sapMOHBottomRow .sapMOHAttrRow{margin-top:1px;}
-.plDacDynamicPageTitle{background: #23c375 !important;}
-.plDacDynamicPageTitle .sapMTitleNoWrap{color:#fff;font-size: 17px !important;}
+/* .plDacDynamicPageTitle{background: #23c375 !important;} */
+/* .plDacDynamicPageTitle .sapMTitleNoWrap{color:#fff;font-size: 17px !important;}
 .plDacDynamicPageTitle .sapUiIcon{color:#fff;}
 .plDacDynamicPageTitle .sapMLabelTextWrapper{color:#fff;}
-.plDacDynamicPageTitle .sapMLabel {color:#fff !important;}
-.plDacPolicyName .sapMTextLineClamp{ font-weight: 700 !important; color: #0854a0 !important;}
+.plDacDynamicPageTitle .sapMLabel {color:#fff !important;} */
+.plDacPolicyName .sapMTextLineClamp{ font-weight: 600 }
 /* .plDacAttributeId>.sapMObjectAttributeText{color: #ff6900 !important;} */
 .plDacAssignedAttribute>span{color: rgb(20 135 82 ) !important;}
 
@@ -454,3 +455,33 @@ ul.plDacSections {
    padding: 0 0.1rem !important;
 } */
 
+.plDacObjectAttribute>span:first-child{color: #343535 !important;}
+.PlDacDailogBox .sapMDialogIcon {margin-left:-14px !important;}
+
+/* .plDacMaskingPattern >span:hover img{
+    filter: brightness(0) invert(1);
+   
+}
+.plDacMaskingPattern >span:hover{
+    background: #1a9459 !important;
+     */
+.plDacMaskingPattern .sapMBtnInner{
+    
+    background-image: url("/assets/pattern.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+   
+}
+.plDacMaskingPattern .sapMBtnInner:hover {
+   
+      background-image: url("/assets/patternw-nobg.svg") !important;
+     background-repeat: no-repeat !important;
+    background-position: center !important;
+    
+}
+
+.sapMSwtDisabled{
+ opacity: 1;
+}
+.plDacHBoxMarginTop{margin-top: 17px;}
+.plDacSelectMarginBottom{margin-bottom: 14px !important ;}

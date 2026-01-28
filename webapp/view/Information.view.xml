@@ -15,7 +15,7 @@
         <VBox justifyContent="Center" alignItems="Center" alignContent="Center" height="100%" >
             	<!-- @ui5ignore -->
 				<Image  id="idInfoPageImg" />
-                <Title text="pathlock" level="H1" class="plDacInfoPageTitle"/>
+                <Title text="Pathlock" level="H1" class="plDacInfoPageTitle"/>
                 <Title text="Dynamic Access Control" level="H2" class="plDacInfoPageTitle" />
         </VBox>
     </content>

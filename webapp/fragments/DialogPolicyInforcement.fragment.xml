@@ -107,21 +107,19 @@
                             <core:Item key="D" text="DENY" />
                         </items>
                     </Select>
-                    <Label text="{i18n>lblMaskingPattern}"  class="plDacLabelMarginTop" visible="{viewModel>/VisibleAttribute}"/>
-                      <!-- @ui5ignore -->
-                    <Select 	selectedKey="{viewModel>/Data/PolicyResult}" id="idPEPMaskingPattern" visible="{viewModel>/VisibleAttribute}"
-                     valueState="{viewModel>/ActionErrorState}"
-                        valueStateText="{viewModel>/ActionErrorMessage}"
+                    <HBox class="plDacHBoxMarginTop"
                     >
-                        <items>
-                            <core:Item key="" text="" />
-                            <core:Item key="A" text="ALLOW" />
-                            <core:Item key="D" text="DENY" />
-                        </items>
-                    </Select>
-                     <!-- @ui5ignore -->
-                    <CheckBox text="Is Active" id="idPEPIsActive" selected="{viewModel>/Data/IsActive}" class="plDacCheckBoxMarginTop" />
-                    <!-- Add more form fields as needed -->
+                        <Label text="{i18n>lblStatus}"  class="plDacLabelMarginTop" />
+                        <!-- @ui5ignore -->
+                        <Switch
+                            type="AcceptReject"
+                            enabled="true"
+                            state="{viewModel>/Data/IsActive}"
+                            class="sapUiSmallMarginBegin"
+                        />
+                    </HBox>
+                     
+                    
                 </f:content>
             </f:SimpleForm>
         </content>

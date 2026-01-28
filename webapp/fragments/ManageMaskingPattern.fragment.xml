@@ -1,0 +1,70 @@
+    <core:FragmentDefinition
+        xmlns="sap.m"
+        xmlns:core="sap.ui.core"
+        xmlns:f="sap.ui.layout.form">
+         <!-- @ui5ignore -->
+        <Dialog class="PlDacDailogBox"
+            icon="sap-icon://course-book"
+            beforeOpen="onMaskingPatternDialogBeforeOpen"
+            contentWidth="500px"
+            resizable="false"
+            title="{i18n>lblMaskingPattern}">
+            <content>
+             <!-- @ui5ignore -->
+                <f:SimpleForm
+                    editable="true"
+                    layout="ResponsiveGridLayout"
+                    labelSpanXL="3"
+                    labelSpanL="3"
+                    labelSpanM="3"
+                    labelSpanS="12"
+                    adjustLabelSpan="false"
+                    emptySpanXL="4"
+                    emptySpanL="4"
+                    emptySpanM="4"
+                    emptySpanS="0"
+                    columnsXL="1"
+                    columnsL="1"
+                    columnsM="1"
+                    singleContainerFullSize="false">
+                    <f:content>
+                      <!-- @ui5ignore -->
+                        <Label text="{i18n>lblAttributeId}" />
+                        <MultiInput
+                                enabled="false"
+                        >
+                            <tokens>
+                                <Token key="{viewModel>/PatternData/AttributeId}"
+                                    text="{viewModel>/PatternData/AttributeId} ({viewModel>/PatternData/Description})"
+                                   >    
+                                </Token>
+                            </tokens>
+                        </MultiInput>
+                        <!-- <ObjectAttribute text="{viewModel>/SelectedContextData/AttributeId}" title="Attribute ID" /> -->
+                       
+                        <Label text="{i18n>lblMaskingPattern}"  required="true"/>
+                         <!-- @ui5ignore -->
+                       <Select items="{viewModel>/PatternSet}" id="idPatternSelect" selectedKey="{viewModel>/PatternData/MaskPattern}"	 visible="{viewModel>/VisibleAttribute}"
+                     valueState="{viewModel>/PatternErrorState}"
+                        valueStateText="{viewModel>/PatternErrroMSG}" class="plDacSelectMarginBottom"
+                    >
+                        <items>
+                            <core:Item key="{viewModel>MaskPattern}" text="{viewModel>MaskPattern}" />
+                            <!-- <core:Item key="A" text="ALLOW" />
+                            <core:Item key="D" text="DENY" /> -->
+                        </items>
+                    </Select>
+                        <!-- Add more form fields as needed -->
+                    </f:content>
+                </f:SimpleForm>
+            </content>
+            <beginButton>
+             <!-- @ui5ignore -->
+                <Button text="Save" press="onSaveMasnkingPatternDialog" />
+            </beginButton>
+            <endButton>
+             <!-- @ui5ignore -->
+                <Button text="Cancel" press="onCloseMaskingPatternDialog" />
+            </endButton>
+        </Dialog>
+    </core:FragmentDefinition>

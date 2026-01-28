@@ -28,15 +28,15 @@
                <f:DynamicPageTitle class="plDacDynamicPageTitle">
                   <f:heading>
                      <HBox alignItems="Center">
-                        <core:Icon src="sap-icon://fx" class="sapUiTinyMarginEnd" />
-                        <Title text="{popOverModel>/PolicyName}" level="H2" />
+                        <core:Icon src="sap-icon://validate" class="sapUiTinyMarginEnd" />
+                        <Title text="{popOverModel>/PolicyName} ({popOverModel>/PolicyDesc})" level="H2" />
                      </HBox>
                   </f:heading>
                   <f:expandedContent>
-                     <Label  text="{popOverModel>/PolicyDesc}" />
+                     <!-- <Label  text="{popOverModel>/PolicyDesc}" /> -->
                   </f:expandedContent>
                   <f:snappedContent>
-                     <Label  text="{popOverModel>/PolicyDesc}" />
+                     <!-- <Label  text="{popOverModel>/PolicyDesc}" /> -->
                   </f:snappedContent>
                </f:DynamicPageTitle>
             </f:title>

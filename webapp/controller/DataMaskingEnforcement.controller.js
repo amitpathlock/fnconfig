@@ -13,11 +13,10 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/base/Log",
-	"sap/m/Token",
-	"sap/ui/model/Sorter"
+	"sap/m/Token"
 ], function (
 	BaseController, PlDacConst, Fragment, JSONModel, MessageBox, UIColumn, Column, Text, Label,
-	ColumnListItem, Filter, FilterOperator, Log, Token,Sorter
+	ColumnListItem, Filter, FilterOperator, Log, Token
 ) {
 	"use strict";
 
@@ -39,6 +38,7 @@ sap.ui.define([
 		 * /// Automatically called by the UI5 framework during controller instantiation
 		 */
 		onInit: function () {
+			this.bShowMaskPattern = true;
 			this._oRouter = this.getOwnerComponent().getRouter();
 			this._oRouter.getRoute("DataMasking").attachPatternMatched(this._onRouteMatched, this);
 			this.addAdditionalButtonIntoThePolicyEnforcementTableToolbar(this.getView().byId("idSmartTableDataMaskingEnforcement"));
@@ -81,10 +81,6 @@ sap.ui.define([
 					Title: oBundle.getText("titPolInforcementDataMasking"),
 					PlaceHolder: "",
 					EditButtonEnabled: false,
-					Payload: {
-						AttributeName: "",
-						Description: ""
-					},
 					PolicyNameEnabled: true,
 					AttrErrorState: "None",
 					AttrErrorMessage: "",
@@ -101,10 +97,121 @@ sap.ui.define([
 					ExitColumn: true,
 					SelectedContextData: null,
 					VisibleAttribute: true,
-					AttributeNameEnabled: true
+					AttributeNameEnabled: true,
+					PatternErrorState: "",
+					PatternErrorMSG: "",
+					PatternData: { AttributeId: "", Description: "", MaskPattern: "" }
 				}
 			), "viewModel");
 			this.oPolicyEnforcementTable = oView.byId("idTableDataMaskingEnforcement");
+			this._loadMaskingPatterns();
+		},
+		_loadMaskingPatterns: function () {
+			var oView = this.getView(), oDataModel = oView.getModel(), oViewModel = oView.getModel("viewModel");
+			oDataModel.read("/PatternSet", {
+				success: function (oData) {
+					// Data is available in the oData object (single entity)
+					oData.results.splice(0, 0, { MaskPattern: "" });
+					oViewModel.setProperty("/PatternSet", oData.results);
+
+				},
+				error: function () {
+					// Error handling
+
+				}
+			});
+		},
+
+		loadMaskingPatternDetailsByAttributeId: function () {
+			var sPath, oView = this.getView(), oDataModel = oView.getModel(), oViewModel = oView.getModel("viewModel"), oSelectedData = oViewModel.getData().SelectedContextData;
+			sPath = "/AttrSet('" + oSelectedData.AttributeId + "')";
+			oDataModel.read(sPath, {
+				urlParameters: {
+					"$expand": "to_Pattern"
+				},
+				// Success callback function
+				success: function (oData) {
+					oViewModel.setProperty("/PatternData/AttributeId", oData.AttributeId);
+					oViewModel.setProperty("/PatternData/Description", oData.Description);
+					oViewModel.setProperty("/PatternData/MaskPattern", oData.to_Pattern.MaskPattern);
+				}.bind(this),
+				// Error callback function
+				error: function () {//
+					// oError contains details about the error
+				}
+			});
+		},
+		_onManageMaskingPatternBtnPress: function () {
+			var oView = this.getView();
+			if (!this._oMaskingPatternDialog) {
+				Fragment.load({
+					id: oView.getId(),
+					name: "pl.dac.apps.fnconfig.fragments.ManageMaskingPattern", // Path to your fragment
+					controller: this // Assign the current controller
+				}).then(function (oDialog) {
+					this._oMaskingPatternDialog = oDialog;
+					oView.addDependent(oDialog); // Add dialog as dependent of the view
+					oDialog.open();
+				}.bind(this));
+			} else {
+
+				this._oMaskingPatternDialog.open();
+
+			}
+		},
+		onCloseMaskingPatternDialog: function () {
+			var oView = this.getView(), oViewModel = oView.getModel("viewModel");
+			this.oPolicyEnforcementTable.removeSelections(true);
+			oViewModel.setProperty("/EditButtonEnabled", false);
+			oViewModel.setProperty("/DeleteButtonEnabled", false);
+			oViewModel.setProperty("/PatternData/AttributeId", "");
+			oViewModel.setProperty("/PatternData/Description", "");
+			oViewModel.setProperty("/PatternData/MaskPattern", "");
+			this._oMaskingPatternDialog.close();
+
+		},
+		onSaveMasnkingPatternDialog: function () {
+			var oBundle, oView = this.getView(),oURLParameters, oViewModel = oView.getModel("viewModel"),
+				oDataModel = oView.getModel();
+			oBundle = oView.getModel("i18n").getResourceBundle();
+			if (oViewModel.getProperty("/PatternData/MaskPattern") == "") {
+				oViewModel.setProperty("/PatternErrorState", "Error");
+				oViewModel.setProperty("/PatternErrroMSG", oBundle.getText("msgErrorMaskingPatternMandatory"));
+				oView.byId("idPatternSelect").focus();
+				return;
+			}
+			
+			oURLParameters = {
+				// ParameterName: Value
+				"AttributeId": oViewModel.getProperty("/PatternData/MaskPattern"), // Example variable
+				"MaskPattern": oViewModel.getProperty("/PatternData/AttributeId")    // Example variable
+
+			};
+			// 2. Call the function import
+			oDataModel.callFunction("/Func_Imp_Update_Attr_Pattern", {
+				method: "POST", // Use POST if the function has side effects, otherwise GET
+				urlParameters: oURLParameters,
+				success: function () {
+					// Handle the success case
+					//sap.m.MessageToast.show("Function import called successfully!");
+					this.oPolicyEnforcementTable.removeSelections(true);
+					oViewModel.setProperty("/EditButtonEnabled", false);
+					oViewModel.setProperty("/DeleteButtonEnabled", false);
+					oViewModel.setProperty("/PatternErrorState", "");
+					oViewModel.setProperty("/PatternErrroMSG", "");
+					this._oMaskingPatternDialog.close();
+					oDataModel.refresh();
+					MessageBox.success(oBundle.getText("msgUpdatePatternSuccessful"));
+					// The returned data is available in the oData parameter
+				}.bind(this), // Use .bind(this) to maintain context
+				error: function () {
+					MessageBox.error(oBundle.getText("msgErrorMaskingPatternUpdate"));
+					// Handle the error case
+				}.bind(this)
+			});			
+		},
+		onMaskingPatternDialogBeforeOpen: function () {
+			this.loadMaskingPatternDetailsByAttributeId();
 		},
 		onBeforePEPDataMaskingExport: function (oEvent) {
 			var mExportSettings = oEvent.getParameter("exportSettings");
@@ -136,13 +243,13 @@ sap.ui.define([
 					switch (oColumn.property) {
 						case "to_Policy/PolicyDesc":
 							oColumn.label = "Policy Description"; // Set the new column name
-							oColumn.width =27;
+							oColumn.width = 27;
 							break;
 						case "to_Policy/PolicyName":
-							oColumn.width =27;
-						break;
+							oColumn.width = 27;
+							break;
 						case "AttributeId":
-							oColumn.width =27;
+							oColumn.width = 27;
 							break;
 						// Add more cases as needed for other columns
 					}
@@ -243,6 +350,7 @@ sap.ui.define([
 				this._checkForDuplicateEntry(PlDacConst.ENTITY_SET_DATAMASKINGENFORCEMENT + "('" + oEntry.Policy + "')", oEntry);
 			}
 		},
+
 		clearValidationError: function () {
 			var oView = this.getView(), oViewModel = oView.getModel("viewModel");
 			oViewModel.setProperty("/ErrorState", "None");
@@ -366,7 +474,7 @@ sap.ui.define([
 		 * - Setting the PolicyDesc property in the view model
 		 * - Refreshing the view model to update the UI
 		 * - Closing the attribute value help dialog
-		 * - Validating the selected attribute by calling _validateAttibuteInput
+		 * - Validating the selected attribute by calling validateAttibuteInput
 		 * 
 		 * @example
 		 * /// Called when user confirms attribute selection in the value help dialog
@@ -378,7 +486,7 @@ sap.ui.define([
 			oView.getModel("viewModel").setProperty("/Data/PolicyDesc", oValue.PolicyDesc);
 			oView.getModel("viewModel").refresh();
 			this._oPEPAttributeVHDialog.close();
-			this._validateAttibuteInput(aTokens[0].getKey());
+			this.validateAttibuteInput(aTokens[0].getKey());
 		},
 		/**
 		 * Event handler triggered when a suggestion item is selected from the attribute input field.
@@ -392,7 +500,7 @@ sap.ui.define([
 		 * This method handles the selection of an attribute from the suggestion list by:
 		 * - Retrieving the selected attribute context object from the binding context
 		 * - Extracting the AttributeId from the context
-		 * - Calling _validateAttibuteInput to validate the selected attribute
+		 * - Calling validateAttibuteInput to validate the selected attribute
 		 * 
 		 * @example
 		 * /// Automatically called when user selects an attribute from suggestion list
@@ -400,7 +508,7 @@ sap.ui.define([
 		 */
 		onPEPAttributeSuggestionItemSelected: function (oEvent) {
 			var oCtx = oEvent.getParameter("selectedRow").getBindingContext().getObject();
-			this._validateAttibuteInput(oCtx.AttributeId);
+			this.validateAttibuteInput(oCtx.AttributeId);
 		},
 		/**
 		 * Validates the selected attribute by reading its details from the OData service.
@@ -424,9 +532,9 @@ sap.ui.define([
 		 *   - Displaying the error message from the OData response
 		 * 
 		 * @example
-		 * this._validateAttibuteInput("ATTR001");
+		 * this.validateAttibuteInput("ATTR001");
 		 */
-		_validateAttibuteInput: function (sAttribute) {
+		validateAttibuteInput: function (sAttribute) {
 			var oBundle, oView = this.getView(), oDataModel = oView.getModel(),
 				oViewModel = oView.getModel("viewModel"),
 				sPath = "/AttrSet('" + sAttribute.toUpperCase() + "')";
@@ -528,7 +636,7 @@ sap.ui.define([
 		 * This method handles live changes to the attribute name input by:
 		 * - Clearing the attribute error state and message
 		 * - Converting the input value to uppercase
-		 * - Triggering validation via _validateAttibuteInput if the value length exceeds 6 characters
+		 * - Triggering validation via validateAttibuteInput if the value length exceeds 6 characters
 		 * 
 		 * @example
 		 * /// Automatically called when user types in the attribute input field
@@ -542,7 +650,7 @@ sap.ui.define([
 			oViewModel.setProperty("/AttrErrorMessage", "");
 			oInput.setValue(oInput.getValue().toUpperCase());
 			if (sNewValue.length > 6) {
-				this._validateAttibuteInput(sNewValue);
+				this.validateAttibuteInput(sNewValue);
 			} else {
 				oViewModel.setProperty("/Data/Policy", "");
 				oViewModel.setProperty("/AttrErrorState", "Error");
