@@ -456,7 +456,10 @@ ul.plDacSections {
 } */
 
 .plDacObjectAttribute>span:first-child{color: #343535 !important;}
-.PlDacDailogBox .sapMDialogIcon {margin-left:-14px !important;}
+/* .PlDacDailogBox .sapMDialogIcon {margin-left:-14px !important;} */
+.PlDacDailogBox  header .sapMBarLeft,.PlDacDailogBox header .sapMBarPH {
+     padding-left: 0.25rem !important;
+}
 
 /* .plDacMaskingPattern >span:hover img{
     filter: brightness(0) invert(1);
