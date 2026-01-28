@@ -183,8 +183,8 @@ sap.ui.define([
 			
 			oURLParameters = {
 				// ParameterName: Value
-				"AttributeId": oViewModel.getProperty("/PatternData/MaskPattern"), // Example variable
-				"MaskPattern": oViewModel.getProperty("/PatternData/AttributeId")    // Example variable
+				"MaskPattern": oViewModel.getProperty("/PatternData/MaskPattern"), // Example variable
+				"AttributeId": oViewModel.getProperty("/PatternData/AttributeId")    // Example variable
 
 			};
 			// 2. Call the function import
