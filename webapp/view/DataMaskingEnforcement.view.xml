@@ -56,7 +56,7 @@
                 >
                     <!-- Header -->
                     <columns>
-                        <Column  width="43%" hAlign="Left">
+                        <Column  width="40%" hAlign="Left">
                             <customData>
                                 <core:CustomData key="p13nData" value='\{"columnKey": "PolicyName", "sortProperty": "Policy", "columnIndex":"0","navigationProperty":"to_Policy",  "leadingProperty": "to_Policy/PolicyName"}'/>
                                
@@ -65,7 +65,7 @@
                                 
                            
                         </Column>
-                        <Column width="40%" >
+                        <Column width="36%" >
                             <customData>
                                 <core:CustomData key="p13nData" value='\{"columnKey": "AttributeId","sortProperty": "AttributeId", "columnIndex":"1", "leadingProperty": "AttributeId"}'/>
                             </customData>
@@ -73,15 +73,15 @@
                                  <!-- @ui5ignore -->
                                
                         </Column>
-                         <Column width="8%"  hAlign="Center">
+                         <Column width="12%"  hAlign="Center">
                             <customData>
-                                <core:CustomData key="p13nData" value='\{"columnKey": "PolicyResult", "columnIndex":"2", "leadingProperty": "PolicyResult"}'/>
+                                <core:CustomData key="p13nData" value='\{"columnKey": "PolicyResult", "sortProperty": "PolicyResult","columnIndex":"2", "leadingProperty": "PolicyResult"}'/>
                             </customData>
                             <Text text="{i18n>txtAction}" />
                         </Column>
-                        <Column width="9%" hAlign="Center">
+                        <Column width="12%" hAlign="Center">
                             <customData>
-                                 <core:CustomData key="p13nData" value='\{"columnKey": "IsActive", "columnIndex":"3", "leadingProperty": "IsActive"}'/>
+                                 <core:CustomData key="p13nData" value='\{"columnKey": "IsActive", "sortProperty": "IsActive", "columnIndex":"3", "leadingProperty": "IsActive"}'/>
                                 
                             </customData>
                             <Text text="{i18n>txtStatus}" />
