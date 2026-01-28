@@ -53,6 +53,7 @@
                     growing="true"
                     growingThreshold="20"
                     growingScrollToLoad="true"
+                    alternateRowColors="true"
                 >
                     <!-- Header -->
                     <columns ></columns>
