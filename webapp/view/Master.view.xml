@@ -11,7 +11,7 @@
 <Page >
  <customHeader >
     <Toolbar design="Transparent" class="plDacToolbar">
-	 	<core:Icon src="sap-icon://alphabetical-order" />
+	 	<core:Icon src="sap-icon://menu2" />
         <Title text="{i18n>titleMasterPage}"/>
          <ToolbarSpacer/>
        

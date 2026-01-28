@@ -124,7 +124,7 @@ sap.ui.define([
 
 		loadMaskingPatternDetailsByAttributeId: function () {
 			var sPath, oView = this.getView(), oDataModel = oView.getModel(), oViewModel = oView.getModel("viewModel"), oSelectedData = oViewModel.getData().SelectedContextData;
-			sPath = "/AttrSet('" + oSelectedData.AttributeId + "')";
+			sPath = "/AttrPatternSet('" + oSelectedData.AttributeId + "')";
 			oDataModel.read(sPath, {
 				urlParameters: {
 					"$expand": "to_Pattern"
@@ -307,7 +307,7 @@ sap.ui.define([
 		 * Event handler triggered before exporting data masking policy enforcement data.
 		 * 
 		 * @public
-		 * @param {sap.ui.base.Event} oEvent - The export event object
+		 * @param {} oEvent - The export event object
 		 * @param {object} oEvent.getParameter("exportSettings") - Export settings containing workbook configuration
 		 * @returns {void}
 		 * 
@@ -379,8 +379,8 @@ sap.ui.define([
 		 * Event handler triggered when attribute tokens are updated (added or removed).
 		 * 
 		 * @public
-		 * @param {sap.ui.base.Event} oEvent - The token update event object
-		 * @param {string} oEvent.getParameter("type") - The type of token update ("removed", "removedAll", "added", etc.)
+		 * @param {} oEvent - The token update event object
+		 * @param {} oEvent.getParameter("type") - The type of token update ("removed", "removedAll", "added", etc.)
 		 * @returns {void}
 		 * 
 		 * @description
