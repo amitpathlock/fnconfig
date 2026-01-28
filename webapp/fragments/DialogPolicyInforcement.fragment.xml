@@ -109,7 +109,7 @@
                     </Select>
                     <HBox class="plDacHBoxMarginTop"
                     >
-                        <Label text="{i18n>lblStatus}"  class="plDacLabelMarginTop" />
+                        <Label text="{i18n>lblStatus}"  class="sapUiTinyMarginTop" />
                         <!-- @ui5ignore -->
                         <Switch
                             type="AcceptReject"
