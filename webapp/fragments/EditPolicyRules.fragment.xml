@@ -17,7 +17,7 @@
 			<ToolbarSpacer/>
 			<!-- @ui5ignore -->
 			<Button text="Add Condition" icon="sap-icon://add"
-			 press="onPressAddConditionBtn" class="sapUiTinyMarginEnd" type="Transparent"
+			 press="onPressAddConditionBtn" class="sapUiTinyMarginEnd plDacPolRuleButton" type="Transparent"
 			  enabled="{parts:[{path:'ruleModel>ContitionType'},{path:'ruleModel>'}],formatter:'.formatter.hasAddConditionBtnEnabled'}" >
 				<customData>
 						<core:CustomData key="data" value="{ruleModel>}"/>
@@ -133,6 +133,7 @@
 												<cc:PlDacRuleInput
 													width="100%"
 													value="{ruleModel>ValueDesc}"
+													
 													showValueDialog=".onShowValueDialog"
 												>
 												 <cc:customData>

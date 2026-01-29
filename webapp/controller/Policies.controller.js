@@ -72,21 +72,21 @@ sap.ui.define([
 					text: "Add",
 					icon: "sap-icon://add",
 					tooltip: "{i18n>toolTipAddPolicy}",
-					press: this._onAddPolicyPolAdminButtonPress.bind(this)
+				//	press: this._onAddPolicyPolAdminButtonPress.bind(this)
 				}));
 				oToolbar.addContent(new OverflowToolbarButton({
 					text: "Edit",
 					icon: "sap-icon://edit",
 					enabled: "{viewModel>/EditButtonEnabled}",
 					tooltip: "{i18n>toolTipEditPolicy}",
-					press: this._onEditPolicyPoladminButtonPress.bind(this)
+				//	press: this._onEditPolicyPoladminButtonPress.bind(this)
 				}));
 				oToolbar.addContent(new OverflowToolbarButton({
 					text: "Delete",
 					icon: "sap-icon://delete",
 					enabled: "{viewModel>/DeleteButtonEnabled}",
 					tooltip: "{i18n>toolTipDelPolicy}",
-					press: this._onDeletePolicyPolAdminButtonPress.bind(this)
+				//	press: this._onDeletePolicyPolAdminButtonPress.bind(this)
 				}));
 
 			}
@@ -627,9 +627,9 @@ sap.ui.define([
 		 */
 		onPressRuleLink: function (oEvent) {
 			//alert("Not Implemented");
-			var sPolicyName = oEvent.getSource().getCustomData()[0].getValue();
-			this._oRouter.navTo("PolicyRules", { PolicyName: sPolicyName });
-			this.getView().getModel("layoutMode").setProperty("/layout", "ThreeColumnsEndExpanded");
+			//var sPolicyName = oEvent.getSource().getCustomData()[0].getValue();
+			//this._oRouter.navTo("PolicyRules", { PolicyName: sPolicyName });
+			//this.getView().getModel("layoutMode").setProperty("/layout", "ThreeColumnsEndExpanded");
 		}
 		
 

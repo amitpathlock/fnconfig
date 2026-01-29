@@ -68,7 +68,7 @@ sap.ui.define([
 		_readPolicyRulesDetails: function (sPolicyName) {
 			var oView = this.getView(), that = this,
 				oModel = oView.getModel(),
-				sPath = "/PolicySet('" + sPolicyName + "')";
+				sPath = "/PolRuleSet('" + sPolicyName + "')";
 			oModel.read(sPath, {
 				urlParameters: {
 					"$expand": "to_Condition/to_Rule/to_Value" // Expand to_Condition/to_Rule/to_Value
@@ -220,7 +220,7 @@ sap.ui.define([
 					oValue["Operator"] = aResult[iResult].Operator;
 					oValue["Value"] = aResult[iResult].Value;
 					oValue["ValueDesc"] = aResult[iResult].ValueDesc;
-					if (({}).hasOwnProperty.call(aResult.to_ValueRange, "results")) {
+					if (({}).hasOwnProperty.call(aResult[iResult].to_ValueRange, "results")) {
 						oValue["ValueRange"] = [];
 					} else {
 						oValue["ValueRange"] = [{ Operator: aResult[iResult].Operator, Value: aResult[iResult].Value }];
@@ -733,6 +733,7 @@ sap.ui.define([
 		//
 		handleClose: function () {
 			this.getView().getModel("layoutMode").setProperty("/layout", "TwoColumnsMidExpanded");
+			this._oRouter.navTo("Policies");
 		},
 		onButtonPressAddRuleMain: function (oEvent) {
 			var oBtn = oEvent.getSource(), i,iLen;

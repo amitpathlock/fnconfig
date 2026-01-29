@@ -108,7 +108,7 @@
                           <!-- @ui5ignore -->
                             <ColumnListItem vAlign="Middle" type="Active" press="onPressUserAttributeItem">
                                 <cells>
-                                    <ObjectIdentifier title="{ListName}" />
+                                    <ObjectIdentifier title="{AttributeId}" />
                                     <Text text="{Description}"/>
                                 </cells>
                             </ColumnListItem>

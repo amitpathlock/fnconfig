@@ -50,6 +50,7 @@ sap.ui.define([
                 oRm.write(">");
                 sap.m.InputRenderer.render(oRm, oControl); //// pass the control to base renderer
                 oRm.renderControl(oControl.getAggregation("_vhicon")); /// pass aggregated control for rendering
+               
                 oRm.write("</div>");
             }
         }

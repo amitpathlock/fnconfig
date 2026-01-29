@@ -13,7 +13,7 @@
 <m:Page class="plDacInfoPage"  id="idRuleBuilderPage">
 <m:customHeader>
  <m:Toolbar design="Transparent" class="plDacToolbar">
-	 	<core:Icon src="sap-icon://fx" />
+	 	<core:Icon src="sap-icon://document-text" class="plDacIconBrandColor"/>
         <m:Title text="Manage Rules"/>
          <m:ToolbarSpacer/>
      <!-- @ui5ignore -->
@@ -42,7 +42,7 @@
 			<ObjectPageSection title="Rules">
 				<subSections>
 				 <!-- @ui5ignore -->
-					<ObjectPageSubSection title="Rules" id="idRuleSubSectionBlock">
+					<ObjectPageSubSection title="Rules" id="idRuleSubSectionBlock" class="plDacObjectPageSubSection">
 						<blocks>
 							<core:Fragment fragmentName="pl.dac.apps.fnconfig.fragments.DisplayPolicyRules" type="XML"/>
 						</blocks>
