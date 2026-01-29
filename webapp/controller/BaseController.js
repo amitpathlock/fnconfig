@@ -292,6 +292,29 @@ sap.ui.define(
 				oView.getModel("viewModel").setProperty("/FullScreen", true);
 				oView.getModel("viewModel").setProperty("/ExitFullScreen", false);
 			},
+			/**
+			 * Adds action buttons (Add, Edit, Delete) to the Attribute SmartTable toolbar.
+			 * This method dynamically populates the toolbar with overflow buttons if it hasn't been initialized yet.
+			 * The buttons are bound to their respective event handlers and include proper icons, tooltips, and enable/disable states.
+			 *
+			 * @function addAdditionalButtonIntoTheAttributeTableToolbar
+			 * @param {sap.ui.comp.smarttable.SmartTable} oSmartTable - The SmartTable control whose toolbar should be enhanced with action buttons.
+			 * @public
+			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
+			 * @returns {void}
+			 *
+			 * @description
+			 * - Retrieves the toolbar from the provided SmartTable
+			 * - Checks if the toolbar is empty (not yet initialized)
+			 * - If empty, adds the following controls in sequence:
+			 *   1. ToolbarSpacer - for spacing
+			 *   2. Add Button - opens the add attribute dialog via `_onAddAttributeButtonPress`
+			 *   3. Edit Button - opens the edit attribute dialog via `_onEditAttributeButtonPress` (enabled based on selection)
+			 *   4. Delete Button - deletes selected attribute via `_onDeleteAttributeButtonPress` (enabled based on selection)
+			 * - All buttons are configured with appropriate icons, text, tooltips (i18n-based), and press event handlers
+			 * - Edit and Delete buttons are bound to the view model's `/EditButtonEnabled` and `/DeleteButtonEnabled` properties
+			 * - Tooltips are bound to i18n keys: `txtBtnAddDataAttribute`, `txtBtnEditDataAttribute`, `txtBtnDelDataAttribute`
+			 */
 			addAdditionalButtonIntoTheAttributeTableToolbar: function (oSmartTable) {
 				var oToolbar = oSmartTable.getToolbar();
 				if (oToolbar.getContent().length == 0) {
@@ -548,6 +571,26 @@ sap.ui.define(
 				mBindingParams.parameters["expand"] = "to_Policy";
 				mBindingParams.parameters["select"] = mBindingParams.parameters["select"] + ",Policy,to_Policy/PolicyDesc";
 			},
+			/**
+			 * Event handler called before the Policy Enforcement Point (PEP) dialog is closed.
+			 * Resets the view model button states and clears the policy name input tokens.
+			 * This cleanup ensures the UI is in a consistent state after the dialog closes.
+			 *
+			 * @function onBeforePEPDialogClosed
+			 * @public
+			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
+			 * @returns {void}
+			 *
+			 * @description
+			 * - Retrieves the current view reference
+			 * - Disables Edit and Delete buttons by setting view model properties:
+			 *   - `/EditButtonEnabled` → false
+			 *   - `/DeleteButtonEnabled` → false
+			 * - Clears all tokens from the policy name input field (idPEPPolicyName)
+			 * 
+			 * This method is typically triggered by the dialog's `beforeClose` event to ensure
+			 * proper cleanup and prevent stale UI states when the dialog is reopened.
+			 */
 			onBeforePEPDialogClosed: function () {
 				var oView = this.getView();
 				oView.getModel("viewModel").setProperty("/EditButtonEnabled", false);
@@ -750,7 +793,6 @@ sap.ui.define(
 			 *   2. Add Button - opens the add policy enforcement dialog
 			 *   3. Edit Button - opens the edit policy enforcement dialog (enabled based on selection)
 			 *   4. Delete Button - deletes selected policy enforcement (enabled based on selection)
-			 *   5. Sort Button - triggers sort functionality
 			 * - All buttons are configured with appropriate icons, text, tooltips, and press event handlers
 			 * - Edit and Delete buttons are bound to the view model's button enable state
 			 */

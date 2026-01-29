@@ -14,9 +14,12 @@
       </customHeader>
       <content>
          <!-- @ui5ignore -->
-         <smartFilterBar:SmartFilterBar id="smartFilterBar-Policy" entitySet="UserAttrSet" persistencyKey="SmartFilterBar_Explored" enableBasicSearch="true" />
+         <smartFilterBar:SmartFilterBar id="smartFilterBar-Policy"
+         
+          entitySet="UserAttrSet" persistencyKey="SmartFilterBar_Explored" enableBasicSearch="true" />
          <!-- @ui5ignore -->
-         <smartTable:SmartTable id="idSmartPolAdminTable" showTablePersonalisation="false" entitySet="PolicySet" smartFilterId="smartFilterBar-Policy" tableType="ResponsiveTable" header="{i18n>titPolAdminPolicies}" persistencyKey="SmartTableAnalytical_Explored" enableAutoBinding="true" demandPopin="true" class="sapUiResponsiveContentPadding" requestAtLeastFields="Policy,PolicyDesc" placeToolbarInTable="true">
+         <smartTable:SmartTable id="idSmartPolAdminTable" 
+         beforeExport="onBeforePolAdminPolicyExport"         showTablePersonalisation="false" entitySet="PolicySet" smartFilterId="smartFilterBar-Policy" tableType="ResponsiveTable" header="{i18n>titPolAdminPolicies}" persistencyKey="SmartTableAnalytical_Explored" enableAutoBinding="true" demandPopin="true" class="sapUiResponsiveContentPadding" requestAtLeastFields="Policy,PolicyName,PolicyDesc" placeToolbarInTable="true">
             <!-- @ui5ignore -->
             <Table mode="SingleSelectLeft" id="idTablePolAdminPolicies" selectionChange="onTableSelectionChange" sticky="ColumnHeaders,HeaderToolbar" growingScrollToLoad="true" growing="true" growingThreshold="20">
                <!-- Header -->
@@ -33,10 +36,14 @@
                      </customData>
                      <Text />
                   </Column>
+                  
                </columns>
                <!-- Data -->
                <items>
                   <ColumnListItem>
+                   <customData>
+                              <core:CustomData value="{Policy}" />
+                           </customData>
                      <cells>
                         <ObjectHeader title="{PolicyName}" class="plDacObjectHeader plDacPolicyName">
                             <ObjectAttribute class="plDacObjectAttribute" title="Description" text="{PolicyDesc}" />

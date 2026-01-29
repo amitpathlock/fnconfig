@@ -25,7 +25,7 @@
       </beginButton>
       <endButton>
          <!-- @ui5ignore -->
-         <Button text="Cancel" press="onCloseDialog" />
+         <Button text="Cancel" press="onClosePolAdminPolicyDialog" />
       </endButton>
    </Dialog>
 </core:FragmentDefinition>
