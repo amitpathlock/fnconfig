@@ -400,6 +400,10 @@ ul.plDacSections {
     border-bottom: 1px solid #1a9459;
 
 }
+.plDacLinkBrandColor{color:#1a9459 !important;}
+.plDacIconBrandColor{color:#1a9459;}
+.PlDacDailogBox .sapMDialogIcon{color:#1a9459;}
+.plDacTitleText>span{font-size: 1rem;}
 /* .PlDacMessageBox>header>div>div {
     background: #23c375 !important;
 }

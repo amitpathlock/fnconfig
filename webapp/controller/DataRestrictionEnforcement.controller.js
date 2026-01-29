@@ -111,7 +111,7 @@ sap.ui.define([
 				{
 					Name: oBundle.getText("lblPolicyName"),
 					Description: oBundle.getText("lblDescription"),
-					Icon: "sap-icon://locked",
+					Icon: "sap-icon://shield",
 					Title: oBundle.getText("titPolInforcementDataRestriction"),
 					PlaceHolder: "",
 					EditButtonEnabled: false,

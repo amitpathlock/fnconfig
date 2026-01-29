@@ -74,18 +74,13 @@ sap.ui.define([
 					tooltip: "{i18n>toolTipDelPolicy}",
 					press: this._onDeletePolicyPolAdminButtonPress.bind(this)
 				}));
-				oToolbar.addContent(new OverflowToolbarButton({
-					text: "Sort",
-					icon: "sap-icon://sort",
-					tooltip: "Sort",
-					//press: this._onPolicyEnforcementSortButtonPress.bind(this)
-				}));
+				
 			}
 		},
 		_onAddPolicyPolAdminButtonPress: function () {
 			var oView = this.getView();
 			oView.getModel("viewModel").setProperty("/Data", { PolicyName: "", PolicyDesc: "", Policy: "" });
-
+			oView.getModel("viewModel").setProperty("/PolicyNameEnabled", true);
 			if (!this._oDialogPolAdminPolicies) {
 				Fragment.load({
 					id: oView.getId(),
@@ -125,7 +120,7 @@ sap.ui.define([
 			var oView = this.getView();
 			if (this._oDialogPolAdminPolicies) {
 				this._oDialogPolAdminPolicies.close();
-				oView.byId("idTablePolicies").removeSelections(true);
+				oView.byId("idTablePolAdminPolicies").removeSelections(true);
 			}
 		},
 		_onRouteMatched: function () {
@@ -136,7 +131,7 @@ sap.ui.define([
 				{
 					Name: oBundle.getText("lblPolicyName"),
 					Description: oBundle.getText("lblDescription"),
-					Icon: "sap-icon://fx",
+					Icon: "sap-icon://documents",
 					Title: oBundle.getText("titPolicy"),
 					PlaceHolder: "",
 					EditButtonEnabled: false,
@@ -167,18 +162,19 @@ sap.ui.define([
 		},
 	
 		onSavePolAdminPolicy: function () {
-			var sPath, oView = this.getView(), oViewModel = oView.getModel("viewModel"),
+			var oBundle,sPath, oView = this.getView(), oViewModel = oView.getModel("viewModel"),
 				oDataModel = oView.getModel();
+				oBundle = oView.getModel("i18n").getResourceBundle();
 			var oEntry = oViewModel.getProperty("/Data");
 			if (oEntry.PolicyName.trim() == "") {
 				oViewModel.setProperty("/PolNameErrorState", "Error");
-				oViewModel.setProperty("/PolNameErrorMessage", "The mandatory field cannot be left blank.");
+				oViewModel.setProperty("/PolNameErrorMessage", oBundle.getText("msgErrorPolicyNameMandatory"));
 				oView.byId("idPolAdminPolName").focus();
 				return;
 			}
 			if (oEntry.PolicyDesc.trim() == "") {
 				oViewModel.setProperty("/PolDescErrorState", "Error");
-				oViewModel.setProperty("/PolDescErrorMessage", "The mandatory field cannot be left blank.");
+				oViewModel.setProperty("/PolDescErrorMessage", oBundle.getText("msgErrorPolicyNameMandatory"));
 				oView.byId("idPolAdminPolDesc").focus();
 				return;
 			}
@@ -187,8 +183,8 @@ sap.ui.define([
 				sPath = "/PolicySet('" + oEntry.Policy + "')";
 				oDataModel.update(sPath, oEntry, {
 					success: function () {
-						MessageBox.success("Entry has been updated");
-						oView.byId("idTablePolicies").removeSelections(true);
+						MessageBox.success(oBundle.getText("msgPolicyUpdateSuccessful",[oEntry.PolicyName]));
+						oView.byId("idTablePolAdminPolicies").removeSelections(true);
 						oDataModel.refresh();
 						this._oDialogPolAdminPolicies.close();
 					}.bind(this),
@@ -202,8 +198,11 @@ sap.ui.define([
 				
 			}
 		},
-		onBeforePolAdminPolicyDialogOpened: function (oEvent) {
-			var oDailog = oEvent.getSource(), oView = this.getView(), oData = oView.getModel("viewModel").getProperty("/Data"),
+		onBeforePolAdminPolicyDialogOpened: function () {
+			this._removelAllValidationError();
+		},
+		onAfterPolAdminPolicyDialogOpen:function(oEvent){
+			var oDailog = oEvent.getSource(),
 				oForm = oDailog.getContent()[0].getAggregation("form"),
 				aFormElements = oForm.getAggregation("formContainers")[0].getAggregation("formElements");
 			if (aFormElements[0].getAggregation("fields")[0].getEnabled()) {
@@ -211,7 +210,6 @@ sap.ui.define([
 			} else {
 				aFormElements[1].getAggregation("fields")[0].focus();
 			}
-			this._removelAllValidationError();
 		},
 		_removelAllValidationError:function(){
 			var oView = this.getView();
@@ -244,11 +242,17 @@ sap.ui.define([
 				}
 			);
 		},
+		onPolicyNameInputLiveChange:function(oEvent){
+			var sNewValue = oEvent.getParameter("newValue");
+			if(sNewValue){
+				oEvent.getSource().setValue(sNewValue.toUpperCase());
+			}
+		},
 		_createEntry:function(oEntry){
-			var oView=this.getView(),oDataModel = oView.getModel();
+			var oView=this.getView(),oDataModel = oView.getModel(),oBundle = oView.getModel("i18n").getResourceBundle();
 			oDataModel.create(PlDacConst.ENTITY_SET_POLICIES, oEntry, {
 					success: function () {
-						MessageBox.success("Entry has been created");
+						MessageBox.success(oBundle.getText("msgPolicyCreatedSuccessful",[oEntry.PolicyName]));
 						oDataModel.refresh();
 						this._oDialogPolAdminPolicies.close();
 					}.bind(this),
@@ -285,10 +289,11 @@ sap.ui.define([
 			});
 		},
 		onPressRuleLink: function (oEvent) {
-			var sPolicyName = oEvent.getSource().getCustomData()[0].getValue();
-			this._oRouter.navTo("PolicyRules", { PolicyName: sPolicyName });
-			this.getView().getModel("layoutMode").setProperty("/layout", "ThreeColumnsEndExpanded");
-		},
+			alert("Not Implemented");
+			//var sPolicyName = oEvent.getSource().getCustomData()[0].getValue();
+			//this._oRouter.navTo("PolicyRules", { PolicyName: sPolicyName });
+			//this.getView().getModel("layoutMode").setProperty("/layout", "ThreeColumnsEndExpanded");
+		}
 		// handleFullScreen: function () {
 		// 	this.getView().getModel("layoutMode").setProperty("/layout", "MidColumnFullScreen");
 		// 	this.getView().getModel("viewModel").setProperty("/FullScreen", false);
@@ -305,17 +310,6 @@ sap.ui.define([
 		// 	//var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/endColumn/closeColumn");
 		// 	//this._oRouter.navTo("master", { layout: sNextLayout });
 		// },
-		onSort: function () {
-			var oView = this.getView(),
-				aStates = [undefined, "asc", "desc"],
-				iOrder = oView.getModel("viewModel").getProperty("/SortOrder");
-
-			iOrder = (iOrder + 1) % aStates.length;
-			var sOrder = aStates[iOrder];
-
-			oView.getModel("viewModel").setProperty("/SortOrder", iOrder);
-			oView.byId("idTablePolicies").getBinding("items").sort(new Sorter("PolicyName", sOrder));
-
-		}
+	
 	});
 });

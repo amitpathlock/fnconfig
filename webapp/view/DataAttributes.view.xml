@@ -12,7 +12,7 @@
     <Page  >
         <customHeader>
             <Toolbar design="Transparent" class="plDacToolbar">
-                <core:Icon src="sap-icon://product" />
+                <core:Icon src="sap-icon://product" class="plDacIconBrandColor" />
                 <Title text="{i18n>titPIPDataAttributePage}"/>
                 <ToolbarSpacer/>
                 <!-- @ui5ignore -->

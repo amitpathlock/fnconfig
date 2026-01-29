@@ -2,7 +2,7 @@
    <Page>
       <customHeader>
          <Toolbar design="Transparent" class="plDacToolbar">
-            <core:Icon src="sap-icon://locked" />
+            <core:Icon src="sap-icon://shield" class="plDacIconBrandColor" />
             <Title text="{i18n>titPolInforcementDataRestriction}" />
             <ToolbarSpacer />
             <!-- @ui5ignore -->

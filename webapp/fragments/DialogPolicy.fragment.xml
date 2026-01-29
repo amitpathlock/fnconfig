@@ -2,18 +2,19 @@
    <!-- @ui5ignore -->
    <Dialog class="PlDacDailogBox" 
    beforeOpen="onBeforePolAdminPolicyDialogOpened"
-   contentWidth="600px" resizable="true" icon="{viewModel&gt;/Icon}" title="{viewModel&gt;/Title}">
+   afterOpen="onAfterPolAdminPolicyDialogOpen"
+   contentWidth="600px" resizable="true" icon="{viewModel>/Icon}" title="{viewModel>/Title}">
       <content>
          <!-- @ui5ignore -->
          <f:SimpleForm editable="true" labelSpanXL="12" labelSpanL="12" labelSpanM="12" labelSpanS="12" layout="ResponsiveGridLayout" singleContainerFullSize="false">
             <f:content>
                <!-- @ui5ignore -->
-               <Label text="{viewModel&gt;/Name}" required="true" />
+               <Label text="{viewModel>/Name}" required="true" />
                <!-- @ui5ignore -->
-               <Input id="idPolAdminPolName" enabled="{viewModel&gt;/PolicyNameEnabled}" valueState="{viewModel&gt;/PolNameErrorState}" valueStateText="{viewModel&gt;/PolNameErrorMessage}" liveChange="onInputChange" value="{viewModel&gt;/Data/PolicyName}" />
-               <Label text="{viewModel&gt;/Description}" required="true" />
+               <Input id="idPolAdminPolName" enabled="{viewModel>/PolicyNameEnabled}" valueState="{viewModel>/PolNameErrorState}" valueStateText="{viewModel>/PolNameErrorMessage}" liveChange="onPolicyNameInputLiveChange" value="{viewModel>/Data/PolicyName}" />
+               <Label text="{viewModel>/Description}" required="true" />
               <!-- @ui5ignore -->
-               <Input id="idPolAdminPolDesc" value="{viewModel&gt;/Data/PolicyDesc}" valueState="{viewModel&gt;/PolDescErrorState}" valueStateText="{viewModel&gt;/PolDescErrorMessage}" />
+               <Input id="idPolAdminPolDesc" value="{viewModel>/Data/PolicyDesc}" valueState="{viewModel>/PolDescErrorState}" valueStateText="{viewModel>/PolDescErrorMessage}" />
                <!-- Add more form fields as needed -->
             </f:content>
          </f:SimpleForm>

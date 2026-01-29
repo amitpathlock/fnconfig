@@ -2,12 +2,12 @@
  <!-- @ui5ignore -->
    <Popover showHeader="false"
    afterClose="onAfterCloseAssignedAttributePopOver"
-    class="PlDacPopover" placement="Auto" resizable="true" contentHeight="280px" contentWidth="430px">
+    class="PlDacPopover" placement="Auto" resizable="true" contentHeight="280px" contentWidth="500px">
       <content>
          <f:DynamicPage class="sapUiNoContentPadding">
             <f:content>
              <!-- @ui5ignore -->
-               <Table id="idAssignedAttribures" items="{    path: 'popOverModel>/items'   }" noDataText="No data found"> 
+               <Table id="idAssignedAttribures" items="{    path: 'popOverModel>/items'   }" alternateRowColors="true" noDataText="No data found" showNoData="true"> 
                   <columns>
                      <Column>
                         <Text text="Attribute Name" />
@@ -28,8 +28,8 @@
                <f:DynamicPageTitle class="plDacDynamicPageTitle">
                   <f:heading>
                      <HBox alignItems="Center">
-                        <core:Icon src="sap-icon://validate" class="sapUiTinyMarginEnd" />
-                        <Title text="{popOverModel>/PolicyName} ({popOverModel>/PolicyDesc})" level="H2" />
+                        <core:Icon src="sap-icon://documents" class="sapUiTinyMarginEnd plDacIconBrandColor" />
+                        <Title class="plDacTitleText" text="{popOverModel>/PolicyName} ({popOverModel>/PolicyDesc})" level="H3" titleStyle="H5" />
                      </HBox>
                   </f:heading>
                   <f:expandedContent>
