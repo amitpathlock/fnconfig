@@ -880,7 +880,7 @@ sap.ui.define(
 			 * Event handler triggered when policy tokens are updated (added or removed).
 			 * 
 			 * @public
-			 * @param {} oEvent - The token update event object
+			 * @param {*} oEvent - The token update event object
 			 * @param {} oEvent.getParameter("type") - The type of token update ("removed", "removedAll", "added", etc.)
 			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
 			 * @returns {void}
@@ -915,8 +915,8 @@ sap.ui.define(
 			 * Event handler triggered when a suggestion item is selected from the policy name input field.
 			 * 
 			 * @public
-			 * @param {sap.ui.base.Event} oEvent - The suggestion item selection event object
-			 * @param {sap.m.ColumnListItem} oEvent.getParameter("selectedRow") - The selected row from the suggestion list
+			 * @param {*} oEvent - The suggestion item selection event object
+			 * @param {} oEvent.getParameter("selectedRow") - The selected row from the suggestion list
 			 * @memberOf pl.dac.apps.fnconfig.controller.BaseController
 			 * @returns {void}
 			 * 

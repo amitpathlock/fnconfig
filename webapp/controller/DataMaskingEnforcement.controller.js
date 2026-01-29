@@ -104,9 +104,33 @@ sap.ui.define([
 				}
 			), "viewModel");
 			this.oPolicyEnforcementTable = oView.byId("idTableDataMaskingEnforcement");
-			this._loadMaskingPatterns();
+			this._readMaskingPatternsResults();
 		},
-		_loadMaskingPatterns: function () {
+		/**
+		 * Reads and loads all available masking patterns from the OData service.
+		 * 
+		 * @private
+		 * @memberOf pl.dac.apps.fnconfig.controller.DataMaskingEnforcement
+		 * @returns {void}
+		 * 
+		 * @description
+		 * This method retrieves the complete list of masking patterns from the backend by:
+		 * - Reading the PatternSet entity collection from the OData model
+		 * - On success:
+		 *   - Adding an empty pattern option at the beginning of the results array (index 0)
+		 *   - Storing the pattern data in the view model's /PatternSet property
+		 *   - Making patterns available for selection in dropdown/combobox controls
+		 * - On error:
+		 *   - Silently handles the error (no user notification)
+		 * 
+		 * The empty pattern option allows users to clear/reset masking pattern selections.
+		 * This method is typically called during route initialization to populate pattern dropdowns.
+		 * 
+		 * @example
+		 * /// Called during _onRouteMatched to initialize pattern data
+		 * this._readMaskingPatternsResults();
+		 */
+		_readMaskingPatternsResults: function () {
 			var oView = this.getView(), oDataModel = oView.getModel(), oViewModel = oView.getModel("viewModel");
 			oDataModel.read("/PatternSet", {
 				success: function (oData) {
@@ -121,7 +145,33 @@ sap.ui.define([
 				}
 			});
 		},
-
+		/**
+		 * Loads masking pattern details for the currently selected attribute from the OData service.
+		 * 
+		 * @public
+		 * @memberOf pl.dac.apps.fnconfig.controller.DataMaskingEnforcement
+		 * @returns {void}
+		 * 
+		 * @description
+		 * This method retrieves the masking pattern configuration for a specific attribute by:
+		 * - Retrieving the selected attribute data from the view model's SelectedContextData
+		 * - Constructing the OData path to read from AttrPatternSet using the AttributeId
+		 * - Expanding the to_Pattern navigation property to fetch related pattern details
+		 * - On success:
+		 *   - Populating the view model's PatternData with:
+		 *     - AttributeId - The attribute identifier
+		 *     - Description - The attribute description
+		 *     - MaskPattern - The associated masking pattern from the expanded to_Pattern entity
+		 * - On error:
+		 *   - Silently handles the error (no user notification)
+		 * 
+		 * This method is typically called when opening the masking pattern management dialog
+		 * to display the current pattern configuration for the selected attribute.
+		 * 
+		 * @example
+		 * /// Called when editing an existing attribute's masking pattern
+		 * this.loadMaskingPatternDetailsByAttributeId();
+		 */
 		loadMaskingPatternDetailsByAttributeId: function () {
 			var sPath, oView = this.getView(), oDataModel = oView.getModel(), oViewModel = oView.getModel("viewModel"), oSelectedData = oViewModel.getData().SelectedContextData;
 			sPath = "/AttrPatternSet('" + oSelectedData.AttributeId + "')";
@@ -307,8 +357,8 @@ sap.ui.define([
 		 * Event handler triggered before exporting data masking policy enforcement data.
 		 * 
 		 * @public
-		 * @param {} oEvent - The export event object
-		 * @param {object} oEvent.getParameter("exportSettings") - Export settings containing workbook configuration
+		 * @param {*} oEvent - The export event object
+		 * @param {} oEvent.getParameter("exportSettings") - Export settings containing workbook configuration
 		 * @returns {void}
 		 * 
 		 * @description
@@ -379,7 +429,7 @@ sap.ui.define([
 		 * Event handler triggered when attribute tokens are updated (added or removed).
 		 * 
 		 * @public
-		 * @param {} oEvent - The token update event object
+		 * @param {*} oEvent - The token update event object
 		 * @param {} oEvent.getParameter("type") - The type of token update ("removed", "removedAll", "added", etc.)
 		 * @returns {void}
 		 * 
