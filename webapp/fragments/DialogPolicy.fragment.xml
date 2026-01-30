@@ -3,7 +3,7 @@
    <Dialog class="PlDacDailogBox" 
    beforeOpen="onBeforePolAdminPolicyDialogOpened"
    afterOpen="onAfterPolAdminPolicyDialogOpen"
-   contentWidth="600px" resizable="true" icon="{viewModel>/Icon}" title="{viewModel>/Title}">
+   contentWidth="600px" resizable="false" icon="{viewModel>/Icon}" title="{viewModel>/Title}">
       <content>
          <!-- @ui5ignore -->
          <f:SimpleForm editable="true" labelSpanXL="12" labelSpanL="12" labelSpanM="12" labelSpanS="12" layout="ResponsiveGridLayout" singleContainerFullSize="false">

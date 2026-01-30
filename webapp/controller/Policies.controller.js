@@ -86,7 +86,7 @@ sap.ui.define([
 					icon: "sap-icon://delete",
 					enabled: "{viewModel>/DeleteButtonEnabled}",
 					tooltip: "{i18n>toolTipDelPolicy}",
-				//	press: this._onDeletePolicyPolAdminButtonPress.bind(this)
+					press: this._onDeletePolicyPolAdminButtonPress.bind(this)
 				}));
 
 			}
@@ -178,10 +178,12 @@ sap.ui.define([
 		 * - Resets the UI state after dialog closure
 		 */
 		onClosePolAdminPolicyDialog: function () {
-			var oView = this.getView();
+			var oView = this.getView(),oViewModel=oView.getModel("viewModel");
 			if (this._oDialogPolAdminPolicies) {
 				this._oDialogPolAdminPolicies.close();
 				oView.byId("idTablePolAdminPolicies").removeSelections(true);
+				oViewModel.setProperty("/EditButtonEnabled",false);
+				oViewModel.setProperty("/DeleteButtonEnabled",false);
 			}
 		},
 		/**
@@ -360,6 +362,8 @@ sap.ui.define([
 						oView.byId("idTablePolAdminPolicies").removeSelections(true);
 						oDataModel.refresh();
 						this._oDialogPolAdminPolicies.close();
+						oViewModel.setProperty("/EditButtonEnabled",false);
+						oViewModel.setProperty("/DeleteButtonEnabled",false);
 					}.bind(this),
 					error: function () {
 						MessageBox.error("Error has occured while updating record");
@@ -526,12 +530,15 @@ sap.ui.define([
 		 * - Called after successful duplicate entry validation
 		 */
 		_createEntry: function (oEntry) {
-			var oView = this.getView(), oDataModel = oView.getModel(), oBundle = oView.getModel("i18n").getResourceBundle();
+			var oViewModel,oView = this.getView(), oDataModel = oView.getModel(), oBundle = oView.getModel("i18n").getResourceBundle();
+			oViewModel= oView.getModel("viewModel");
 			oDataModel.create(PlDacConst.ENTITY_SET_POLICIES, oEntry, {
 				success: function () {
 					MessageBox.success(oBundle.getText("msgPolicyCreatedSuccessful", [oEntry.PolicyName]));
 					oDataModel.refresh();
 					this._oDialogPolAdminPolicies.close();
+					oViewModel.setProperty("/EditButtonEnabled",false);
+					oViewModel.setProperty("/DeleteButtonEnabled",false);
 				}.bind(this),
 				error: function () {
 					MessageBox.error("Error has occured while creating record");
@@ -556,16 +563,17 @@ sap.ui.define([
 		 * - Prevents accidental deletion by requiring explicit user confirmation
 		 */
 		_onDeletePolicyPolAdminButtonPress: function () {
-			var that = this, oBundle = this.getView().getModel("i18n").getResourceBundle();
-			MessageBox.warning(oBundle.getText("msgDeleteConfirmation"), {
-				actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-				emphasizedAction: MessageBox.Action.OK,
-				onClose: function (sAction) {
-					if (sAction == "OK") {
-						that._removeSelectedRecord();
-					}
-				}
-			});
+			alert("Not Implemented");
+			// var that = this, oBundle = this.getView().getModel("i18n").getResourceBundle();
+			// MessageBox.warning(oBundle.getText("msgDeleteConfirmation"), {
+			// 	actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+			// 	emphasizedAction: MessageBox.Action.OK,
+			// 	onClose: function (sAction) {
+			// 		if (sAction == "OK") {
+			// 			that._removeSelectedRecord();
+			// 		}
+			// 	}
+			// });
 
 		},
 		/**
@@ -592,15 +600,18 @@ sap.ui.define([
 		 * - Called after user confirms deletion in the confirmation dialog
 		 */
 		_removeSelectedRecord: function () {
-			var oBundle,sPolicy,oSelectedItemData,sErrorMSG, sPath, oView = this.getView(), oModel = oView.getModel();
+			var oViewModel, oBundle,sPolicy,oSelectedItemData,sErrorMSG, sPath, oView = this.getView(), oModel = oView.getModel();
 			oSelectedItemData = oView.byId("idTablePolAdminPolicies").getSelectedItem().getBindingContext().getObject();
 			sPolicy = oSelectedItemData.Policy;
 			sPath = "/PolicySet('" + sPolicy + "')";
-			oBundle = oView.getModel("i18n").getResourceBundle()
+			oBundle = oView.getModel("i18n").getResourceBundle();
+			oViewModel =oView.getModel("viewModel");
 			oModel.remove(sPath, {
 				success: function () {
 					MessageBox.success(oBundle.getText("msgPolicyDeleteSuccessful",[oSelectedItemData.PolicyName]));
 					oView.byId("idTablePolAdminPolicies").removeSelections(true);
+					oViewModel.setProperty("/EditButtonEnabled",false);
+					oViewModel.setProperty("/DeleteButtonEnabled",false);
 					oModel.refresh();
 				},
 				error: function (e) {
