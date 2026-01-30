@@ -192,9 +192,12 @@ span.sapMBtnInner.sapMBtnEmphasized {
 .plDacSubRule {
     padding-left: 37px;
 }
+.plDacRuleButtonFontSize .sapMBtnIcon ,.plDacRuleButtonFontSize .sapMBtnContent{font-size: 12px !important;}
 
-
-
+.plDacRuleButtonFontSize .sapMBtnIcon:hover{color:#fff !important;}
+.plDacRuleButtonFontSize .sapMBtnContent:hover{
+    color:#fff !important;
+}
 
 
 .plDacRuleRowAction {
@@ -218,6 +221,7 @@ span.sapMBtnInner.sapMBtnReject {
     padding: 4px 17px;
     background: #acf389;
     color: #bb0000fa;
+    font-size: 13px;
 }
 
 .plDacRuleButton .sapMBtnContent {
@@ -254,10 +258,11 @@ span.sapMBtnInner.sapMBtnReject {
 }
 
 .plDacRuleConditonTitle>span {
-    font-size: 15px;
+    font-size: 13px;
 }
 
 
+.plDacRulePanelTitle .sapMTitleTB{font-size:1rem !important;}
 
 .plDacRuleBackground>.sapMFlexBoxBGTransparent:nth-child(1) {
     padding-top: 17px;
@@ -284,12 +289,14 @@ span.sapMBtnInner.sapMBtnReject {
 
 .plDacRuleBackground .sapMTitle {
     color: #bb0000fa !important;
-    margin-top: -4px;
+    margin-top: -4px !important;
+    font-size: 13px;
 }
 
 .plDacIFToolbar:last-child {
-    margin-top: 7px !important;
+    /* margin-top: 7px !important; */
 }
+ .plDacToolbarMarginTop{margin-top: 7px !important;} */
 .plDacRuleInput{display: flex;}
 .plDacRuleInputIcon {
     margin-left: -20px;

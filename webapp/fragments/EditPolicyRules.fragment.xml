@@ -8,23 +8,23 @@
 	 <VBox items="{ruleModel>/types}" >
 	
 	 <Panel expandable="true"   expanded="true" headerText="{ruleModel>RuleType}" 
-	 width="auto" class="sapUiResponsiveMargin plDacPanelBackground">
+	 width="auto" class="sapUiResponsiveMargin plDacPanelBackground plDacRulePanelTitle">
 	 		
 			<headerToolbar>
-				<Toolbar class="plDacIFToolbar" >
+				<Toolbar class="plDacIFToolbar plDacToolbarMarginTop" >
 					<Title text="{ruleModel>RuleType}" />	
 
 			<ToolbarSpacer/>
 			<!-- @ui5ignore -->
 			<Button text="Add Condition" icon="sap-icon://add"
-			 press="onPressAddConditionBtn" class="sapUiTinyMarginEnd plDacPolRuleButton" type="Transparent"
+			 press="onPressAddConditionBtn" class="sapUiTinyMarginEnd plDacPolRuleButton plDacRuleButtonFontSize" type="Transparent"
 			  enabled="{parts:[{path:'ruleModel>ContitionType'},{path:'ruleModel>'}],formatter:'.formatter.hasAddConditionBtnEnabled'}" >
 				<customData>
 						<core:CustomData key="data" value="{ruleModel>}"/>
 				</customData>
 			</Button>
 			
-			<Button text="Delete" icon="sap-icon://delete" type="Transparent" />
+			<Button text="Delete" icon="sap-icon://delete" type="Transparent" class="plDacRuleButtonFontSize" />
 		</Toolbar>
 			</headerToolbar>
 			<content>
@@ -36,7 +36,7 @@
 								<Title text="{parts:[{path:'ruleModel>CType'},{path:'ruleModel>RuleType'}],formatter:'.formatter.handleConditionText'}"  class="plDacRuleConditonTitle"/>
 								<ToolbarSpacer/>
 								<!-- @ui5ignore -->
-								<Button text="Add" icon="sap-icon://add" class="sapUiTinyMarginEnd"
+								<Button text="Add" icon="sap-icon://add" class="sapUiTinyMarginEnd plDacRuleButtonFontSize"
 								 press="onButtonPressAddRuleMain" type="Transparent" 
 								 >
 								<customData>
@@ -45,7 +45,7 @@
 								</Button>
 								<!-- @ui5ignore -->
 								<Button text="Delete" icon="sap-icon://delete" type="Transparent" 
-								 press="onButtonPressDeleteRuleMain">
+								 press="onButtonPressDeleteRuleMain" class="plDacRuleButtonFontSize">
 									<customData>
 										<core:CustomData key="data" value="{ruleModel>}"/>
 									</customData>
@@ -53,7 +53,7 @@
 								</Button>
 							</Toolbar>
 							
-							<Toolbar class="sapUiMediumMarginTop plDacIFToolbar" visible="{parts:[{path:'ruleModel>CType'},{path:'ruleModel>RuleType'}],formatter:'.formatter.editViewHandleEndIfVisiblity'}">
+							<Toolbar class="plDacIFToolbar" visible="{parts:[{path:'ruleModel>CType'},{path:'ruleModel>RuleType'}],formatter:'.formatter.editViewHandleEndIfVisiblity'}">
 								<Title text="{ruleModel>CType}"  class="plDacRuleConditonTitle"/>
 								<ToolbarSpacer/>
 				
@@ -67,7 +67,7 @@
 								<Title  class="plDacRuleConditonTitle sapUiTinyMarginBegin"/>
 								<ToolbarSpacer/>
 								<!-- @ui5ignore -->
-								<Button text="Add" icon="sap-icon://add" class="sapUiTinyMarginEnd"
+								<Button text="Add" icon="sap-icon://add" class="sapUiTinyMarginEnd plDacRuleButtonFontSize"
 								 press="onButtonPressAddRuleMain" type="Transparent" 
 								 >
 								<customData>
@@ -76,7 +76,7 @@
 								</Button>
 								<!-- @ui5ignore -->
 								<Button text="Delete" icon="sap-icon://delete" type="Transparent" 
-								 press="onButtonPressDeleteRuleMain">
+								 press="onButtonPressDeleteRuleMain" class="plDacRuleButtonFontSize">
 									<customData>
 										<core:CustomData key="data" value="{ruleModel>}"/>
 									</customData>
@@ -90,13 +90,13 @@
 										<Toolbar class="{ruleModel>Classes}" visible="{path:'ruleModel>ContitionType',formatter:'.formatter.handleTitleElseIFVisibile'}">
 											<ToolbarSpacer/>
 											<!-- @ui5ignore -->
-											<Button text="Add" icon="sap-icon://add" class="sapUiTinyMarginEnd" press="onButtonPressAddRule" type="Transparent" visible="{path:'ruleModel>ContitionType',formatter:'.formatter.handleANDVisibility'}">
+											<Button text="Add" icon="sap-icon://add" class="sapUiTinyMarginEnd plDacRuleButtonFontSize" press="onButtonPressAddRule" type="Transparent" visible="{path:'ruleModel>ContitionType',formatter:'.formatter.handleANDVisibility'}">
 												 <customData>
 													<core:CustomData key="data" value="{ruleModel>}"/>
 												</customData>
 											</Button>
 											<!-- @ui5ignore -->
-											<Button  press="onButtonPressDeleteRuleMain" text="Delete" icon="sap-icon://delete" type="Reject" />
+											<Button  press="onButtonPressDeleteRuleMain" text="Delete" icon="sap-icon://delete" type="Reject" class="plDacRuleButtonFontSize" />
 										</Toolbar>
 										<Title text="{ruleModel>ContitionType}" class=""  visible="{path:'ruleModel>ContitionType',formatter:'.formatter.handleANDOperatorVisibility'}" />	
 										<FlexBox width="100%" class="plDacFlexBoxPaddingAll"  

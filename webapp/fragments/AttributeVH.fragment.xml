@@ -9,7 +9,7 @@
 		cancel=".onValueHelpCancelPress"
 		afterClose=".onValueHelpAfterClose"
 		supportRanges="true"
-		key="AttributeName"
+		key="AttributeId"
 		descriptionKey="Description">  
         </ValueHelpDialog>
 </c:FragmentDefinition>
