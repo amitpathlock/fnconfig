@@ -1,132 +1,150 @@
-<c:FragmentDefinition
+<core:FragmentDefinition
 	xmlns="sap.m"
-	xmlns:c="sap.ui.core"
-    xmlns:cus="pl.dac.apps.fnconfig.control"
-    xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
-> <!-- @ui5ignore -->
-   <Dialog showHeader="false" contentWidth="600px" contentHeight="580px" beforeOpen="onBeforeOpenDialog">   
-        <content>
-          <cus:PlDacSectionLayout
-          >
-              <cus:sections>
-               
-                    <!-- Single Values Selection Table-->
-                    <VBox
-                      
-                    >
-                        
-                  
-                     <Table items="{SingleValues>/}"  customData:title="Single Values" customData:icon="sap-icon://list" >
-                        <columns>
-                         <Column 	  demandPopin="true">
-                                <Text text="Selection Option" />
-                            </Column> 
-                            <Column 	  demandPopin="true">
-                                <Text text="Values" />
-                            </Column> 
-                           
-                        </columns>
-                        <items>
-                            <ColumnListItem vAlign="Middle" type="Active">
-                                <cells>
-                                    <Select width="100%" items="{path:'Operators>/',templateShareable:true}" selectedKey="{SingleValues>Operator}">
-                                       <items>
-                                        <c:Item key="{Operators>Key}" text="{Operators>Text}" />
-                                       </items>
-                                    </Select>
-                                    <Input value="{SingleValues>Value}"/>
-                                </cells>
-                            </ColumnListItem>
-                        </items>
-                    </Table>
-                     <!-- @ui5ignore -->
-                        <Button icon="sap-icon://add" text="Rows" class="plDacAddRows"  press=".onPressAddRowInValues" />    
-                      </VBox>
-                    <!-- Ranges Selection Table-->
-                     <VBox>
-                     <Table items="{Ranges>/}"  customData:title="Ranges" customData:icon="sap-icon://direction-arrows" >
-                        <columns>
-                         <Column 	  demandPopin="true">
-                                <Text text="Selection Option" />
-                            </Column> 
-                            <Column 	  demandPopin="true">
-                                <Text text="Lower Limit" />
-                            </Column> 
-                           <Column   demandPopin="true">
-                                <Text text="Upper Limit" />
-                            </Column> 
-                        </columns>
-                        <items>
-                            <ColumnListItem vAlign="Middle" type="Active">
-                                <cells>
-                                    <Select  width="100%" items="{path:'Operators>/',templateShareable:true}" selectedKey="{Ranges>Operator}">
-                                       <items>
-                                        <c:Item key="{Operators>Key}" text="{Operators>Text}" />
-                                       </items>
-                                    </Select>
-                                    <Input value="{Ranges>Lower}"/>
-                                     <Input value="{Ranges>Upper}"/>
-                                </cells>
-                            </ColumnListItem>
-                        </items>
-                    </Table>
-                    <!-- @ui5ignore -->
-                        <Button icon="sap-icon://add" text="Rows" class="plDacAddRows"  press=".onPressAddRowInRanges" />    
-                     </VBox>
-                     <VBox>
-                      <Table items="{path:'/UserAttrSet'}"  customData:title="User Attributes"  customData:icon="sap-icon://person-placeholder" >
-                        <columns>
-                            <Column 	minScreenWidth="Tablet"  demandPopin="true">
-                                <Text text="Name" />
-                            </Column> 
-                             <Column 	minScreenWidth="Tablet"  demandPopin="true">
-                                <Text text="Description" />
-                            </Column>     
-                        </columns>
-                        <items>
-                          <!-- @ui5ignore -->
-                            <ColumnListItem vAlign="Middle" type="Active" press="onPressUserAttributeItem">
-                                <cells>
-                                    <ObjectIdentifier title="{AttributeId}" />
-                                    <Text text="{Description}"/>
-                                </cells>
-                            </ColumnListItem>
-                        </items>
-                    </Table>
-                     </VBox>
-                     <VBox>
-                      <Table items="{path:'/UserAttrSet'}"  customData:title="List"  customData:icon="sap-icon://activities" >
-                        <columns>
-                            <Column 	minScreenWidth="Tablet"  demandPopin="true">
-                                <Text text="Name" />
-                            </Column> 
-                             <Column 	minScreenWidth="Tablet"  demandPopin="true">
-                                <Text text="Description" />
-                            </Column>     
-                        </columns>
-                        <items>
-                          <!-- @ui5ignore -->
-                            <ColumnListItem vAlign="Middle" type="Active" press="onPressUserAttributeItem">
-                                <cells>
-                                    <ObjectIdentifier title="{AttributeId}" />
-                                    <Text text="{Description}"/>
-                                </cells>
-                            </ColumnListItem>
-                        </items>
-                    </Table>
-                     </VBox>
-              </cus:sections>
-          </cus:PlDacSectionLayout>
-
-        </content> 
-            <beginButton>
-                 <!-- @ui5ignore -->
-             <Button text="Ok" press="onValueDialogOkPress" visible="{viewModel>/VisibleOK}" />
-            </beginButton> 
-          <endButton>
-          
-           <!-- @ui5ignore -->
-                <Button text="Cancel" press="onCloseValueDialog" />
-            </endButton>      
-    </Dialog>
-</c:FragmentDefinition>
+	xmlns:core="sap.ui.core"
+	xmlns:cc="pl.dac.apps.fnconfig.control"
+>
+	<VBox items="{ruleModel>/types}" >
+		<Panel expandable="true"   expanded="true" headerText="{ruleModel>RuleType}" 
+	 width="auto" class="sapUiResponsiveMargin plDacPanelBackground plDacRulePanelTitle">
+			<headerToolbar>
+				<Toolbar class="plDacIFToolbar plDacToolbarMarginTop" >
+					<Title text="{ruleModel>RuleType}" />
+					<ToolbarSpacer/>
+					<!-- @ui5ignore -->
+					<Button text="Add Condition" icon="sap-icon://add"
+			 press="onPressAddConditionBtn" class="sapUiTinyMarginEnd plDacPolRuleButton plDacRuleButtonFontSize" type="Transparent"
+			  enabled="{parts:[{path:'ruleModel>ContitionType'},{path:'ruleModel>'}],formatter:'.formatter.hasAddConditionBtnEnabled'}" >
+						<customData>
+							<core:CustomData key="data" value="{ruleModel>}"/>
+						</customData>
+					</Button>
+					<Button text="Delete" icon="sap-icon://delete" type="Transparent" class="plDacRuleButtonFontSize" />
+				</Toolbar>
+			</headerToolbar>
+			<content>
+				<VBox items="{ruleModel>Condition/}">
+					<items>
+						<VBox >
+							<Toolbar class="plDacIFToolbar" 
+							visible="{parts:[{path:'ruleModel>CType'},{path:'ruleModel>RuleType'}],formatter:'.formatter.editViewHandleIFBlockVisiblity'}">
+								<Title text="{parts:[{path:'ruleModel>CType'},{path:'ruleModel>RuleType'}],formatter:'.formatter.handleConditionText'}"  class="plDacRuleConditonTitle"/>
+								<ToolbarSpacer/>
+								<!-- @ui5ignore -->
+								<Button text="Add" icon="sap-icon://add" class="sapUiTinyMarginEnd plDacRuleButtonFontSize"
+								 press="onButtonPressAddRuleMain" type="Transparent" 
+								 >
+									<customData>
+										<core:CustomData key="data" value="{ruleModel>}"/>
+									</customData>
+								</Button>
+								<!-- @ui5ignore -->
+								<Button text="Delete" icon="sap-icon://delete" type="Transparent" 
+								 press="onButtonPressDeleteRuleMain" class="plDacRuleButtonFontSize">
+									<customData>
+										<core:CustomData key="data" value="{ruleModel>}"/>
+									</customData>
+								</Button>
+							</Toolbar>
+							<Toolbar class="plDacIFToolbar" visible="{parts:[{path:'ruleModel>CType'},{path:'ruleModel>RuleType'}],formatter:'.formatter.editViewHandleEndIfVisiblity'}">
+								<Title text="{ruleModel>CType}"  class="plDacRuleConditonTitle"/>
+								<ToolbarSpacer/>
+							</Toolbar>
+							<Toolbar class="sapUiMediumMarginTop plDacIFToolbar" visible="{parts:[{path:'ruleModel>CType'},{path:'ruleModel>RuleType'}],formatter:'.formatter.editViewHandleANDOperatorVisiblity'}">
+								<Title text="{ruleModel>CType}"  class="plDacRuleConditonTitle sapUiTinyMarginBegin"/>
+								<ToolbarSpacer/>
+							</Toolbar>
+							<Toolbar class="sapUiMediumMarginTop plDacIFToolbar plDacElseIfTitle" visible="{parts:[{path:'ruleModel>CType'},{path:'ruleModel>RuleType'}],formatter:'.formatter.editViewHandleELSEIFVisiblity'}">
+								<Title  class="plDacRuleConditonTitle sapUiTinyMarginBegin"/>
+								<ToolbarSpacer/>
+								<!-- @ui5ignore -->
+								<Button text="Add" icon="sap-icon://add" class="sapUiTinyMarginEnd plDacRuleButtonFontSize"
+								 press="onButtonPressAddRuleMain" type="Transparent" 
+								 >
+									<customData>
+										<core:CustomData key="data" value="{ruleModel>}"/>
+									</customData>
+								</Button>
+								<!-- @ui5ignore -->
+								<Button text="Delete" icon="sap-icon://delete" type="Transparent" 
+								 press="onButtonPressDeleteRuleMain" class="plDacRuleButtonFontSize">
+									<customData>
+										<core:CustomData key="data" value="{ruleModel>}"/>
+									</customData>
+								</Button>
+							</Toolbar>
+							<!-- @ui5ignore -->
+							<VBox id="idBoxRuleMain" class="plDacRuleBackground" items="{ruleModel>Rules/}">
+								<VBox class="plDacOperatorTitle">
+									<items>
+										<Toolbar class="{ruleModel>Classes}" visible="{path:'ruleModel>ContitionType',formatter:'.formatter.handleTitleElseIFVisibile'}">
+											<ToolbarSpacer/>
+											<!-- @ui5ignore -->
+											<Button text="Add" icon="sap-icon://add" class="sapUiTinyMarginEnd plDacRuleButtonFontSize" press="onButtonPressAddRule" type="Transparent" visible="{path:'ruleModel>ContitionType',formatter:'.formatter.handleANDVisibility'}">
+												<customData>
+													<core:CustomData key="data" value="{ruleModel>}"/>
+												</customData>
+											</Button>
+											<!-- @ui5ignore -->
+											<Button  press="onButtonPressDeleteRuleMain" text="Delete" icon="sap-icon://delete" type="Reject" class="plDacRuleButtonFontSize" />
+										</Toolbar>
+										<Title text="{ruleModel>ContitionType}" class=""  visible="{path:'ruleModel>ContitionType',formatter:'.formatter.handleANDOperatorVisibility'}" />
+										<FlexBox width="100%" class="plDacFlexBoxPaddingAll"  
+										alignItems="Start"
+										justifyContent="Center">
+											<items>
+												<!-- @ui5ignore -->
+												<Input  value="{ruleModel>AttributeDesc}"
+												 width="100%"
+												 showValueHelp="true"
+												 valueHelpRequest=".onAttributeValueHelpRequested"
+												
+											   >
+													<customData>
+														<core:CustomData key="data" value="{ruleModel>}"/>
+													</customData>
+													<layoutData>
+														<FlexItemData growFactor="4" />
+													</layoutData>
+												</Input>
+												<Select items="{Operators>/}" selectedKey="{ruleModel>Operator}" width="100%"
+												class="">
+													<core:Item key="{Operators>Key}" text="{Operators>Text}" />
+													<customData>
+														<core:CustomData key="data" value="{ruleModel>}"/>
+													</customData>
+													<layoutData>
+														<FlexItemData growFactor="2" />
+													</layoutData>
+												</Select>
+												<!-- @ui5ignore -->
+												<cc:PlDacRuleInput
+													width="100%"
+													value="{ruleModel>ValueDesc}"
+													
+													showValueDialog=".onShowValueDialog"
+												>
+													<cc:customData>
+														<core:CustomData key="data" value="{ruleModel>}"/>
+													</cc:customData>
+													<cc:layoutData>
+														<FlexItemData growFactor="4" />
+													</cc:layoutData>
+												</cc:PlDacRuleInput>
+												<!-- @ui5ignore -->
+												<Button icon="sap-icon://delete" type="Reject" press="onPressDeleteSingleRowRule">
+													<customData>
+														<core:CustomData key="data" value="{ruleModel>}"/>
+													</customData>
+												</Button>
+											</items>
+										</FlexBox>
+									</items>
+								</VBox>
+							</VBox>
+						</VBox>
+					</items>
+				</VBox>
+			</content>
+		</Panel>
+	</VBox>
+</core:FragmentDefinition>

@@ -676,12 +676,9 @@ sap.ui.define([
 		 * - Enables drill-down navigation for viewing and managing policy rules
 		 */
 		onPressRuleLink: function (oEvent) {
-			alert("Not Implemented");
-			//var sPolicyName = oEvent.getSource().getCustomData()[0].getValue();
-			//this._oRouter.navTo("PolicyRules", { PolicyName: sPolicyName });
-			//this.getView().getModel("layoutMode").setProperty("/layout", "ThreeColumnsEndExpanded");
+			var sPolicyName = oEvent.getSource().getCustomData()[0].getValue();
+			this._oRouter.navTo("PolicyRules", { PolicyName: sPolicyName });
+			this.getView().getModel("layoutMode").setProperty("/layout", "ThreeColumnsEndExpanded");
 		}
-		
-
 	});
 });

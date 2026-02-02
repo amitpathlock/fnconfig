@@ -50,12 +50,12 @@ sap.ui.define([
 			this._loadOperatorModel();
 			this._readPolicyRulesDetails(sPolicyName);
 			this._loadReadOnlyPolicyRuleFragment();
-			var oModelSingleValues = new JSONModel();
-			oModelSingleValues.attachRequestCompleted(function () {
-				oView.getModel("SingleValues").setData(oModelSingleValues.getData());
-			});
-			oModelSingleValues.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/SingleValues.json"));
-			oView.setModel(oModelSingleValues, "SingleValues");
+			// var oModelSingleValues = new JSONModel();
+			// oModelSingleValues.attachRequestCompleted(function () {
+			// 	oView.getModel("SingleValues").setData(oModelSingleValues.getData());
+			// });
+			// oModelSingleValues.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/SingleValues.json"));
+			// oView.setModel(oModelSingleValues, "SingleValues");
 			this.handleFullScreen();
 
 		},
@@ -71,7 +71,7 @@ sap.ui.define([
 				sPath = "/PolRuleSet('" + sPolicyName + "')";
 			oModel.read(sPath, {
 				urlParameters: {
-					"$expand": "to_Condition/to_Rule/to_Value" // Expand to_Condition/to_Rule/to_Value
+					"$expand": "to_Condition/to_Rule/to_Value,to_Condition/to_Rule/to_Value/to_ValueRange" // Expand to_Condition/to_Rule/to_Value
 				},
 				success: function (oData) {
 					if (oData.to_Condition.results.length > 0) {
@@ -170,10 +170,11 @@ sap.ui.define([
 			}
 		},
 		_buildRule: function (oCondition, iCondition) {
-			var lArr = oCondition.to_Rule.results, i, oRule = new Rule(), aRules = [], oValue;
+			var lArr = oCondition.to_Rule.results, i, oRule , aRules = [], oValue;
 			if (lArr.length > 0) {
 				for (i = 0; i < lArr.length; i++) {
 					oValue = this._readConditionValue(lArr[i].to_Value.results);
+					oRule = new Rule();
 					oRule["ContitionType"] = i == 0 ? "" : "AND";
 					oRule["Attribute"] = lArr[i].AttributeId;
 					oRule["AttributeDesc"] = lArr[i].Description;
@@ -220,14 +221,31 @@ sap.ui.define([
 					oValue["Operator"] = aResult[iResult].Operator;
 					oValue["Value"] = aResult[iResult].Value;
 					oValue["ValueDesc"] = aResult[iResult].ValueDesc;
-					if (({}).hasOwnProperty.call(aResult[iResult].to_ValueRange, "results")) {
-						oValue["ValueRange"] = [];
+					if (({}).hasOwnProperty.call(aResult[iResult].to_ValueRange, "results") && aResult[iResult].to_ValueRange.results.length>0) {
+						oValue["ValueRange"] = this._prepareValueRangeArray(aResult[iResult].to_ValueRange.results,oValue);
 					} else {
 						oValue["ValueRange"] = [{ Operator: aResult[iResult].Operator, Value: aResult[iResult].Value }];
 					}
 				}
 			}
 			return oValue;
+		},
+		_prepareValueRangeArray:function(aResult,oValue){
+			var i=0,lArr=new Array(),nMin=0;
+			for(i=0;i<aResult.length;i++){
+				if((i+1)%2==0){
+					lArr.push({Operator:"BT",Lower:nMin,Upper:aResult[i].Value});
+					if(!oValue["Value"]){
+						oValue["Value"] =nMin+ " to " + aResult[i].Value;
+					}else{
+						oValue["Value"] = oValue["Value"]+", ";
+					}
+					nMin=0;
+				}else{
+					nMin = aResult[i].Value;	
+				}
+			}
+			return lArr;
 		},
 
 		_reindexCondition: function (aCondition) {
@@ -569,6 +587,26 @@ sap.ui.define([
 			}
 			oView.getModel("ruleModel").setData(oRuleData);
 		},
+		updateRangesValue: function (aValues, aItems) {
+			var i,oData;
+			if (this._oRangeDialog) {
+				if (!Array.isArray(aValues)) {
+					aItems[0].Lower = aValues.Min;
+					aItems[0].Upper = aValues.Max;
+					aItems[0].Operator = aValues.Operator;
+				} else {
+					if (aItems.length > aValues.length) {
+						for (i = 0; i < aValues.length; i++) {
+							aItems[i] = aValues[i];
+						}
+					} else {
+						aItems = aValues;
+					}
+				}
+				oData = aItems;
+				this._oRangeDialog.getContent()[0].getModel("Ranges").setData(oData);
+			}
+		},
 		updateSingleValuesModel: function (aValues, aItems) {
 			var i,oData;
 			if (this._oRangeDialog) {
@@ -585,11 +623,11 @@ sap.ui.define([
 					}
 				}
 				oData = aItems;
-				this.getView().getModel("SingleValues").setData(oData);
+				this._oRangeDialog.getContent()[0].getModel("SingleValues").setData(oData);
 			}
 		},
 		onShowValueDialog: function (oEvent) {
-			var oInput = oEvent.getSource(), oModelSingleValues, that = this, aSingleValueModel;
+			var oInput = oEvent.getSource(),aRangesModel, oModelSingleValues,oModelRanges, that = this, aSingleValueModel;
 			var oView = this.getView();
 			var oCustomData = oInput.getCustomData()[0].getValue();
 			if (oCustomData.Attribute.trim() == "") {
@@ -612,6 +650,8 @@ sap.ui.define([
 				oView.getModel("viewModel").setProperty("/DialogTitle", "Define Value Ranges");
 				oView.getModel("viewModel").setProperty("/DialogIcon", "sap-icon://list");
 				oView.getModel("viewModel").setProperty("/VisibleOK", true);
+			} else if(oModel.getData().Operator == "BT"){
+				oView.getModel("viewModel").setProperty("/VisibleOK", true);
 			} else {
 				oView.getModel("viewModel").setProperty("/DialogTitle", "User Attributes");
 				oView.getModel("viewModel").setProperty("/DialogIcon", "sap-icon://person-placeholder");
@@ -626,31 +666,66 @@ sap.ui.define([
 					oView.addDependent(this._oRangeDialog);
 					this._oRangeDialog.setModel(oModel, "setting");
 					oModelSingleValues = new JSONModel();
+					that._oRangeDialog.getContent()[0].setModel(oModelSingleValues,"SingleValues");
 					oModelSingleValues.attachRequestCompleted(function () {
 						that._oRangeDialog.getContent()[0].getModel("SingleValues").setData(oModelSingleValues.getData());
 						that.updateSingleValuesModel(oCustomData.ValueRange, oModelSingleValues.getData());
 						that._oRangeDialog.open();
 					});
 					oModelSingleValues.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/SingleValues.json"));
+					oModelRanges = new JSONModel();
+					that._oRangeDialog.getContent()[0].setModel(oModelRanges,"Ranges");
+					oModelRanges.attachRequestCompleted(function () {
+						that._oRangeDialog.getContent()[0].getModel("Ranges").setData(oModelRanges.getData());
+						that.updateRangesValue(oCustomData.ValueRange, oModelRanges.getData());
+						that._oRangeDialog.open();
+					});
+					oModelRanges.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/Ranges.json"));
 				}.bind(this));
 			} else {
-				oModelSingleValues = this._oRangeDialog.getContent()[0].getModel("SingleValues");
-				aSingleValueModel = oModelSingleValues.getData();
-				if (Object.entries(aSingleValueModel).length == 0) {
-					oModelSingleValues.attachRequestCompleted(function () {
-						that._oRangeDialog.setModel(oModel, "setting");
-						that._oRangeDialog.open();
-						that.updateSingleValuesModel(oCustomData.ValueRange, aSingleValueModel);
-					});
-					oModelSingleValues.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/SingleValues.json"));
-				} else {
-					this._oRangeDialog.setModel(oModel, "setting");
-					this._oRangeDialog.open();
-					this.updateSingleValuesModel(oCustomData.ValueRange, aSingleValueModel);
+				if(oCustomData.Operator=="BT"){
+					oModelRanges =that._oRangeDialog.getContent()[0].getModel("Ranges");
+					aRangesModel = oModelRanges.getData();
+					if (Object.entries(aRangesModel).length == 0) {
+						oModelRanges.attachRequestCompleted(function () {
+							that._oRangeDialog.setModel(oModel, "setting");
+							
+							that.updateRangesValue(oCustomData.ValueRange, aRangesModel);
+							that._oRangeDialog.open();
+						});
+						oModelRanges.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/Ranges.json"));
+					}else{
+						this._oRangeDialog.setModel(oModel, "setting");
+						that.updateRangesValue(oCustomData.ValueRange, aRangesModel);
+						this._oRangeDialog.open();
+					}
 				}
+				
+				if(oCustomData.Operator=="EQ"){
+					oModelSingleValues = this._oRangeDialog.getContent()[0].getModel("SingleValues");
+					aSingleValueModel = oModelSingleValues.getData();
+					if (Object.entries(aSingleValueModel).length == 0) {
+						oModelSingleValues.attachRequestCompleted(function () {
+							that._oRangeDialog.setModel(oModel, "setting");
+							that._oRangeDialog.open();
+							that.updateSingleValuesModel(oCustomData.ValueRange, aSingleValueModel);
+						});
+						oModelSingleValues.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/SingleValues.json"));
+					} else {
+						this._oRangeDialog.setModel(oModel, "setting");
+						
+						this.updateSingleValuesModel(oCustomData.ValueRange, aSingleValueModel);
+						this._oRangeDialog.open();
+					}
+
+				}
+				
 
 			}
 
+		},
+		onSelectSectionEvent:function(){
+			alert('hi');
 		},
 		onBeforeOpenDialog: function () {
 
@@ -702,9 +777,11 @@ sap.ui.define([
 								if (oSelectedItemData.AttributeId) {
 									aCondition[i].Rules[j].Value = oSelectedItemData.AttributeId;
 									aCondition[i].Rules[j].ValueDesc = oSelectedItemData.Description + "(" + oSelectedItemData.AttributeId + ")";
+									aCondition[i].Rules[j].ValueRange=[];
 								} else {
 									aCondition[i].Rules[j].Value = oSelectedItemData.ListName;
 									aCondition[i].Rules[j].ValueDesc = oSelectedItemData.Description + "(" + oSelectedItemData.ListName + ")";
+									aCondition[i].Rules[j].ValueRange=[];
 								}
 								break;
 							}

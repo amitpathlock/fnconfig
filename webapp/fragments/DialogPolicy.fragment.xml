@@ -1,33 +1,36 @@
-<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:f="sap.ui.layout.form">
-   <!-- @ui5ignore -->
-   <Dialog class="PlDacDailogBox" 
+<core:FragmentDefinition
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
+	xmlns:f="sap.ui.layout.form">
+	<!-- @ui5ignore -->
+	<Dialog class="PlDacDailogBox" 
    beforeOpen="onBeforePolAdminPolicyDialogOpened"
    afterOpen="onAfterPolAdminPolicyDialogOpen"
    contentWidth="600px" resizable="false" icon="{viewModel>/Icon}" title="{viewModel>/Title}">
-      <content>
-         <!-- @ui5ignore -->
-         <f:SimpleForm editable="true" labelSpanXL="12" labelSpanL="12" labelSpanM="12" labelSpanS="12" layout="ResponsiveGridLayout" singleContainerFullSize="false">
-            <f:content>
-               <!-- @ui5ignore -->
-               <Label text="{viewModel>/Name}" required="true" />
-               <!-- @ui5ignore -->
-               <Input id="idPolAdminPolName" enabled="{viewModel>/PolicyNameEnabled}" valueState="{viewModel>/PolNameErrorState}" valueStateText="{viewModel>/PolNameErrorMessage}" liveChange="onPolicyNameInputLiveChange" value="{viewModel>/Data/PolicyName}" />
-               <Label text="{viewModel>/Description}" required="true" />
-              <!-- @ui5ignore -->
-               <Input id="idPolAdminPolDesc" value="{viewModel>/Data/PolicyDesc}" 
+		<content>
+			<!-- @ui5ignore -->
+			<f:SimpleForm editable="true" labelSpanXL="12" labelSpanL="12" labelSpanM="12" labelSpanS="12" layout="ResponsiveGridLayout" singleContainerFullSize="false">
+				<f:content>
+					<!-- @ui5ignore -->
+					<Label text="{viewModel>/Name}" required="true" />
+					<!-- @ui5ignore -->
+					<Input id="idPolAdminPolName" enabled="{viewModel>/PolicyNameEnabled}" valueState="{viewModel>/PolNameErrorState}" valueStateText="{viewModel>/PolNameErrorMessage}" liveChange="onPolicyNameInputLiveChange" value="{viewModel>/Data/PolicyName}" />
+					<Label text="{viewModel>/Description}" required="true" />
+					<!-- @ui5ignore -->
+					<Input id="idPolAdminPolDesc" value="{viewModel>/Data/PolicyDesc}" 
                 submit="onSubmitPolAdminPolicyDesc"
                valueState="{viewModel>/PolDescErrorState}" valueStateText="{viewModel>/PolDescErrorMessage}" />
-               <!-- Add more form fields as needed -->
-            </f:content>
-         </f:SimpleForm>
-      </content>
-      <beginButton>
-         <!-- @ui5ignore -->
-         <Button text="Save" press="onSavePolAdminPolicy" />
-      </beginButton>
-      <endButton>
-         <!-- @ui5ignore -->
-         <Button text="Cancel" press="onClosePolAdminPolicyDialog" />
-      </endButton>
-   </Dialog>
+					<!-- Add more form fields as needed -->
+				</f:content>
+			</f:SimpleForm>
+		</content>
+		<beginButton>
+			<!-- @ui5ignore -->
+			<Button text="Save" press="onSavePolAdminPolicy" />
+		</beginButton>
+		<endButton>
+			<!-- @ui5ignore -->
+			<Button text="Cancel" press="onClosePolAdminPolicyDialog" />
+		</endButton>
+	</Dialog>
 </core:FragmentDefinition>

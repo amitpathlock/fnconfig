@@ -17,6 +17,8 @@
 				<Image  id="idInfoPageImg" />
                 <Title text="Pathlock" level="H1" class="plDacInfoPageTitle"/>
                 <Title text="Dynamic Access Control" level="H2" class="plDacInfoPageTitle" />
+				<!-- @ui5ignore -->
+				<Text id="idTextProductVersion" text="" />
         </VBox>
     </content>
 </Page>

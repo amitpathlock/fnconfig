@@ -118,9 +118,9 @@ sap.ui.define([
             var idx;
           //  var items = oData.ValueRange;
             if (oData.ValueRange.length > 0) {
-                idx = 0;
+                idx =1;
                 if (!oData.ValueRange[0].Lower) {
-                    //
+                     idx =0;
                 } else {
                     //
                 }
