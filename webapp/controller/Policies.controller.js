@@ -181,7 +181,10 @@ sap.ui.define([
 			var oView = this.getView(),oViewModel=oView.getModel("viewModel");
 			if (this._oDialogPolAdminPolicies) {
 				this._oDialogPolAdminPolicies.close();
-				oView.byId("idTablePolAdminPolicies").removeSelections(true);
+				if(oView.byId("idTablePolAdminPolicies")){
+					oView.byId("idTablePolAdminPolicies").removeSelections(true);
+				}
+				
 				oViewModel.setProperty("/EditButtonEnabled",false);
 				oViewModel.setProperty("/DeleteButtonEnabled",false);
 			}

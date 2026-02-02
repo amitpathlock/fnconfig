@@ -16,7 +16,7 @@
          <!-- @ui5ignore -->
          <smartFilterBar:SmartFilterBar id="smartFilterBar-Policy"
          
-          entitySet="UserAttrSet" persistencyKey="SmartFilterBar_Explored" enableBasicSearch="true" />
+          entitySet="PolicySet" persistencyKey="SmartFilterBar_Explored" enableBasicSearch="true" />
          <!-- @ui5ignore -->
          <smartTable:SmartTable id="idSmartPolAdminTable" 
          beforeExport="onBeforePolAdminPolicyExport"         showTablePersonalisation="false" entitySet="PolicySet" smartFilterId="smartFilterBar-Policy" tableType="ResponsiveTable" header="{i18n>titPolAdminPolicies}" persistencyKey="SmartTableAnalytical_Explored" enableAutoBinding="true" demandPopin="true" class="sapUiResponsiveContentPadding" requestAtLeastFields="Policy,PolicyName,PolicyDesc" placeToolbarInTable="true">
