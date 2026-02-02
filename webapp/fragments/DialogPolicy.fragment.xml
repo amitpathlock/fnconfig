@@ -14,7 +14,9 @@
                <Input id="idPolAdminPolName" enabled="{viewModel>/PolicyNameEnabled}" valueState="{viewModel>/PolNameErrorState}" valueStateText="{viewModel>/PolNameErrorMessage}" liveChange="onPolicyNameInputLiveChange" value="{viewModel>/Data/PolicyName}" />
                <Label text="{viewModel>/Description}" required="true" />
               <!-- @ui5ignore -->
-               <Input id="idPolAdminPolDesc" value="{viewModel>/Data/PolicyDesc}" valueState="{viewModel>/PolDescErrorState}" valueStateText="{viewModel>/PolDescErrorMessage}" />
+               <Input id="idPolAdminPolDesc" value="{viewModel>/Data/PolicyDesc}" 
+                submit="onSubmitPolAdminPolicyDesc"
+               valueState="{viewModel>/PolDescErrorState}" valueStateText="{viewModel>/PolDescErrorMessage}" />
                <!-- Add more form fields as needed -->
             </f:content>
          </f:SimpleForm>

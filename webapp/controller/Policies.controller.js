@@ -563,18 +563,54 @@ sap.ui.define([
 		 * - Prevents accidental deletion by requiring explicit user confirmation
 		 */
 		_onDeletePolicyPolAdminButtonPress: function () {
-			alert("Not Implemented");
-			// var that = this, oBundle = this.getView().getModel("i18n").getResourceBundle();
-			// MessageBox.warning(oBundle.getText("msgDeleteConfirmation"), {
-			// 	actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-			// 	emphasizedAction: MessageBox.Action.OK,
-			// 	onClose: function (sAction) {
-			// 		if (sAction == "OK") {
-			// 			that._removeSelectedRecord();
-			// 		}
-			// 	}
-			// });
+			 var that = this, oBundle = this.getView().getModel("i18n").getResourceBundle();
+			MessageBox.warning(oBundle.getText("msgDeleteConfirmation"), {
+				actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+				emphasizedAction: MessageBox.Action.OK,
+				onClose: function (sAction) {
+					if (sAction == "OK") {
+						that._removeSelectedRecord();
+					}
+				}
+			});
 
+		},
+		/**
+		 * Handles the submit event for the Policy Administrator policy description input field.
+		 * Validates the policy description value and triggers the save operation if valid.
+		 *
+		 * @function onSubmitPolAdminPolicyDesc
+		 * @public
+		 * @memberOf pl.dac.apps.fnconfig.controller.Policies
+		 * @param {sap.ui.base.Event} oEvent - The event object containing the input submit details
+		 * @returns {void}
+		 *
+		 * @description
+		 * - Retrieves the policy description value from the input field
+		 * - Validates that the description is not empty or whitespace only
+		 * - If valid:
+		 *   - Clears any existing error state and error message
+		 *   - Calls onSavePolAdminPolicy to save the policy
+		 * - If invalid (empty or whitespace):
+		 *   - Sets error state to "Error" for the description field
+		 *   - Displays mandatory field error message
+		 *   - Sets focus back to the policy description input field
+		 * - Enables form submission via Enter key for improved user experience
+		 */
+		onSubmitPolAdminPolicyDesc:function(oEvent){
+			var oView=this.getView(),
+			oBundle = oView.getModel("i18n").getResourceBundle(),
+			oViewModel = oView.getModel("viewModel"), sValue = oEvent.getSource().getValue();
+			if(sValue && sValue.trim()!=""){
+				oViewModel.setProperty("/PolDescErrorState", "None");
+				oViewModel.setProperty("/PolDescErrorMessage","");
+				this.onSavePolAdminPolicy();
+			}else{
+				oViewModel.setProperty("/PolDescErrorState", "Error");
+				oViewModel.setProperty("/PolDescErrorMessage", oBundle.getText("msgErrorPolicyNameMandatory"));
+				oView.byId("idPolAdminPolDesc").focus();
+				return;
+			}
 		},
 		/**
 		 * Removes the selected policy record from the backend via OData DELETE operation.
