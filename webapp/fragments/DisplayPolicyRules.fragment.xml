@@ -5,8 +5,13 @@
 >
 	<VBox >
 		<items>
+			<OverflowToolbar class="plDacRuleTopToolbar">
+				<ToolbarSpacer/>
+				<!-- @ui5ignore -->
+				<Button icon="sap-icon://edit" press="onPressEditRuleBtn"  text="Modify" tooltip="Modify Rule" />
+			</OverflowToolbar>
 			<!-- @ui5ignore -->
-			<Title text="No rule found"  visible="{viewModel>/ShowNoRecordFound}" class="plDacNoRecordFound"></Title>
+			<Title text="No data available for the rules"  visible="{viewModel>/ShowNoRecordFound}" class="plDacNoRecordFound"></Title>
 			<VBox items="{ruleModel>/types}" >
 				<Panel expandable="true"   expanded="true" headerText="{ruleModel>RuleType}" 
 	 width="auto" class="sapUiResponsiveMargin plDacPanelBackground">

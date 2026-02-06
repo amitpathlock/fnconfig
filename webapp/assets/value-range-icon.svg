@@ -1,0 +1,22 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+     xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Range 1 -->
+  <line x1="4" y1="6" x2="20" y2="6"
+        stroke="#1a9459" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="8" cy="6" r="2" fill="#1a9459"/>
+  <circle cx="16" cy="6" r="2" fill="#1a9459"/>
+
+  <!-- Range 2 -->
+  <line x1="6" y1="12" x2="18" y2="12"
+        stroke="#1a9459" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="10" cy="12" r="2" fill="#1a9459"/>
+  <circle cx="14" cy="12" r="2" fill="#1a9459"/>
+
+  <!-- Range 3 -->
+  <line x1="5" y1="18" x2="19" y2="18"
+        stroke="#1a9459" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="7" cy="18" r="2" fill="#1a9459"/>
+  <circle cx="17" cy="18" r="2" fill="#1a9459"/>
+
+</svg>

@@ -3,9 +3,19 @@
 	xmlns:core="sap.ui.core"
 	xmlns:cc="pl.dac.apps.fnconfig.control"
 >
+
+	<VBox>
+		<items>
+		<OverflowToolbar class="plDacRuleTopToolbar">
+				<ToolbarSpacer/>
+				<!-- @ui5ignore -->
+				<Button icon="sap-icon://save" press="onPressSaveRuleBtn"  text="Save" tooltip="Save Rule"/>
+				<!-- @ui5ignore -->
+				<Button icon="sap-icon://decline" press="onPressCancelRuleBtn"  text="Cancel" tooltip="Save Rule" />
+			</OverflowToolbar>
 	<VBox items="{ruleModel>/types}" >
 		<Panel expandable="true"   expanded="true" headerText="{ruleModel>RuleType}" 
-	 width="auto" class="sapUiResponsiveMargin plDacPanelBackground plDacRulePanelTitle">
+	 width="auto" class="plDacPanelBackground plDacRulePanelTitle">
 			<headerToolbar>
 				<Toolbar class="plDacIFToolbar plDacToolbarMarginTop" >
 					<Title text="{ruleModel>RuleType}" />
@@ -73,7 +83,7 @@
 								</Button>
 							</Toolbar>
 							<!-- @ui5ignore -->
-							<VBox id="idBoxRuleMain" class="plDacRuleBackground" items="{ruleModel>Rules/}">
+							<VBox  class="plDacRuleBackground" items="{ruleModel>Rules/}">
 								<VBox class="plDacOperatorTitle">
 									<items>
 										<Toolbar class="{ruleModel>Classes}" visible="{path:'ruleModel>ContitionType',formatter:'.formatter.handleTitleElseIFVisibile'}">
@@ -96,9 +106,14 @@
 												<Input  value="{ruleModel>AttributeDesc}"
 												 width="100%"
 												 showValueHelp="true"
-												 valueHelpRequest=".onAttributeValueHelpRequested"
-												
-											   >
+												 valueHelpRequest="onAttributeValueHelpRequested"
+												showSuggestion="true"
+									suggestionItems="{ path:'/AttrSet',length: 1000}"
+									suggestionItemSelected="onSuggestionItemSelected">
+									<core:Item
+										text="{Description}({AttributeId})"
+										key="{AttributeId}"  />
+											   
 													<customData>
 														<core:CustomData key="data" value="{ruleModel>}"/>
 													</customData>
@@ -147,4 +162,8 @@
 			</content>
 		</Panel>
 	</VBox>
+		</items>
+	
+	</VBox>
+
 </core:FragmentDefinition>

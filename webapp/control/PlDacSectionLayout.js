@@ -73,6 +73,11 @@ sap.ui.define([
                     oRm.writeClasses(oControl);
                     oRm.writeControlData(oControl);
                     oRm.write(">");
+                    if(i==2){
+                        _item.getItems()[0].addStyleClass("plDacDialogTable");
+                        _item.getItems()[0].setAlternateRowColors(true);
+                        _item.getItems()[0].setMode("SingleSelectLeft");
+                    }
                     oRm.renderControl(_item);
                     oRm.write("</div>");
                 });

@@ -14,8 +14,8 @@
 					<!-- @ui5ignore -->
 					<Label text="{viewModel>/Name}" required="true" />
 					<!-- @ui5ignore -->
-					<Input id="idPolAdminPolName" enabled="{viewModel>/PolicyNameEnabled}" valueState="{viewModel>/PolNameErrorState}" valueStateText="{viewModel>/PolNameErrorMessage}" liveChange="onPolicyNameInputLiveChange" value="{viewModel>/Data/PolicyName}" />
-					<Label text="{viewModel>/Description}" required="true" />
+					<Input id="idPolAdminPolName"  enabled="{viewModel>/PolicyNameEnabled}" valueState="{viewModel>/PolNameErrorState}" valueStateText="{viewModel>/PolNameErrorMessage}" liveChange="onPolicyNameInputLiveChange" value="{viewModel>/Data/PolicyName}" />
+					<Label text="{viewModel>/Description}" class="sapUiTinyMarginTop" required="true" />
 					<!-- @ui5ignore -->
 					<Input id="idPolAdminPolDesc" value="{viewModel>/Data/PolicyDesc}" 
                 submit="onSubmitPolAdminPolicyDesc"

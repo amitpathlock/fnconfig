@@ -211,7 +211,7 @@ sap.ui.define([
 		_onRouteMatched: function () {
 
 			var oView = this.getView(), oBundle = oView.getModel("i18n").getResourceBundle();
-
+			this.getOwnerComponent().getModel("routeModel").setProperty("/PolicyRoute",true);
 			oView.setModel(new JSONModel(
 				{
 					Name: oBundle.getText("lblPolicyName"),
@@ -348,7 +348,12 @@ sap.ui.define([
 				oViewModel.setProperty("/PolNameErrorState", "Error");
 				oViewModel.setProperty("/PolNameErrorMessage", oBundle.getText("msgErrorPolicyNameMandatory"));
 				oView.byId("idPolAdminPolName").focus();
+				oViewModel.setProperty("/PolDescErrorState", "None");
+				oViewModel.setProperty("/PolDescErrorMessage","");
 				return;
+			}else{
+				oViewModel.setProperty("/PolNameErrorState", "None");
+				oViewModel.setProperty("/PolNameErrorMessage","");
 			}
 			if (oEntry.PolicyDesc.trim() == "") {
 				oViewModel.setProperty("/PolDescErrorState", "Error");

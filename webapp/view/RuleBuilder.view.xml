@@ -10,34 +10,43 @@
 	xmlns:core="sap.ui.core"
 	
 >
-<m:Page class="plDacInfoPage"  id="idRuleBuilderPage">
+<!-- <m:Page class="plDacInfoPage"  id="idRuleBuilderPage">
 <m:customHeader>
  <m:Toolbar design="Transparent" class="plDacToolbar">
 	 	<core:Icon src="sap-icon://document-text" class="plDacIconBrandColor"/>
         <m:Title text="Manage Rules"/>
          <m:ToolbarSpacer/>
-     <!-- @ui5ignore -->
+    
         	<m:OverflowToolbarButton type="Transparent" icon="sap-icon://full-screen" press="handleFullScreen" tooltip="Enter Full Screen Mode" visible="{viewModel>/FullScreen}"/>
-			 <!-- @ui5ignore -->
-            <m:OverflowToolbarButton type="Transparent" icon="sap-icon://exit-full-screen" press="handleExitFullScreen" tooltip="Exit Full Screen Mode" visible="{viewModel>/ExitFullScreen}"/>
-			 <!-- @ui5ignore -->
+			
+            
             <m:OverflowToolbarButton type="Transparent" icon="sap-icon://decline" press="handleClose"  tooltip="Close column" visible="{viewModel>/ExitColumn}"/>
     </m:Toolbar>
 </m:customHeader>
- <m:content>
-	<ObjectPageLayout  upperCaseAnchorBar="false">
-		<headerTitle>
+ <m:content> -->
+	<ObjectPageLayout   upperCaseAnchorBar="false" flexEnabled="true"  alwaysShowContentHeader="true" showTitleInHeaderContent="true" class="plDacObjectPageHeader"> 
+		<headerTitle >
 			<ObjectPageHeader objectImageURI="sap-icon://documents" objectTitle="{PolicyName}"
 			objectSubtitle="{PolicyDesc}"
 			>
-			<actions>
-				 <!-- @ui5ignore -->
-			   <ObjectPageHeaderActionButton icon="sap-icon://edit" id="editRuleBtn" press="onPressEditRuleBtn"  text="edit" importance="Medium" tooltip="edit"/>
-				 <!-- @ui5ignore -->
-				<ObjectPageHeaderActionButton icon="sap-icon://save" id="saveRuleBtn" press="onPressSaveRuleBtn" text="save"  visible="false" tooltip="save"/>
-			</actions>
+			
 			</ObjectPageHeader>
+				
 		</headerTitle>
+		<headerContent>
+			<m:FlexBox class="plDacObjetHeaderFlexBox" alignItems="Start"  	>
+				<!-- @ui5ignore -->
+                <m:OverflowToolbarButton type="Transparent" icon="sap-icon://full-screen" press="handleFullScreen" tooltip="Enter Full Screen Mode" visible="{viewModel>/FullScreen}"/>
+                <!-- @ui5ignore -->
+                <m:OverflowToolbarButton type="Transparent" icon="sap-icon://exit-full-screen" press="handleExitFullScreen" tooltip="Exit Full Screen Mode" visible="{viewModel>/ExitFullScreen}"/>
+			    <!-- @ui5ignore -->   
+				    <m:Button  icon="sap-icon://decline" press="onObjectPageCloseButtonPressed"  tooltip="Exit view" type="Reject" visible="{viewModel>/ExitColumn}"/>
+				
+			</m:FlexBox>
+				
+			
+		
+		</headerContent>
 		<sections>
 			<ObjectPageSection title="Rules">
 				<subSections>
@@ -50,11 +59,11 @@
 					
 				</subSections>
 			</ObjectPageSection>
-			<ObjectPageSection >
+			<!-- <ObjectPageSection >
 				<subSections>
 					<ObjectPageSubSection title="Classification" titleUppercase="false">
 						<blocks>
-							 <!-- <m:Table items="{path:'/ExposeAttrSet'}"  headerText="Classification" >
+							 <m:Table items="{path:'/ExposeAttrSet'}"  headerText="Classification" >
                         <m:columns>
                             <m:Column 	minScreenWidth="Tablet"  demandPopin="true">
                                 <m:Text text="Attribute ID" />
@@ -72,35 +81,41 @@
                                 </m:cells>
                             </m:ColumnListItem>
                         </m:items>
-                    </m:Table> -->
+                    </m:Table>
 						</blocks>
 					</ObjectPageSubSection>
 				</subSections>
-			</ObjectPageSection>
+			</ObjectPageSection> -->
 			
 			<ObjectPageSection >
 				<subSections>
-					<ObjectPageSubSection title="Exposed Attributed">
+					<ObjectPageSubSection title="{i18n>titObjectPageSectionTitleExposedAttrs}" >
 						<blocks>
-							  <!-- <m:Table items="{path:'/ExposeAttrSet'}"  headerText="Exposed Attributed" >
+						<!-- @ui5ignore -->
+							  <m:Table alternateRowColors="true" id="idExposeAttributeTable" updateStarted="onExposeAttributeUpdateStarted" updateFinished="onExposedAttributeTableUpdateFinished"  headerText="{i18n>titObjectPageSectionExposedAttrTableTitle}" >
+							  <m:headerToolbar>
+							  	<m:OverflowToolbar>
+									<m:Title text="{i18n>titObjectPageSectionExposedAttrTableTitle}" />
+										
+									<m:ToolbarSpacer />
+					
+									<!-- @ui5ignore -->
+									<m:OverflowToolbarButton icon="sap-icon://add" press="onPressAddExposeAttribute"  text="Add" tooltip="Add Attribute" />
+								</m:OverflowToolbar>
+							  </m:headerToolbar>
                         <m:columns>
-                            <m:Column 	minScreenWidth="Tablet"  demandPopin="true">
-                                <m:Text text="Attribute ID" />
+                            <m:Column 	minScreenWidth="Tablet"  demandPopin="true" width="30%">
+                                <m:Text text="{i18n>txtHeadrObjectPageExposeAttrTblColumnAttribute}" />
                             </m:Column> 
-                             <m:Column 	minScreenWidth="Tablet"  demandPopin="true">
-                                <m:Text text="Description" />
-                            </m:Column>     
+                             <m:Column 	minScreenWidth="Tablet"  demandPopin="true" width="30%">
+                                <m:Text text="{i18n>txtHeadrObjectPageExposeAttrTblColumnAttributeDesc}" />
+                            </m:Column>  
+							<m:Column width="5%">
+                                <m:Text text="" />
+                            </m:Column>        
                         </m:columns>
-                        <m:items>
-                          
-                            <m:ColumnListItem vAlign="Middle" type="Active" press="onPressUserAttributeItem">
-                                <m:cells>
-                                    <m:ObjectIdentifier title="{AttributeName}" />
-                                    <m:Text text="{Description}"/>
-                                </m:cells>
-                            </m:ColumnListItem>
-                        </m:items>
-                    </m:Table> -->
+                        
+                    </m:Table>
 						</blocks>
 					</ObjectPageSubSection>
 				</subSections>
@@ -108,39 +123,6 @@
 		</sections>
 
 	</ObjectPageLayout>
- </m:content>
-</m:Page>
-
-<!--
-<Page   class="plDacInfoPage"  id="idRuleBuilderPage" >
-   <customHeader >
-    <Toolbar design="Transparent" class="plDacToolbar">
-	 	<core:Icon src="sap-icon://fx" />
-        <Title text="Manage Rules"/>
-         <ToolbarSpacer/>
-       >
-        	<OverflowToolbarButton type="Transparent" icon="sap-icon://full-screen" press="handleFullScreen" tooltip="Enter Full Screen Mode" visible="{viewModel>/FullScreen}"/>
-			
-            <OverflowToolbarButton type="Transparent" icon="sap-icon://exit-full-screen" press="handleExitFullScreen" tooltip="Exit Full Screen Mode" visible="{viewModel>/ExitFullScreen}"/>
-			
-            <OverflowToolbarButton type="Transparent" icon="sap-icon://decline" press="handleClose"  tooltip="Close column" visible="{viewModel>/ExitColumn}"/>
-    </Toolbar>
- </customHeader>
-    <content>
-       		<ObjectHeader class="plDacPageHeaderBorderBottom"
-	
-		icon="sap-icon://documents"
-		iconDensityAware="false"
-		iconAlt="PolicyName"
-		title="{PolicyName}"
-		 >
-		
-		<attributes>
-			
-			<ObjectAttribute text="{Description}" />
-		</attributes>
-	</ObjectHeader>
-
-    </content>
-</Page> -->
+ <!-- </m:content>
+</m:Page> -->
 </mvc:View>
