@@ -69,6 +69,8 @@ sap.ui.define([
 				Icon: "/assets/expose-attribute.svg",
 				AttrErrorState: "None",
 				AttrErrorMessage: "",
+				DisplayRuleBtnIcon: "",
+				DisplayRuleBtnText: "",
 				Data: {
 					Policy: "",
 					PolicyToken: "Policy test(POl_TEST)",
@@ -90,7 +92,8 @@ sap.ui.define([
 			this.getView().setModel(new JSONModel({ types: [] }), "ruleModel");
 			this._loadOperatorModel();
 			this._readPolicyRulesDetails(this._sPolicyName);
-			this._loadReadOnlyPolicyRuleFragment();
+
+			//this.onPressEditRuleBtn();
 			if (this._oDialogSelection && this._oDialogSelection.getContent() && this._oDialogSelection.getContent()[0]) {
 
 				if (oView.getModel("SingleValues")) {
@@ -112,7 +115,7 @@ sap.ui.define([
 						icon: "sap-icon://delete",
 						type: "Reject",
 						tooltip: "Delete Entry",
-						press: this.onDeleteExposeAttributeInlineButtonPress.bind(this)
+						press: this._onDeleteExposeAttributeInlineButtonPress.bind(this)
 					})
 				]
 			});
@@ -145,13 +148,18 @@ sap.ui.define([
 				success: function (oData) {
 					if (oData.to_Condition.results.length > 0) {
 						oViewModel.setProperty("/ShowNoRecordFound", false);
-						RuleModelHandler.prepareRuleModel(oView, oData.to_Condition.results)
+						oViewModel.setProperty("/DisplayRuleBtnIcon", "sap-icon://edit");
+						oViewModel.setProperty("/DisplayRuleBtnText", "Edit Rule");
+						RuleModelHandler.prepareRuleModel(oView, oData.to_Condition.results);
+						this._loadReadOnlyPolicyRuleFragment();
 					} else {
+						oViewModel.setProperty("/DisplayRuleBtnIcon", "sap-icon://add");
+						oViewModel.setProperty("/DisplayRuleBtnText", "Add Rule");
 						oViewModel.setProperty("/ShowNoRecordFound", true);
 						oView.setModel(new JSONModel({ types: [] }), "ruleModel");
 					}
 
-				},
+				}.bind(this),
 				error: function (oError) {
 					Log.error("Read failed:" + oError);
 					sap.ui.core.BusyIndicator.hide();
@@ -160,26 +168,12 @@ sap.ui.define([
 		},
 
 		_loadReadOnlyPolicyRuleFragment: function () {
-			var oView = this.getView(), oSubSection = oView.byId("idRuleSubSectionBlock");
-			if (this._oDisplayRules) {
-				this._oDisplayRules.destroy();
-				this._oDisplayRules = null;
-			}
-			if (!this._oDisplayRules) {
-				// Load the fragment asynchronously
-				Fragment.load({
-					id: this.getView().getId(), // Optional: Assign an ID to the fragment's controls
-					name: "pl.dac.apps.fnconfig.fragments.DisplayPolicyRules", // Path to the fragment file
-					controller: this // Pass the current controller for event handling
-				}).then(function (oDisplayRules) {
-					this._oDisplayRules = oDisplayRules;
-					oSubSection.removeAllBlocks();
-					oSubSection.addBlock(this._oDisplayRules);
-				}.bind(this));
-			} else {
-				oSubSection.removeAllBlocks();
-				oSubSection.addBlock(this._oDisplayRules);
-			}
+			var oView = this.getView(), aTypes, oSubSection = oView.byId("idRuleSubSectionBlock");
+
+			oSubSection.removeAllBlocks();
+			aTypes = oView.getModel("ruleModel").getData().types;
+			oSubSection.addBlock(RuleModelHandler.createDiplayRuleReadOnly(aTypes, this));
+
 		},
 
 		onPressAddConditionBtn: function (oEvent) {
@@ -199,22 +193,16 @@ sap.ui.define([
 			RuleModelHandler.updateRuleModelWithSuggestionItem(this.getView(), oEvent.getSource(), oEvent.getParameter("selectedItem"));
 
 		},
-		
+
 		onAttributeValueHelpRequested: function (oEvent) {
 			var oView = this.getView(), oInput = oEvent.getSource(), oColAttryName,
 				oColAttrDesc, oModel = new JSONModel(oInput.getCustomData()[0].getValue()),
 				that = this;
-			// oSearchField = new SearchField({
-			// 	liveChange: function (oEvent) {
-			// 		var sValue = oEvent.getParameter("newValue");
-			// 		var oFilter = new Filter("name", FilterOperator.Contains, sValue);
-			// 		this._oVHDialogAttr.getTable().getBinding("items").filter([oFilter]);
-			// 	}.bind(this)
-			// });
+			
 			if (!this._oVHDialogAttr) {
 				this._oVHDialogAttr = sap.ui.xmlfragment("pl.dac.apps.fnconfig.fragments.AttributeVH", this);
 				oView.addDependent(this._oVHDialogAttr);
-			//	this._oVHDialogAttr.setFilterBar(oSearchField);
+				//	this._oVHDialogAttr.setFilterBar(oSearchField);
 				this._oVHDialogAttr.setModel(oModel, "condition");
 				// Set key fields for filtering in the Define Conditions Tab
 				this._oVHDialogAttr.setRangeKeyFields([{
@@ -278,72 +266,7 @@ sap.ui.define([
 			this._oVHDialogAttr.close();
 		},
 		onValueDialogOkPress: function () {
-			var oView = this.getView(), aCondition, j, oRuleModel, i, sValuesRanges = "", aValues = [], aValueRanges, sKey = "";
-			var oData = this._oDialogSelection.getModel("setting").getData();
-			if (oData.Values.length > 0) {
-				aValueRanges = this._oDialogSelection.getContent()[0].getModel("SingleValues").getData();
-				sKey = "Values";
-				for (i = 0; i < aValueRanges.length; i++) {
-					if (aValueRanges[i].Value && aValueRanges[i].Value.trim() != "") {
-						if (aValueRanges[i].Operator.trim() == "") {
-							aValueRanges[i].Operator = "EQ";
-						}
-						aValues.push(aValueRanges[i]);
-					}
-				}
-				sValuesRanges = aValues.map(oValue => oValue.Value).join(', ');
-			}
-			if (oData.ValueRange.length > 0) {
-				aValueRanges = this._oDialogSelection.getContent()[0].getModel("Ranges").getData();
-				sKey = "ValueRange";
-				for (i = 0; i < aValueRanges.length; i++) {
-					if (aValueRanges[i].Lower.trim() != "" && aValueRanges[i].Upper.trim() != "") {
-						aValueRanges[i].Operator = "BT";
-						aValues.push(aValueRanges[i]);
-					}
-				}
-				for (i = 0; i < aValues.length; i++) {
-					sValuesRanges += aValues[i].Lower + " to " + aValues[i].Upper;
-					if (i < aValues.length - 1) {
-						sValuesRanges += ", ";
-					}
-				}
-			}
-			oRuleModel = oView.getModel("ruleModel").getData();
-			if (oData.RuleType == "Precondition") {
-				aCondition = oRuleModel.types[0].Condition;
-				for (i = 0; i < aCondition.length; i++) {
-					if (aCondition[i].CTypeID === oData.CondId) {
-						for (j = 0; j < aCondition[i].Rules.length; j++) {
-							if (aCondition[i].Rules[j].Rows == oData.Rows) {
-								aCondition[i].Rules[j][sKey] = aValues;
-								aCondition[i].Rules[j].Value = sValuesRanges;//aValues.map(oValue => oValue.Value).join(', ') // aValues[0].Value;
-								aCondition[i].Rules[j].ValueDesc = sValuesRanges;///aValues.map(oValue => oValue.Value).join(', ');//aValues[0].Value;
-								break;
-							}
-						}
-					}
-				}
-				oRuleModel.types[0].Condition = aCondition;
-			} else {
-				aCondition = oRuleModel.types[1].Condition;
-				for (i = 0; i < aCondition.length; i++) {
-					if (aCondition[i].CTypeID === oData.CTypeID) {
-						for (j = 0; j < aCondition[i].Rules.length; j++) {
-							if (aCondition[i].Rules[j].Rows == oData.Rows) {
-								aCondition[i].Rules[j][sKey] = aValues;
-								aCondition[i].Rules[j].Value = sValuesRanges;// aValues.map(oValue => oValue.Value).join(', ')//aValues[0].Value;
-								aCondition[i].Rules[j].ValueDesc = sValuesRanges;// aValues.map(oValue => oValue.Value).join(', ')//aValues[0].Value;
-								break;
-							}
-						}
-					}
-				}
-				oRuleModel.types[1].Condition = aCondition;
-			}
-			oView.getModel("ruleModel").setData(oRuleModel);
-			oView.getModel("ruleModel").refresh();
-			this._oDialogSelection.close();
+			RuleModelHandler.updateRuleModelWithValueAndRangesSelectionData(this._oDialogSelection,this.getView());
 		},
 		onAttributeValueHelpOkPress: function (oEvent) {
 			var aTokens = oEvent.getParameter("tokens");
@@ -351,7 +274,7 @@ sap.ui.define([
 			RuleModelHandler.updateRuleModelWithValueHelpItem(this.getView(), aTokens[0], this._oVHDialogAttr);
 		},
 		onShowValueDialog: function (oEvent) {
-			var oView = this.getView(), oInput = oEvent.getSource(), oUserAttributeTable, oListTable, aValues, i;
+			var oView = this.getView(), oInput = oEvent.getSource(), oUserAttributeTable, oListTable;
 			var oCustomData = oInput.getCustomData()[0].getValue();
 			if (oCustomData.Attribute.trim() == "") {
 				MessageToast.show("Please choose any attributes to continue.");
@@ -392,62 +315,14 @@ sap.ui.define([
 					oUserAttributeTable.addEventDelegate(this._userAttributeTableEventDelegate, this);
 					oListTable = this._oDialogSelection.getContent()[0].getAggregation("sections")[3].getItems()[0];
 					oListTable.addEventDelegate(this._listTableEventDelegate, this);
-					if (!({}).hasOwnProperty.call(oCustomData, "ValueRange")) {
-						oCustomData["ValueRange"] = new Array();
-					}
-					if (!({}).hasOwnProperty.call(oCustomData, "Values")) {
-						oCustomData["Values"] = new Array();
-					}
-					if (oCustomData.Operator == "BT") {
-						aValues = oCustomData.ValueDesc.split(",");
-						for (i = 0; i < aValues.length; i++) {
-							oCustomData["ValueRange"].push({ Operator: oCustomData.Operator, Lower: aValues[i].split("to")[0], Upper: aValues[i].split("to")[1] })
-						}
-					} else {
-
-						oCustomData["Values"] = new Array();
-						aValues = oCustomData.ValueDesc.split(",");
-						for (i = 0; i < aValues.length; i++) {
-							oCustomData["Values"].push({ Operator: oCustomData.Operator, Value: aValues[i] });
-						}
-
-					}
-					if (oCustomData.Values.length > 0) {
-						RuleModelHandler.loadSingleValueModel(oDialog, oSettingModel, oCustomData);
-					}
-					if (oCustomData.ValueRange.length > 0) {
-						RuleModelHandler.loadValueRangeModel(oDialog, oSettingModel, oCustomData);
-					}
+					RuleModelHandler.initialModelValues(oCustomData);
+					RuleModelHandler.loadValueRangeModel(oDialog, oSettingModel, oCustomData);
+					RuleModelHandler.loadSingleValueModel(oDialog, oSettingModel, oCustomData);
 				}.bind(this));
 			} else {
-				if (!({}).hasOwnProperty.call(oCustomData, "ValueRange")) {
-					oCustomData["ValueRange"] = new Array();
-				}
-				if (!({}).hasOwnProperty.call(oCustomData, "Values")) {
-					oCustomData["Values"] = new Array();
-				}
-				if (oCustomData.Operator == "BT") {
-					aValues = oCustomData.ValueDesc.split(",");
-					for (i = 0; i < aValues.length; i++) {
-						oCustomData["ValueRange"].push({ Operator: oCustomData.Operator, Lower: aValues[i].split("to")[0], Upper: aValues[i].split("to")[1] })
-					}
-				} else {
-
-					oCustomData["Values"] = new Array();
-					aValues = oCustomData.ValueDesc.split(",");
-					for (i = 0; i < aValues.length; i++) {
-						oCustomData["Values"].push({ Operator: oCustomData.Operator, Value: aValues[i] });
-					}
-
-				}
-
-
-				if (oCustomData.ValueRange.length > 0) {
-					RuleModelHandler.loadValueRangeModel(this._oDialogSelection, oSettingModel, oCustomData);
-				}
-				if (oCustomData.Values.length > 0) {
-					RuleModelHandler.loadSingleValueModel(this._oDialogSelection, oSettingModel, oCustomData);
-				}
+				RuleModelHandler.initialModelValues(oCustomData);
+				RuleModelHandler.loadValueRangeModel(this._oDialogSelection, oSettingModel, oCustomData);
+				RuleModelHandler.loadSingleValueModel(this._oDialogSelection, oSettingModel, oCustomData);
 			}
 		},
 		onPressAddExposeAttribute: function () {
@@ -471,7 +346,7 @@ sap.ui.define([
 				this._oExposeAttributeDialog.open();
 			}
 		},
-		onDeleteExposeAttributeInlineButtonPress: function (oEvent) {
+		_onDeleteExposeAttributeInlineButtonPress: function (oEvent) {
 			var that = this, oBundle = this.getView().getModel("i18n").getResourceBundle(),
 				oEntry = oEvent.getSource().getBindingContext().getObject();
 			MessageBox.warning(oBundle.getText("msgDeleteConfirmation"), {
@@ -749,7 +624,6 @@ sap.ui.define([
 				}
 				// Handle keypress event
 			}
-
 		},
 		_listTableEventDelegate: {
 			onAfterRendering: function (oEvent) {
@@ -770,25 +644,7 @@ sap.ui.define([
 				}
 				// Handle keypress event
 			}
-
 		},
-		_selectUserTableData: function (sAttributeId) {
-			var aItems, oItemData, iItem, oTable = this._oDialogSelection.getContent()[0].getAggregation("sections")[2].getItems()[0];
-			aItems = oTable.getItems();
-			if (aItems.length > 0) {
-				for (iItem = 0; iItem < aItems.length; iItem++) {
-					oItemData = aItems[iItem].getBindingContext();
-					if (oItemData.getProperty("AttributeId") == sAttributeId) {
-						oTable.setSelectedItem(aItems[iItem], true);
-						oTable.setSelectIndex
-						aItems[iItem].focus();
-						break;
-					}
-				}
-			}
-
-		},
-
 		onPressAddRowInValues: function () {
 			this._oDialogSelection.getContent()[0].addRowInValues();
 		},
@@ -799,64 +655,8 @@ sap.ui.define([
 			this._oDialogSelection.close();
 		},
 		onPressUserAttributeItem: function (oEvent) {
-			var oView = this.getView();
 			var oSelectedItemData = oEvent.getSource().getBindingContext().getObject();
-			var oData = this._oDialogSelection.getModel("setting").getData();
-			this._oDialogSelection.close();
-			var oRuleData = oView.getModel("ruleModel").getData();
-			var i, aCondition, j;
-			if (oData.RuleType == "Precondition") {
-				aCondition = oRuleData.types[0].Condition;
-				for (i = 0; i < aCondition.length; i++) {
-					if (aCondition[i].CTypeID == oData.CondId) {
-						for (j = 0; j < aCondition[i].Rules.length; j++) {
-							if (aCondition[i].Rules[j].Rows == oData.Rows) {
-								if (oSelectedItemData.AttributeId) {
-									aCondition[i].Rules[j].Value = oSelectedItemData.AttributeId;
-									aCondition[i].Rules[j].ValueDesc = oSelectedItemData.Description + "(" + oSelectedItemData.AttributeId + ")";
-									aCondition[i].Rules[j].Values = [{ Operator: "EQ", Value: oSelectedItemData.AttributeId }];
-									aCondition[i].Rules[j].ValueRange = [];
-								} else {
-									aCondition[i].Rules[j].Value = oSelectedItemData.ListId;
-									aCondition[i].Rules[j].ValueDesc = oSelectedItemData.Description + "(" + oSelectedItemData.ListId + ")";
-									aCondition[i].Rules[j].Values = [{ Operator: "EQ", Value: oSelectedItemData.ListId }];
-									aCondition[i].Rules[j].ValueRange = [];
-								}
-
-								break;
-							}
-						}
-					}
-				}
-				oRuleData.types[0].Condition = aCondition;
-			} else {
-				aCondition = oRuleData.types[1].Condition;
-				for (i = 0; i < aCondition.length; i++) {
-					if (aCondition[i].CTypeID == oData.CTypeID) {
-						for (j = 0; j < aCondition[i].Rules.length; j++) {
-							if (aCondition[i].Rules[j].Rows == oData.Rows) {
-								if (oSelectedItemData.AttributeId) {
-									aCondition[i].Rules[j].Value = oSelectedItemData.AttributeId;
-									aCondition[i].Rules[j].ValueDesc = oSelectedItemData.Description + "(" + oSelectedItemData.AttributeId + ")";
-									aCondition[i].Rules[j].ValueRange = [];
-									aCondition[i].Rules[j].Values = [{ Operator: "EQ", Value: oSelectedItemData.AttributeId }];
-
-								} else {
-									aCondition[i].Rules[j].Value = oSelectedItemData.ListId;
-									aCondition[i].Rules[j].ValueDesc = oSelectedItemData.Description + "(" + oSelectedItemData.ListId + ")";
-									aCondition[i].Rules[j].ValueRange = [];
-									aCondition[i].Rules[j].Values = [{ Operator: "EQ", Value: oSelectedItemData.ListId }];
-
-								}
-								break;
-							}
-						}
-					}
-				}
-				oRuleData.types[1].Condition = aCondition;
-			}
-			oView.getModel("ruleModel").setData(oRuleData);
-
+			RuleModelHandler.updateRuleModelWithUserAttrSelectionData(this.getView(),this._oDialogSelection,oSelectedItemData);
 		},
 
 

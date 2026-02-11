@@ -87,9 +87,9 @@
 				</subSections>
 			</ObjectPageSection> -->
 			
-			<ObjectPageSection >
+			<ObjectPageSection class="plDacObectPageSubSectionTitle" >
 				<subSections>
-					<ObjectPageSubSection title="{i18n>titObjectPageSectionTitleExposedAttrs}" >
+					<ObjectPageSubSection  title="{i18n>titObjectPageSectionTitleExposedAttrs}" >
 						<blocks>
 						<!-- @ui5ignore -->
 							  <m:Table alternateRowColors="true" id="idExposeAttributeTable" updateStarted="onExposeAttributeUpdateStarted" updateFinished="onExposedAttributeTableUpdateFinished"  headerText="{i18n>titObjectPageSectionExposedAttrTableTitle}" >

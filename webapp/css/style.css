@@ -218,7 +218,7 @@ span.sapMBtnInner.sapMBtnReject {
     border: 0;
 
 }
-
+.plDacRuleSelectOperator span{font-size: 11px;font-weight: 600;}
 .plDacElseIfTitle {
     margin-top: 1px !important;
 }
@@ -231,7 +231,7 @@ span.sapMBtnInner.sapMBtnReject {
     padding: 4px 17px;
     background: #9B54D5;
     color: #fff;
-    font-size: 13px;
+    font-size: 11px;
     border-radius: 13px;
 }
 
@@ -253,11 +253,15 @@ span.sapMBtnInner.sapMBtnReject {
 }
 
 .plDacIFToolbar {
-    border-bottom: 0 !important
+    border-bottom: 0 !important;
+    
 }
+.plDacIFToolbarEdit{height: 3rem !important;}
+.plDacIFToolbarEdit button{margin-top:1rem !important;}
+.plDacIFToolbarEdit div{margin-top:-1rem !important;}
 
 .plDacFlexBoxPaddingAll {
-    padding: 7px;
+    padding: 1px;
     border: 1px solid #e8ffe8;
 }
 
@@ -278,8 +282,8 @@ span.sapMBtnInner.sapMBtnReject {
 }
 
 .plDacRuleBackground>.sapMFlexBoxBGTransparent:nth-child(1) {
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-top: 7px;
+    
     padding-left: 17px;
     padding-right: 17px;
     background: #f7f7f7;
@@ -292,19 +296,19 @@ span.sapMBtnInner.sapMBtnReject {
 .plDacRuleBackground>.sapMFlexBoxBGTransparent:only-child {
     border: 1px solid #d9d9d9;
 }
-
+.plDacRuleTitleText span{font-weight: 600;}
 .plDacPanelBackground {
     background: #fff;
     margin: 0.2rem 0.5rem !important;
     padding-top: 1rem;
     box-shadow: 0 4px 6px rgb(199 197 197 / 50%);
     border: 1px solid #d9d9d9;
-    padding-top: 1rem;
+    padding-top: 5px;
 }
 
 .plDacRuleBackground>.sapMFlexBoxBGTransparent:not(:nth-child(1)) {
     padding-top: 0px;
-    padding-bottom: 10px;
+    padding-bottom: 0px;
     padding-left: 17px;
     padding-right: 17px;
     background: #f7f7f7;
@@ -321,14 +325,15 @@ span.sapMBtnInner.sapMBtnReject {
 .plDacRuleBackground>.sapMFlexBoxBGTransparent:nth-child(even) {
     background-color: #ffffff;
 }
-
+.plDacRuleInputFontSize input{font-size: 11px;font-weight: 600;}
 .plDacRuleBackground .sapMTitle {
     background: #D023A4 !important;
-    margin-top: -4px !important;
-    font-size: 13px;
+    margin-top: 3px !important;
+    font-size: 9px;
     color: #fff;
     padding: 2px 10px;
     border-radius: 19px;
+        font-weight: 600;
 }
 
 .plDacRuleBackground .sapMFlexItemAlignAuto {
@@ -336,9 +341,9 @@ span.sapMBtnInner.sapMBtnReject {
 }
 
 .plDacIFToolbar:last-child {
-    /* margin-top: 7px !important; */
+     margin-bottom: 7px !important; 
 }
-
+.plDacRuleBackground{margin-bottom: 7px;}
 .plDacToolbarMarginTop {
     margin-top: 7px !important;
 }
@@ -623,7 +628,7 @@ ul.plDacSections {
 }
 
 .plDacObjectPageSubSection>.sapUxAPBlockContainer {
-    padding: 1rem 0rem 2rem 0rem !important;
+    padding: 7px 0rem 2rem 0rem !important;
 }
 
 .plDacFlexBoxPaddingAll div:nth-child(3)>div {
@@ -676,9 +681,10 @@ html .sapUiContainer-Wide .sapUxAPObjectPageHeaderIdentifier {
 
 .plDacPanelBackground .sapMPanelContent {
     padding-top: 0 !important;
-    padding-bottom: 7px !important;
+    padding-bottom: 5px !important;
 
 }
+.plDacRuleTopButton span{font-size: 12px !important;}
 
 .plDacObjectPageHeader header>div {
     display: flex;
@@ -699,7 +705,32 @@ html .sapUiContainer-Wide .sapUxAPObjectPageHeaderIdentifier {
     height: 1.5rem !important;
     width: 1.6rem !important;
 }
-
 .plDacRuleTopToolbar {
     border-bottom: 0;
 }
+.plDacRuleCustomInput input{background: #fff;}
+
+.plDacHTMLruleBlock{padding:12px;padding-bottom: 0;background: #fff}
+.plDacHTMLRuleTitle{margin-bottom: 12px;font-weight: 600;font-size: 14px;}
+.plDacHTMLIfblock{padding-left: 1rem;font-size: 14px;}
+.plDacHTMLRuleLine{padding-left: 2rem; font-size: 12px;height: 20px;color:#354a5f;}
+.plDacHTMLRuleLine div{display: inline-block;}
+.plDacHTMLRuleLine span{margin-right: 1rem;}
+.plDacHTMLRuleToolbar{background:#fff;}
+.plDacHTMLRuleOR{    font-size: 14px;
+    margin-bottom: 7px;
+    margin-top: 7px;
+}
+/* Custom class for a large button */
+/* .myLargeButton .sapMBtnInner {
+    height: 3rem; 
+    font-size: 1rem;
+} */
+
+/* Custom class for a small button */
+.plDacHTMLEditBtn .sapMBtnInner {
+    height: 1.5rem;
+    font-size: 0.75rem;
+}
+.plDacHTMLEditBtn .sapMBtnIconLeft{font-size: 0.75rem;}
+.plDacObectPageSubSectionTitle .sapUxAPObjectPageSectionTitle{font-size: 14px !important;}

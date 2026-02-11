@@ -120,15 +120,11 @@ sap.ui.define([
             $(".plDacSection").on("click", this.handleOnSectionClick.bind(this));
             this.getParent().getModel("viewModel").setProperty("/VisibleOK", true);
             var oData = this.getParent().getModel("setting").getData();
-            var idx;
+            var idx=0;
           //  var items = oData.ValueRange;
-            if (oData.ValueRange.length > 0) {
+            if (oData.Operator=="BT") {
                 idx =1;
-                if (!oData.ValueRange[0].Lower) {
-                     idx =0;
-                } else {
-                    //
-                }
+               
                 $(".plDacSectionItem").each(function (i) {
                     if (i == idx) {
                         $(this).css('display', 'block');

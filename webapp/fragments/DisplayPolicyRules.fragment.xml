@@ -8,75 +8,18 @@
 			<OverflowToolbar class="plDacRuleTopToolbar">
 				<ToolbarSpacer/>
 				<!-- @ui5ignore -->
-				<Button icon="sap-icon://edit" press="onPressEditRuleBtn"  text="Modify" tooltip="Modify Rule" />
+				<Button icon="{viewModel>/DisplayRuleBtnIcon}" press="onPressEditRuleBtn"  text="{viewModel>/DisplayRuleBtnText}" tooltip="Modify Rule" />
 			</OverflowToolbar>
 			<!-- @ui5ignore -->
 			<Title text="No data available for the rules"  visible="{viewModel>/ShowNoRecordFound}" class="plDacNoRecordFound"></Title>
 			<VBox items="{ruleModel>/types}" >
 				<Panel expandable="true"   expanded="true" headerText="{ruleModel>RuleType}" 
 	 width="auto" class="sapUiResponsiveMargin plDacPanelBackground">
-					<headerToolbar>
-						<Toolbar class="plDacIFToolbar" >
-							<Title text="{ruleModel>RuleType}" />
-							<ToolbarSpacer/>
-							<!-- @ui5ignore -->
-						</Toolbar>
-					</headerToolbar>
 					<content>
-						<VBox items="{ruleModel>Condition/}">
-							<items>
-								<VBox >
-									<Toolbar class="plDacIFToolbar" 
-							visible="{parts:[{path:'ruleModel>CType'},{path:'ruleModel>RuleType'}],formatter:'.formatter.displayViewHandleIFBlockVisiblity'}">
-										<Title class="plDacRuleConditonTitle"  text="{path:'ruleModel>CType',formatter:'.formatter.handleConditionText'}"  />
-									</Toolbar>
-									<Toolbar class="plDacIFToolbar plDacElseIfTitle" 
-							visible="{parts:[{path:'ruleModel>RuleType'},{path:'ruleModel>CType'}],formatter:'.formatter.displayViewHandleElseIFBlockVisiblity'}">
-										<Title  class="plDacRuleConditonTitle" />
-									</Toolbar>
-									<!-- @ui5ignore -->
-									<VBox  items="{ruleModel>Rules/}" class="plDacRuleBackground">
-										<VBox class="plDacOperatorTitle">
-											<items>
-												<Title text="{ruleModel>ContitionType}" class="plDacRuleConditonTitle sapUiTinyMarginBegin"  visible="{path:'ruleModel>ContitionType',formatter:'.formatter.handleANDOperatorVisibility'}" />
-												<FlexBox width="100%" class="plDacFlexBoxPaddingAll"  
-										alignItems="Start" justifyContent="SpaceBetween"
-										>
-													<items>
-														<!-- @ui5ignore -->
-														<Input
-												   value="{ruleModel>AttributeDesc}" editable="false"
-												  
-												   width="100%"
-											   >
-															<layoutData>
-																<FlexItemData growFactor="5"/>
-															</layoutData>
-														</Input>
-														<Input textAlign="Center"  editable="false"
-												value="{ruleModel>Operator}" width="100%" >
-															<layoutData>
-																<FlexItemData growFactor="2"/>
-															</layoutData>
-														</Input>
-														<Input
-												   value="{ruleModel>ValueDesc}"
-												  editable="false"
-												   width="100%"
-											   >
-															<layoutData>
-																<FlexItemData growFactor="5"/>
-															</layoutData>
-														</Input>
-													</items>
-												</FlexBox>
-											</items>
-										</VBox>
-									</VBox>
-								</VBox>
-							</items>
-						</VBox>
+						<core:HTML content='&lt;div class=&quot;content&quot;&gt;&lt;h4&gt;Lorem ipsum&lt;/h4&gt;&lt;div&gt;Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.&lt;/div&gt;&lt;a target=&quot;_blank&quot; href=&quot;http://en.wikipedia.org/wiki/Lorem_ipsum&quot;&gt;Learn more about Lorem Ipsum ...&lt;/a&gt;&lt;/div&gt;'>
+			</core:HTML>
 					</content>
+					
 				</Panel>
 			</VBox>
 		</items>
