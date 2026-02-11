@@ -649,16 +649,23 @@ html .sapUiContainer-Wide .sapUxAPObjectPageHeaderIdentifier {
     margin-right: 1rem;
     margin-bottom: 0;
 }
-
+.plDacObjectPageHeader .sapUxAPObjectPageHeader {display: none !important;}
+.plDacObjectPageHeader .sapUxAPObjectPageHeaderContentImageContainer {height: 1rem;}
+/* .sapUxAPObjectPageLayout-Std-Tablet .sapUxAPObjectPageHeaderContent:only-child{
+    padding-bottom: 7px !important;
+} */
+.plDacObjectPageHeader .sapUxAPObjectPageHeaderObjectImage  {height: 1rem !important; width: 1.6rem !important;}
 .plDacObjectPageHeader .sapFAvatarL {
     height: 2.1rem;
     width: 2.1rem;
     font-size: 2rem;
 }
-
-.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPObjectPageHeaderContent:only-child {
+.plDacObjectPageHeader .sapMBtnContent{line-height: 2rem !important;}
+.plDacObjectPageHeader .sapMBtnInner {height: 2rem !important;}
+.plDacObjectPageHeader .sapUxAPAnchorBar {height: 2rem !important;}
+/* .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPObjectPageHeaderContent:only-child {
     padding-bottom: 0 !important;
-}
+} */
 
 .sapUxAPObjectPageHeaderContent .sapUxAPObjectPageHeaderContentImageContainer .sapUiIcon,
 .sapUxAPObjectPageHeaderContent .sapUxAPObjectPageHeaderContentImageContainer .sapUxAPObjectPageHeaderPlaceholder.sapUxAPObjectPageHeaderObjectImage .sapUiIcon {
@@ -729,8 +736,11 @@ html .sapUiContainer-Wide .sapUxAPObjectPageHeaderIdentifier {
 
 /* Custom class for a small button */
 .plDacHTMLEditBtn .sapMBtnInner {
-    height: 1.5rem;
-    font-size: 0.75rem;
+    height: 1.5rem !important;
+    font-size: 0.75rem !important;
 }
-.plDacHTMLEditBtn .sapMBtnIconLeft{font-size: 0.75rem;}
+.plDacHTMLEditBtn .sapMBtnContent {
+    line-height: 1.5rem !important;
+}
+.plDacHTMLEditBtn .sapMBtnIconLeft{font-size: 0.75rem !important;}
 .plDacObectPageSubSectionTitle .sapUxAPObjectPageSectionTitle{font-size: 14px !important;}
