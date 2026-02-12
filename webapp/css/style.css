@@ -458,9 +458,9 @@ ul.plDacSections {
 }
 
 .plDacNoRecordFound>span {
-    font-size: 17px;
+    font-size: 15px;
     font-weight: 600;
-    color: #24b770;
+    color: #346187;
 }
 
 /* .sapMMessageToast{

@@ -87,8 +87,8 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @param {sap.ui.core.mvc.Controller} oController - Controller instance for Edit action.
          * @returns {sap.m.Panel} Rendered panel containing HTML rule display.
          */
-            createDiplayRuleReadOnly: function (lRuleTypes, oController) {
-                var iRule, iCondition,oContent, iRuleTypes, oToolbar, aPrecondition = null, aRulesCondition = null, sPreConditon = "", sRule = "", aRules;
+            createDiplayRuleReadOnly: function (lRuleTypes, oView) {
+                var iRule, sBtnText, sBtnIcon, iCondition, oContent, sPolicyName, iRuleTypes, oToolbar, aPrecondition = null, aRulesCondition = null, sPreConditon = "", sRule = "", aRules;
                 for (iRuleTypes = 0; iRuleTypes < lRuleTypes.length; iRuleTypes++) {
                     if (lRuleTypes[iRuleTypes].RuleType == "Precondition") {
                         aPrecondition = lRuleTypes[iRuleTypes].Condition;
@@ -132,28 +132,33 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     }
                     sRule += "</div></div>";
                 }
-                 oToolbar = new Toolbar({
-                    content: [
-                        new sap.m.ToolbarSpacer(), // Pushes buttons to the right
-                        new Button({ text: "Edit Rule", icon: "sap-icon://edit", press: oController.onPressEditRuleBtn.bind(oController) }).addStyleClass("plDacHTMLEditBtn"),
-                    ]
-                });
-                oToolbar.addStyleClass("plDacHTMLRuleToolbar");
-                if(sPreConditon=="" && sRule==""){
+
+                sPolicyName = oView.getElementBinding().oElementContext.getProperty("PolicyName");
+                if (sPreConditon == "" && sRule == "") {
                     oContent = new sap.m.Title({
-                        text:"No data available for the rules",
-                        visible:"{viewModel>/ShowNoRecordFound}"
+                        text: "There is no rule data available for the policy `" + sPolicyName + "`.",
+                        visible: "{viewModel>/ShowNoRecordFound}"
                     });
                     oContent.addStyleClass("plDacNoRecordFound");
-                }else{
-                    oContent =new HTML({
+                    sBtnIcon = "sap-icon://add";
+                    sBtnText = "Add Rule";
+                } else {
+                    oContent = new HTML({
                         // The 'content' property holds the raw HTML string
                         content:
                             sPreConditon + sRule,
                         preferDOM: true // Renders the HTML as a native DOM element
                     });
+                    sBtnIcon = "sap-icon://edit";
+                    sBtnText = "Modify Rule";
                 }
-                
+                oToolbar = new Toolbar({
+                    content: [
+                        new sap.m.ToolbarSpacer(), // Pushes buttons to the right
+                        new Button({ text: sBtnText, icon: sBtnIcon, press: oView.getController().onPressEditRuleBtn.bind(oView.getController()) }).addStyleClass("plDacHTMLEditBtn"),
+                    ]
+                });
+                oToolbar.addStyleClass("plDacHTMLRuleToolbar");
                 return new Panel({
                     // headerToolbar: oHeaderToolbar,
                     content: [oToolbar, oContent]

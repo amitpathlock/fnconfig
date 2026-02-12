@@ -218,7 +218,7 @@ sap.ui.define([
 
 			oSubSection.removeAllBlocks();
 			aTypes = oView.getModel("ruleModel").getData().types;
-			oSubSection.addBlock(RuleModelHandler.createDiplayRuleReadOnly(aTypes, this));
+			oSubSection.addBlock(RuleModelHandler.createDiplayRuleReadOnly(aTypes, oView));
 
 		},
 		/**
