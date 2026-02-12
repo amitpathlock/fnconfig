@@ -715,7 +715,7 @@ html .sapUiContainer-Wide .sapUxAPObjectPageHeaderIdentifier {
 .plDacObjetHeaderFlexBox {
     float: right;
     margin-top: -32px !important;
-    margin-right: -2rem !important;
+    /* margin-right: -2rem !important; */
 }
 
 .PlDacDailogBox img {
@@ -754,3 +754,10 @@ html .sapUiContainer-Wide .sapUxAPObjectPageHeaderIdentifier {
 }
 .plDacHTMLEditBtn .sapMBtnIconLeft{font-size: 0.75rem !important;}
 .plDacObectPageSubSectionTitle .sapUxAPObjectPageSectionTitle{font-size: 14px !important;}
+
+.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPObjectPageHeaderContent:only-child {
+    padding-right: 1rem !important;
+}
+.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPObjectPageHeaderContent:only-child {
+    padding-right: 1rem !important;
+}
