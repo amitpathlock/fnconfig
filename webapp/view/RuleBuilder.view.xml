@@ -24,7 +24,8 @@
     </m:Toolbar>
 </m:customHeader>
  <m:content> -->
-	<ObjectPageLayout   upperCaseAnchorBar="false" flexEnabled="true"  alwaysShowContentHeader="true" showTitleInHeaderContent="true" class="plDacObjectPageHeader"> 
+ <!-- @ui5ignore -->
+	<ObjectPageLayout  id="idObjectPageLayoutRuleBuilder"  upperCaseAnchorBar="false" flexEnabled="true"  alwaysShowContentHeader="true" showTitleInHeaderContent="true" class="plDacObjectPageHeader"> 
 		<headerTitle >
 			<ObjectPageHeader objectImageURI="sap-icon://documents" objectTitle="{PolicyName}"
 			objectSubtitle="{PolicyDesc}"

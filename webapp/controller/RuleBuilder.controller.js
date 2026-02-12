@@ -55,6 +55,7 @@ sap.ui.define([
 		 */
 		onInit: function () {
 			this._oRouter = this.getOwnerComponent().getRouter();
+			var oObjectPageLayout = this.getView().byId("idObjectPageLayoutRuleBuilder");
 			this._oRouter.getRoute("PolicyRules").attachPatternMatched(this._onRouteMatched, this);
 		},
 		/**

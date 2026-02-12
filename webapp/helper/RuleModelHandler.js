@@ -132,7 +132,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     }
                     sRule += "</div></div>";
                 }
-                oToolbar = new Toolbar({
+                 oToolbar = new Toolbar({
                     content: [
                         new sap.m.ToolbarSpacer(), // Pushes buttons to the right
                         new Button({ text: "Edit Rule", icon: "sap-icon://edit", press: oController.onPressEditRuleBtn.bind(oController) }).addStyleClass("plDacHTMLEditBtn"),

@@ -660,9 +660,12 @@ html .sapUiContainer-Wide .sapUxAPObjectPageHeaderIdentifier {
     width: 2.1rem;
     font-size: 2rem;
 }
-.plDacObjectPageHeader .sapMBtnContent{line-height: 2rem !important;}
-.plDacObjectPageHeader .sapMBtnInner {height: 2rem !important;}
-.plDacObjectPageHeader .sapUxAPAnchorBar {height: 2rem !important;}
+.sapUxAPAnchorBar .sapMBtnContent{line-height: 2rem !important;}
+.sapUxAPAnchorBar .sapMBtnInner {height: 2rem !important;}
+.sapUxAPAnchorBar .sapUxAPAnchorBar {height: 2rem !important;}
+.sapUxAPAnchorBarFiori3Height, .sapUiSizeCompact .sapUxAPAnchorBar, .sapUxAPAnchorBar, .sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft, .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft, .sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowLeft, .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowLeft, .sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowRight, .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowRight, .sapUiSizeCompact .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight, .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight, .sapUiSizeCompact .sapUxAPAnchorBar .anchorBarArrow>.sapUiHLayoutChildWrapper, .sapUxAPAnchorBar .anchorBarArrow>.sapUiHLayoutChildWrapper, .sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton, .sapUxAPAnchorBar .sapUxAPAnchorBarButton, .sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMSB.sapMSBTransparent, .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMSB.sapMSBTransparent, .sapUiSizeCompact .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner, .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner {
+    height: 2rem !important;
+}
 /* .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPObjectPageHeaderContent:only-child {
     padding-bottom: 0 !important;
 } */
@@ -715,7 +718,7 @@ html .sapUiContainer-Wide .sapUxAPObjectPageHeaderIdentifier {
 .plDacObjetHeaderFlexBox {
     float: right;
     margin-top: -32px !important;
-    /* margin-right: -2rem !important; */
+    margin-right: -2rem !important;
 }
 
 .PlDacDailogBox img {
@@ -745,19 +748,12 @@ html .sapUiContainer-Wide .sapUxAPObjectPageHeaderIdentifier {
 } */
 
 /* Custom class for a small button */
-.plDacHTMLEditBtn .sapMBtnInner {
+.plDacRuleTopToolbar .sapMBtnInner {
     height: 1.5rem !important;
     font-size: 0.75rem !important;
 }
-.plDacHTMLEditBtn .sapMBtnContent {
+.plDacRuleTopToolbar .sapMBtnContent {
     line-height: 1.5rem !important;
 }
-.plDacHTMLEditBtn .sapMBtnIconLeft{font-size: 0.75rem !important;}
+.plDacRuleTopToolbar .sapMBtnIconLeft{font-size: 0.75rem !important;}
 .plDacObectPageSubSectionTitle .sapUxAPObjectPageSectionTitle{font-size: 14px !important;}
-
-.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPObjectPageHeaderContent:only-child {
-    padding-right: 1rem !important;
-}
-.sapUxAPObjectPageLayout-Std-Tablet .sapUxAPObjectPageHeaderContent:only-child {
-    padding-right: 1rem !important;
-}
