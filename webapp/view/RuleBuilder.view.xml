@@ -54,7 +54,7 @@
 				 <!-- @ui5ignore -->
 					<ObjectPageSubSection title="Rules" id="idRuleSubSectionBlock" class="plDacObjectPageSubSection">
 						<blocks>
-							<core:Fragment fragmentName="pl.dac.apps.fnconfig.fragments.DisplayPolicyRules" type="XML"/>
+							<!-- <core:Fragment fragmentName="pl.dac.apps.fnconfig.fragments.DisplayPolicyRules" type="XML"/> -->
 						</blocks>
 					</ObjectPageSubSection>
 					

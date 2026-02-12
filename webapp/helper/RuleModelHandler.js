@@ -88,7 +88,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @returns {sap.m.Panel} Rendered panel containing HTML rule display.
          */
             createDiplayRuleReadOnly: function (lRuleTypes, oController) {
-                var iRule, iCondition, iRuleTypes, oToolbar, aPrecondition = null, aRulesCondition = null, sPreConditon = "", sRule = "", aRules;
+                var iRule, iCondition,oContent, iRuleTypes, oToolbar, aPrecondition = null, aRulesCondition = null, sPreConditon = "", sRule = "", aRules;
                 for (iRuleTypes = 0; iRuleTypes < lRuleTypes.length; iRuleTypes++) {
                     if (lRuleTypes[iRuleTypes].RuleType == "Precondition") {
                         aPrecondition = lRuleTypes[iRuleTypes].Condition;
@@ -139,14 +139,24 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     ]
                 });
                 oToolbar.addStyleClass("plDacHTMLRuleToolbar");
-                return new Panel({
-                    // headerToolbar: oHeaderToolbar,
-                    content: [oToolbar, new HTML({
+                if(sPreConditon=="" && sRule==""){
+                    oContent = new sap.m.Title({
+                        text:"No data available for the rules",
+                        visible:"{viewModel>/ShowNoRecordFound}"
+                    });
+                    oContent.addStyleClass("plDacNoRecordFound");
+                }else{
+                    oContent =new HTML({
                         // The 'content' property holds the raw HTML string
                         content:
                             sPreConditon + sRule,
                         preferDOM: true // Renders the HTML as a native DOM element
-                    })]
+                    });
+                }
+                
+                return new Panel({
+                    // headerToolbar: oHeaderToolbar,
+                    content: [oToolbar, oContent]
                 });
             },
 
@@ -701,7 +711,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                 } else {
                     aCondition = oRuleData.types[0].Condition;
                     for (i = 0; i < aCondition.length; i++) {
-                        if (aCondition[i].CTypeID == oValue.CTypeID) {
+                        if (aCondition[i].CTypeID == oValue.CondId) {
                             aRules = aCondition[i].Rules;
                             for (j = 0; j < aRules.length; j++) {
                                 if (aRules[j].Rows !== oValue.Rows) {

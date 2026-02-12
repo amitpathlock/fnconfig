@@ -7,7 +7,7 @@
    <Dialog showHeader="false" contentWidth="640px" contentHeight="580px" beforeOpen="onBeforeOpenDialog">   
         <content>
         <!-- @ui5ignore -->
-          <cus:PlDacSectionLayout selectSection="onSectionSelected"
+          <cus:PlDacSectionLayout 
           >
               <cus:sections>
                

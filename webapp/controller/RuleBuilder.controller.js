@@ -195,6 +195,7 @@ sap.ui.define([
 						oViewModel.setProperty("/DisplayRuleBtnText", "Add Rule");
 						oViewModel.setProperty("/ShowNoRecordFound", true);
 						oView.setModel(new JSONModel({ types: [] }), "ruleModel");
+						this._loadReadOnlyPolicyRuleFragment();
 					}
 
 				}.bind(this),
