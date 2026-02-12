@@ -733,13 +733,12 @@ html .sapUiContainer-Wide .sapUxAPObjectPageHeaderIdentifier {
 .plDacHTMLruleBlock{padding:12px;padding-bottom: 0;background: #fff}
 .plDacHTMLRuleTitle{margin-bottom: 12px;font-weight: 600;font-size: 14px;}
 .plDacHTMLIfblock{padding-left: 1rem;font-size: 14px;}
-.plDacHTMLRuleLine{padding-left: 2rem; font-size: 12px;height: 20px;color:#354a5f;}
+.plDacHTMLRuleLine{font-size: 12px;height: 23px;color:#354a5f;}
 .plDacHTMLRuleLine div{display: inline-block;}
 .plDacHTMLRuleLine span{margin-right: 1rem;}
 .plDacHTMLRuleToolbar{background:#fff;}
-.plDacHTMLRuleOR{    font-size: 14px;
-    margin-bottom: 7px;
-    margin-top: 7px;
+.plDacHTMLRuleOR{    font-size: 14px; height: 23px;;
+  
 }
 /* Custom class for a large button */
 /* .myLargeButton .sapMBtnInner {

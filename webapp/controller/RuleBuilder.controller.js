@@ -143,7 +143,9 @@ sap.ui.define([
 				template: oColumnListItemTemplate,
 				filters: aFilters
 			});
+			
 		},
+	
 		/**
 		 * Loads operator configuration models from local JSON files.
 		 *
@@ -218,6 +220,7 @@ sap.ui.define([
 
 			oSubSection.removeAllBlocks();
 			aTypes = oView.getModel("ruleModel").getData().types;
+			oSubSection.addBlock(new sap.m.VBox({height:"300px"}));
 			oSubSection.addBlock(RuleModelHandler.createDiplayRuleReadOnly(aTypes, oView));
 
 		},
@@ -311,7 +314,7 @@ sap.ui.define([
 					if (oTable.bindRows) {
 						// Bind rows to the ODataModel and add columns
 						oTable.bindAggregation("rows", {
-							path: "/AttrSet",
+							path: "/DataAttrSet",
 							events: {
 								dataReceived: function () {
 									that._oVHDialogAttr.update();
@@ -334,7 +337,7 @@ sap.ui.define([
 					if (oTable.bindItems) {
 						// Bind items to the ODataModel and add columns
 						oTable.bindAggregation("items", {
-							path: "/AttrSet",
+							path: "/DataAttrSet",
 							template: new ColumnListItem({
 								cells: [new Label({ text: "{AttributeId}" }), new Label({ text: "{Description}" })]
 							}),
@@ -1336,6 +1339,7 @@ sap.ui.define([
 					this._oEditRules.destroy();
 					this._oEditRules = null;
 					this._loadReadOnlyPolicyRuleFragment();
+					
 				}.bind(this),
 				error: function (oError) {
 					Log.error(oError.message)
@@ -1360,6 +1364,7 @@ sap.ui.define([
 			this._oEditRules.destroy();
 			this._oEditRules = null;
 			this._loadReadOnlyPolicyRuleFragment();
+			
 		},
 		/**
 		 * Event handler triggered when the exposed attribute table completes its update.

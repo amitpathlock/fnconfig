@@ -51,7 +51,7 @@
                             suggestionItemSelected="onExposeAttrSuggestionItemSelected"
                            
                         	suggestionRows="{
-                                path: '/AttrSet',
+                                path: '/DataAttrSet',
                                 length: 1000
                             }" 
                     >

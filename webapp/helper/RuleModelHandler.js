@@ -88,7 +88,8 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @returns {sap.m.Panel} Rendered panel containing HTML rule display.
          */
             createDiplayRuleReadOnly: function (lRuleTypes, oView) {
-                var iRule, sBtnText, sBtnIcon, iCondition, oContent, sPolicyName, iRuleTypes, oToolbar, aPrecondition = null, aRulesCondition = null, sPreConditon = "", sRule = "", aRules;
+                var iRule, sBtnText, sBtnIcon, iCondition, oContent, sPolicyName, iRuleTypes, oToolbar,
+                oSubSection = oView.byId("idRuleSubSectionBlock"), aPrecondition = null, aRulesCondition = null, sPreConditon = "", sRule = "", aRules;
                 for (iRuleTypes = 0; iRuleTypes < lRuleTypes.length; iRuleTypes++) {
                     if (lRuleTypes[iRuleTypes].RuleType == "Precondition") {
                         aPrecondition = lRuleTypes[iRuleTypes].Condition;
@@ -99,34 +100,35 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
 
                 if (aPrecondition && aPrecondition.length > 0) {
                     sPreConditon = "<div class=\"plDacHTMLruleBlock\"><div class=\"plDacHTMLRuleTitle\">Precondition:</div>";
-                    sPreConditon += "<div class=\"plDacHTMLIfblock\" ><div>IF</div>";
+                    sPreConditon += "<div class=\"plDacHTMLIfblock\" ><div style=\"height: 23px;\">IF</div>";
                     for (iCondition = 0; iCondition < aPrecondition.length; iCondition++) {
                         aRules = aPrecondition[iCondition].Rules;
                         for (iRule = 0; iRule < aRules.length; iRule++) {
                             if (iRule == 0) {
                                 sPreConditon += "<div class=\"plDacHTMLRuleLine\">" + aRules[iRule].Attribute + "<b style=\"margin-left:12px;margin-right:12px;\">" + aRules[iRule].Operator + "</b>" + this._mergeValues(aRules[iRule]) + "</div>";
                             } else {
-                                sPreConditon += "<div class=\"plDacHTMLRuleLine\"><span style=\"padding-left:1rem;\">" + aRules[iRule].ContitionType + "</span>" + aRules[iRule].Attribute + "<b style=\"margin-left:12px;margin-right:12px;\">" + aRules[iRule].Operator + "</b>" + this._mergeValues(aRules[iRule]) + "</div>";
+                                sPreConditon += "<div class=\"plDacHTMLRuleLine\"><span style=\"margin-right:10px;\">" + aRules[iRule].ContitionType + "</span>" + aRules[iRule].Attribute + "<b style=\"margin-left:12px;margin-right:12px;\">" + aRules[iRule].Operator + "</b>" + this._mergeValues(aRules[iRule]) + "</div>";
                             }
                         }
                     }
                     sPreConditon += "</div></div>";
+                    sPreConditon+="<div style=\"background:#fff;padding-left: 1rem;\">*******************************************************************</div>";
                 }
 
                 if (aRulesCondition && aRulesCondition.length > 0) {
                     sRule = "<div class=\"plDacHTMLruleBlock\"><div class=\"plDacHTMLRuleTitle\">Rule:</div>";
-                    sRule += "<div class=\"plDacHTMLIfblock\" ><div>IF</div>";
+                    sRule += "<div class=\"plDacHTMLIfblock\" ><div style=\"height: 23px;\">IF</div>";
                     for (iCondition = 0; iCondition < aRulesCondition.length; iCondition++) {
                         aRules = aRulesCondition[iCondition].Rules;
                         if (aRulesCondition[iCondition].CType == "ELSE IF") {
                             sRule += "<div class=\"plDacHTMLRuleOR\">OR</div>";
-                            sRule += "<div>IF</div>";
+                            sRule += "<div style=\"height: 23px;\">IF</div>";
                         }
                         for (iRule = 0; iRule < aRules.length; iRule++) {
                             if (iRule == 0) {
                                 sRule += "<div class=\"plDacHTMLRuleLine\">" + aRules[iRule].Attribute + "<b style=\"margin-left:12px;margin-right:12px;\">" + aRules[iRule].Operator + "</b>" + this._mergeValues(aRules[iRule]) + "</div>";
                             } else {
-                                sRule += "<div class=\"plDacHTMLRuleLine\"><span style=\"padding-left:1rem;\">" + aRules[iRule].ContitionType + "</span>" + aRules[iRule].Attribute + "<b style=\"margin-left:12px;margin-right:12px;\">" + aRules[iRule].Operator + "</b>" + this._mergeValues(aRules[iRule]) + "</div>";
+                                sRule += "<div class=\"plDacHTMLRuleLine\"><span style=\"margin-right:10px;\">" + aRules[iRule].ContitionType + "</span>" + aRules[iRule].Attribute + "<b style=\"margin-left:12px;margin-right:12px;\">" + aRules[iRule].Operator + "</b>" + this._mergeValues(aRules[iRule]) + "</div>";
                             }
                         }
                     }
@@ -159,6 +161,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     ]
                 });
                 oToolbar.addStyleClass("plDacHTMLRuleToolbar");
+                oSubSection.removeAllBlocks();
                 return new Panel({
                     // headerToolbar: oHeaderToolbar,
                     content: [oToolbar, oContent]

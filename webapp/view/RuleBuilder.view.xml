@@ -49,11 +49,13 @@
 		
 		</headerContent>
 		<sections>
-			<ObjectPageSection title="Rules">
+		 <!-- @ui5ignore -->
+			<ObjectPageSection title="Rules"  id="idRuleObjectPageSection" selectedSubSection="true">
 				<subSections>
 				 <!-- @ui5ignore -->
 					<ObjectPageSubSection title="Rules" id="idRuleSubSectionBlock" class="plDacObjectPageSubSection">
 						<blocks>
+							<m:VBox height="300px" />
 							<!-- <core:Fragment fragmentName="pl.dac.apps.fnconfig.fragments.DisplayPolicyRules" type="XML"/> -->
 						</blocks>
 					</ObjectPageSubSection>
