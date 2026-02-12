@@ -57,6 +57,10 @@ sap.ui.define([
 			this._oRouter = this.getOwnerComponent().getRouter();
 			this._oRouter.getRoute("PolicyRules").attachPatternMatched(this._onRouteMatched, this);
 		},
+		// onSectionSelected: function (oEvent) {
+		// 	const iIndex = oEvent.getParameter("index");
+		// 	this.getModel("viewModel").setProperty("/VisibleOK", iIndex < 2);
+		// },
 		/**
 		 * Handles the route match event for "PolicyRules".
 		 *

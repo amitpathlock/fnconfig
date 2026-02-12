@@ -6,7 +6,8 @@
 > <!-- @ui5ignore -->
    <Dialog showHeader="false" contentWidth="640px" contentHeight="580px" beforeOpen="onBeforeOpenDialog">   
         <content>
-          <cus:PlDacSectionLayout
+        <!-- @ui5ignore -->
+          <cus:PlDacSectionLayout selectSection="onSectionSelected"
           >
               <cus:sections>
                
@@ -74,7 +75,7 @@
                         <Button icon="sap-icon://add" text="Rows" class="plDacAddRows"  press=".onPressAddRowInRanges" />    
                      </VBox>
                      <VBox>
-                      <Table items="{path:'/UserAttrSet'}"  customData:title="User Attributes"  customData:icon="sap-icon://person-placeholder" >
+                      <Table items="{path:'/UserAttrSet'}" mode="SingleSelectLeft" customData:title="User Attributes"  customData:icon="sap-icon://person-placeholder" >
                         <columns>
                             <Column 	minScreenWidth="Tablet"  demandPopin="true">
                                 <Text text="{i18n>txtHeadrObjectPageExposeAttrTblColumnAttribute}" />
