@@ -304,7 +304,9 @@ sap.ui.define([
 					if (sSearchValue) {
 						var oFilter = new sap.ui.model.Filter("AttributeId", sap.ui.model.FilterOperator.Contains, sSearchValue.toUpperCase());
 						that._oVHDialogAttr.getTable().getBinding("rows").filter([oFilter]);
-					};
+					}else{
+						that._oVHDialogAttr.getTable().getBinding("rows").filter([]);
+					}
 
 				}
 			}).addStyleClass("plDacVHFilter");
@@ -319,6 +321,8 @@ sap.ui.define([
 						if (sSearchValue) {
 							var oFilter = new sap.ui.model.Filter("AttributeId", sap.ui.model.FilterOperator.Contains, sSearchValue.toUpperCase());
 							that._oVHDialogAttr.getTable().getBinding("rows").filter([oFilter]);
+						}else{
+							that._oVHDialogAttr.getTable().getBinding("rows").filter([]);
 						}
 
 					}
@@ -345,7 +349,7 @@ sap.ui.define([
 					if (oTable.bindRows) {
 						// Bind rows to the ODataModel and add columns
 						oTable.bindAggregation("rows", {
-							path: "/DataAttrSet",
+							path: "/AttrSet",
 							events: {
 								dataReceived: function () {
 									that._oVHDialogAttr.update();
@@ -368,7 +372,7 @@ sap.ui.define([
 					if (oTable.bindItems) {
 						// Bind items to the ODataModel and add columns
 						oTable.bindAggregation("items", {
-							path: "/DataAttrSet",
+							path: "/AttrSet",
 							template: new ColumnListItem({
 								cells: [new Label({ text: "{AttributeId}" }), new Label({ text: "{Description}" })]
 							}),
@@ -601,7 +605,7 @@ sap.ui.define([
 		 * @public
 		 * @function onBeforeExposeAttributeDialogOpened
 		 * @param {sap.ui.base.Event} oEvent - The event object triggered by the dialog open.
-		 * @param {sap.m.Dialog} oEvent.getSource() - The dialog instance being opened.
+		 * @param {0} oEvent.getSource() - The dialog instance being opened.
 		 * @returns {void}
 		 */
 		onBeforeExposeAttributeDialogOpened: function (oEvent) {
@@ -620,7 +624,7 @@ sap.ui.define([
 		 *   - If the value length is greater than 6, it triggers server-side validation.
 		 *   - Otherwise, it marks the input as invalid and shows the appropriate error message.
 		 *
-		 * @param {sap.ui.base.Event} oEvent - The input change event.
+		 * @param {*} oEvent - The input change event.
 		 * @param {string} oEvent.getParameter("newValue") - The new value entered by the user.
 		 * @returns {void}
 		 */
@@ -704,9 +708,41 @@ sap.ui.define([
 		 * @returns {void}
 		 */
 		onExponseAttributeVHRequested: function () {
-			var oView = this.getView(), oColAttrName,
+			var oView = this.getView(), oColAttrName,oFilterBar,
 				oColAttrDesc,
 				that = this;
+			oFilterBar = new sap.ui.comp.filterbar.FilterBar({
+				advancedMode: true,
+				// filterContainerWidth: "10rem",
+				search: function (oEvent) {
+					// 4. Implement Search Logic
+					var sSearchValue = oEvent.getParameter("selectionSet")[0].getValue();
+					if (sSearchValue) {
+						var oFilter = new sap.ui.model.Filter("AttributeId", sap.ui.model.FilterOperator.Contains, sSearchValue.toUpperCase());
+						that._oVHDialogAttribute.getTable().getBinding("rows").filter([oFilter]);
+					}else{
+						that._oVHDialogAttribute.getTable().getBinding("rows").filter([]);
+					}
+
+				}
+			}).addStyleClass("plDacVHFilter");
+			oFilterBar.addFilterGroupItem(new sap.ui.comp.filterbar.FilterGroupItem({
+				groupName: "G1",
+				name: "Search",
+				label: "Search",
+				control: new sap.m.SearchField({
+					placeholder: "Search for...",
+					search: function (oEvent) {
+						var sSearchValue = oEvent.getParameter("query");
+						if (sSearchValue) {
+							var oFilter = new sap.ui.model.Filter("AttributeId", sap.ui.model.FilterOperator.Contains, sSearchValue.toUpperCase());
+							that._oVHDialogAttribute.getTable().getBinding("rows").filter([oFilter]);
+						}else{
+							that._oVHDialogAttribute.getTable().getBinding("rows").filter([]);
+						}
+					}
+				})
+			}));
 			if (!this._oVHDialogAttribute) {
 				this._oVHDialogAttribute = sap.ui.xmlfragment("pl.dac.apps.fnconfig.fragments.VHAttribute", this);
 				oView.addDependent(this._oVHDialogAttribute);
@@ -716,13 +752,14 @@ sap.ui.define([
 					type: "string"
 				}]);
 				this._oVHDialogAttribute.getTableAsync().then(function (oTable) {
+					that._oVHDialogAttribute.setFilterBar(oFilterBar);
 					oTable.setModel(oView.getModel());
 					oTable.setSelectionMode("Single");
 					// For Desktop and tabled the default table is sap.ui.table.Table
 					if (oTable.bindRows) {
 						// Bind rows to the ODataModel and add columns
 						oTable.bindAggregation("rows", {
-							path: "/AttrSet",
+							path: "/DataAttrSet",
 							events: {
 								dataReceived: function () {
 									that._oVHDialogAttribute.update();
@@ -745,7 +782,7 @@ sap.ui.define([
 					if (oTable.bindItems) {
 						// Bind items to the ODataModel and add columns
 						oTable.bindAggregation("items", {
-							path: "/AttrSet",
+							path: "/DataAttrSet",
 							template: new ColumnListItem({
 								cells: [new Label({ text: "{AttributeId}" }), new Label({ text: "{Description}" })]
 							}),

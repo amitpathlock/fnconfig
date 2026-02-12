@@ -765,3 +765,4 @@ html .sapUiContainer-Wide .sapUxAPObjectPageHeaderIdentifier {
 /*CSS for Value Help Dialog*/
 .plDacVHFilter>div:nth-child(2){display: none;}
 .plDacVHFilter>div:nth-child(3){padding-top: 0 !important;margin-top: -2.7rem;}
+.plDacVHFilter>div:nth-child(3)>div{width:88% !important;}
