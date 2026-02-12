@@ -143,9 +143,9 @@ sap.ui.define([
 				template: oColumnListItemTemplate,
 				filters: aFilters
 			});
-			
+
 		},
-	
+
 		/**
 		 * Loads operator configuration models from local JSON files.
 		 *
@@ -220,7 +220,7 @@ sap.ui.define([
 
 			oSubSection.removeAllBlocks();
 			aTypes = oView.getModel("ruleModel").getData().types;
-			oSubSection.addBlock(new sap.m.VBox({height:"300px"}));
+			oSubSection.addBlock(new sap.m.VBox({ height: "300px" }));
 			oSubSection.addBlock(RuleModelHandler.createDiplayRuleReadOnly(aTypes, oView));
 
 		},
@@ -292,9 +292,38 @@ sap.ui.define([
 		 * @returns {void}
 		 */
 		onAttributeValueHelpRequested: function (oEvent) {
-			var oView = this.getView(), oInput = oEvent.getSource(), oColAttryName,
+			var oView = this.getView(), oFilterBar, oInput = oEvent.getSource(), oColAttryName,
 				oColAttrDesc, oModel = new JSONModel(oInput.getCustomData()[0].getValue()),
 				that = this;
+			oFilterBar = new sap.ui.comp.filterbar.FilterBar({
+				advancedMode: true,
+				// filterContainerWidth: "10rem",
+				search: function (oEvent) {
+					// 4. Implement Search Logic
+					var sSearchValue = oEvent.getParameter("selectionSet")[0].getValue();
+					if (sSearchValue) {
+						var oFilter = new sap.ui.model.Filter("AttributeId", sap.ui.model.FilterOperator.Contains, sSearchValue.toUpperCase());
+						that._oVHDialogAttr.getTable().getBinding("rows").filter([oFilter]);
+					};
+
+				}
+			}).addStyleClass("plDacVHFilter");
+			oFilterBar.addFilterGroupItem(new sap.ui.comp.filterbar.FilterGroupItem({
+				groupName: "G1",
+				name: "Search",
+				label: "Search",
+				control: new sap.m.SearchField({
+					placeholder: "Search for...",
+					search: function (oEvent) {
+						var sSearchValue = oEvent.getParameter("query");
+						if (sSearchValue) {
+							var oFilter = new sap.ui.model.Filter("AttributeId", sap.ui.model.FilterOperator.Contains, sSearchValue.toUpperCase());
+							that._oVHDialogAttr.getTable().getBinding("rows").filter([oFilter]);
+						}
+
+					}
+				})
+			}));
 
 			if (!this._oVHDialogAttr) {
 				this._oVHDialogAttr = sap.ui.xmlfragment("pl.dac.apps.fnconfig.fragments.AttributeVH", this);
@@ -307,9 +336,11 @@ sap.ui.define([
 					key: "AttributeId",
 					type: "string"
 				}]);
+
 				this._oVHDialogAttr.getTableAsync().then(function (oTable) {
 					oTable.setModel(oView.getModel());
 					oTable.setSelectionMode("Single");
+					that._oVHDialogAttr.setFilterBar(oFilterBar);
 					// For Desktop and tabled the default table is sap.ui.table.Table
 					if (oTable.bindRows) {
 						// Bind rows to the ODataModel and add columns
@@ -1339,7 +1370,7 @@ sap.ui.define([
 					this._oEditRules.destroy();
 					this._oEditRules = null;
 					this._loadReadOnlyPolicyRuleFragment();
-					
+
 				}.bind(this),
 				error: function (oError) {
 					Log.error(oError.message)
@@ -1364,7 +1395,7 @@ sap.ui.define([
 			this._oEditRules.destroy();
 			this._oEditRules = null;
 			this._loadReadOnlyPolicyRuleFragment();
-			
+
 		},
 		/**
 		 * Event handler triggered when the exposed attribute table completes its update.
