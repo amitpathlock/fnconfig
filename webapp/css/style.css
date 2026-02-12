@@ -757,3 +757,8 @@ html .sapUiContainer-Wide .sapUxAPObjectPageHeaderIdentifier {
 }
 .plDacRuleTopToolbar .sapMBtnIconLeft{font-size: 0.75rem !important;}
 .plDacObectPageSubSectionTitle .sapUxAPObjectPageSectionTitle{font-size: 14px !important;}
+
+.sapUxAPObjectPageLayout-Std-Desktop .sapUxAPObjectPageHeaderContent {
+    padding-left: 3rem;
+    padding-right: 1rem ;
+}
