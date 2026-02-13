@@ -1392,6 +1392,8 @@ sap.ui.define([
 				oRuleData = oView.getModel("ruleModel").getData();
 				oRuleData.types.push(oEmptyRuleModel.getData());
 				oView.getModel("ruleModel").setData(oRuleData);
+				oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock",false);
+                oView.getModel("viewModel").setProperty("/bVisibleAddCondition",true);
 			});
 			oEmptyRuleModel.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/EmptyRule.json"));
 		},
@@ -1405,7 +1407,7 @@ sap.ui.define([
 				} else {
 					oRuleData.types.unshift(oEmptyModel.getData());
 				}
-
+				oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock",false);
 				oView.getModel("ruleModel").setData(oRuleData);
 			});
 			oEmptyModel.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/EmptyPrecondition.json"));

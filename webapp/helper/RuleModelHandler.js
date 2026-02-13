@@ -692,7 +692,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                 } else {
                     aCondition = oRuleData.types[0].Condition;
                     for (i = 0; i < aCondition.length; i++) {
-                        if (aCondition[i].CTypeID == oValue.CondId) {
+                        if (aCondition[i].CTypeID == oValue.CTypeID) {
                             aRules = aCondition[i].Rules;
                             for (j = 0; j < aRules.length; j++) {
                                 if (aRules[j].Rows !== oValue.Rows) {
@@ -703,13 +703,20 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
 
                             if (aRules.length == 0) {
                                 aCondition.splice(i, 1);
+                                oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock",true);
                             } else {
                                 aCondition[i].Rules = aRules;
                             }
                             break;
                         }
                     }
-                    oRuleData.types[0].Condition = aCondition;
+                    if(aCondition.length==0){
+                        oRuleData.types.splice(0,1);
+                        oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock",true);
+                    }else{
+                        oRuleData.types[0].Condition = aCondition;
+                    }
+                    
                 }
                 oView.getModel("ruleModel").setData(oRuleData);
             },
@@ -768,6 +775,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                         }
                         if (nConditions.length == 0) {
                             oRuleData.types.splice(0, 1);
+                            oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock",true);
                         } else {
                             oRuleData.types[0].Condition = nConditions;
                         }
@@ -834,6 +842,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     for (i = 0; i < aCondition.length; i++) {
                         if (aCondition[i].CTypeID == oValue.CTypeID) {
                             aCondition[i].Rules = this._reindexConditionRules(aCondition[i].Rules);
+                             oRule={};
                             iLen = aCondition[i].Rules.length;
                             oRule["CTypeID"] = oValue.CTypeID;
                             oRule["Rows"] = iLen + 1;

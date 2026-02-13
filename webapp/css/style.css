@@ -755,8 +755,11 @@ html .sapUiContainer-Wide .sapUxAPObjectPageHeaderIdentifier {
     line-height: 1.5rem !important;
 }
 .plDacHTMLEditBtn  .sapMBtnIconLeft{font-size: 0.75rem !important;}
-.plDacObectPageSubSectionTitle .sapUxAPObjectPageSectionTitle{font-size: 14px !important;}
 
+.plDacHTMLEditBtn .sapMBtnInner.sapMBtnText .sapMBtnIcon {padding-right: 2px !important;}
+.plDacObectPageSubSectionTitle .sapUxAPObjectPageSectionTitle{font-size: 14px !important;}
+.plDacRuleTopButton .sapMBtnInner.sapMBtnText .sapMBtnIcon {padding-right: 2px !important;}
+.plDacRuleButtonFontSize .sapMBtnInner.sapMBtnText .sapMBtnIcon {padding-right: 2px !important;}
 .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPObjectPageHeaderContent {
     padding-left: 3rem;
     padding-right: 1rem ;
