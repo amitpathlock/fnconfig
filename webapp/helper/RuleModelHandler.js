@@ -843,7 +843,6 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                         }
                     }
                     oRuleData.types[oRuleData.types.length - 1].Condition = aCondition;
-
                 } else {
                     var aCondition = oRuleData.types[0].Condition;
                     for (i = 0; i < aCondition.length; i++) {
@@ -863,7 +862,6 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                         }
                     }
                     oRuleData.types[0].Condition = aCondition;
-
                 }//end if
                 oView.getModel("ruleModel").setData(oRuleData);
             },

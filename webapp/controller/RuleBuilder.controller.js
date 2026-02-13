@@ -908,6 +908,7 @@ sap.ui.define([
 				success: function (oData) {
 					if (oData.AttributeId) {
 						oMultiInput.removeAllTokens();
+						oMultiInput.setValue("");
 						oMultiInput.setTokens([new Token({ key: sAttribute, text: sAttribute.toUpperCase() + " (" + oData.Description + ")" })]);
 						oViewModel.setProperty("/AttrErrorState", "None");
 						oViewModel.setProperty("/AttrErrorMessage", "");
