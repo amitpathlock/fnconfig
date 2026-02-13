@@ -252,7 +252,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                 } else {
 
                     if (oCustomData["Values"].length == 0) {
-                        aValues = oCustomData.ValueDesc.split(",");
+                        aValues = oCustomData.ValueDesc ?oCustomData.ValueDesc.split(","):[];
                         for (iValue = 0; iValue < aValues.length; iValue++) {
                             oCustomData["Values"].push({ Operator: oCustomData.Operator, Value: aValues[iValue] });
                         }

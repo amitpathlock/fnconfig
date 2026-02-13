@@ -139,7 +139,7 @@ sap.ui.define([
                     }
                 });
             } else {
-                if (oData.Value != "") {
+                if (oData.Value != "" && oData.Value!=undefined) {
                     idx = null;
                     if (oData.Value.split(".")[0] == "USER") {
                         idx = 2;

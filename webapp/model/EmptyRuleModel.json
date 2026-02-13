@@ -1,6 +1,5 @@
 {
     "types": [
-        
         {
             "RuleType": "Rules",
             "CTypeID": 0,
@@ -21,10 +20,8 @@
                             "CTypeID": 0,
                             "RuleType": "Rules",
                             "CondId": 0,
-                            "ValueRange": {
-                                "Operator": "",
-                                "Value": ""
-                            }
+                            "ValueRange": [],
+                            "Values": []
                         }
                     ]
                 }
