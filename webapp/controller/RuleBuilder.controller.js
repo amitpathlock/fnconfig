@@ -1332,12 +1332,27 @@ sap.ui.define([
 		onPressEditRuleBtn: function () {
 			var oView = this.getView(), oSubSection = oView.byId("idRuleSubSectionBlock"),
 				oRuleData = oView.getModel("ruleModel").getData(),
-				oEmptyRuleModel, oEmptyPrecondition, oEmptyRule;
+				oEmptyRuleModel, aTypes,iType, oEmptyRule,bPreCondition=false,bRules=false;
 
-			//	oView.byId("saveRuleBtn").setVisible(true);
-			oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock", true);
 			oView.getModel("viewModel").setProperty("/bVisibleAddCondition", true);
-
+			aTypes = oView.getModel("ruleModel").getData().types;
+			for(iType=0;iType<aTypes.length;iType++){
+				if(aTypes[iType].RuleType=="Precondition"){
+					oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock", false);
+					bPreCondition=true;
+				}
+				if(aTypes[iType].RuleType=="Rules"){
+					oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", false);
+					bRules=true
+				}
+			}
+			if(!bPreCondition){
+				oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock", true);
+			}
+			if(!bRules){
+				oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", true);
+				oView.getModel("viewModel").setProperty("/bVisibleAddCondition", false);
+			}
 
 			if (oRuleData.types.length == 0) {
 				oEmptyRuleModel = new JSONModel();

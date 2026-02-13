@@ -44,6 +44,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                         oConditionRules["Rules"] = this._preparePreconditionRuleBody(aResults[iResult], iResult);
                         oCondition.Condition.push(oConditionRules);
                         lRuleTypes.push(oCondition);
+
                     } else {
                         if (lArr.length == 0) {
                             if (aResults[iResult].CType == "IF") {
@@ -66,6 +67,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                             };
                             oConditionRules["Rules"] = this._prepareRuleBody(aResults[iResult], iResult,);
                             lArr.push(oConditionRules);
+
                         }
                     }
                 }//End of for loop
@@ -252,7 +254,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                 } else {
 
                     if (oCustomData["Values"].length == 0) {
-                        aValues = oCustomData.ValueDesc ?oCustomData.ValueDesc.split(","):[];
+                        aValues = oCustomData.ValueDesc ? oCustomData.ValueDesc.split(",") : [];
                         for (iValue = 0; iValue < aValues.length; iValue++) {
                             oCustomData["Values"].push({ Operator: oCustomData.Operator, Value: aValues[iValue] });
                         }
@@ -314,7 +316,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     }
                     oRuleModel.types[0].Condition = aCondition;
                 } else {
-                    aCondition = oRuleModel.types[oRuleModel.types.length-1].Condition;
+                    aCondition = oRuleModel.types[oRuleModel.types.length - 1].Condition;
                     for (iCondition = 0; iCondition < aCondition.length; iCondition++) {
                         if (aCondition[iCondition].CTypeID === oData.CTypeID) {
                             for (iRule = 0; iRule < aCondition[iCondition].Rules.length; iRule++) {
@@ -327,7 +329,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                             }
                         }
                     }
-                    oRuleModel.types[oRuleModel.types.length-1].Condition = aCondition;
+                    oRuleModel.types[oRuleModel.types.length - 1].Condition = aCondition;
                 }
                 oView.getModel("ruleModel").setData(oRuleModel);
                 oView.getModel("ruleModel").refresh();
@@ -373,7 +375,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     }
                     oRuleData.types[0].Condition = aCondition;
                 } else {
-                    aCondition = oRuleData.types[oRuleData.types.length-1].Condition;
+                    aCondition = oRuleData.types[oRuleData.types.length - 1].Condition;
                     for (iCondition = 0; iCondition < aCondition.length; iCondition++) {
                         if (aCondition[iCondition].CTypeID == oData.CTypeID) {
                             for (iRule = 0; iRule < aCondition[iCondition].Rules.length; iRule++) {
@@ -396,7 +398,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                             }
                         }
                     }
-                    oRuleData.types[oRuleData.types.length-1].Condition = aCondition;
+                    oRuleData.types[oRuleData.types.length - 1].Condition = aCondition;
                 }
                 oView.getModel("ruleModel").setData(oRuleData);
             },
@@ -584,9 +586,9 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                 if (!oValue) {
                     oRule["RuleType"] = "Rules";
                     oRule["Rows"] = 1;
-                    oRuleData.types[oRuleData.types.length-1] = {};
-                    oRuleData.types[oRuleData.types.length-1].Condition = new Array();
-                    oRuleData.types[oRuleData.types.length-1].Condition.push({
+                    oRuleData.types[oRuleData.types.length - 1] = {};
+                    oRuleData.types[oRuleData.types.length - 1].Condition = new Array();
+                    oRuleData.types[oRuleData.types.length - 1].Condition.push({
 
                         CType: "IF",
                         CTypeID: 1,
@@ -598,10 +600,10 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     );
                 } else {
                     if (oValue.RuleType == "Rules") {
-                        if (oRuleData.types[oRuleData.types.length-1].Condition.length == 0) {
+                        if (oRuleData.types[oRuleData.types.length - 1].Condition.length == 0) {
                             oRule["RuleType"] = "Rules";
                             oRule["Rows"] = 1;
-                            oRuleData.types[oRuleData.types.length-1].Condition.push({
+                            oRuleData.types[oRuleData.types.length - 1].Condition.push({
 
                                 CType: "IF",
                                 CTypeID: 1,
@@ -611,16 +613,16 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                                 ]
                             });
                         } else {
-                            oRuleData.types[oRuleData.types.length-1].Condition = this._reindexCondition(oRuleData.types[oRuleData.types.length-1].Condition);
-                          
+                            oRuleData.types[oRuleData.types.length - 1].Condition = this._reindexCondition(oRuleData.types[oRuleData.types.length - 1].Condition);
+
                             oRule["ContitionType"] = "OR";
-                            oRule["CTypeID"] = oRuleData.types[oRuleData.types.length-1].Condition.length + 1;
+                            oRule["CTypeID"] = oRuleData.types[oRuleData.types.length - 1].Condition.length + 1;
                             oRule["Rows"] = 1;
                             oRule["RuleType"] = "Rules";
-                            oRuleData.types[oRuleData.types.length-1].Condition.push({
+                            oRuleData.types[oRuleData.types.length - 1].Condition.push({
 
                                 CType: "ELSE IF",
-                                CTypeID: oRuleData.types[oRuleData.types.length-1].Condition.length + 1,
+                                CTypeID: oRuleData.types[oRuleData.types.length - 1].Condition.length + 1,
                                 RuleType: "Rules",
 
                                 Rules: [
@@ -629,7 +631,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                             }
                             );
                         }
-                    } 
+                    }
                 }
                 oView.getModel("ruleModel").setData(oRuleData);
             },
@@ -661,7 +663,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                 oValue = oButton.getCustomData()[0].getValue();
                 oRuleData = oView.getModel("ruleModel").getData();
                 if (oValue.RuleType == "Rules") {
-                    aCondition = oRuleData.types[oRuleData.types.length-1].Condition;
+                    aCondition = oRuleData.types[oRuleData.types.length - 1].Condition;
                     for (i = 0; i < aCondition.length; i++) {
                         if (aCondition[i].CTypeID == oValue.CTypeID) {
                             aRules = aCondition[i].Rules;
@@ -680,15 +682,15 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                             break;
                         }
                     }
-                    if(aCondition.length==0){
-                        oRuleData.types.splice(oRuleData.types.length-1,1);
-                        oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock",true);
-                        oView.getModel("viewModel").setProperty("/bVisibleAddCondition",false);
-                    }else{
-                        oRuleData.types[oRuleData.types.length-1].Condition = aCondition;
-                        oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock",false);
+                    if (aCondition.length == 0) {
+                        oRuleData.types.splice(oRuleData.types.length - 1, 1);
+                        oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", true);
+                        oView.getModel("viewModel").setProperty("/bVisibleAddCondition", false);
+                    } else {
+                        oRuleData.types[oRuleData.types.length - 1].Condition = aCondition;
+                        oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", false);
                     }
-                    
+
                 } else {
                     aCondition = oRuleData.types[0].Condition;
                     for (i = 0; i < aCondition.length; i++) {
@@ -703,20 +705,20 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
 
                             if (aRules.length == 0) {
                                 aCondition.splice(i, 1);
-                                oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock",true);
+                                oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock", true);
                             } else {
                                 aCondition[i].Rules = aRules;
                             }
                             break;
                         }
                     }
-                    if(aCondition.length==0){
-                        oRuleData.types.splice(0,1);
-                        oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock",true);
-                    }else{
+                    if (aCondition.length == 0) {
+                        oRuleData.types.splice(0, 1);
+                        oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock", true);
+                    } else {
                         oRuleData.types[0].Condition = aCondition;
                     }
-                    
+
                 }
                 oView.getModel("ruleModel").setData(oRuleData);
             },
@@ -733,31 +735,36 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                 var oRuleData = oView.getModel("ruleModel").getData();
                 if (oValue.RuleType == "Rules") {
                     if (oValue.CTypeID == 0) {
-                        oRuleData.types.splice(oRuleData.types.length-1, 1);
-                        oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock",true);
-                        oView.getModel("viewModel").setProperty("/bVisibleAddCondition",false);
+                        oRuleData.types.splice(oRuleData.types.length - 1, 1);
+                        oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", true);
+                        oView.getModel("viewModel").setProperty("/bVisibleAddCondition", false);
                     } else {
-                        aCondition = oRuleData.types[oRuleData.types.length-1].Condition;
-
-                        for (i = 0; i < aCondition.length; i++) {
-                            if (aCondition[i].CTypeID == oValue.CTypeID) {
-                                aCondition.splice(i, 1);
+                        aCondition = oRuleData.types[oRuleData.types.length - 1].Condition;
+                        if (aCondition.length > 0 && aCondition[0].CTypeID == oValue.CTypeID) {
+                            oRuleData.types.splice(oRuleData.types.length - 1, 1);
+                            oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", true);
+                            oView.getModel("viewModel").setProperty("/bVisibleAddCondition", false);
+                        } else {
+                            for (i = 0; i < aCondition.length; i++) {
+                                if (aCondition[i].CTypeID == oValue.CTypeID) {
+                                    aCondition.splice(i, 1);
+                                }
+                            }
+                            if (aCondition.length == 0) {
+                                oRuleData.types.splice(oRuleData.types.length - 1, 1);
+                                oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", true);
+                                oView.getModel("viewModel").setProperty("/bVisibleAddCondition", false);
+                            } else {
+                                oRuleData.types[oRuleData.types.length - 1].Condition = aCondition;
+                                oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", false);
                             }
                         }
-                        if (aCondition.length == 0) {
-                            oRuleData.types.splice(oRuleData.types.length-1, 1);
-                            oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock",true);
-                            oView.getModel("viewModel").setProperty("/bVisibleAddCondition",false);
-                        } else {
-                            oRuleData.types[oRuleData.types.length-1].Condition = aCondition;
-                            oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock",false);
-                        }
-                        
+
                     }
                 } else {
                     aCondition = oRuleData.types[0].Condition;
                     if (oValue.CTypeID == 1 && aCondition.length == 2) {
-                        oRuleData.types[oRuleData.types.length-1].Condition = nConditions;
+                        oRuleData.types[oRuleData.types.length - 1].Condition = nConditions;
                     } else if (oValue.CTypeID == 1 && aCondition.length > 2) {
                         for (i = 0; i < aCondition.length; i++) {
                             if (aCondition[i].CTypeID != oValue.CTypeID) {
@@ -775,7 +782,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                         }
                         if (nConditions.length == 0) {
                             oRuleData.types.splice(0, 1);
-                            oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock",true);
+                            oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock", true);
                         } else {
                             oRuleData.types[0].Condition = nConditions;
                         }
@@ -812,18 +819,18 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                 var i, iLen, oRule, oValue, oRuleData;
                 oValue = oButton.getCustomData()[0].getValue();
                 oRuleData = oView.getModel("ruleModel").getData();
-               // if (oRuleData.types.length == 1) {
-                  //  aCondition = oRuleData.types[0].Condition;
-               // } else {
-                    aCondition = oRuleData.types[oRuleData.types.length-1].Condition;
-               // }
+                // if (oRuleData.types.length == 1) {
+                //  aCondition = oRuleData.types[0].Condition;
+                // } else {
+                aCondition = oRuleData.types[oRuleData.types.length - 1].Condition;
+                // }
                 if (oValue.RuleType == "Rules") {
                     //var aCondition = oRuleData.types[1].Condition;
                     for (i = 0; i < aCondition.length; i++) {
                         if (aCondition[i].CTypeID == oValue.CTypeID) {
                             aCondition[i].Rules = this._reindexConditionRules(aCondition[i].Rules);
                             iLen = aCondition[i].Rules.length;
-                            oRule={};
+                            oRule = {};
                             oRule["CTypeID"] = oValue.CTypeID;
                             oRule["Rows"] = iLen + 1;
                             oRule["RuleType"] = "Rules";
@@ -835,14 +842,14 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                             }
                         }
                     }
-                    oRuleData.types[oRuleData.types.length-1].Condition = aCondition;
+                    oRuleData.types[oRuleData.types.length - 1].Condition = aCondition;
 
                 } else {
                     var aCondition = oRuleData.types[0].Condition;
                     for (i = 0; i < aCondition.length; i++) {
                         if (aCondition[i].CTypeID == oValue.CTypeID) {
                             aCondition[i].Rules = this._reindexConditionRules(aCondition[i].Rules);
-                             oRule={};
+                            oRule = {};
                             iLen = aCondition[i].Rules.length;
                             oRule["CTypeID"] = oValue.CTypeID;
                             oRule["Rows"] = iLen + 1;
@@ -889,7 +896,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     }
                     oRuleData.types[0].Condition = aCondition;
                 } else {
-                    aCondition = oRuleData.types[oRuleData.types.length-1].Condition;
+                    aCondition = oRuleData.types[oRuleData.types.length - 1].Condition;
                     for (i = 0; i < aCondition.length; i++) {
                         if (aCondition[i].CTypeID == oData.CTypeID) {
                             for (j = 0; j < aCondition[i].Rules.length; j++) {
@@ -901,7 +908,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                             }
                         }
                     }
-                    oRuleData.types[oRuleData.types.length-1].Condition = aCondition;
+                    oRuleData.types[oRuleData.types.length - 1].Condition = aCondition;
                 }
                 oView.getModel("ruleModel").setData(oRuleData);
             },
@@ -935,7 +942,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     }
                     oRuleData.types[0].Condition = aCondition;
                 } else {
-                    aCondition = oRuleData.types[oRuleData.types.length-1].Condition;
+                    aCondition = oRuleData.types[oRuleData.types.length - 1].Condition;
                     for (i = 0; i < aCondition.length; i++) {
                         if (aCondition[i].CTypeID == oData.CTypeID) {
                             for (j = 0; j < aCondition[i].Rules.length; j++) {
@@ -947,7 +954,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                             }
                         }
                     }
-                    oRuleData.types[oRuleData.types.length-1].Condition = aCondition;
+                    oRuleData.types[oRuleData.types.length - 1].Condition = aCondition;
                 }
                 oView.getModel("ruleModel").setData(oRuleData);
             },
