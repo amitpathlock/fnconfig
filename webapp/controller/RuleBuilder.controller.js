@@ -108,9 +108,6 @@ sap.ui.define([
 
 			});
 			var oRuleModel = new JSONModel({ types: [] });
-			oRuleModel.attachPropertyChange(function(oEvent) {
-				alert('hi');
-			});
 			oView.setModel(oRuleModel, "ruleModel");
 			this._sPolicyName = oEvent.getParameter("arguments").PolicyName;
 			oView.setModel(oModel, "viewModel");
@@ -204,7 +201,7 @@ sap.ui.define([
 						oViewModel.setProperty("/DisplayRuleBtnIcon", "sap-icon://add");
 						oViewModel.setProperty("/DisplayRuleBtnText", "Add Rule");
 						oViewModel.setProperty("/ShowNoRecordFound", true);
-						oView.getModel("ruleModel").setData({types:[]});
+						oView.getModel("ruleModel").setData({ types: [] });
 						this._loadReadOnlyPolicyRuleFragment();
 					}
 
@@ -228,7 +225,7 @@ sap.ui.define([
 
 			oSubSection.removeAllBlocks();
 			aTypes = oView.getModel("ruleModel").getData().types;
-			aTypes = aTypes?aTypes:[];
+			aTypes = aTypes ? aTypes : [];
 			oSubSection.addBlock(new sap.m.VBox({ height: "300px" }));
 			oSubSection.addBlock(RuleModelHandler.createDiplayRuleReadOnly(aTypes, oView));
 
@@ -1389,7 +1386,7 @@ sap.ui.define([
 			}
 		},
 		onPressAddRuleBlockBtn: function () {
-			var oEmptyRuleModel, oView = this.getView(),oRuleData;
+			var oEmptyRuleModel, oView = this.getView(), oRuleData;
 			oEmptyRuleModel = new JSONModel();
 			oEmptyRuleModel.attachRequestCompleted(function () {
 				oRuleData = oView.getModel("ruleModel").getData();
@@ -1398,17 +1395,17 @@ sap.ui.define([
 			});
 			oEmptyRuleModel.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/EmptyRule.json"));
 		},
-		onPressAddPreConditionBlockBtn:function(){
-			var oEmptyModel, oView = this.getView(),oRuleData;
+		onPressAddPreConditionBlockBtn: function () {
+			var oEmptyModel, oView = this.getView(), oRuleData;
 			oEmptyModel = new JSONModel();
 			oEmptyModel.attachRequestCompleted(function () {
 				oRuleData = oView.getModel("ruleModel").getData();
-				if(oRuleData.types.length==0){
+				if (oRuleData.types.length == 0) {
 					oRuleData.types.push(oEmptyModel.getData());
-				}else{
+				} else {
 					oRuleData.types.unshift(oEmptyModel.getData());
 				}
-				
+
 				oView.getModel("ruleModel").setData(oRuleData);
 			});
 			oEmptyModel.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/EmptyPrecondition.json"));

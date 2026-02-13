@@ -103,7 +103,7 @@
 									<m:ToolbarSpacer />
 					
 									<!-- @ui5ignore -->
-									<m:OverflowToolbarButton icon="sap-icon://add" press="onPressAddExposeAttribute"  text="Add" tooltip="Add Attribute" />
+									<m:OverflowToolbarButton icon="sap-icon://add" press="onPressAddExposeAttribute"  text="Add" tooltip="Add Attribute" class="plDacRuleButtonFontSize" />
 								</m:OverflowToolbar>
 							  </m:headerToolbar>
                         <m:columns>
