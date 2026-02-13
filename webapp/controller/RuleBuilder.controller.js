@@ -88,6 +88,9 @@ sap.ui.define([
 				AttrErrorMessage: "",
 				DisplayRuleBtnIcon: "",
 				DisplayRuleBtnText: "",
+				bVisibleAddPreBlock: false,
+				bVisibleAddRuleBlock: false,
+				bVisibleAddCondition: false,
 				Data: {
 					Policy: "",
 					PolicyToken: "Policy test(POl_TEST)",
@@ -104,6 +107,11 @@ sap.ui.define([
 				}
 
 			});
+			var oRuleModel = new JSONModel({ types: [] });
+			oRuleModel.attachPropertyChange(function(oEvent) {
+				alert('hi');
+			});
+			oView.setModel(oRuleModel, "ruleModel");
 			this._sPolicyName = oEvent.getParameter("arguments").PolicyName;
 			oView.setModel(oModel, "viewModel");
 			this.getView().setModel(new JSONModel({ types: [] }), "ruleModel");
@@ -133,7 +141,7 @@ sap.ui.define([
 						type: "Reject",
 						tooltip: "Delete Entry",
 						press: this._onDeleteExposeAttributeInlineButtonPress.bind(this)
-					})
+					}).addStyleClass("plDacRuleButtonFontSize")
 				]
 			});
 			var oPolicy = new Filter("Policy", FilterOperator.EQ, this._sPolicyName);
@@ -196,7 +204,7 @@ sap.ui.define([
 						oViewModel.setProperty("/DisplayRuleBtnIcon", "sap-icon://add");
 						oViewModel.setProperty("/DisplayRuleBtnText", "Add Rule");
 						oViewModel.setProperty("/ShowNoRecordFound", true);
-						oView.setModel(new JSONModel({ types: [] }), "ruleModel");
+						oView.getModel("ruleModel").setData({types:[]});
 						this._loadReadOnlyPolicyRuleFragment();
 					}
 
@@ -220,6 +228,7 @@ sap.ui.define([
 
 			oSubSection.removeAllBlocks();
 			aTypes = oView.getModel("ruleModel").getData().types;
+			aTypes = aTypes?aTypes:[];
 			oSubSection.addBlock(new sap.m.VBox({ height: "300px" }));
 			oSubSection.addBlock(RuleModelHandler.createDiplayRuleReadOnly(aTypes, oView));
 
@@ -304,7 +313,7 @@ sap.ui.define([
 					if (sSearchValue) {
 						var oFilter = new sap.ui.model.Filter("AttributeId", sap.ui.model.FilterOperator.Contains, sSearchValue.toUpperCase());
 						that._oVHDialogAttr.getTable().getBinding("rows").filter([oFilter]);
-					}else{
+					} else {
 						that._oVHDialogAttr.getTable().getBinding("rows").filter([]);
 					}
 
@@ -321,7 +330,7 @@ sap.ui.define([
 						if (sSearchValue) {
 							var oFilter = new sap.ui.model.Filter("AttributeId", sap.ui.model.FilterOperator.Contains, sSearchValue.toUpperCase());
 							that._oVHDialogAttr.getTable().getBinding("rows").filter([oFilter]);
-						}else{
+						} else {
 							that._oVHDialogAttr.getTable().getBinding("rows").filter([]);
 						}
 
@@ -708,7 +717,7 @@ sap.ui.define([
 		 * @returns {void}
 		 */
 		onExponseAttributeVHRequested: function () {
-			var oView = this.getView(), oColAttrName,oFilterBar,
+			var oView = this.getView(), oColAttrName, oFilterBar,
 				oColAttrDesc,
 				that = this;
 			oFilterBar = new sap.ui.comp.filterbar.FilterBar({
@@ -720,7 +729,7 @@ sap.ui.define([
 					if (sSearchValue) {
 						var oFilter = new sap.ui.model.Filter("AttributeId", sap.ui.model.FilterOperator.Contains, sSearchValue.toUpperCase());
 						that._oVHDialogAttribute.getTable().getBinding("rows").filter([oFilter]);
-					}else{
+					} else {
 						that._oVHDialogAttribute.getTable().getBinding("rows").filter([]);
 					}
 
@@ -737,7 +746,7 @@ sap.ui.define([
 						if (sSearchValue) {
 							var oFilter = new sap.ui.model.Filter("AttributeId", sap.ui.model.FilterOperator.Contains, sSearchValue.toUpperCase());
 							that._oVHDialogAttribute.getTable().getBinding("rows").filter([oFilter]);
-						}else{
+						} else {
 							that._oVHDialogAttribute.getTable().getBinding("rows").filter([]);
 						}
 					}
@@ -1329,6 +1338,10 @@ sap.ui.define([
 				oEmptyRuleModel, oEmptyPrecondition, oEmptyRule;
 
 			//	oView.byId("saveRuleBtn").setVisible(true);
+			oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock", true);
+			oView.getModel("viewModel").setProperty("/bVisibleAddCondition", true);
+
+
 			if (oRuleData.types.length == 0) {
 				oEmptyRuleModel = new JSONModel();
 				oEmptyRuleModel.attachRequestCompleted(function () {
@@ -1338,14 +1351,14 @@ sap.ui.define([
 				oEmptyRuleModel.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/EmptyRuleModel.json"));
 
 			}
-			if (oRuleData.types[0] && oRuleData.types[0].RuleType != "Precondition") {
-				oEmptyPrecondition = new JSONModel();
-				oEmptyPrecondition.attachRequestCompleted(function () {
-					oRuleData.types.unshift(oEmptyPrecondition.getData());
-					oView.getModel("ruleModel").setData(oRuleData);
-				});
-				oEmptyPrecondition.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/EmptyPrecondition.json"));
-			}
+			// if (oRuleData.types[0] && oRuleData.types[0].RuleType != "Precondition") {
+			// 	oEmptyPrecondition = new JSONModel();
+			// 	oEmptyPrecondition.attachRequestCompleted(function () {
+			// 		oRuleData.types.unshift(oEmptyPrecondition.getData());
+			// 		oView.getModel("ruleModel").setData(oRuleData);
+			// 	});
+			// 	oEmptyPrecondition.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/EmptyPrecondition.json"));
+			// }
 			if (oRuleData.types.length == 1 && oRuleData.types[0].RuleType == "Precondition") {
 				oEmptyRule = new JSONModel();
 				oEmptyRule.attachRequestCompleted(function () {
@@ -1374,6 +1387,31 @@ sap.ui.define([
 				oSubSection.removeAllBlocks();
 				oSubSection.addBlock(this._oEditRules);
 			}
+		},
+		onPressAddRuleBlockBtn: function () {
+			var oEmptyRuleModel, oView = this.getView(),oRuleData;
+			oEmptyRuleModel = new JSONModel();
+			oEmptyRuleModel.attachRequestCompleted(function () {
+				oRuleData = oView.getModel("ruleModel").getData();
+				oRuleData.types.push(oEmptyRuleModel.getData());
+				oView.getModel("ruleModel").setData(oRuleData);
+			});
+			oEmptyRuleModel.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/EmptyRule.json"));
+		},
+		onPressAddPreConditionBlockBtn:function(){
+			var oEmptyModel, oView = this.getView(),oRuleData;
+			oEmptyModel = new JSONModel();
+			oEmptyModel.attachRequestCompleted(function () {
+				oRuleData = oView.getModel("ruleModel").getData();
+				if(oRuleData.types.length==0){
+					oRuleData.types.push(oEmptyModel.getData());
+				}else{
+					oRuleData.types.unshift(oEmptyModel.getData());
+				}
+				
+				oView.getModel("ruleModel").setData(oRuleData);
+			});
+			oEmptyModel.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/EmptyPrecondition.json"));
 		},
 		/**
 		 * Handles the save action for a policy rule.

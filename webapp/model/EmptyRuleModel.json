@@ -1,47 +1,14 @@
 {
     "types": [
-        {
-            "RuleType": "Precondition",
-            "Condition": [
-                {
-                    "CType": "IF",
-                    "RuleType": "Precondition",
-                    "CTypeID": "P01",
-                    "Rules": [
-                        {
-                            "ContitionType": "",
-                            "Attribute": "",
-                            "AttributeDesc": "",
-                            "Operator": "=",
-                            "Value": "",
-                            "ValueDesc": "",
-                            "Rows": 1,
-                            "CTypeID": "P01",
-                            "RuleType": "Precondition",
-                            "CondId": "P01",
-                            "ValueRange": {
-                                "Operator": "",
-                                "Value": ""
-                            }
-                        }
-                    ]
-                },
-                {
-                    "CType": "END IF",
-                    "CTypeID": 20,
-                    "RuleType": "Precondition",
-                    "Rules": []
-                }
-            ]
-        },
+        
         {
             "RuleType": "Rules",
-            "CTypeID": "001",
+            "CTypeID": 0,
             "Condition": [
                 {
                     "CType": "IF",
                     "RuleType": "Rules",
-                    "CTypeID": "001",
+                    "CTypeID": 0,
                     "Rules": [
                         {
                             "ContitionType": "",
@@ -51,21 +18,15 @@
                             "Value": "",
                             "ValueDesc": "",
                             "Rows": 1,
-                            "CTypeID": "001",
+                            "CTypeID": 0,
                             "RuleType": "Rules",
-                            "CondId": "001",
+                            "CondId": 0,
                             "ValueRange": {
                                 "Operator": "",
                                 "Value": ""
                             }
                         }
                     ]
-                },
-                {
-                    "CType": "END IF",
-                    "CTypeID": 40,
-                    "RuleType": "Rules",
-                    "Rules": []
                 }
             ]
         }

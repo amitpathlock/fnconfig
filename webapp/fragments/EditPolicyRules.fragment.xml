@@ -9,8 +9,13 @@
 		<OverflowToolbar class="plDacRuleTopToolbar">
 				<ToolbarSpacer/>
 				<!-- @ui5ignore -->
-				<Button icon="sap-icon://add" class="plDacRuleTopButton" press="onPressAddConditionBtn"  text="Add Condition" tooltip="Save Rule">
-				<customData>
+				<Button icon="sap-icon://add" visible="{viewModel>/bVisibleAddPreBlock}" class="plDacRuleTopButton" press="onPressAddPreConditionBlockBtn"  text="Pre-Condition" tooltip="Add Pre-Condition"/>
+				
+				<!-- @ui5ignore -->
+				<Button icon="sap-icon://add" visible="{viewModel>/bVisibleAddRuleBlock}" class="plDacRuleTopButton" press="onPressAddRuleBlockBtn"  text="Rule" tooltip="Add Rule"/>
+				<!-- @ui5ignore -->
+				<Button icon="sap-icon://add" visible="{viewModel>/bVisibleAddCondition}" class="plDacRuleTopButton" press="onPressAddConditionBtn"  text="Condition" tooltip="Save Rule">
+					<customData>
 							<core:CustomData key="data" value="{ruleModel>}"/>
 						</customData>
 				</Button>

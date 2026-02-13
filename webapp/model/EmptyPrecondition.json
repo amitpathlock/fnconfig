@@ -23,12 +23,6 @@
                     }
                 }
             ]
-        },
-        {
-            "CType": "END IF",
-            "CTypeID": 20,
-            "RuleType": "Precondition",
-            "Rules": []
         }
     ]
 }
