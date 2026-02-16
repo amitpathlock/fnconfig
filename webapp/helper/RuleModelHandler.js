@@ -193,7 +193,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                         }
                         sMergeValue += "<span style=\"margin-right:12px;\">" + aValueRange[iValueRange].Lower + "</span >AND<span style=\"margin-left:12px;margin-right:0;\">" + aValueRange[iValueRange].Upper + "</span>";
                     }
-                    sMergeValue= this._mergeValueRangeAndValueContition(oRule.Values,oRule,sMergeValue);
+                    sMergeValue = this._mergeValueRangeAndValueContition(oRule.Values, oRule, sMergeValue);
                 } else {
                     aValueRange = oRule.Values;
                     //var bComman = false;
@@ -540,13 +540,16 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                         oValue["ValueDesc"] = sValue;
                         oValue["Values"] = lArrValue;
                         oValue["ValueRange"] = [];
-                        if (lArrValueR.length > 0 && sValue=="") {
-                            for (i = 0; i < 2; i++) {
-                                if (sValue != "") {
-                                    sValue += " to ";
+                        if (lArrValueR.length > 0) {
+                            if (sValue == "") {
+                                for (i = 0; i < 2; i++) {
+                                    if (sValue != "") {
+                                        sValue += " to ";
+                                    }
+                                    sValue += lArrValueR[i].Value;
                                 }
-                                sValue += lArrValueR[i].Value;
                             }
+
                             oValue["ValueRange"] = this._readRuleValueRangeValues(lArrValueR, oValue);
                             oValue["ValueDesc"] = sValue;
                         }
