@@ -7,7 +7,7 @@
    <Dialog showHeader="false" contentWidth="640px" contentHeight="580px" beforeOpen="onBeforeOpenDialog">   
         <content>
         <!-- @ui5ignore -->
-          <cus:PlDacSectionLayout 
+          <cus:PlDacSectionLayout  addRowInSingleValue="onAddRowInSingleValue" addRowInValueRanges="onAddRowInValueRanges"
           >
               <cus:sections>
                
@@ -17,7 +17,7 @@
                     >
                         
                   
-                     <Table items="{SingleValues>/}"  customData:title="Single Values" customData:icon="sap-icon://list" >
+                     <Table items="{SingleValues>/}" sticky="HeaderToolbar,InfoToolbar,ColumnHeaders"  customData:title="Single Values" customData:icon="sap-icon://list" >
                         <columns>
                          <Column 	  demandPopin="true">
                                 <Text text="Selection Option" />
@@ -45,7 +45,7 @@
                       </VBox>
                     <!-- Ranges Selection Table-->
                      <VBox>
-                     <Table items="{Ranges>/}"  customData:title="Ranges" customData:icon="sap-icon://filter" >
+                     <Table items="{Ranges>/}"  customData:title="Ranges" customData:icon="sap-icon://filter" sticky="HeaderToolbar,InfoToolbar,ColumnHeaders" >
                         <columns>
                          <Column 	  demandPopin="true">
                                 <Text text="Selection Option" />

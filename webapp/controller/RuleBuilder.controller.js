@@ -1191,7 +1191,14 @@ sap.ui.define([
 		 * @returns {void}
 		 */
 		onPressAddRowInValues: function () {
-			this._oDialogSelection.getContent()[0].addRowInValues();
+			this._oDialogSelection.getContent()[0].fireAddRowInSingleValue();
+		},
+		onAddRowInSingleValue: function (oEvent) {
+			var oModel = oEvent.getSource().getModel("SingleValues");
+			var aData = oModel.getData();
+			aData.push({ Operator: " ", value: "" });
+			oModel.setData(aData);
+
 		},
 
 		/**
@@ -1207,7 +1214,14 @@ sap.ui.define([
 		 * @returns {void}
 		 */
 		onPressAddRowInRanges: function () {
-			this._oDialogSelection.getContent()[0].addRowInRanges();
+			this._oDialogSelection.getContent()[0].fireAddRowInValueRanges();
+		},
+		onAddRowInValueRanges: function (oEvent) {
+			var oModel = oEvent.getSource().getModel("Ranges");
+			var oData = oModel.getData();
+			oData.push({ Operator: " ", Lower: "", Upper: "" });
+			oModel.setData(oData);
+
 		},
 
 		/**
@@ -1333,24 +1347,24 @@ sap.ui.define([
 		onPressEditRuleBtn: function () {
 			var oView = this.getView(), oSubSection = oView.byId("idRuleSubSectionBlock"),
 				oRuleData = oView.getModel("ruleModel").getData(),
-				oEmptyRuleModel, aTypes,iType, oEmptyRule,bPreCondition=false,bRules=false;
+				oEmptyRuleModel, aTypes, iType, oEmptyRule, bPreCondition = false, bRules = false;
 
 			oView.getModel("viewModel").setProperty("/bVisibleAddCondition", true);
 			aTypes = oView.getModel("ruleModel").getData().types;
-			for(iType=0;iType<aTypes.length;iType++){
-				if(aTypes[iType].RuleType=="Precondition"){
+			for (iType = 0; iType < aTypes.length; iType++) {
+				if (aTypes[iType].RuleType == "Precondition") {
 					oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock", false);
-					bPreCondition=true;
+					bPreCondition = true;
 				}
-				if(aTypes[iType].RuleType=="Rules"){
+				if (aTypes[iType].RuleType == "Rules") {
 					oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", false);
-					bRules=true
+					bRules = true
 				}
 			}
-			if(!bPreCondition){
+			if (!bPreCondition) {
 				oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock", true);
 			}
-			if(!bRules){
+			if (!bRules) {
 				oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", true);
 				oView.getModel("viewModel").setProperty("/bVisibleAddCondition", false);
 			}
@@ -1408,8 +1422,8 @@ sap.ui.define([
 				oRuleData = oView.getModel("ruleModel").getData();
 				oRuleData.types.push(oEmptyRuleModel.getData());
 				oView.getModel("ruleModel").setData(oRuleData);
-				oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock",false);
-                oView.getModel("viewModel").setProperty("/bVisibleAddCondition",true);
+				oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", false);
+				oView.getModel("viewModel").setProperty("/bVisibleAddCondition", true);
 			});
 			oEmptyRuleModel.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/EmptyRule.json"));
 		},
@@ -1423,7 +1437,7 @@ sap.ui.define([
 				} else {
 					oRuleData.types.unshift(oEmptyModel.getData());
 				}
-				oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock",false);
+				oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock", false);
 				oView.getModel("ruleModel").setData(oRuleData);
 			});
 			oEmptyModel.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/EmptyPrecondition.json"));

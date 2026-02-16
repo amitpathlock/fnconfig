@@ -540,7 +540,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                         oValue["ValueDesc"] = sValue;
                         oValue["Values"] = lArrValue;
                         oValue["ValueRange"] = [];
-                        if (lArrValueR.length > 0) {
+                        if (lArrValueR.length > 0 && sValue=="") {
                             for (i = 0; i < 2; i++) {
                                 if (sValue != "") {
                                     sValue += " to ";
