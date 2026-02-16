@@ -30,10 +30,10 @@ sap.ui.define([
                 onSelectSection: {
                     enablePreventDefault: true
                 },
-                addRowInSingleValue:{
+                addRowInSingleValue: {
                     enablePreventDefault: true
                 },
-                addRowInValueRanges:{
+                addRowInValueRanges: {
                     enablePreventDefault: true
                 }
             }
@@ -82,29 +82,25 @@ sap.ui.define([
                     oRm.close("li");
 
                 });
-
                 oRm.close("ul");
 
                 // ---------- CONTENT ----------
                 aSections.forEach(function (oSection, iIndex) {
-
                     oRm.openStart("div")
                         .class("plDacSectionItem")
                         .openEnd();
-
                     if (iIndex === 2) {
                         var oItem = oSection.getItems()[0];
                         oItem.addStyleClass("plDacDialogTable");
                         oItem.setAlternateRowColors(true);
                         oItem.setMode("SingleSelectLeft");
                     }
-
                     oRm.renderControl(oSection);
                     oRm.close("div");
                 });
             }
         },
-      
+
         _handleOnSectionClick: function (oEvent) {
             var $target = $(oEvent.target);
             var iIndex = parseInt($target.attr("data-key"), 10);
@@ -131,7 +127,7 @@ sap.ui.define([
 
         },
         onAfterRendering: function () {
-            var oParent,aSections,aContents,oDom = this.getParent().getDomRef();
+            var oParent, aSections, aContents, oDom = this.getParent().getDomRef();
             if (!oDom) return; // ensure the control is rendered
 
             // Grab all sections (navigation headers) and content divs
@@ -176,12 +172,12 @@ sap.ui.define([
         },
         _applyInitialState: function () {
 
-            var oParent = this.getParent();
-            var oSettingData = oParent.getModel("setting").getData();
-            //  var $content = this.$().find(".plDacSectionItem");
-            var $sections = this.$().find(".plDacSection");
+            var $sections, iIndex, oSettingData, aContents, oParent = this.getParent(), oDom = oParent.getDomRef();
+            oSettingData = oParent.getModel("setting").getData();
+            aContents = oDom.querySelectorAll("div.plDacSectionItem");
+            $sections = this.$().find(".plDacSection");
 
-            var iIndex = 0;
+            iIndex = 0;
 
             if (oSettingData.Operator === "BT") {
                 iIndex = 1;
@@ -195,12 +191,9 @@ sap.ui.define([
                     iIndex = 3;
                 }
             }
-            $(".plDacSectionItem").each(function (i) {
-                if (i == iIndex) {
-                    $(this).css('display', 'block');
-                } else {
-                    $(this).css('display', 'none');
-                }
+            // Hide all content divs except the idx==iIndex
+            aContents.forEach(function (el, idx) {
+                el.style.display = idx === iIndex ? "block" : "none";
             });
 
             $sections.removeClass("plDacSectionSelected")
