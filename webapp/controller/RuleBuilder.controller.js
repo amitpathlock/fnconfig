@@ -83,7 +83,7 @@ sap.ui.define([
 				VisibleOK: true,
 				ShowNoRecordFound: false,
 				Title: "Expose Attribute",
-				Icon: "/assets/expose-attribute.svg",
+				Icon: jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/assets/expose-attribute.svg"),
 				AttrErrorState: "None",
 				AttrErrorMessage: "",
 				DisplayRuleBtnIcon: "",

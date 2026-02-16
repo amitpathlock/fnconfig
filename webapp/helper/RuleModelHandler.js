@@ -183,8 +183,9 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @returns {string} A formatted string representation of the rule values.
          */
             _mergeValues: function (oRule) {
-                var aValueRange, iValueRange, sMergeValue = "", aValueRangeU, iValueRangeU;
+                var aValueRange, iValueRange, bComman = false, sMergeValue = "", aValueRangeU, iValueRangeU;
                 if (oRule.Operator == "BT") {
+
                     aValueRange = oRule.ValueRange;
                     for (iValueRange = 0; iValueRange < aValueRange.length; iValueRange++) {
                         if (iValueRange > 0) {
@@ -192,9 +193,10 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                         }
                         sMergeValue += "<span style=\"margin-right:12px;\">" + aValueRange[iValueRange].Lower + "</span >AND<span style=\"margin-left:12px;margin-right:0;\">" + aValueRange[iValueRange].Upper + "</span>";
                     }
+                    sMergeValue= this._mergeValueRangeAndValueContition(oRule.Values,oRule,sMergeValue);
                 } else {
                     aValueRange = oRule.Values;
-                    var bComman = false;
+                    //var bComman = false;
                     aValueRangeU = Array.from(new Map(oRule.Values.map(item => [item.Operator, item])).values());
                     for (iValueRangeU = 0; iValueRangeU < aValueRangeU.length; iValueRangeU++) {
                         if (iValueRangeU == 0) {
@@ -226,7 +228,41 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                 }
                 return sMergeValue;
             },
+            _mergeValueRangeAndValueContition: function (aValueRange, oRule, sMergeValue) {
+                var bComman = false, iValueRangeU, aValueRangeU, iValueRange; aValueRange = oRule.Values;
+                if (aValueRange && aValueRange.length > 0) {
+                    sMergeValue += ", "
+                    aValueRangeU = Array.from(new Map(oRule.Values.map(item => [item.Operator, item])).values());
+                    for (iValueRangeU = 0; iValueRangeU < aValueRangeU.length; iValueRangeU++) {
+                        if (iValueRangeU == 0) {
+                            sMergeValue += "&ensp;&ensp;" + aValueRangeU[iValueRangeU].Operator + "&ensp;&ensp;";
+                            for (iValueRange = 0; iValueRange < aValueRange.length; iValueRange++) {
+                                if (aValueRange[iValueRangeU].Operator == aValueRange[iValueRange].Operator) {
+                                    if (bComman) {
+                                        sMergeValue += ",&ensp;&ensp;";
+                                    }
+                                    sMergeValue += aValueRange[iValueRange].Value;
+                                    bComman = true;
+                                }
+                            }
+                        } else {
+                            sMergeValue += "<span style=\"margin-left:1rem;\"><b>" + aValueRangeU[iValueRangeU].Operator + "</b></span>";
+                            bComman = false;
+                            for (iValueRange = 0; iValueRange < aValueRange.length; iValueRange++) {
+                                if (aValueRange[iValueRangeU].Operator == aValueRange[iValueRange].Operator) {
+                                    if (bComman) {
+                                        sMergeValue += ",&ensp;&ensp;";
+                                    }
+                                    sMergeValue += aValueRange[iValueRange].Value;
+                                    bComman = true;
+                                }
 
+                            }
+                        }
+                    }
+                }
+                return sMergeValue;
+            },
             /**
          * Ensures rule object has valid arrays for ValueRange and Values.
          * It also parses `ValueDesc` to fill the arrays based on operator type.

@@ -34,7 +34,7 @@ sap.ui.define([
         },
         init: function () {
             var oModelOperator = new JSONModel();
-            var sPathOperator = jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/Operators.json");
+            var sPathOperator = sap.ui.require.toUrl("pl.dac.apps.fnconfig/model/Operators.json");
             oModelOperator.loadData(sPathOperator);
             this.setModel(oModelOperator, "Operators");
         },
@@ -164,7 +164,7 @@ sap.ui.define([
                     }
                 }
                 var oModelRanges = new JSONModel();
-                var sPathRanges = jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/Ranges.json");
+                var sPathRanges = sap.ui.require.toUrl("pl.dac.apps.fnconfig/model/Ranges.json");
                 oModelRanges.loadData(sPathRanges);
                 this.setModel(oModelRanges, "Ranges");
             }
