@@ -235,7 +235,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     aValueRangeU = Array.from(new Map(oRule.Values.map(item => [item.Operator, item])).values());
                     for (iValueRangeU = 0; iValueRangeU < aValueRangeU.length; iValueRangeU++) {
                         if (iValueRangeU == 0) {
-                            sMergeValue += "&ensp;&ensp;" + aValueRangeU[iValueRangeU].Operator + "&ensp;&ensp;";
+                            sMergeValue += "&ensp;&ensp;<b>" + aValueRangeU[iValueRangeU].Operator + "</b>&ensp;&ensp;";
                             for (iValueRange = 0; iValueRange < aValueRange.length; iValueRange++) {
                                 if (aValueRange[iValueRangeU].Operator == aValueRange[iValueRange].Operator) {
                                     if (bComman) {
@@ -329,7 +329,9 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                         if (aValueRanges[iValueRanges].Lower.trim() != "" && aValueRanges[iValueRanges].Upper.trim() != "") {
                             aValueRanges[iValueRanges].Operator = "BT";
                             aValues.push(aValueRanges[iValueRanges]);
+                        
                         }
+                       
                     }
                     if (aValues.length > 0) {
                         sValuesRanges = aValues[0].Lower + " to " + aValues[0].Upper;

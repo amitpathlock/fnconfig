@@ -1466,6 +1466,7 @@ sap.ui.define([
 			var oView = this.getView(), oDataModel = oView.getModel(),
 				oRuleData = oView.getModel("ruleModel").getData(), oPayload;
 			oPayload = RuleModelHandler.prepareRuleCreatePayload(oView, oRuleData.types);
+			
 			oPayload.Policy = this._sPolicyName;
 			oDataModel.create("/PolRuleSet", oPayload, {
 				success: function () {
