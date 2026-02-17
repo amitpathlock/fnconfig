@@ -57,10 +57,6 @@ sap.ui.define([
 			this._oRouter = this.getOwnerComponent().getRouter();
 			this._oRouter.getRoute("PolicyRules").attachPatternMatched(this._onRouteMatched, this);
 		},
-		// onSectionSelected: function (oEvent) {
-		// 	const iIndex = oEvent.getParameter("index");
-		// 	this.getModel("viewModel").setProperty("/VisibleOK", iIndex < 2);
-		// },
 		/**
 		 * Handles the route match event for "PolicyRules".
 		 *
@@ -1176,23 +1172,41 @@ sap.ui.define([
 				// Handle keypress event
 			}
 		},
-
 		/**
-		 * Adds a new row to the "Values" table inside the selection dialog.
+		 * Event handler triggered when the user presses the "Add Row" button
+		 * in the Values dialog.
 		 *
-		 * This handler is triggered when the user clicks the "Add" button in the
-		 * selection dialog for value-based conditions. It delegates the row insertion
-		 * logic to the dialog's internal controller by calling its `addRowInValues`
-		 * method.
+		 * This method delegates the action to the first content control
+		 * of the selection dialog by firing the custom
+		 * `addRowInSingleValue` event.
 		 *
-		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
 		 * @public
 		 * @function onPressAddRowInValues
+		 *
 		 * @returns {void}
 		 */
 		onPressAddRowInValues: function () {
 			this._oDialogSelection.getContent()[0].fireAddRowInSingleValue();
 		},
+
+		/**
+		 * Event handler for adding a new single value row.
+		 *
+		 * This method retrieves the "SingleValues" model from the event source,
+		 * appends a new empty value object to the model data array,
+		 * and updates the model to reflect the changes.
+		 *
+		 * The new row contains:
+		 *  - Operator: initialized with a blank space
+		 *  - value: initialized as an empty string
+		 *
+		 * @public
+		 * @function onAddRowInSingleValue
+		 *
+		 * @param {sap.ui.base.Event} oEvent - The event object triggered by
+		 *                                      `addRowInSingleValue`.
+		 * @returns {void}
+		 */
 		onAddRowInSingleValue: function (oEvent) {
 			var oModel = oEvent.getSource().getModel("SingleValues");
 			var aData = oModel.getData();
@@ -1202,20 +1216,41 @@ sap.ui.define([
 		},
 
 		/**
-		 * Adds a new row to the "Ranges" table inside the selection dialog.
+		 * Event handler triggered when the user presses the "Add Row"
+		 * button in the Value Ranges section of the dialog.
 		 *
-		 * This method is called when the user clicks the "Add Range" button in the
-		 * selection dialog. It delegates the actual row creation to the dialog's internal
-		 * controller by calling its `addRowInRanges` method.
+		 * This method delegates the action by firing the custom
+		 * `addRowInValueRanges` event on the first content control
+		 * of the selection dialog.
 		 *
-		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
 		 * @public
 		 * @function onPressAddRowInRanges
+		 *
 		 * @returns {void}
 		 */
 		onPressAddRowInRanges: function () {
 			this._oDialogSelection.getContent()[0].fireAddRowInValueRanges();
 		},
+
+		/**
+		 * Event handler for adding a new value range row.
+		 *
+		 * This method retrieves the "Ranges" model from the event source,
+		 * appends a new empty range object to the model data array,
+		 * and updates the model to reflect the changes.
+		 *
+		 * The new row contains:
+		 *  - Operator: initialized with a blank space
+		 *  - Lower: initialized as an empty string (lower boundary)
+		 *  - Upper: initialized as an empty string (upper boundary)
+		 *
+		 * @public
+		 * @function onAddRowInValueRanges
+		 *
+		 * @param {sap.ui.base.Event} oEvent - The event object triggered by
+		 *                                      `addRowInValueRanges`.
+		 * @returns {void}
+		 */
 		onAddRowInValueRanges: function (oEvent) {
 			var oModel = oEvent.getSource().getModel("Ranges");
 			var oData = oModel.getData();
@@ -1365,7 +1400,7 @@ sap.ui.define([
 				oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock", true);
 			}
 			if (!bRules) {
-				oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", true);
+				//oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", true);
 				oView.getModel("viewModel").setProperty("/bVisibleAddCondition", false);
 			}
 

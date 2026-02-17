@@ -228,6 +228,43 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                 }
                 return sMergeValue;
             },
+            /**
+             * Merges value range conditions from a rule object into a formatted HTML string.
+             *
+             * This function groups rule values by their `Operator` and appends them to the
+             * provided `sMergeValue` string. Each operator is displayed in bold, followed by
+             * its corresponding values separated by commas.
+             *
+             * Duplicate operators are consolidated before rendering. The output format uses
+             * HTML entities and inline styles for spacing and indentation.
+             *
+             * @private
+             * @function _mergeValueRangeAndValueContition
+             *
+             * @param {Array<Object>} aValueRange - (Unused parameter) Originally intended to hold value ranges.
+             * @param {Object} oRule - Rule object containing a `Values` array.
+             * @param {Array<Object>} oRule.Values - Array of value condition objects.
+             * @param {string} oRule.Values[].Operator - The comparison operator (e.g., '=', '>', '<=', etc.).
+             * @param {string|number} oRule.Values[].Value - The value associated with the operator.
+             * @param {string} sMergeValue - Existing formatted string to which the value conditions will be appended.
+             *
+             * @returns {string} Updated HTML-formatted string containing grouped operators and their values.
+             *
+             * @example
+             * const rule = {
+             *   Values: [
+             *     { Operator: "=", Value: "100" },
+             *     { Operator: "=", Value: "200" },
+             *     { Operator: ">", Value: "500" }
+             *   ]
+             * };
+             *
+             * const result = this._mergeValueRangeAndValueContition(null, rule, "");
+             *
+             * // Output (formatted HTML string):
+             * // ",   =   100, 200   >   500"
+             */
+
             _mergeValueRangeAndValueContition: function (aValueRange, oRule, sMergeValue) {
                 var bComman = false, iValueRangeU, aValueRangeU, iValueRange; aValueRange = oRule.Values;
                 if (aValueRange && aValueRange.length > 0) {
@@ -555,12 +592,6 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                             oValue["ValueRange"] = this._readRuleValueRangeValues(lArrValueR, oValue);
                             oValue["ValueDesc"] = sValue;
                         }
-                        // if (({}).hasOwnProperty.call(aResult[iResult].to_ValueRange, "results") && aResult[iResult].to_ValueRange.results.length > 0) {
-
-                        // }
-                        // else {
-                        //     oValue["Values"] = [{ Operator: aResult[iResult].Operator, Value: aResult[iResult].Value }];
-                        // }
                     } else {
                         for (iResult = 0; iResult < aResult.length; iResult++) {
                             oValue["Operator"] = aResult[iResult].Operator;
