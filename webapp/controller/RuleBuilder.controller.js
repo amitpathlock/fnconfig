@@ -1389,6 +1389,7 @@ sap.ui.define([
 			for (iType = 0; iType < aTypes.length; iType++) {
 				if (aTypes[iType].RuleType == "Precondition") {
 					oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock", false);
+					oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", false)
 					bPreCondition = true;
 				}
 				if (aTypes[iType].RuleType == "Rules") {
@@ -1399,10 +1400,10 @@ sap.ui.define([
 			if (!bPreCondition) {
 				oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock", true);
 			}
-			if (!bRules) {
+			//if (!bRules) {
 				//oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", true);
-				oView.getModel("viewModel").setProperty("/bVisibleAddCondition", false);
-			}
+				//oView.getModel("viewModel").setProperty("/bVisibleAddCondition", false);
+			//}
 
 			if (oRuleData.types.length == 0) {
 				oEmptyRuleModel = new JSONModel();

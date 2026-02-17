@@ -39,6 +39,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                         oConditionRules = {
                             CType: "IF",
                             RuleType: "Precondition",
+                            Rows:iResult+1,
                             CTypeID: aResults[iResult].CondId, Rules: []
                         };
                         oConditionRules["Rules"] = this._preparePreconditionRuleBody(aResults[iResult], iResult);
@@ -766,7 +767,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                 } else {
                     aCondition = oRuleData.types[0].Condition;
                     for (i = 0; i < aCondition.length; i++) {
-                        if (aCondition[i].CTypeID == oValue.CTypeID) {
+                        if (aCondition[i].CTypeID == oValue.CondId) {
                             aRules = aCondition[i].Rules;
                             for (j = 0; j < aRules.length; j++) {
                                 if (aRules[j].Rows !== oValue.Rows) {
