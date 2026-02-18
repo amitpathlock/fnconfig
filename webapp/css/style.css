@@ -425,13 +425,13 @@ ul.plDacSections {
 }
 
 .plDacSectionSelected {
-    background: #23c375;
+    background: #0a6ed1;
     color: #fff !important;
 }
 .plDacSectionSelected span{color:#fff;}
 .plDacSectionSelected>a{color:#fff !important;}
 .plDacSections li {
-    border-right: 1px dotted #23c375;
+    border-right: 1px dotted #e5e5e5;
     flex: 1;
 }
 
