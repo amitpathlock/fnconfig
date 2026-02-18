@@ -17,7 +17,7 @@
                     >
                         
                   
-                     <Table items="{SingleValues>/}" sticky="HeaderToolbar,InfoToolbar,ColumnHeaders"  customData:title="Single Values" customData:icon="sap-icon://list" >
+                     <Table items="{SingleValues>/}" sticky="HeaderToolbar,InfoToolbar,ColumnHeaders"  customData:title="Single Values" customData:icon="sap-icon://slim-arrow-down" >
                         <columns>
                          <Column 	  demandPopin="true">
                                 <Text text="Selection Option" />
@@ -45,7 +45,7 @@
                       </VBox>
                     <!-- Ranges Selection Table-->
                      <VBox>
-                     <Table items="{Ranges>/}"  customData:title="Ranges" customData:icon="sap-icon://filter" sticky="HeaderToolbar,InfoToolbar,ColumnHeaders" >
+                     <Table items="{Ranges>/}"  customData:title="Ranges" customData:icon="sap-icon://multi-select" sticky="HeaderToolbar,InfoToolbar,ColumnHeaders" >
                         <columns>
                          <Column 	  demandPopin="true">
                                 <Text text="Selection Option" />
