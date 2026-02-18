@@ -925,6 +925,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                             iLen = aCondition[i].Rules.length;
                             oRule["CTypeID"] = oValue.CTypeID;
                             oRule["Rows"] = iLen + 1;
+                            oRule["CondId"]= oValue.CTypeID;
                             oRule["RuleType"] = "Precondition";
                             if (iLen > 0) {
                                 oRule["ContitionType"] = "AND";
