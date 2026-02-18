@@ -98,6 +98,9 @@
 .sapMBtn:hover .sapUiIcon {
     color: #fff !important;
 }
+.sapMBtn:hover .sapMBtnContent{
+    color: #fff !important;
+}
 
 .sapMBtnGhost {
     border-color: #24b770;
@@ -760,6 +763,7 @@ html .sapUiContainer-Wide .sapUxAPObjectPageHeaderIdentifier {
 .plDacHTMLEditBtn .sapMBtnInner.sapMBtnText .sapMBtnIcon {padding-right: 2px !important;}
 .plDacObectPageSubSectionTitle .sapUxAPObjectPageSectionTitle{font-size: 14px !important;}
 .plDacRuleTopButton .sapMBtnInner.sapMBtnText .sapMBtnIcon {padding-right: 2px !important;}
+.plDacRuleTopButton .sapMBtnIconLeft {padding-right: 2px !important;}
 .plDacRuleButtonFontSize .sapMBtnInner.sapMBtnText .sapMBtnIcon {padding-right: 2px !important;}
 .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPObjectPageHeaderContent {
     padding-left: 3rem;
