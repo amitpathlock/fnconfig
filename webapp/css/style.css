@@ -421,7 +421,8 @@ ul.plDacSections {
     background: #23c375;
     color: #fff !important;
 }
-
+.plDacSectionSelected span{color:#fff;}
+.plDacSectionSelected>a{color:#fff !important;}
 .plDacSections li {
     border-right: 1px dotted #23c375;
     flex: 1;
