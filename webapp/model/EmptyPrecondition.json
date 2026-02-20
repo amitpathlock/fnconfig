@@ -17,8 +17,8 @@
                     "CTypeID": "P01",
                     "RuleType": "Precondition",
                     "CondId": "P01",
-                     "ValueRange": [],
-                    "Values":[]
+                    "ValueRange": [],
+                    "Values": []
                 }
             ]
         }

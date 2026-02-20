@@ -2,12 +2,13 @@
     "types": [
         {
             "RuleType": "Rules",
-            "CTypeID": 0,
+            "CTypeID": 1,
+            "CondId":1,
             "Condition": [
                 {
                     "CType": "IF",
                     "RuleType": "Rules",
-                    "CTypeID": 0,
+                    "CTypeID": 1,
                     "Rules": [
                         {
                             "ContitionType": "",
@@ -17,9 +18,9 @@
                             "Value": "",
                             "ValueDesc": "",
                             "Rows": 1,
-                            "CTypeID": 0,
+                            "CTypeID": 1,
                             "RuleType": "Rules",
-                            "CondId": 0,
+                            "CondId": 1,
                             "ValueRange": [],
                             "Values": []
                         }

@@ -53,20 +53,20 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                                 oConditionRules = {
                                     CType: "IF",
                                     RuleType: "Rules",
-                                    CTypeID: iResult,
+                                    CTypeID: iResult+1,
                                     Rules: []
                                 };
-                                oConditionRules["Rules"] = this._prepareRuleBody(aResults[iResult], iResult);
+                                oConditionRules["Rules"] = this._prepareRuleBody(aResults[iResult], iResult+1);
                                 lArr.push(oConditionRules);
                             }
                         } else {
                             oConditionRules = {
                                 CType: "ELSE IF",
                                 RuleType: "Rules",
-                                CTypeID: iResult,
+                                CTypeID: iResult+1,
                                 Rules: []
                             };
-                            oConditionRules["Rules"] = this._prepareRuleBody(aResults[iResult], iResult,);
+                            oConditionRules["Rules"] = this._prepareRuleBody(aResults[iResult], iResult+1);
                             lArr.push(oConditionRules);
 
                         }
