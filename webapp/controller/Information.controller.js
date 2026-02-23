@@ -1,7 +1,8 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller"
+	"sap/ui/core/mvc/Controller",
+	"sap/base/Log"
 ], function (
-	Controller
+	Controller,Log
 ) {
 	"use strict";
 
@@ -27,15 +28,9 @@ sap.ui.define([
 				if(({}).hasOwnProperty.call(oData,"results") && oData.results.length>0 ){
 						oView.byId("idTextProductVersion").setText(oData.results[0].Vrsio);
 				}
-				// Success handler: process the returned data (oData)
-				
-				// e.g., to bind the result to a model for display
-				// var oJsonModel = new sap.ui.model.json.JSONModel(oData.results);
-				// this.getView().setModel(oJsonModel, "resultsModel");
 			}.bind(this), // Use .bind(this) to access the controller's context
 			error: function(oError) {
-				// Error handler: handle the error (oError)
-				console.error("Function Import failed: ", oError);
+				Log.error("Function import failed:"+ oError);
 			}
 		});
 		}
