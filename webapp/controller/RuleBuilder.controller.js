@@ -46,6 +46,7 @@ sap.ui.define([
 
 	return BaseController.extend("pl.dac.apps.fnconfig.controller.RuleBuilder", {
 		formatter: PLDACFormatter,
+		bRuleDataUpdate: false,
 		/**
 		 * Controller initialization lifecycle hook.
 		 * Initializes the router and attaches the pattern matched event handler for the "PolicyRules" route.
@@ -458,11 +459,11 @@ sap.ui.define([
 				oInput.getParent().getItems()[0].focus();
 				return;
 			}
-			if (oCustomData.Operator.trim() == "") {
-				MessageToast.show("Please choose any operator to continue.");
-				oInput.getParent().getItems()[1].focus();
-				return;
-			}
+			// if (oCustomData.Operator.trim() == "") {
+			// 	MessageToast.show("Please choose any operator to continue.");
+			// 	oInput.getParent().getItems()[1].focus();
+			// 	return;
+			// }
 			if (!Array.isArray(oCustomData.ValueRange) && oCustomData.Value == "" && oCustomData.ValueDesc != "") {
 				oCustomData.ValueRange.Operator = oCustomData.Operator;
 				oCustomData.Value = oCustomData.ValueDesc;
@@ -1383,7 +1384,11 @@ sap.ui.define([
 			var oView = this.getView(), oSubSection = oView.byId("idRuleSubSectionBlock"),
 				oRuleData = oView.getModel("ruleModel").getData(),
 				oEmptyRuleModel, aTypes, iType, oEmptyRule, bPreCondition = false;
-
+			if (({}).hasOwnProperty.call(oRuleData, "types") && oRuleData.types.length > 0) {
+				this.bRuleDataUpdate = true;
+			} else {
+				this.bRuleDataUpdate = false;
+			}
 			oView.getModel("viewModel").setProperty("/bVisibleAddCondition", true);
 			aTypes = oView.getModel("ruleModel").getData().types;
 			for (iType = 0; iType < aTypes.length; iType++) {
@@ -1537,11 +1542,16 @@ sap.ui.define([
 			var oView = this.getView(), oDataModel = oView.getModel(),
 				oRuleData = oView.getModel("ruleModel").getData(), oPayload;
 			oPayload = RuleModelHandler.prepareRuleCreatePayload(oView, oRuleData.types);
-			
+
 			oPayload.Policy = this._sPolicyName;
 			oDataModel.create("/PolRuleSet", oPayload, {
 				success: function () {
-					MessageToast.show("Rule has been update!");
+					if(this.bRuleDataUpdate){
+						MessageToast.show("The rule data has been successfully updated.");
+					}else{
+						MessageToast.show("The rule data has been successfully created.");
+					}
+					
 					this._readPolicyRulesDetails(this.getView().getBindingContext().getObject().PolicyName);
 					this._oEditRules.destroy();
 					this._oEditRules = null;

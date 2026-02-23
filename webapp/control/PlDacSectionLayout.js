@@ -46,9 +46,9 @@ sap.ui.define([
         },
         _loadOperatorsModel: function () {
             var oModel = new JSONModel();
-            var sPath = jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/Operators.json");
+            var sPath = jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/OperatorsSV.json");
             oModel.loadData(sPath);
-            this.setModel(oModel, "Operators");
+            this.setModel(oModel, "OperatorsSV");
         },
         renderer: {
             render: function (oRm, oControl) { /////// Render the control
