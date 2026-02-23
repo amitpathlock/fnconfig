@@ -11,6 +11,10 @@ sap.ui.define([], function () {
         ROUTE_PATH_MASTER:"RouteMaster",
         ROUTE_PATH_FUNCTIONALITY:"Functionality",
         ROUTE_PATH_DATA_ATTRIBUTE:"DataAttributes",
-        ROUTE_PATH_USER_ATTRIBUTE:"UserAttributes"
+        ROUTE_PATH_USER_ATTRIBUTE:"UserAttributes",
+        PRE_CONDITION_CTYPE:"PRECONDITION",
+        PRE_CONDITION_RULE_TYPE:"Precondition"
+
+        
     };
 });

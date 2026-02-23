@@ -3,9 +3,10 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
     "sap/ui/core/HTML",
     "sap/m/Panel",
     "sap/m/Toolbar",
-    "sap/m/Button"
+    "sap/m/Button",
+    "pl/dac/apps/fnconfig/const/PlDacConst"
 ],
-    function (JSONModel, Rule, HTML, Panel, Toolbar, Button) {
+    function (JSONModel, Rule, HTML, Panel, Toolbar, Button,PlDacConst) {
         "use strict";
         /**
      * Rule Utility Library
@@ -31,14 +32,14 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                 var iResult, oCondition, oConditionRules, lRuleTypes = [],
                     lArr = [];
                 for (iResult = 0; iResult < aResults.length; iResult++) {
-                    if (aResults[iResult].CType == "PRECONDITION" && iResult == 0) {
+                    if (aResults[iResult].CType == PlDacConst.PRE_CONDITION_CTYPE && iResult == 0) {
                         oCondition = {
-                            RuleType: "Precondition",
+                            RuleType: PlDacConst.PRE_CONDITION_RULE_TYPE,
                             Condition: []
                         };
                         oConditionRules = {
                             CType: "IF",
-                            RuleType: "Precondition",
+                            RuleType: PlDacConst.PRE_CONDITION_RULE_TYPE,
                             Rows:iResult+1,
                             CTypeID: aResults[iResult].CondId, Rules: []
                         };
@@ -94,7 +95,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                 var iRule, sBtnText, sBtnIcon, iCondition, oContent, sPolicyName, iRuleTypes, oToolbar,
                     oSubSection = oView.byId("idRuleSubSectionBlock"), aPrecondition = null, aRulesCondition = null, sPreConditon = "", sRule = "", aRules;
                 for (iRuleTypes = 0; iRuleTypes < lRuleTypes.length; iRuleTypes++) {
-                    if (lRuleTypes[iRuleTypes].RuleType == "Precondition") {
+                    if (lRuleTypes[iRuleTypes].RuleType ==PlDacConst.PRE_CONDITION_RULE_TYPE) {
                         aPrecondition = lRuleTypes[iRuleTypes].Condition;
                     } else {
                         aRulesCondition = lRuleTypes[iRuleTypes].Condition;
@@ -202,7 +203,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     for (iValueRangeU = 0; iValueRangeU < aValueRangeU.length; iValueRangeU++) {
                         if (iValueRangeU == 0) {
                             for (iValueRange = 0; iValueRange < aValueRange.length; iValueRange++) {
-                                if (aValueRange[iValueRangeU].Operator == aValueRange[iValueRange].Operator) {
+                                if (aValueRangeU[iValueRangeU].Operator == aValueRange[iValueRange].Operator) {
                                     if (bComman) {
                                         sMergeValue += ",&ensp;&ensp;";
                                     }
@@ -215,7 +216,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                             sMergeValue += "<span style=\"margin-left:1rem;\"><b>" + aValueRangeU[iValueRangeU].Operator + "</b></span>";
                             bComman = false;
                             for (iValueRange = 0; iValueRange < aValueRange.length; iValueRange++) {
-                                if (aValueRange[iValueRangeU].Operator == aValueRange[iValueRange].Operator) {
+                                if (aValueRangeU[iValueRangeU].Operator == aValueRange[iValueRange].Operator) {
                                     if (bComman) {
                                         sMergeValue += ",&ensp;&ensp;";
                                     }
@@ -308,7 +309,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @param {Object} oCustomData - Rule object containing Operator and ValueDesc.
          * @returns {void}
          */
-            initialModelValues: function (oCustomData) {
+            loadInitialModelValues: function (oCustomData) {
                 var aValues, iValue;
                 if (!({}).hasOwnProperty.call(oCustomData, "ValueRange")) {
                     oCustomData["ValueRange"] = new Array();
@@ -376,7 +377,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     }
                 }
                 oRuleModel = oView.getModel("ruleModel").getData();
-                if (oData.RuleType == "Precondition") {
+                if (oData.RuleType == PlDacConst.PRE_CONDITION_RULE_TYPE) {
                     aCondition = oRuleModel.types[0].Condition;
                     for (iCondition = 0; iCondition < aCondition.length; iCondition++) {
                         if (aCondition[iCondition].CTypeID === oData.CondId) {
@@ -426,7 +427,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                 oDialog.close();
                 oRuleData = oView.getModel("ruleModel").getData();
 
-                if (oData.RuleType == "Precondition") {
+                if (oData.RuleType == PlDacConst.PRE_CONDITION_RULE_TYPE) {
                     aCondition = oRuleData.types[0].Condition;
                     for (iCondition = 0; iCondition < aCondition.length; iCondition++) {
                         if (aCondition[iCondition].CTypeID == oData.CondId) {
@@ -502,7 +503,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                         oRule["ValueDesc"] = oValue.ValueDesc != "" ? oValue.ValueDesc : oValue.Value;
                         oRule["Rows"] = i + 1;
                         oRule["CTypeID"] = iCondition;
-                        oRule["RuleType"] = "Precondition";
+                        oRule["RuleType"] = PlDacConst.PRE_CONDITION_RULE_TYPE;
                         oRule["CondId"] = lArr[i].CondId;
                         oRule["ValueRange"] = oValue.ValueRange;
                         oRule["Values"] = oValue.Values;
@@ -926,7 +927,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                             oRule["CTypeID"] = oValue.CTypeID;
                             oRule["Rows"] = iLen + 1;
                             oRule["CondId"]= oValue.CTypeID;
-                            oRule["RuleType"] = "Precondition";
+                            oRule["RuleType"] = PlDacConst.PRE_CONDITION_RULE_TYPE;
                             if (iLen > 0) {
                                 oRule["ContitionType"] = "AND";
                                 aCondition[i].Rules.push(oRule);
@@ -953,7 +954,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                 oData = oInput.getCustomData()[0].getValue();
                 oValue = oItem.getBindingContext().getObject();
                 oRuleData = oView.getModel("ruleModel").getData();
-                if (oData.RuleType == "Precondition") {
+                if (oData.RuleType == PlDacConst.PRE_CONDITION_RULE_TYPE) {
                     aCondition = oRuleData.types[0].Condition;
                     for (i = 0; i < aCondition.length; i++) {
                         if (aCondition[i].CTypeID == oData.CTypeID) {
@@ -998,7 +999,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                 oData = oDialog.getModel("condition").getData();
                 oRuleData = oView.getModel("ruleModel").getData();
                 oValue = oToken.getCustomData()[0].getValue();
-                if (oData.RuleType == "Precondition") {
+                if (oData.RuleType == PlDacConst.PRE_CONDITION_RULE_TYPE) {
                     aCondition = oRuleData.types[0].Condition;
                     for (i = 0; i < aCondition.length; i++) {
                         if (aCondition[i].CTypeID == oData.CTypeID) {

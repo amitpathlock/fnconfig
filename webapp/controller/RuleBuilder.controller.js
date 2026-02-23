@@ -492,12 +492,12 @@ sap.ui.define([
 					oUserAttributeTable.addEventDelegate(this._userAttributeTableEventDelegate, this);
 					oListTable = this._oDialogSelection.getContent()[0].getAggregation("sections")[3].getItems()[0];
 					oListTable.addEventDelegate(this._listTableEventDelegate, this);
-					RuleModelHandler.initialModelValues(oCustomData);
+					RuleModelHandler.loadInitialModelValues(oCustomData);
 					RuleModelHandler.loadValueRangeModel(oDialog, oSettingModel, oCustomData);
 					RuleModelHandler.loadSingleValueModel(oDialog, oSettingModel, oCustomData);
 				}.bind(this));
 			} else {
-				RuleModelHandler.initialModelValues(oCustomData);
+				RuleModelHandler.loadInitialModelValues(oCustomData);
 				RuleModelHandler.loadValueRangeModel(this._oDialogSelection, oSettingModel, oCustomData);
 				RuleModelHandler.loadSingleValueModel(this._oDialogSelection, oSettingModel, oCustomData);
 			}
@@ -1382,7 +1382,7 @@ sap.ui.define([
 		onPressEditRuleBtn: function () {
 			var oView = this.getView(), oSubSection = oView.byId("idRuleSubSectionBlock"),
 				oRuleData = oView.getModel("ruleModel").getData(),
-				oEmptyRuleModel, aTypes, iType, oEmptyRule, bPreCondition = false, bRules = false;
+				oEmptyRuleModel, aTypes, iType, oEmptyRule, bPreCondition = false;
 
 			oView.getModel("viewModel").setProperty("/bVisibleAddCondition", true);
 			aTypes = oView.getModel("ruleModel").getData().types;
@@ -1394,34 +1394,18 @@ sap.ui.define([
 				}
 				if (aTypes[iType].RuleType == "Rules") {
 					oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", false);
-					bRules = true
 				}
 			}
 			if (!bPreCondition) {
 				oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock", true);
 			}
-			//if (!bRules) {
-				//oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", true);
-				//oView.getModel("viewModel").setProperty("/bVisibleAddCondition", false);
-			//}
-
 			if (oRuleData.types.length == 0) {
 				oEmptyRuleModel = new JSONModel();
 				oEmptyRuleModel.attachRequestCompleted(function () {
 					oView.getModel("ruleModel").setData(oEmptyRuleModel.getData());
-					//oView.getModel("ruleModel").setData(oRuleData);
 				});
 				oEmptyRuleModel.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/EmptyRuleModel.json"));
-
 			}
-			// if (oRuleData.types[0] && oRuleData.types[0].RuleType != "Precondition") {
-			// 	oEmptyPrecondition = new JSONModel();
-			// 	oEmptyPrecondition.attachRequestCompleted(function () {
-			// 		oRuleData.types.unshift(oEmptyPrecondition.getData());
-			// 		oView.getModel("ruleModel").setData(oRuleData);
-			// 	});
-			// 	oEmptyPrecondition.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/EmptyPrecondition.json"));
-			// }
 			if (oRuleData.types.length == 1 && oRuleData.types[0].RuleType == "Precondition") {
 				oEmptyRule = new JSONModel();
 				oEmptyRule.attachRequestCompleted(function () {
@@ -1434,7 +1418,6 @@ sap.ui.define([
 				this._oEditRules.destroy();
 				this._oEditRules = null;
 			}
-			//oView.getModel("ruleModel").setData(oRuleData);
 			if (!this._oEditRules) {
 				// Load the fragment asynchronously
 				Fragment.load({
