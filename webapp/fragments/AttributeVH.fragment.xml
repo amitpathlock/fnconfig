@@ -9,7 +9,9 @@
 		cancel=".onValueHelpCancelPress"
 		afterClose=".onValueHelpAfterClose"
 		supportRanges="true"
-		key="AttributeName"
+		key="AttributeId"
 		descriptionKey="Description">  
+		<!--@ui5ignore-->
+		
         </ValueHelpDialog>
 </c:FragmentDefinition>

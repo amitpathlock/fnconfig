@@ -15,5 +15,5 @@ export default defineConfig([
     "webapp/localService/*"
   ]),
   { files: ["**/*.{js,mjs,cjs}"], plugins: { js }, extends: ["js/recommended"],
-   languageOptions: { globals: { "sap": true, "$": true ,"jQuery":true,"element":true,"hasher":true} } }
+   languageOptions: { globals: { "sap": true, "$": true ,"jQuery":true,"element":true,"hasher":true,"if":true} } }
 ]);

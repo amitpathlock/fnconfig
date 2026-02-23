@@ -1,7 +1,7 @@
+
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	"pl/dac/apps/fnconfig/controller/BaseController",
 	"sap/ui/model/json/JSONModel",
-	"pl/dac/apps/fnconfig/helper/RuleBuilder",
 	"sap/ui/core/Fragment",
 	"sap/ui/table/Column",
 	"sap/m/Column",
@@ -11,19 +11,65 @@ sap.ui.define([
 	"pl/dac/apps/fnconfig/formatter/PLDACFormatter",
 	"sap/m/MessageToast",
 	"pl/dac/apps/fnconfig/control/Rule",
-	 "sap/base/Log"
+	"sap/base/Log",
+	"sap/m/ObjectIdentifier",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"pl/dac/apps/fnconfig/helper/RuleModelHandler",
+	"sap/m/Token",
+	"pl/dac/apps/fnconfig/const/PlDacConst",
+	"sap/m/MessageBox",
+	"sap/m/OverflowToolbarButton"
 ], function (
-	Controller, JSONModel, RuleBuilder, Fragment, UIColumn, Column, Text, Label, ColumnListItem, PLDACFormatter, MessageToast, 
-	Rule,Log
+	BaseController,
+	JSONModel,
+	Fragment,
+	UIColumn,
+	Column,
+	Text,
+	Label,
+	ColumnListItem,
+	PLDACFormatter,
+	MessageToast,
+	Rule,
+	Log,
+	ObjectIdentifier,
+	Filter,
+	FilterOperator,
+	RuleModelHandler,
+	Token,
+	PlDacConst,
+	MessageBox,
+	OverflowToolbarButton
 ) {
 	"use strict";
 
-	return Controller.extend("pl.dac.apps.fnconfig.controller.RuleBuilder", {
+	return BaseController.extend("pl.dac.apps.fnconfig.controller.RuleBuilder", {
 		formatter: PLDACFormatter,
+		/**
+		 * Controller initialization lifecycle hook.
+		 * Initializes the router and attaches the pattern matched event handler for the "PolicyRules" route.
+		 * 
+		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
+		 * @public
+		 */
 		onInit: function () {
 			this._oRouter = this.getOwnerComponent().getRouter();
 			this._oRouter.getRoute("PolicyRules").attachPatternMatched(this._onRouteMatched, this);
 		},
+		/**
+		 * Handles the route match event for "PolicyRules".
+		 *
+		 * When the route is triggered, this method:
+		 * - Binds the view to the selected policy.
+		 * - Initializes view models for UI state and rule data.
+		 * - Loads operators and policy rule details.
+		 * - Prepares the UI for full screen layout.
+		 * - Binds the exposed attributes table to the selected policy.
+		 *
+		 * @param {sap.ui.base.Event} oEvent - The route matched event.
+		 * @private
+		 */
 		_onRouteMatched: function (oEvent) {
 			var oView = this.getView();
 			var oModel = new JSONModel({
@@ -31,7 +77,22 @@ sap.ui.define([
 				ExitFullScreen: true,
 				ExitColumn: true,
 				VisibleOK: true,
-				ShowNoRecordFound: false
+				ShowNoRecordFound: false,
+				Title: "Expose Attribute",
+				Icon: jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/assets/expose-attribute.svg"),
+				AttrErrorState: "None",
+				AttrErrorMessage: "",
+				DisplayRuleBtnIcon: "",
+				DisplayRuleBtnText: "",
+				bVisibleAddPreBlock: false,
+				bVisibleAddRuleBlock: false,
+				bVisibleAddCondition: false,
+				Data: {
+					Policy: "",
+					PolicyToken: "Policy test(POl_TEST)",
+					AttributeId: "",
+					AttributeToken: ""
+				}
 			});
 			var sPath = this.getView().getModel().createKey("/PolicySet", {
 				Policy: oEvent.getParameter("arguments").PolicyName
@@ -42,395 +103,250 @@ sap.ui.define([
 				}
 
 			});
-			var sPolicyName = oEvent.getParameter("arguments").PolicyName;
+			var oRuleModel = new JSONModel({ types: [] });
+			oView.setModel(oRuleModel, "ruleModel");
+			this._sPolicyName = oEvent.getParameter("arguments").PolicyName;
 			oView.setModel(oModel, "viewModel");
-			oView.byId("editRuleBtn").setVisible(true);
-			oView.byId("saveRuleBtn").setVisible(false);
 			this.getView().setModel(new JSONModel({ types: [] }), "ruleModel");
 			this._loadOperatorModel();
-			this._readPolicyRulesDetails(sPolicyName);
-			this._loadReadOnlyPolicyRuleFragment();
-			var oModelSingleValues = new JSONModel();
-			oModelSingleValues.attachRequestCompleted(function () {
-				oView.getModel("SingleValues").setData(oModelSingleValues.getData());
-			});
-			oModelSingleValues.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/SingleValues.json"));
-			oView.setModel(oModelSingleValues, "SingleValues");
+			this._readPolicyRulesDetails(this._sPolicyName);
+
+			//this.onPressEditRuleBtn();
+			if (this._oDialogSelection && this._oDialogSelection.getContent() && this._oDialogSelection.getContent()[0]) {
+
+				if (oView.getModel("SingleValues")) {
+					oView.getModel("SingleValues").setData([]);
+				}
+				if (oView.getModel("Ranges")) {
+					oView.getModel("Ranges").setData([]);
+				}
+
+			}
+
 			this.handleFullScreen();
+			var oTable = oView.byId("idExposeAttributeTable");
+			var oColumnListItemTemplate = new ColumnListItem({
+				cells: [
+					new ObjectIdentifier({ title: "{AttributeId}" }), // Bind text to the 'firstName' property
+					new Text({ text: "{Description}" }),
+					new OverflowToolbarButton({
+						icon: "sap-icon://delete",
+						type: "Reject",
+						tooltip: "Delete Entry",
+						press: this._onDeleteExposeAttributeInlineButtonPress.bind(this)
+					}).addStyleClass("plDacRuleButtonFontSize")
+				]
+			});
+			var oPolicy = new Filter("Policy", FilterOperator.EQ, this._sPolicyName);
+			var aFilters = [oPolicy]
+			oTable.bindAggregation("items", {
+				path: "/ExposeAttrSet", // The main entity set
+				template: oColumnListItemTemplate,
+				filters: aFilters
+			});
 
 		},
+
+		/**
+		 * Loads operator configuration models from local JSON files.
+		 *
+		 * These models provide the list of available operators
+		 * for values and ranges in rule conditions.
+		 *
+		 * @private
+		 */
 		_loadOperatorModel: function () {
-			var oModelOperator = new JSONModel();
-			var sPathOperator = jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/Operators.json");
+			var sPathOperator, oModelOperator = new JSONModel(), oModelRangeOperator = new JSONModel();
+			sPathOperator = jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/Operators.json");
 			oModelOperator.loadData(sPathOperator);
 			this.getView().setModel(oModelOperator, "Operators");
+
+			sPathOperator = jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/OperatorsRange.json");
+			oModelRangeOperator.loadData(sPathOperator);
+			this.getView().setModel(oModelRangeOperator, "OperatorsRange");
 		},
+		/**
+		 * Reads policy rule details from the backend.
+		 *
+		 * Calls OData to fetch all rules and conditions for the given policy.
+		 * On success:
+		 * - Prepares the rule model using RuleModelHandler
+		 * - Loads the read-only rule view fragment
+		 * On failure:
+		 * - Logs the error and hides the busy indicator.
+		 *
+		 * @param {string} sPolicyName - The policy name to load rules for.
+		 * @private
+		 */
 		_readPolicyRulesDetails: function (sPolicyName) {
-			var oView = this.getView(), that = this,
-				oModel = oView.getModel(),
-				sPath = "/PolicySet('" + sPolicyName + "')";
-			oModel.read(sPath, {
+			var oView = this.getView(), oViewModel = oView.getModel("viewModel"),
+				oDataModel = oView.getModel(),
+				sPath = "/PolRuleSet('" + sPolicyName + "')";
+			oDataModel.read(sPath, {
 				urlParameters: {
-					"$expand": "to_Condition/to_Rule/to_Value" // Expand to_Condition/to_Rule/to_Value
+					"$expand": "to_Condition/to_Rule/to_Value,to_Condition/to_Rule/to_Value/to_ValueRange" // Expand to_Condition/to_Rule/to_Value
 				},
 				success: function (oData) {
 					if (oData.to_Condition.results.length > 0) {
-						oView.getModel("viewModel").setProperty("/ShowNoRecordFound", false);
-						//oView.byId("idNoRecordFindRuleBuilder").setVisible(false);
-						that.loadRuleModel(oData.to_Condition.results);
+						oViewModel.setProperty("/ShowNoRecordFound", false);
+						oViewModel.setProperty("/DisplayRuleBtnIcon", "sap-icon://edit");
+						oViewModel.setProperty("/DisplayRuleBtnText", "Edit Rule");
+						RuleModelHandler.prepareRuleModel(oView, oData.to_Condition.results);
+						this._loadReadOnlyPolicyRuleFragment();
 					} else {
-						oView.getModel("viewModel").setProperty("/ShowNoRecordFound", true);
-						oView.setModel(new JSONModel({ types: [] }), "ruleModel");
+						oViewModel.setProperty("/DisplayRuleBtnIcon", "sap-icon://add");
+						oViewModel.setProperty("/DisplayRuleBtnText", "Add Rule");
+						oViewModel.setProperty("/ShowNoRecordFound", true);
+						oView.getModel("ruleModel").setData({ types: [] });
+						this._loadReadOnlyPolicyRuleFragment();
 					}
 
-				},
+				}.bind(this),
 				error: function (oError) {
-					Log.error("Read failed:"+oError);
+					Log.error("Read failed:" + oError);
 					sap.ui.core.BusyIndicator.hide();
 				}
 			});
 		},
-		loadRuleModel: function (aResults) {
-			var iResult, oCondition, oConditionRules, lRuleTypes = [],
-				lArr = [];
-			for (iResult = 0; iResult < aResults.length; iResult++) {
-				if (aResults[iResult].CType == "PRECONDITION" && iResult == 0) {
-					oCondition = {
-						RuleType: "Precondition",
-						Condition: []
-					};
-					oConditionRules = {
-						CType: "IF",
-						RuleType: "Precondition",
-						CTypeID: aResults[iResult].CondId, Rules: []
-					};
-					oConditionRules["Rules"] = this._buildPrecondtion(aResults[iResult], iResult);
-					oCondition.Condition.push(oConditionRules);
-					oCondition.Condition.push({
-						CType: "END IF",
-						CTypeID: 20,
-						RuleType: "Precondition",
-						Rules: []
-					});
-					lRuleTypes.push(oCondition);
-				} else {
-					if (lArr.length == 0) {
-						if (aResults[iResult].CType == "IF") {
-							oCondition = { RuleType: "Rules", CTypeID: 1, Condition: [] };
-							oConditionRules = {
-								CType: "IF", RuleType: "Rules",
-								CTypeID: iResult,//aResults[iResult].CondId,
-								Rules: []
-							};
-							oConditionRules["Rules"] = this._buildRule(aResults[iResult], iResult);
-							lArr.push(oConditionRules);
-
-						}
-					} else {
-						oConditionRules = {
-							CType: "ELSE IF",
-							RuleType: "Rules",
-							CTypeID: iResult,//aResults[iResult].CondId,
-							Rules: []
-						};
-
-						oConditionRules["Rules"] = this._buildRule(aResults[iResult], iResult, );
-						lArr.push(oConditionRules);
-					}
-				}
-			}//End of for loop
-			if (lArr.length > 0) {
-				lArr.push({
-					CType: "END IF",
-					CTypeID: 20,
-					RuleType: "Rules",
-					Rules: []
-				});
-				oCondition.Condition = lArr;
-				lRuleTypes.push(oCondition);
-			}
-			this.getView().setModel(new JSONModel({ types: lRuleTypes }), "ruleModel");
-		},
+		/**
+		 * Loads the read-only rule display fragment.
+		 *
+		 * Removes any existing blocks in the rule section and adds a
+		 * read-only view generated by RuleModelHandler based on the current rule model.
+		 *
+		 * @private
+		 */
 		_loadReadOnlyPolicyRuleFragment: function () {
-			var oView = this.getView(), oSubSection = oView.byId("idRuleSubSectionBlock");
-			if (!this._oDisplayRules) {
-				// Load the fragment asynchronously
-				Fragment.load({
-					id: this.getView().getId(), // Optional: Assign an ID to the fragment's controls
-					name: "pl.dac.apps.fnconfig.fragments.DisplayPolicyRules", // Path to the fragment file
-					controller: this // Pass the current controller for event handling
-				}).then(function (oDisplayRules) {
-					this._oDisplayRules = oDisplayRules;
-					oSubSection.removeAllBlocks();
-					oSubSection.addBlock(this._oDisplayRules);
-				}.bind(this));
-			} else {
-				oSubSection.removeAllBlocks();
-				oSubSection.addBlock(this._oDisplayRules);
-			}
-		},
-		_buildRule: function (oCondition, iCondition) {
-			var lArr = oCondition.to_Rule.results, i, oRule = new Rule(), aRules = [], oValue;
-			if (lArr.length > 0) {
-				for (i = 0; i < lArr.length; i++) {
-					oValue = this._readConditionValue(lArr[i].to_Value.results);
-					oRule["ContitionType"] = i == 0 ? "" : "AND";
-					oRule["Attribute"] = lArr[i].AttributeId;
-					oRule["AttributeDesc"] = lArr[i].Description;
-					oRule["Operator"] = oValue.Operator;
-					oRule["Value"] = oValue.Value;
-					oRule["ValueDesc"] = oValue.ValueDesc != "" ? oValue.ValueDesc : oValue.Value;
-					oRule["Rows"] = i + 1;
-					oRule["CTypeID"] = iCondition;
-					oRule["RuleType"] = "Rules";
-					oRule["CondId"] = lArr[i].CondId;
-					oRule["ValueRange"] = oValue.ValueRange;
+			var oView = this.getView(), aTypes, oSubSection = oView.byId("idRuleSubSectionBlock");
 
-					aRules.push(oRule);
-				}
-			}
-			return aRules;
-		},
-		_buildPrecondtion: function (oCondition, iCondition) {
-			var lArr = oCondition.to_Rule.results, i, oRule = new Rule(), aRules = [], oValue;
-			if (lArr.length > 0) {
-				for (i = 0; i < lArr.length; i++) {
-					oValue = this._readConditionValue(lArr[i].to_Value.results);
-					oRule["ContitionType"] = i == 0 ? "" : "AND";
-					oRule["Attribute"] = lArr[i].AttributeId;
-					oRule["AttributeDesc"] = lArr[i].Description;
-					oRule["Operator"] = oValue.Operator;
-					oRule["Value"] = oValue.Value;
-					oRule["ValueDesc"] = oValue.ValueDesc != "" ? oValue.ValueDesc : oValue.Value;
-					oRule["Rows"] = i + 1;
-					oRule["CTypeID"] = iCondition;
-					oRule["RuleType"] = "Precondition";
-					oRule["CondId"] = lArr[i].CondId;
-					oRule["ValueRange"] = oValue.ValueRange;
+			oSubSection.removeAllBlocks();
+			aTypes = oView.getModel("ruleModel").getData().types;
+			aTypes = aTypes ? aTypes : [];
+			oSubSection.addBlock(new sap.m.VBox({ height: "300px" }));
+			oSubSection.addBlock(RuleModelHandler.createDiplayRuleReadOnly(aTypes, oView));
 
-					aRules.push(oRule);
-				}
-			}
-			return aRules;
 		},
-		_readConditionValue: function (aResult) {
-			var oValue = {}, iResult;
-			if (aResult.length > 0) {
-				for (iResult = 0; iResult < aResult.length; iResult++) {
-					oValue["Operator"] = aResult[iResult].Operator;
-					oValue["Value"] = aResult[iResult].Value;
-					oValue["ValueDesc"] = aResult[iResult].ValueDesc;
-					if (({}).hasOwnProperty.call(aResult.to_ValueRange, "results")) {
-						oValue["ValueRange"] = [];
-					} else {
-						oValue["ValueRange"] = [{ Operator: aResult[iResult].Operator, Value: aResult[iResult].Value }];
-					}
-				}
-			}
-			return oValue;
-		},
-
-		_reindexCondition: function (aCondition) {
-			var i, j;
-			for (i = 0; i < aCondition.length; i++) {
-				aCondition[i].CTypeID = i + 1;
-				for (j = 0; j < aCondition[i].Rules.length; j++) {
-					aCondition[i].Rules[j].CTypeID = aCondition[i].CTypeID;
-				}
-			}
-			return aCondition;
-		},
+		/**
+		 * Adds a new condition block to the rule.
+		 *
+		 * Delegates the creation logic to RuleModelHandler and passes
+		 * the current view and button source.
+		 *
+		 * @param {sap.ui.base.Event} oEvent - Event triggered by Add Condition button.
+		 * @public
+		 */
 		onPressAddConditionBtn: function (oEvent) {
-			var oBtn = oEvent.getSource();
-			var oValue = oBtn.getCustomData()[0].getValue();
-			var oRuleData = this.getView().getModel("ruleModel").getData();
-			var oRule = new Rule();
-			if (oValue.RuleType == "Rules") {
-				if (oRuleData.types[1].Condition.length == 0) {
-					oRule["RuleType"] = "Rules";
-					oRule["Rows"] = 1;
-					oRuleData.types[1].Condition.push({
-
-						CType: "IF",
-						CTypeID: 1,
-						RuleType: "Rules",
-						Rules: [
-							oRule
-						]
-					}
-					);
-					oRuleData.types[1].Condition.push({
-						CType: "END IF",
-						CTypeID: 200,
-						Rules: []
-					});
-				} else {
-					oRuleData.types[1].Condition = this._reindexCondition(oRuleData.types[1].Condition);
-					oRuleData.types[1].Condition.pop();
-					oRule["ContitionType"] = "OR";
-					oRule["CTypeID"] = oRuleData.types[1].Condition.length + 1;
-					oRule["Rows"] = 1;
-					oRule["RuleType"] = "Rules";
-					oRuleData.types[1].Condition.push({
-
-						CType: "ELSE IF",
-						CTypeID: oRuleData.types[1].Condition.length + 1,
-						RuleType: "Rules",
-
-						Rules: [
-							oRule
-						]
-					}
-					);
-					oRuleData.types[1].Condition.push({
-						CType: "END IF",
-						CTypeID: 200,
-						Rules: []
-					});
-				}
-
-			} else {
-				var aCondition = oRuleData.types[1].Condition;
-
-				aCondition[0].Rules = this._reindexConditionRules(aCondition[0].Rules);
-				var iLen = aCondition[0].Rules.length;
-				if (iLen > 0) {
-					oRule["RuleType"] = "Precondition";
-					oRule["Rows"] = iLen + 1;
-					oRule["CTypeID"] = 1;
-					oRule["ContitionType"] = "AND";
-					aCondition[0].Rules.push(oRule);
-
-				} else {
-					oRule["RuleType"] = "Precondition";
-					oRule["Rows"] = iLen + 1;
-					oRule["CTypeID"] = 1;
-					aCondition[0].Rules.push(oRule);
-
-				}
-
-				oRuleData.types[0].Condition = aCondition;
-			}
-			this.getView().getModel("ruleModel").setData(oRuleData);
+			RuleModelHandler.insertConditonInConditionBlock(this.getView(), oEvent.getSource());
 		},
-		_reindexConditionRules: function (aRules) {
-			var i;
-			for (i = 0; i < aRules.length; i++) {
-				aRules[i].Rows = i + 1;
-			}
-			return aRules;
-		},
+
+		/**
+		 * Deletes a single rule row from the current condition.
+		 *
+		 * Delegates deletion logic to RuleModelHandler.
+		 *
+		 * @param {sap.ui.base.Event} oEvent - Event triggered by delete button.
+		 * @public
+		 */
 		onPressDeleteSingleRowRule: function (oEvent) {
-			var oBtn = oEvent.getSource(), i, aRules, nRules = [], j,aCondition;
-			var oValue = oBtn.getCustomData()[0].getValue();
-			var oRuleData = this.getView().getModel("ruleModel").getData();
-			if (oValue.RuleType == "Rules") {
-				aCondition = oRuleData.types[1].Condition;
-				for (i = 0; i < aCondition.length; i++) {
-					if (aCondition[i].CTypeID == oValue.CTypeID) {
-						aRules = aCondition[i].Rules;
-						for (j = 0; j < aRules.length; j++) {
-							if (aRules[j].Rows !== oValue.Rows) {
-								nRules.push(aRules[j]);
-							}
-						}
-						aRules = this._reindexConditionRules(nRules);
-						aCondition[i].Rules = aRules;
-						break;
-					}
-				}
-				oRuleData.types[1].Condition = aCondition;
-			} else {
-				aCondition = oRuleData.types[0].Condition;
-				for (i = 0; i < aCondition.length; i++) {
-					if (aCondition[i].CTypeID == oValue.CTypeID) {
-						aRules = aCondition[i].Rules;
-						for (j = 0; j < aRules.length; j++) {
-							if (aRules[j].Rows !== oValue.Rows) {
-								nRules.push(aRules[j]);
-							}
-						}
-						aRules = this._reindexConditionRules(nRules);
-						aCondition[i].Rules = aRules;
-						break;
-					}
-				}
-				oRuleData.types[0].Condition = aCondition;
-			}
-			this.getView().getModel("ruleModel").setData(oRuleData);
+
+			RuleModelHandler.deleteInlineRule(this.getView(), oEvent.getSource());
 		},
+
+		/**
+		 * Deletes the entire rule block.
+		 *
+		 * Delegates the deletion to RuleModelHandler which removes
+		 * the complete rule from the model.
+		 *
+		 * @param {sap.ui.base.Event} oEvent - Event triggered by delete button.
+		 * @public
+		 */
 		onButtonPressDeleteRuleMain: function (oEvent) {
-			var oView = this.getView();
-			var oBtn = oEvent.getSource(), i, nConditions = [],aCondition;
-			var oValue = oBtn.getCustomData()[0].getValue();
-			var oRuleData = oView.getModel("ruleModel").getData();
-			if (oValue.RuleType == "Rules") {
-				aCondition = oRuleData.types[1].Condition;
-				if (oValue.CTypeID == 1 && aCondition.length == 2) {
-					oRuleData.types[1].Condition = nConditions;
-				} else if (oValue.CTypeID == 1 && aCondition.length > 2) {
-					for (i = 0; i < aCondition.length; i++) {
-						if (aCondition[i].CTypeID != oValue.CTypeID) {
-							nConditions.push(aCondition[i]);
-						}
-					}
-					nConditions[0].CType = "IF";
-					nConditions[0].CTypeID = 1;
-					oRuleData.types[1].Condition = nConditions;
-				} else {
-					for (i = 0; i < aCondition.length; i++) {
-						if (aCondition[i].CTypeID != oValue.CTypeID) {
-							nConditions.push(aCondition[i]);
-						}
-					}
-					oRuleData.types[1].Condition = nConditions;
-				}
-			} else {
-				aCondition = oRuleData.types[0].Condition;
-				if (oValue.CTypeID == 1 && aCondition.length == 2) {
-					oRuleData.types[1].Condition = nConditions;
-				} else if (oValue.CTypeID == 1 && aCondition.length > 2) {
-					for (i = 0; i < aCondition.length; i++) {
-						if (aCondition[i].CTypeID != oValue.CTypeID) {
-							nConditions.push(aCondition[i]);
-						}
-					}
-					nConditions[0].CType = "IF";
-					nConditions[0].CTypeID = 1;
-					oRuleData.types[0].Condition = nConditions;
-				} else {
-					for (i = 0; i < aCondition.length; i++) {
-						if (aCondition[i].CTypeID != oValue.CTypeID) {
-							nConditions.push(aCondition[i]);
-						}
-					}
-					oRuleData.types[0].Condition = nConditions;
-				}
-			}
-			oView.getModel("ruleModel").setData(oRuleData);
+			RuleModelHandler.deleteEntireRuleBlock(this.getView(), oEvent.getSource());
 		},
 
+		/**
+		 * Handles selection from suggestion list.
+		 *
+		 * Updates the rule model with the selected suggestion value
+		 * to ensure the rule condition is updated correctly.
+		 *
+		 * @param {sap.ui.base.Event} oEvent - Suggestion select event.
+		 * @public
+		 */
+		onSuggestionItemSelected: function (oEvent) {
 
+			RuleModelHandler.updateRuleModelWithSuggestionItem(this.getView(), oEvent.getSource(), oEvent.getParameter("selectedItem"));
+
+		},
+
+		/**
+		 * Opens the Attribute Value Help dialog when the user requests it.
+		 *
+		 * This method initializes and configures the value help dialog for selecting
+		 * user attributes. It sets up the dialog model, binds the OData attribute
+		 * list to the table, and configures the table columns depending on the
+		 * device type (desktop/table vs mobile). If the dialog is already created,
+		 * it simply updates the model and reopens it.
+		 *
+		 * @param {sap.ui.base.Event} oEvent - The value help request event from the input field.
+		 * @public
+		 * @returns {void}
+		 */
 		onAttributeValueHelpRequested: function (oEvent) {
-			var oView = this.getView(), oInput = oEvent.getSource(), oColAttryName,
+			var oView = this.getView(), oFilterBar, oInput = oEvent.getSource(), oColAttryName,
 				oColAttrDesc, oModel = new JSONModel(oInput.getCustomData()[0].getValue()),
 				that = this;
+			oFilterBar = new sap.ui.comp.filterbar.FilterBar({
+				advancedMode: true,
+				// filterContainerWidth: "10rem",
+				search: function (oEvent) {
+					// 4. Implement Search Logic
+					var sSearchValue = oEvent.getParameter("selectionSet")[0].getValue();
+					if (sSearchValue) {
+						var oFilter = new sap.ui.model.Filter("AttributeId", sap.ui.model.FilterOperator.Contains, sSearchValue.toUpperCase());
+						that._oVHDialogAttr.getTable().getBinding("rows").filter([oFilter]);
+					} else {
+						that._oVHDialogAttr.getTable().getBinding("rows").filter([]);
+					}
 
-			if (!this.oVHDialogAttr) {
+				}
+			}).addStyleClass("plDacVHFilter");
+			oFilterBar.addFilterGroupItem(new sap.ui.comp.filterbar.FilterGroupItem({
+				groupName: "G1",
+				name: "Search",
+				label: "Search",
+				control: new sap.m.SearchField({
+					placeholder: "Search for...",
+					search: function (oEvent) {
+						var sSearchValue = oEvent.getParameter("query");
+						if (sSearchValue) {
+							var oFilter = new sap.ui.model.Filter("AttributeId", sap.ui.model.FilterOperator.Contains, sSearchValue.toUpperCase());
+							that._oVHDialogAttr.getTable().getBinding("rows").filter([oFilter]);
+						} else {
+							that._oVHDialogAttr.getTable().getBinding("rows").filter([]);
+						}
 
-				this.oVHDialogAttr = sap.ui.xmlfragment("pl.dac.apps.fnconfig.fragments.AttributeVH", this);
-				oView.addDependent(this.oVHDialogAttr);
+					}
+				})
+			}));
 
-				this.oVHDialogAttr.setModel(oModel, "condition");
+			if (!this._oVHDialogAttr) {
+				this._oVHDialogAttr = sap.ui.xmlfragment("pl.dac.apps.fnconfig.fragments.AttributeVH", this);
+				oView.addDependent(this._oVHDialogAttr);
+				//	this._oVHDialogAttr.setFilterBar(oSearchField);
+				this._oVHDialogAttr.setModel(oModel, "condition");
 				// Set key fields for filtering in the Define Conditions Tab
-				this.oVHDialogAttr.setRangeKeyFields([{
+				this._oVHDialogAttr.setRangeKeyFields([{
 					label: "Description",
 					key: "AttributeId",
 					type: "string"
 				}]);
-				this.oVHDialogAttr.getTableAsync().then(function (oTable) {
+
+				this._oVHDialogAttr.getTableAsync().then(function (oTable) {
 					oTable.setModel(oView.getModel());
 					oTable.setSelectionMode("Single");
+					that._oVHDialogAttr.setFilterBar(oFilterBar);
 					// For Desktop and tabled the default table is sap.ui.table.Table
 					if (oTable.bindRows) {
 						// Bind rows to the ODataModel and add columns
@@ -438,7 +354,7 @@ sap.ui.define([
 							path: "/AttrSet",
 							events: {
 								dataReceived: function () {
-									that.oVHDialogAttr.update();
+									that._oVHDialogAttr.update();
 								}
 							}
 						});
@@ -464,133 +380,78 @@ sap.ui.define([
 							}),
 							events: {
 								dataReceived: function () {
-									that.oVHDialogAttr.update();
+									that._oVHDialogAttr.update();
 								}
 							}
 						});
 						oTable.addColumn(new Column({ header: new Label({ text: "Attribute Name" }) }));
 						oTable.addColumn(new Column({ header: new Label({ text: "Description" }) }));
 					}
-					that.oVHDialogAttr.update();
+					that._oVHDialogAttr.update();
 				});
-				this.oVHDialogAttr.open();
-				//}.bind(this));
+				this._oVHDialogAttr.open();
+
 			} else {
-				//this.oVHDialogAttr.setModel(oModel, "condition");
-				this.oVHDialogAttr.open();
+				this._oVHDialogAttr.setModel(oModel, "condition");
+				this._oVHDialogAttr.open();
 			}
 		},
+		/**
+		 * Handles the cancel action in the Attribute Value Help dialog.
+		 *
+		 * Simply closes the dialog without applying any selection or changes.
+		 *
+		 * @public
+		 * @returns {void}
+		 */
 		onValueHelpCancelPress: function () {
-			this.oVHDialogAttr.close();
+			this._oVHDialogAttr.close();
 		},
+
+		/**
+		 * Confirms the value selection and updates the rule model.
+		 *
+		 * Reads the selected values/ranges from the dialog and
+		 * updates the rule model using RuleModelHandler.
+		 *
+		 * @public
+		 */
 		onValueDialogOkPress: function () {
-			var oView = this.getView(), i, aValues = [];
-			var oData = this._oRangeDialog.getModel("setting").getData();
-			//	var oViewData = oView.getModel("viewModel").getData();
-			var aValueRanges = this._oRangeDialog.getContent()[0].getModel("SingleValues").getData();//this._oRangeDialog.getModel("valueRangeModel").getData();
-			for (i = 0; i < aValueRanges.length; i++) {
-				if (aValueRanges[i].Value && aValueRanges[i].Value.trim() != "") {
-					aValues.push(aValueRanges[i]);
-				}
-			}
-			var oRuleModel = oView.getModel("ruleModel").getData(), aCondition, j;
-			if (oData.RuleType == "Precondition") {
-				aCondition = oRuleModel.types[0].Condition;
-				for (i = 0; i < aCondition.length; i++) {
-					if (aCondition[i].CTypeID === oData.CTypeID) {
-						for (j = 0; j < aCondition[i].Rules.length; j++) {
-							if (aCondition[i].Rules[j].Rows == oData.Rows) {
-								aCondition[i].Rules[j].ValueRange = aValues;
-								aCondition[i].Rules[j].Value = aValues[0].Value;
-								aCondition[i].Rules[j].ValueDesc = aValues[0].Value;
-								break;
-							}
-						}
-					}
-				}
-				oRuleModel.types[0].Condition = aCondition;
-			} else {
-				aCondition = oRuleModel.types[1].Condition;
-				for (i = 0; i < aCondition.length; i++) {
-					if (aCondition[i].CTypeID === oData.CTypeID) {
-						for (j = 0; j < aCondition[i].Rules.length; j++) {
-							if (aCondition[i].Rules[j].Rows == oData.Rows) {
-								aCondition[i].Rules[j].ValueRange = aValues;
-								aCondition[i].Rules[j].Value = aValues[0].Value;
-								aCondition[i].Rules[j].ValueDesc = aValues[0].Value;
-								break;
-							}
-						}
-					}
-				}
-				oRuleModel.types[1].Condition = aCondition;
-			}
-			oView.getModel("ruleModel").setData(oRuleModel);
-			oView.getModel("ruleModel").refresh();
-			this._oRangeDialog.close();
+			RuleModelHandler.updateRuleModelWithValueAndRangesSelectionData(this._oDialogSelection, this.getView());
 		},
+
+		/**
+		 * Handles the confirmation of the Attribute Value Help dialog.
+		 *
+		 * This method retrieves the selected token from the dialog,
+		 * closes the dialog, and updates the rule model with the selected
+		 * attribute value using the RuleModelHandler.
+		 *
+		 * @param {sap.ui.base.Event} oEvent - The event fired when the user presses OK in the value help dialog.
+		 * @public
+		 * @returns {void}
+		 */
 		onAttributeValueHelpOkPress: function (oEvent) {
 			var aTokens = oEvent.getParameter("tokens");
-			var oView = this.getView();
-			var oData = this.oVHDialogAttr.getModel("condition").getData();
-			var oValue = aTokens[0].getCustomData()[0].getValue();
-			this.oVHDialogAttr.close();
-			var oRuleData = oView.getModel("ruleModel").getData();
-			var i, aCondition, j;
-			if (oData.RuleType == "Precondition") {
-				aCondition = oRuleData.types[0].Condition;
-				for (i = 0; i < aCondition.length; i++) {
-					if (aCondition[i].CTypeID == oData.CTypeID) {
-						for (j = 0; j < aCondition[i].Rules.length; j++) {
-							if (aCondition[i].Rules[j].Rows == oData.Rows) {
-								aCondition[i].Rules[j].Attribute = oValue.AttributeId;
-								aCondition[i].Rules[j].AttributeDesc = oValue.Description;
+			this._oVHDialogAttr.close();
+			RuleModelHandler.updateRuleModelWithValueHelpItem(this.getView(), aTokens[0], this._oVHDialogAttr);
+		},
+		/**
+		 * Opens the value selection dialog based on operator type.
+		 *
+		 * Validates user selection for attribute and operator.
+		 * Depending on operator type:
+		 * - Shows value ranges for IN / BT
+		 * - Shows user attributes for others
+		 *
+		 * Loads required models and initial values for the dialog.
+		 *
+		 * @param {sap.ui.base.Event} oEvent - Event triggered by pressing the value field.
+		 * @public
+		 */
 
-								break;
-							}
-						}
-					}
-				}
-				oRuleData.types[0].Condition = aCondition;
-			} else {
-				aCondition = oRuleData.types[1].Condition;
-				for (i = 0; i < aCondition.length; i++) {
-					if (aCondition[i].CTypeID == oData.CTypeID) {
-						for (j = 0; j < aCondition[i].Rules.length; j++) {
-							if (aCondition[i].Rules[j].Rows == oData.Rows) {
-								aCondition[i].Rules[j].Attribute = oValue.AttributeId;
-								aCondition[i].Rules[j].AttributeDesc = oValue.Description;
-								break;
-							}
-						}
-					}
-				}
-				oRuleData.types[1].Condition = aCondition;
-			}
-			oView.getModel("ruleModel").setData(oRuleData);
-		},
-		updateSingleValuesModel: function (aValues, aItems) {
-			var i,oData;
-			if (this._oRangeDialog) {
-				if (!Array.isArray(aValues)) {
-					aItems[0].Value = aValues.Value;
-					aItems[0].Operator = aValues.Operator;
-				} else {
-					if (aItems.length > aValues.length) {
-						for (i = 0; i < aValues.length; i++) {
-							aItems[i] = aValues[i];
-						}
-					} else {
-						aItems = aValues;
-					}
-				}
-				oData = aItems;
-				this.getView().getModel("SingleValues").setData(oData);
-			}
-		},
 		onShowValueDialog: function (oEvent) {
-			var oInput = oEvent.getSource(), oModelSingleValues, that = this, aSingleValueModel;
-			var oView = this.getView();
+			var oView = this.getView(), oInput = oEvent.getSource(), oUserAttributeTable, oListTable;
 			var oCustomData = oInput.getCustomData()[0].getValue();
 			if (oCustomData.Attribute.trim() == "") {
 				MessageToast.show("Please choose any attributes to continue.");
@@ -607,207 +468,943 @@ sap.ui.define([
 				oCustomData.Value = oCustomData.ValueDesc;
 				oCustomData.ValueRange.Value = oCustomData.Value;
 			}
-			var oModel = new JSONModel(oCustomData);
-			if (oModel.getData().Operator == "IN") {
+			var oSettingModel = new JSONModel(oCustomData);
+			if (oSettingModel.getData().Operator == "IN") {
 				oView.getModel("viewModel").setProperty("/DialogTitle", "Define Value Ranges");
 				oView.getModel("viewModel").setProperty("/DialogIcon", "sap-icon://list");
+				oView.getModel("viewModel").setProperty("/VisibleOK", true);
+			} else if (oSettingModel.getData().Operator == "BT") {
 				oView.getModel("viewModel").setProperty("/VisibleOK", true);
 			} else {
 				oView.getModel("viewModel").setProperty("/DialogTitle", "User Attributes");
 				oView.getModel("viewModel").setProperty("/DialogIcon", "sap-icon://person-placeholder");
 				oView.getModel("viewModel").setProperty("/VisibleOK", false);
 			}
-			if (!this._oRangeDialog) {
+			if (!this._oDialogSelection) {
 				Fragment.load({
-					name: "pl.dac.apps.fnconfig.fragments.RangeDialog",
+					name: "pl.dac.apps.fnconfig.fragments.VHDialogSelection",
 					controller: this
 				}).then(function (oDialog) {
-					this._oRangeDialog = oDialog;
-					oView.addDependent(this._oRangeDialog);
-					this._oRangeDialog.setModel(oModel, "setting");
-					oModelSingleValues = new JSONModel();
-					oModelSingleValues.attachRequestCompleted(function () {
-						that._oRangeDialog.getContent()[0].getModel("SingleValues").setData(oModelSingleValues.getData());
-						that.updateSingleValuesModel(oCustomData.ValueRange, oModelSingleValues.getData());
-						that._oRangeDialog.open();
-					});
-					oModelSingleValues.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/SingleValues.json"));
+					this._oDialogSelection = oDialog;
+					oView.addDependent(this._oDialogSelection);
+					this._oDialogSelection.setModel(oSettingModel, "setting");
+					oUserAttributeTable = this._oDialogSelection.getContent()[0].getAggregation("sections")[2].getItems()[0];
+					oUserAttributeTable.addEventDelegate(this._userAttributeTableEventDelegate, this);
+					oListTable = this._oDialogSelection.getContent()[0].getAggregation("sections")[3].getItems()[0];
+					oListTable.addEventDelegate(this._listTableEventDelegate, this);
+					RuleModelHandler.loadInitialModelValues(oCustomData);
+					RuleModelHandler.loadValueRangeModel(oDialog, oSettingModel, oCustomData);
+					RuleModelHandler.loadSingleValueModel(oDialog, oSettingModel, oCustomData);
 				}.bind(this));
 			} else {
-				oModelSingleValues = this._oRangeDialog.getContent()[0].getModel("SingleValues");
-				aSingleValueModel = oModelSingleValues.getData();
-				if (Object.entries(aSingleValueModel).length == 0) {
-					oModelSingleValues.attachRequestCompleted(function () {
-						that._oRangeDialog.setModel(oModel, "setting");
-						that._oRangeDialog.open();
-						that.updateSingleValuesModel(oCustomData.ValueRange, aSingleValueModel);
-					});
-					oModelSingleValues.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/SingleValues.json"));
-				} else {
-					this._oRangeDialog.setModel(oModel, "setting");
-					this._oRangeDialog.open();
-					this.updateSingleValuesModel(oCustomData.ValueRange, aSingleValueModel);
-				}
-
+				RuleModelHandler.loadInitialModelValues(oCustomData);
+				RuleModelHandler.loadValueRangeModel(this._oDialogSelection, oSettingModel, oCustomData);
+				RuleModelHandler.loadSingleValueModel(this._oDialogSelection, oSettingModel, oCustomData);
 			}
+		},
 
-		},
-		onBeforeOpenDialog: function () {
+		/**
+		 * Opens the dialog to add a new exposed attribute.
+		 *
+		 * This method prepares the view model with the current policy details,
+		 * clears any previous validation errors, and resets the attribute input.
+		 * It then loads the dialog fragment asynchronously (if not already loaded)
+		 * and opens the dialog for the user to add a new attribute.
+		 *
+		 * @public
+		 * @returns {void}
+		 */
+		onPressAddExposeAttribute: function () {
+			var oView = this.getView(), oViewModel = oView.getModel("viewModel");
+			oViewModel.setProperty("/Data/Policy", oView.getBindingContext().getProperty("Policy"));
+			oViewModel.setProperty("/Data/PolicyToken", oView.getBindingContext().getProperty("PolicyDesc") + " (" + oView.getBindingContext().getProperty("Policy") + ")");
+			oViewModel.setProperty("AttrErrorState", "None");
+			oViewModel.setProperty("AttrErrorMessage", "");
+			oViewModel.setProperty("/Data/AttributeId", "");
 
-		},
-		onPressAddRowInValues: function () {
-			this._oRangeDialog.getContent()[0].addRowInValues();
-		},
-		onPressAddRowInRanges: function () {
-			this._oRangeDialog.getContent()[0].addRowInRanges();
-		},
-		onCloseValueDialog: function () {
-			this._oRangeDialog.close();
-		},
-		onPressUserAttributeItem: function (oEvent) {
-			var oView = this.getView();
-			var oSelectedItemData = oEvent.getSource().getBindingContext().getObject();
-			var oData = this._oRangeDialog.getModel("setting").getData();
-			this._oRangeDialog.close();
-			var oRuleData = oView.getModel("ruleModel").getData();
-			var i, aCondition, j;
-			if (oData.RuleType == "Precondition") {
-				aCondition = oRuleData.types[0].Condition;
-				for (i = 0; i < aCondition.length; i++) {
-					if (aCondition[i].CTypeID == oData.CTypeID) {
-						for (j = 0; j < aCondition[i].Rules.length; j++) {
-							if (aCondition[i].Rules[j].Rows == oData.Rows) {
-								if (oSelectedItemData.AttributeId) {
-									aCondition[i].Rules[j].Value = oSelectedItemData.AttributeId;
-									aCondition[i].Rules[j].ValueDesc = oSelectedItemData.Description + "(" + oSelectedItemData.AttributeId + ")";
-									aCondition[i].Rules[j].ValueRange = [{ Operator: "EQ", Value: oSelectedItemData.AttributeId }];
-								} else {
-									aCondition[i].Rules[j].Value = oSelectedItemData.ListName;
-									aCondition[i].Rules[j].ValueDesc = oSelectedItemData.Description + "(" + oSelectedItemData.ListName + ")";
-									aCondition[i].Rules[j].ValueRange = [{ Operator: "EQ", Value: oSelectedItemData.ListName }];
-								}
-
-								break;
-							}
-						}
-					}
-				}
-				oRuleData.types[0].Condition = aCondition;
+			if (!this._oExposeAttributeDialog) {
+				Fragment.load({
+					name: "pl.dac.apps.fnconfig.fragments.DialogExposeAttribute",
+					controller: this
+				}).then(function (oDialog) {
+					this._oExposeAttributeDialog = oDialog;
+					oView.addDependent(this._oExposeAttributeDialog);
+					this._oExposeAttributeDialog.open();
+				}.bind(this));
 			} else {
-				aCondition = oRuleData.types[1].Condition;
-				for (i = 0; i < aCondition.length; i++) {
-					if (aCondition[i].CTypeID == oData.CTypeID) {
-						for (j = 0; j < aCondition[i].Rules.length; j++) {
-							if (aCondition[i].Rules[j].Rows == oData.Rows) {
-								if (oSelectedItemData.AttributeId) {
-									aCondition[i].Rules[j].Value = oSelectedItemData.AttributeId;
-									aCondition[i].Rules[j].ValueDesc = oSelectedItemData.Description + "(" + oSelectedItemData.AttributeId + ")";
-								} else {
-									aCondition[i].Rules[j].Value = oSelectedItemData.ListName;
-									aCondition[i].Rules[j].ValueDesc = oSelectedItemData.Description + "(" + oSelectedItemData.ListName + ")";
+				this._oExposeAttributeDialog.open();
+			}
+		},
+
+		/**
+		 * Handles the inline delete button press for an exposed attribute entry.
+		 *
+		 * Shows a confirmation dialog to the user. If the user confirms the deletion,
+		 * the selected entry is removed via `_removeSelectedRecord`.
+		 *
+		 * @private
+		 * @param {sap.ui.base.Event} oEvent - The press event triggered by the delete button.
+		 * @returns {void}
+		 */
+		_onDeleteExposeAttributeInlineButtonPress: function (oEvent) {
+			var that = this, oBundle = this.getView().getModel("i18n").getResourceBundle(),
+				oEntry = oEvent.getSource().getBindingContext().getObject();
+			MessageBox.warning(oBundle.getText("msgDeleteConfirmation"), {
+				actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+				emphasizedAction: MessageBox.Action.OK,
+				styleClass: "PlDacMessageBox",
+				onClose: function (sAction) {
+					if (sAction == "OK") {
+						that._removeSelectedRecord(oEntry);
+					}
+				}
+			});
+		},
+
+		/**
+		 * Deletes the selected exposed attribute entry from the backend.
+		 *
+		 * Constructs the OData entity path using the Policy and AttributeId from the
+		 * provided entry and calls the OData model's `remove` method.
+		 *
+		 * On success:
+		 *   - Shows a success message to the user.
+		 *   - Refreshes the OData model to update the UI.
+		 *
+		 * On error:
+		 *   - Logs the error.
+		 *   - Displays the error message using `displayErrorMessage`.
+		 *
+		 * @private
+		 * @param {Object} oEntry - The exposed attribute entry to delete.
+		 * @param {string} oEntry.Policy - Policy key of the entry.
+		 * @param {string} oEntry.AttributeId - AttributeId key of the entry.
+		 * @returns {void}
+		 */
+		_removeSelectedRecord: function (oEntry) {
+			var oView = this.getView(), oBundle = oView.getModel("i18n").getResourceBundle(),
+				oDataModel = oView.getModel(), sPath;
+			sPath = PlDacConst.ENTITY_SET_EXPOSE_ATTRIBUTES + "(Policy='" + oEntry.Policy + "',AttributeId='" + oEntry.AttributeId + "')";
+			oDataModel.remove(sPath, {
+				success: function () {
+					MessageBox.success(oBundle.getText("msgExposeAttributeDeleteSuccefully", [oEntry.AttributeId]), { styleClass: "PlDacMessageBox" });
+					oDataModel.refresh();
+				},
+				error: function (oError) {
+					Log.error(oBundle.getText("msgDAErrorInDelete") + oError);
+					this.displayErrorMessage(oError);
+				}.bind(this)
+			});
+		},
+
+		/**
+		 * Event handler executed just before the "Expose Attribute" dialog is opened.
+		 *
+		 * This method resets the dialog input state by clearing any existing text
+		 * and removing all tokens from the MultiInput control.
+		 *
+		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
+		 * @public
+		 * @function onBeforeExposeAttributeDialogOpened
+		 * @param {sap.ui.base.Event} oEvent - The event object triggered by the dialog open.
+		 * @param {0} oEvent.getSource() - The dialog instance being opened.
+		 * @returns {void}
+		 */
+		onBeforeExposeAttributeDialogOpened: function (oEvent) {
+			var oDialog = oEvent.getSource(),
+				oMultiInput = oDialog.getContent()[0].getAggregation("form").getFormContainers()[0].getFormElements()[1].getFields()[0];
+			oMultiInput.setValue("");
+			oMultiInput.removeAllTokens();
+		},
+
+		/**
+		 * Handles changes in the Expose Attribute input field.
+		 *
+		 * This method performs validation and normalizes the input value:
+		 *   - Converts the entered value to uppercase.
+		 *   - Clears previous error states.
+		 *   - If the value length is greater than 6, it triggers server-side validation.
+		 *   - Otherwise, it marks the input as invalid and shows the appropriate error message.
+		 *
+		 * @param {*} oEvent - The input change event.
+		 * @param {string} oEvent.getParameter("newValue") - The new value entered by the user.
+		 * @returns {void}
+		 */
+		onExposeAttributeInputChange: function (oEvent) {
+			var oBundle, oView = this.getView(), sNewValue = oEvent.getParameter("newValue"), oViewModel = oView.getModel("viewModel"),
+				oInput = oEvent.getSource();
+			oBundle = oView.getModel("i18n").getResourceBundle();
+			oViewModel.setProperty("/AttrErrorState", "None");
+			oViewModel.setProperty("/AttrErrorMessage", "");
+			oInput.setValue(oInput.getValue().toUpperCase());
+			if (sNewValue.length > 6) {
+				this.validateAttibuteInput(sNewValue, oInput);
+			} else {
+				oViewModel.setProperty("/Data/AttributeId", "");
+				oViewModel.setProperty("/AttrErrorState", "Error");
+				if (sNewValue.length == 0) {
+					oViewModel.setProperty("/AttrErrorMessage", oBundle.getText("msgErrorAttributeNameMandatory"));
+				} else {
+					oViewModel.setProperty("/AttrErrorMessage", oBundle.getText("msgErrorAttributeNameInvalid"));
+				}
+			}
+		},
+		/**
+		 * Event handler for token updates in the Expose Attribute MultiInput field.
+		 *
+		 * This method responds to token add/remove actions and updates the view model's
+		 * error state accordingly.
+		 *
+		 * - When a token is removed:
+		 *   - Sets error state to "Error".
+		 *   - Displays a mandatory attribute error message.
+		 *   - Focuses the MultiInput control to prompt user input.
+		 *
+		 * - When a token is added:
+		 *   - Clears any previous error state and message.
+		 *
+		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
+		 * @public
+		 * @function onExposeAttributeTokenUpdated
+		 * @param {*} oEvent - Token update event object.
+		 * @param {string} oEvent.getParameter("type") - Type of token change ("added" or "removed").
+		 * @returns {void}
+		 */
+		onExposeAttributeTokenUpdated: function (oEvent) {
+			var oBundle, oView = this.getView(), oViewModel = oView.getModel("viewModel"),
+				oMultiInput = this._oExposeAttributeDialog.getContent()[0].getAggregation("form").getFormContainers()[0].getFormElements()[1].getFields()[0];
+			if (oEvent.getParameter("type") == "removed") {
+				oBundle = oView.getModel("i18n").getResourceBundle();
+				oViewModel.setProperty("/AttrErrorState", "Error");
+				oViewModel.setProperty("/AttrErrorMessage", oBundle.getText("msgErrorAttributeNameMandatory"));
+				oMultiInput.focus();
+			}
+			if (oEvent.getParameter("type") == "added") {
+				oViewModel.setProperty("/AttrErrorState", "None");
+				oViewModel.setProperty("/AttrErrorMessage", "");
+			}
+		},
+		/**
+		 * Handles the "Value Help" request for the Expose Attribute input field.
+		 *
+		 * This method is triggered when the user clicks the value help icon in the
+		 * Expose Attribute MultiInput field. It opens a Value Help dialog that lists
+		 * available attributes from the OData service (`/AttrSet`).
+		 *
+		 * If the dialog is not already created, it will:
+		 *   1. Instantiate the Value Help dialog fragment (`VHAttribute`).
+		 *   2. Attach the dialog to the view as a dependent to ensure proper lifecycle management.
+		 *   3. Configure search/filter behavior using `setRangeKeyFields` so the user can search
+		 *      by AttributeId.
+		 *   4. Dynamically bind the attribute table to the `AttrSet` OData entity set.
+		 *   5. Create and add table columns depending on the device type:
+		 *      - Desktop/tablet: `sap.ui.table.Table` with `bindRows`
+		 *      - Mobile: `sap.m.Table` with `bindItems`
+		 *   6. Update the dialog once data is loaded (`dataReceived` event).
+		 *
+		 * Once the dialog is created, it is opened. If it already exists, it is simply opened again.
+		 *
+		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
+		 * @public
+		 * @function onExponseAttributeVHRequested
+		 * @returns {void}
+		 */
+		onExponseAttributeVHRequested: function () {
+			var oView = this.getView(), oColAttrName, oFilterBar,
+				oColAttrDesc,
+				that = this;
+			oFilterBar = new sap.ui.comp.filterbar.FilterBar({
+				advancedMode: true,
+				// filterContainerWidth: "10rem",
+				search: function (oEvent) {
+					// 4. Implement Search Logic
+					var sSearchValue = oEvent.getParameter("selectionSet")[0].getValue();
+					if (sSearchValue) {
+						var oFilter = new sap.ui.model.Filter("AttributeId", sap.ui.model.FilterOperator.Contains, sSearchValue.toUpperCase());
+						that._oVHDialogAttribute.getTable().getBinding("rows").filter([oFilter]);
+					} else {
+						that._oVHDialogAttribute.getTable().getBinding("rows").filter([]);
+					}
+
+				}
+			}).addStyleClass("plDacVHFilter");
+			oFilterBar.addFilterGroupItem(new sap.ui.comp.filterbar.FilterGroupItem({
+				groupName: "G1",
+				name: "Search",
+				label: "Search",
+				control: new sap.m.SearchField({
+					placeholder: "Search for...",
+					search: function (oEvent) {
+						var sSearchValue = oEvent.getParameter("query");
+						if (sSearchValue) {
+							var oFilter = new sap.ui.model.Filter("AttributeId", sap.ui.model.FilterOperator.Contains, sSearchValue.toUpperCase());
+							that._oVHDialogAttribute.getTable().getBinding("rows").filter([oFilter]);
+						} else {
+							that._oVHDialogAttribute.getTable().getBinding("rows").filter([]);
+						}
+					}
+				})
+			}));
+			if (!this._oVHDialogAttribute) {
+				this._oVHDialogAttribute = sap.ui.xmlfragment("pl.dac.apps.fnconfig.fragments.VHAttribute", this);
+				oView.addDependent(this._oVHDialogAttribute);
+				this._oVHDialogAttribute.setRangeKeyFields([{
+					label: "Description",
+					key: "AttributeId",
+					type: "string"
+				}]);
+				this._oVHDialogAttribute.getTableAsync().then(function (oTable) {
+					that._oVHDialogAttribute.setFilterBar(oFilterBar);
+					oTable.setModel(oView.getModel());
+					oTable.setSelectionMode("Single");
+					// For Desktop and tabled the default table is sap.ui.table.Table
+					if (oTable.bindRows) {
+						// Bind rows to the ODataModel and add columns
+						oTable.bindAggregation("rows", {
+							path: "/DataAttrSet",
+							events: {
+								dataReceived: function () {
+									that._oVHDialogAttribute.update();
 								}
-								break;
 							}
+						});
+						oColAttrName = new UIColumn({ label: new Label({ text: "Attribute Name" }), template: new Text({ wrapping: false, text: "{AttributeId}" }) });
+						oColAttrName.data({
+							fieldName: "{AttributeId}"
+						});
+						oTable.addColumn(oColAttrName);
+
+						oColAttrDesc = new UIColumn({ label: new Label({ text: "Description" }), template: new Text({ wrapping: false, text: "{Description}" }) });
+						oColAttrDesc.data({
+							fieldName: "Description"
+						});
+						oTable.addColumn(oColAttrDesc);
+					}
+					// For Mobile the default table is sap.m.Table
+					if (oTable.bindItems) {
+						// Bind items to the ODataModel and add columns
+						oTable.bindAggregation("items", {
+							path: "/DataAttrSet",
+							template: new ColumnListItem({
+								cells: [new Label({ text: "{AttributeId}" }), new Label({ text: "{Description}" })]
+							}),
+							events: {
+								dataReceived: function () {
+									that._oVHDialogAttribute.update();
+								}
+							}
+						});
+						oTable.addColumn(new Column({ header: new Label({ text: "Attribute Name" }) }));
+						oTable.addColumn(new Column({ header: new Label({ text: "Description" }) }));
+					}
+					that._oVHDialogAttribute.update();
+				});
+				this._oVHDialogAttribute.open();
+			} else {
+
+				this._oVHDialogAttribute.open();
+			}
+		},
+		/**
+		 * Handles the confirmation action from the Attribute Value Help dialog.
+		 *
+		 * This event is triggered when the user selects an attribute and presses the "OK"
+		 * button in the Value Help dialog.
+		 *
+		 * The method performs the following actions:
+		 *   1. Retrieves the selected token from the dialog event.
+		 *   2. Extracts the selected attribute data from the token's custom data.
+		 *   3. Updates the view model's "/Data/AttributeId" property with the selected AttributeId.
+		 *   4. Refreshes the view model to propagate changes to the UI.
+		 *   5. Closes the Value Help dialog.
+		 *   6. Validates the selected attribute by calling validateAttibuteInput() to ensure
+		 *      the attribute exists and to update the MultiInput field with a formatted token.
+		 *
+		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
+		 * @public
+		 * @function onValueHelpAttributeOkPress
+		 * @param {*} oEvent - Event object fired from the Value Help dialog.
+		 * @param {*} oEvent.getParameter("tokens") - Array of selected tokens.
+		 * @returns {void}
+		 */
+		onValueHelpAttributeOkPress: function (oEvent) {
+
+			var oMultiInput, oValue, aTokens = oEvent.getParameter("tokens"), oView = this.getView();
+			oMultiInput = this._oExposeAttributeDialog.getContent()[0].getAggregation("form").getFormContainers()[0].getFormElements()[1].getFields()[0];
+			oValue = aTokens[0].getCustomData()[0].getValue();
+			oView.getModel("viewModel").setProperty("/Data/AttributeId", oValue.AttributeId);
+			oView.getModel("viewModel").refresh();
+			this._oVHDialogAttribute.close();
+			this.validateAttibuteInput(aTokens[0].getKey(), oMultiInput);
+		},
+
+		/**
+		 * Handles the cancel action from the Attribute Value Help dialog.
+		 *
+		 * This method closes the attribute Value Help dialog without making any changes
+		 * to the input field or the view model. It is typically triggered when the user
+		 * presses the "Cancel" button in the dialog.
+		 *
+		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
+		 * @public
+		 * @function onValueHelpAttributeCancelPress
+		 * @returns {void}
+		 */
+		onValueHelpAttributeCancelPress: function () {
+
+			this._oVHDialogAttribute.close();
+		},
+		/**
+		 * Event handler for selection of an item from the Expose Attribute suggestion list.
+		 *
+		 * When the user selects a suggestion, this method retrieves the selected row's
+		 * binding context, extracts the `AttributeId`, and triggers validation.
+		 * The validation ensures the attribute exists and updates the MultiInput control
+		 * with a properly formatted token.
+		 *
+		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
+		 * @public
+		 * @function onExposeAttrSuggestionItemSelected
+		 * @param {*} oEvent - The event object fired when a suggestion is selected.
+		 * @param {*} oEvent.getParameter("selectedRow") - The selected suggestion row.
+		 * @returns {void}
+		 */
+		onExposeAttrSuggestionItemSelected: function (oEvent) {
+			var oCtx = oEvent.getParameter("selectedRow").getBindingContext().getObject();
+			this.validateAttibuteInput(oCtx.AttributeId, oEvent.getSource());
+		},
+
+		/**
+		 * Validates whether the provided attribute exists in the backend.
+		 *
+		 * This method checks the entered attribute value against the OData service by
+		 * reading the `/AttrSet('<ATTRIBUTE>')` entity. If the attribute is found:
+		 *   - the MultiInput is cleared and updated with a token showing the attribute and description
+		 *   - the view model error state is cleared
+		 *   - the selected AttributeId is stored in the view model
+		 *
+		 * If the attribute is not found, it sets an error state and displays an error
+		 * message from the i18n bundle.
+		 *
+		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
+		 * @public
+		 * @function validateAttibuteInput
+		 * @param {string} sAttribute - Attribute value entered by the user.
+		 * @param {sap.m.MultiInput} oMultiInput - Input control that will be updated with token.
+		 * @returns {void}
+		 */
+		validateAttibuteInput: function (sAttribute, oMultiInput) {
+			var oBundle, oView = this.getView(), oDataModel = oView.getModel(),
+				oViewModel = oView.getModel("viewModel"),
+				sPath = "/AttrSet('" + sAttribute.toUpperCase() + "')";
+			oViewModel.setProperty("/Data/AttributeId", sAttribute);
+			oBundle = oView.getModel("i18n").getResourceBundle();
+			oDataModel.read(sPath, {
+				// Success callback function
+				success: function (oData) {
+					if (oData.AttributeId) {
+						oMultiInput.removeAllTokens();
+						oMultiInput.setValue("");
+						oMultiInput.setTokens([new Token({ key: sAttribute, text: sAttribute.toUpperCase() + " (" + oData.Description + ")" })]);
+						oViewModel.setProperty("/AttrErrorState", "None");
+						oViewModel.setProperty("/AttrErrorMessage", "");
+						oViewModel.setProperty("/Data/AttributeId", oData.AttributeId);
+
+					} else {
+						oViewModel.setProperty("/AttrErrorState", "Error");
+						oViewModel.setProperty("/AttrErrorMessage", oBundle.getText("msgErrorAttributeNotFound", [sAttribute]));
+					}
+				}.bind(this),
+				// Error callback function
+				error: function () {//
+					// oError contains details about the error
+					oViewModel.setProperty("/AttrErrorState", "Error");
+					oViewModel.setProperty("/AttrErrorMessage", oBundle.getText("msgErrorAttributeNotFound", [sAttribute]));
+
+				}
+			});
+		},
+
+		/**
+		 * Handles the "Save" action from the Expose Attribute dialog.
+		 *
+		 * This method validates the entered attribute and ensures it is not empty or invalid.
+		 * It performs the following steps:
+		 *   1. Retrieves the input control and current dialog data from the view model.
+		 *   2. Validates that AttributeId is provided and not empty.
+		 *   3. Displays an error message if validation fails and sets focus back to the input.
+		 *   4. If validation passes, it calls `_checkForDuplicateEntry` to verify that the
+		 *      attribute is not already exposed for the selected policy.
+		 *
+		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
+		 * @public
+		 * @function onPressSaveDialogExposeAttribute
+		 * @returns {void}
+		 */
+		onPressSaveDialogExposeAttribute: function () {
+			var oBundle, oMultiInput, oView = this.getView(), oViewModel = oView.getModel("viewModel"), oEntry;
+			oMultiInput = this._oExposeAttributeDialog.getContent()[0].getAggregation("form").getFormContainers()[0].getFormElements()[1].getFields()[0]
+			//oDataModel = oView.getModel();
+			oBundle = oView.getModel("i18n").getResourceBundle();
+			oEntry = oViewModel.getProperty("/Data");
+			if (oEntry.AttributeId != "" && oEntry.Policy != "") {
+				oViewModel.setProperty("/AttrErrorState", "None");
+			}
+			if (oViewModel.getProperty("/Data/AttributeId") == "" || oViewModel.getProperty("/AttrErrorState") == "Error") {
+				oViewModel.setProperty("/AttrErrorState", "Error");
+				oViewModel.setProperty("/AttrErrorMessage", oBundle.getText("msgErrorAttributeNameMandatory"));
+				oMultiInput.focus();
+				return;
+			} else {
+				oViewModel.setProperty("/AttrErrorState", "None");
+				oViewModel.setProperty("/AttrErrorMessage", "");
+			}
+			this._checkForDuplicateEntry(oEntry, oMultiInput);
+
+		},
+		/**
+		 * Checks whether the selected attribute already exists for the selected policy.
+		 *
+		 * This method queries the backend OData service to ensure that the combination of
+		 * Policy and AttributeId is unique. It prevents duplicate entries from being
+		 * exposed for the same policy.
+		 *
+		 * The method performs the following actions:
+		 *   1. Builds an OData filter using Policy and AttributeId.
+		 *   2. Reads the Expose Attributes entity set with the combined filter.
+		 *   3. If a record already exists:
+		 *        - sets an error state in the view model
+		 *        - displays a duplicate entry message
+		 *        - focuses the MultiInput control
+		 *   4. If no record exists:
+		 *        - calls `_addExposeAttributeEntry` to create the new entry.
+		 *
+		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
+		 * @private
+		 * @function _checkForDuplicateEntry
+		 * @param {Object} oEntry - Object containing the Policy and AttributeId to be added.
+		 * @param {sap.m.MultiInput} oMultiInput - MultiInput control used for attribute entry.
+		 * @returns {void}
+		 */
+		_checkForDuplicateEntry: function (oEntry, oMultiInput) {
+			var oBundle, oDataModel, oViewModel, oView = this.getView(), oCombinedFilter,
+				oAttribute = new Filter("AttributeId", FilterOperator.EQ, oEntry.AttributeId),
+				oPolicy = new Filter("Policy", FilterOperator.EQ, oEntry.Policy);
+			oDataModel = oView.getModel();
+			oViewModel = oView.getModel("viewModel");
+			oBundle = oView.getModel("i18n").getResourceBundle();
+
+			oCombinedFilter = new Filter({
+				filters: [oPolicy, oAttribute],
+				and: true // all filters must be true (AND condition)
+			});
+			oDataModel.read(PlDacConst.ENTITY_SET_EXPOSE_ATTRIBUTES, {
+				filters: [oCombinedFilter], // Pass the array of filters here
+				success: function (oData) {
+					if (oData.results && oData.results.length > 0) {
+						oViewModel.setProperty("/AttrErrorState", "Error");
+						oViewModel.setProperty("/AttrErrorMessage", oBundle.getText("msgErrorDuplicateEntryCombination", [oEntry.Policy + "~" + oEntry.AttributeId]));
+						oMultiInput.focus();
+						return;
+					}
+					this._addExposeAttributeEntry(oEntry);
+					// Success handler: data.results contains the filtered data
+
+				}.bind(this),
+				error: function () {
+					// Error handler
+					//console.error(oError);
+				}
+			});
+		},
+		/**
+		 * Creates a new Expose Attribute entry in the backend.
+		 *
+		 * This method sends a create request to the OData service to persist the selected
+		 * attribute for the current policy. It performs the following steps:
+		 *   1. Removes temporary UI tokens (PolicyToken and AttributeToken) from the entry object
+		 *      before sending the payload to the backend.
+		 *   2. Calls ODataModel.create() to add the record to the `ExposeAttributes` entity set.
+		 *   3. On success:
+		 *        - displays a success message with the attribute ID
+		 *        - refreshes the model to update the UI list
+		 *        - closes the Expose Attribute dialog
+		 *   4. On error:
+		 *        - logs the error
+		 *        - closes the dialog
+		 *        - displays an error message using `displayErrorMessage`
+		 *
+		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
+		 * @private
+		 * @function _addExposeAttributeEntry
+		 * @param {Object} oEntry - The Expose Attribute entry data containing Policy and AttributeId.
+		 * @returns {void}
+		 */
+		_addExposeAttributeEntry: function (oEntry) {
+			var oBundle, oView = this.getView(), oModel = oView.getModel(), sAttributeId;
+			oBundle = oView.getModel("i18n").getResourceBundle();
+			delete oEntry.PolicyToken;
+			delete oEntry.AttributeToken;
+			sAttributeId = oEntry.AttributeId;
+			oModel.create(PlDacConst.ENTITY_SET_EXPOSE_ATTRIBUTES, oEntry, {
+				success: function () {
+					MessageBox.success(oBundle.getText("msgExposeAttrAddedSuccessfully", [sAttributeId]), { styleClass: "PlDacMessageBox" });
+					oView.getModel().refresh();
+					this._oExposeAttributeDialog.close();
+				}.bind(this),
+				error: function (oError) {
+					Log.error(oBundle.getText("msgErrorInCreate") + oError);
+					this._oExposeAttributeDialog.close();
+					this.displayErrorMessage(oError);
+
+				}.bind(this)
+			});
+		},
+
+		/**
+		 * Handles the close action of the Expose Attribute dialog.
+		 *
+		 * This method resets the dialog-related view model state and closes the dialog.
+		 * It performs the following actions:
+		 *   1. Clears any existing error state and error messages.
+		 *   2. Resets the AttributeId field in the dialog data.
+		 *   3. Updates the view model with the cleared data.
+		 *   4. Closes the Expose Attribute dialog.
+		 *
+		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
+		 * @public
+		 * @function onPressCloseDialogExposeAttribute
+		 * @returns {void}
+		 */
+		onPressCloseDialogExposeAttribute: function () {
+			var oView = this.getView(), oViewModelData = oView.getModel("viewModel").getData();
+			oViewModelData.AttrErrorState = "None";
+			oViewModelData.AttrErrorMessage = "";
+			oViewModelData.Data.AttributeId = "";
+			oView.getModel("viewModel").setData(oViewModelData);
+			this._oExposeAttributeDialog.close();
+		},
+
+		/**
+		 * Event delegate used to handle post-rendering behavior of the User Attribute table.
+		 *
+		 * This delegate is attached to the table inside the dialog. After the table is
+		 * rendered, it automatically selects the row that matches the current attribute
+		 * value stored in the dialog settings model.
+		 *
+		 * The delegate performs the following actions:
+		 *   1. Retrieves the "setting" model from the dialog to get the selected value.
+		 *   2. Iterates through all items in the table.
+		 *   3. Compares each row's AttributeId with the saved value.
+		 *   4. If a match is found:
+		 *        - selects the row programmatically
+		 *        - sets focus to the matched row
+		 *   5. Ensures that the table always reflects the currently selected value after rendering.
+		 *
+		 * This improves user experience by automatically highlighting the previously
+		 * selected attribute when the dialog is opened or refreshed.
+		 *
+		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
+		 * @private
+		 * @name _userAttributeTableEventDelegate
+		 * @property {function} onAfterRendering - Handler executed after the table is rendered.
+		 */
+		_userAttributeTableEventDelegate: {
+			onAfterRendering: function (oEvent) {
+				var aItems, iItem, oItemData, oCustomData, oItem;
+				oCustomData = this._oDialogSelection.getModel("setting").getData();
+				// This code runs after the input field is rendered and in the DOM
+				aItems = oEvent.srcControl.getItems();
+				if (aItems.length > 0) {
+					for (iItem = 0; iItem < aItems.length; iItem++) {
+						oItem = aItems[iItem];
+						oItemData = oItem.getBindingContext();
+						if (oItemData.getProperty("AttributeId") == oCustomData.Value) {
+							oEvent.srcControl.setSelectedItem(oItem, true, true);
+							oItem.focus();
+							break;
 						}
 					}
 				}
-				oRuleData.types[1].Condition = aCondition;
+				// Handle keypress event
 			}
-			oView.getModel("ruleModel").setData(oRuleData);
+		},
+
+		/**
+		 * Event delegate for handling the post-render behavior of the List table.
+		 *
+		 * This delegate is attached to the list table inside the dialog. After the table
+		 * is rendered, it automatically selects the row that matches the current list
+		 * value stored in the dialog settings model.
+		 *
+		 * The delegate performs the following actions:
+		 *   1. Retrieves the current selection value from the dialog's "setting" model.
+		 *   2. Iterates through all rows/items in the table.
+		 *   3. Compares each row's ListId with the saved value.
+		 *   4. If a match is found:
+		 *        - selects the row programmatically
+		 *        - sets focus to the matched row
+		 *   5. Ensures that the table always reflects the currently selected list value
+		 *      after rendering, improving UX when reopening the dialog.
+		 *
+		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
+		 * @private
+		 * @name _listTableEventDelegate
+		 * @property {function} onAfterRendering - Handler executed after the table is rendered.
+		 */
+		_listTableEventDelegate: {
+			onAfterRendering: function (oEvent) {
+				var aItems, iItem, oItemData, oCustomData, oItem;
+				oCustomData = this._oDialogSelection.getModel("setting").getData();
+				// This code runs after the input field is rendered and in the DOM
+				aItems = oEvent.srcControl.getItems();
+				if (aItems.length > 0) {
+					for (iItem = 0; iItem < aItems.length; iItem++) {
+						oItem = aItems[iItem];
+						oItemData = oItem.getBindingContext();
+						if (oItemData.getProperty("ListId") == oCustomData.Value) {
+							oEvent.srcControl.setSelectedItem(oItem, true, true);
+							oItem.focus();
+							break;
+						}
+					}
+				}
+				// Handle keypress event
+			}
+		},
+		/**
+		 * Event handler triggered when the user presses the "Add Row" button
+		 * in the Values dialog.
+		 *
+		 * This method delegates the action to the first content control
+		 * of the selection dialog by firing the custom
+		 * `addRowInSingleValue` event.
+		 *
+		 * @public
+		 * @function onPressAddRowInValues
+		 *
+		 * @returns {void}
+		 */
+		onPressAddRowInValues: function () {
+			this._oDialogSelection.getContent()[0].fireAddRowInSingleValue();
+		},
+
+		/**
+		 * Event handler for adding a new single value row.
+		 *
+		 * This method retrieves the "SingleValues" model from the event source,
+		 * appends a new empty value object to the model data array,
+		 * and updates the model to reflect the changes.
+		 *
+		 * The new row contains:
+		 *  - Operator: initialized with a blank space
+		 *  - value: initialized as an empty string
+		 *
+		 * @public
+		 * @function onAddRowInSingleValue
+		 *
+		 * @param {sap.ui.base.Event} oEvent - The event object triggered by
+		 *                                      `addRowInSingleValue`.
+		 * @returns {void}
+		 */
+		onAddRowInSingleValue: function (oEvent) {
+			var oModel = oEvent.getSource().getModel("SingleValues");
+			var aData = oModel.getData();
+			aData.push({ Operator: " ", value: "" });
+			oModel.setData(aData);
 
 		},
 
+		/**
+		 * Event handler triggered when the user presses the "Add Row"
+		 * button in the Value Ranges section of the dialog.
+		 *
+		 * This method delegates the action by firing the custom
+		 * `addRowInValueRanges` event on the first content control
+		 * of the selection dialog.
+		 *
+		 * @public
+		 * @function onPressAddRowInRanges
+		 *
+		 * @returns {void}
+		 */
+		onPressAddRowInRanges: function () {
+			this._oDialogSelection.getContent()[0].fireAddRowInValueRanges();
+		},
 
+		/**
+		 * Event handler for adding a new value range row.
+		 *
+		 * This method retrieves the "Ranges" model from the event source,
+		 * appends a new empty range object to the model data array,
+		 * and updates the model to reflect the changes.
+		 *
+		 * The new row contains:
+		 *  - Operator: initialized with a blank space
+		 *  - Lower: initialized as an empty string (lower boundary)
+		 *  - Upper: initialized as an empty string (upper boundary)
+		 *
+		 * @public
+		 * @function onAddRowInValueRanges
+		 *
+		 * @param {sap.ui.base.Event} oEvent - The event object triggered by
+		 *                                      `addRowInValueRanges`.
+		 * @returns {void}
+		 */
+		onAddRowInValueRanges: function (oEvent) {
+			var oModel = oEvent.getSource().getModel("Ranges");
+			var oData = oModel.getData();
+			oData.push({ Operator: " ", Lower: "", Upper: "" });
+			oModel.setData(oData);
+
+		},
+
+		/**
+		 * Closes the value selection dialog.
+		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
+		 * @public
+		 * @function onCloseValueDialog
+		 * @returns {void}
+		 */
+		onCloseValueDialog: function () {
+			this._oDialogSelection.close();
+		},
+
+		/**
+		 * Handles the selection of a user attribute item.
+		 *
+		 * Retrieves the selected item's binding context data and updates
+		 * the rule model accordingly using the RuleModelHandler.
+		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
+		 * @public
+		 * @function onPressUserAttributeItem
+		 * @param {*} oEvent - The press event triggered by the user attribute item.
+		 * @returns {void}
+		 */
+		onPressUserAttributeItem: function (oEvent) {
+			var oSelectedItemData = oEvent.getSource()
+				.getBindingContext()
+				.getObject();
+
+			RuleModelHandler.updateRuleModelWithUserAttrSelectionData(
+				this.getView(),
+				this._oDialogSelection,
+				oSelectedItemData
+			);
+		},
+
+		/**
+		 * Handles switching the object page to full screen mode.
+		 *
+		 * Updates the view model flags controlling full screen visibility
+		 * and sets the Flexible Column Layout to "EndColumnFullScreen".
+		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
+		 * @public
+		 * @function handleFullScreen
+		 * @returns {void}
+		 */
 		handleFullScreen: function () {
 			var oView = this.getView();
 			oView.getModel("viewModel").setProperty("/FullScreen", false);
 			oView.getModel("viewModel").setProperty("/ExitFullScreen", true);
 			oView.getModel("layoutMode").setProperty("/layout", "EndColumnFullScreen");
 		},
+		/**
+		 * Handles the exit from full screen mode in the Flexible Column Layout.
+		 *
+		 * Updates the layout to "ThreeColumnsEndExpanded" and adjusts the
+		 * view model properties controlling full screen state.
+		 * If no policy route is defined in the "routeModel", navigates
+		 * back to the "Policies" route.
+		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
+		 * @public
+		 * @function handleExitFullScreen
+		 * @returns {void}
+		 */
 		handleExitFullScreen: function () {
 			var oView = this.getView();
 			oView.getModel("layoutMode").setProperty("/layout", "ThreeColumnsEndExpanded");
 			oView.getModel("viewModel").setProperty("/FullScreen", true);
 			oView.getModel("viewModel").setProperty("/ExitFullScreen", false);
-		},
-		//
-		handleClose: function () {
-			this.getView().getModel("layoutMode").setProperty("/layout", "TwoColumnsMidExpanded");
-		},
-		onButtonPressAddRuleMain: function (oEvent) {
-			var oBtn = oEvent.getSource(), i,iLen;
-			var oView = this.getView();
-			var oRule = [];
-			var oValue = oBtn.getCustomData()[0].getValue();
-			var oRuleData = oView.getModel("ruleModel").getData();
-			if (oRuleData.types.length == 1) {
-				aCondition = oRuleData.types[0].Condition;
-			} else {
-				aCondition = oRuleData.types[1].Condition;
+			if (!this.getOwnerComponent().getModel("routeModel").getProperty("/PolicyRoute")) {
+				this._oRouter.navTo("Policies");
 			}
-			if (oValue.RuleType == "Rules") {
-				//var aCondition = oRuleData.types[1].Condition;
-				for (i = 0; i < aCondition.length; i++) {
-					if (aCondition[i].CTypeID == oValue.CTypeID) {
-						aCondition[i].Rules = this._reindexConditionRules(aCondition[i].Rules);
-						iLen = aCondition[i].Rules.length;
-						oRule["CTypeID"] = oValue.CTypeID;
-						oRule["Rows"] = iLen + 1;
-						oRule["RuleType"] = "Rules";
-						if (iLen > 0) {
-							oRule["ContitionType"] = "AND";
-							aCondition[i].Rules.push(oRule);
-						} else {
-							aCondition[i].Rules.push(oRule);
-						}
-					}
-				}
-				oRuleData.types[1].Condition = aCondition;
 
-			} else {
-				var aCondition = oRuleData.types[0].Condition;
-				for (i = 0; i < aCondition.length; i++) {
-					if (aCondition[i].CTypeID == oValue.CTypeID) {
-						aCondition[i].Rules = this._reindexConditionRules(aCondition[i].Rules);
-						iLen = aCondition[i].Rules.length;
-						oRule["CTypeID"] = oValue.CTypeID;
-						oRule["Rows"] = iLen + 1;
-						oRule["RuleType"] = "Precondition";
-						if (iLen > 0) {
-							oRule["ContitionType"] = "AND";
-							aCondition[i].Rules.push(oRule);
-						} else {
-							aCondition[i].Rules.push(oRule);
-						}
-					}
-				}
-				oRuleData.types[0].Condition = aCondition;
-
-			}//end if
-			oView.getModel("ruleModel").setData(oRuleData);
 		},
-		onPressEditRuleBtn: function (oEvent) {
+		/**
+	 * Handles the close button press on the object page.
+	 *
+	 * Resets the Flexible Column Layout to "TwoColumnsMidExpanded"
+	 * and navigates back to the "Policies" route.
+	 *
+	 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
+	 * @public
+	 * @function onObjectPageCloseButtonPressed
+	 * @returns {void}
+	 */
+		onObjectPageCloseButtonPressed: function () {
+			this.getView().getModel("layoutMode").setProperty("/layout", "TwoColumnsMidExpanded");
+			this._oRouter.navTo("Policies");
+		},
+		/**
+		 * Handles the action for adding a new main rule block.
+		 *
+		 * Delegates the rule insertion logic to the RuleModelHandler,
+		 * passing the current view instance and the button source
+		 * that triggered the event.
+		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
+		 * @public
+		 * @function onButtonPressAddRuleMain
+		 * @param {sap.ui.base.Event} oEvent - The press event triggered by the button.
+		 * @private
+		 * @returns {void}
+		 */
+		onButtonPressAddRuleMain: function (oEvent) {
+			RuleModelHandler.insertRuleInBlock(this.getView(), oEvent.getSource());
+		},
+		/**
+		 * Handles the edit action for policy rules.
+		 *
+		 * Ensures that the rule model contains the required structure before
+		 * switching the UI into edit mode:
+		 * - If no rule types exist, loads an empty rule model.
+		 * - If the first rule type is not a "Precondition", prepends an empty precondition.
+		 * - If only a precondition exists, appends an empty rule.
+		 *
+		 * Afterwards, it destroys any existing edit fragment instance and
+		 * asynchronously loads the "EditPolicyRules" fragment into the
+		 * subsection block for editing.
+		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
+		 * @public
+		 * @function onPressEditRuleBtn
+		 * @returns {void}
+		 */
+		onPressEditRuleBtn: function () {
 			var oView = this.getView(), oSubSection = oView.byId("idRuleSubSectionBlock"),
 				oRuleData = oView.getModel("ruleModel").getData(),
-				oEmptyRuleModel, oEmptyPrecondition, oEmptyRule;
-			oEvent.getSource().setVisible(false);
-			oView.byId("saveRuleBtn").setVisible(true);
+				oEmptyRuleModel, aTypes, iType, oEmptyRule, bPreCondition = false;
+
+			oView.getModel("viewModel").setProperty("/bVisibleAddCondition", true);
+			aTypes = oView.getModel("ruleModel").getData().types;
+			for (iType = 0; iType < aTypes.length; iType++) {
+				if (aTypes[iType].RuleType == "Precondition") {
+					oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock", false);
+					oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", false)
+					bPreCondition = true;
+				}
+				if (aTypes[iType].RuleType == "Rules") {
+					oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", false);
+				}
+			}
+			if (!bPreCondition) {
+				oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock", true);
+			}
 			if (oRuleData.types.length == 0) {
 				oEmptyRuleModel = new JSONModel();
 				oEmptyRuleModel.attachRequestCompleted(function () {
 					oView.getModel("ruleModel").setData(oEmptyRuleModel.getData());
-					//oView.getModel("ruleModel").setData(oRuleData);
 				});
 				oEmptyRuleModel.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/EmptyRuleModel.json"));
-
-			}
-			if (oRuleData.types[0] && oRuleData.types[0].RuleType != "Precondition") {
-				oEmptyPrecondition = new JSONModel();
-				oEmptyPrecondition.attachRequestCompleted(function () {
-					oRuleData.types.unshift(oEmptyPrecondition.getData());
-					oView.getModel("ruleModel").setData(oRuleData);
-				});
-				oEmptyPrecondition.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/EmptyPrecondition.json"));
 			}
 			if (oRuleData.types.length == 1 && oRuleData.types[0].RuleType == "Precondition") {
 				oEmptyRule = new JSONModel();
@@ -817,7 +1414,10 @@ sap.ui.define([
 				});
 				oEmptyRule.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/EmptyRule.json"));
 			}
-			//oView.getModel("ruleModel").setData(oRuleData);
+			if (this._oEditRules) {
+				this._oEditRules.destroy();
+				this._oEditRules = null;
+			}
 			if (!this._oEditRules) {
 				// Load the fragment asynchronously
 				Fragment.load({
@@ -834,162 +1434,109 @@ sap.ui.define([
 				oSubSection.addBlock(this._oEditRules);
 			}
 		},
-		_prepareRulePayload: function (aTypes) {
-			var iType, iCondition, aCondition, iRule, aRules, _aRules, _oRule,
-				oCondition, _aValues, aValueRanges, iValueRange, oView = this.getView(),
-				oPayload = {}, bEmptyRule = true;
-			_aRules = [];
-			for (iType = 0; iType < aTypes.length; iType++) {
-				aCondition = aTypes[iType].Condition;
-				for (iCondition = 0; iCondition < aCondition.length; iCondition++) {
-					if (aCondition[iCondition].CType != "END IF") {
-						oCondition = {};
-						bEmptyRule = true;
-						oCondition["CondId"] = aCondition[iCondition].CTypeID;
-						oCondition["to_Rule"] = [];
-						aRules = aCondition[iCondition].Rules;
-						for (iRule = 0; iRule < aRules.length; iRule++) {
-							if (aRules[iRule].Attribute != '') {
-								bEmptyRule = false;
-								_oRule = {};
-								_oRule["AttributeId"] = aRules[iRule].Attribute;
-								_oRule["to_Value"] = [];
-								_aValues = [];
-								aValueRanges = aRules[iRule].ValueRange;
-								if (aRules[iRule].Operator == "BT") {
-									for (iValueRange = 0; iValueRange < aValueRanges.length; iValueRange++) {
-										_aValues.push({ Value: aValueRanges[iValueRange].Value });
-									}
-								} else {
-									for (iValueRange = 0; iValueRange < aValueRanges.length; iValueRange++) {
-										_aValues.push({ Value: aValueRanges[iValueRange].Value, Operator: aValueRanges[iValueRange].Operator });
-									}
-								}
-								if (aRules[iRule].ValueDesc != "" && aRules[iRule].Value == "") {
-									_aValues.push({ Value: aRules[iRule].ValueDesc, Operator: aRules[iRule].Operator });
-								}
-								if (aRules[iRule].Operator == "BT") {
-									_oRule["to_Value"].push({ Operator: aRules[iRule].Operator, to_ValueRange: _aValues });
-								} else {
-									for (var i = 0; i < _aValues.length; i++) {
-										_oRule["to_Value"].push(_aValues[i]);
-									}
-								}
-								oCondition["to_Rule"].push(_oRule);
-							}
-						}
-						if (!bEmptyRule) {
-							_aRules.push(oCondition);
-						}
-					}
-				}
-			}
-			oPayload["to_Condition"] = _aRules;
-			oPayload["Policy"] = oView.getBindingContext().getObject().PolicyName;
-			return oPayload;
+		onPressAddRuleBlockBtn: function () {
+			var oEmptyRuleModel, oView = this.getView(), oRuleData;
+			oEmptyRuleModel = new JSONModel();
+			oEmptyRuleModel.attachRequestCompleted(function () {
+				oRuleData = oView.getModel("ruleModel").getData();
+				oRuleData.types.push(oEmptyRuleModel.getData());
+				oView.getModel("ruleModel").setData(oRuleData);
+				oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", false);
+				oView.getModel("viewModel").setProperty("/bVisibleAddCondition", true);
+			});
+			oEmptyRuleModel.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/EmptyRule.json"));
 		},
-		onPressSaveRuleBtn: function (oEvent) {
-			var oView = this.getView(),
+		onPressAddPreConditionBlockBtn: function () {
+			var oEmptyModel, oView = this.getView(), oRuleData;
+			oEmptyModel = new JSONModel();
+			oEmptyModel.attachRequestCompleted(function () {
+				oRuleData = oView.getModel("ruleModel").getData();
+				if (oRuleData.types.length == 0) {
+					oRuleData.types.push(oEmptyModel.getData());
+				} else {
+					oRuleData.types.unshift(oEmptyModel.getData());
+				}
+				oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock", false);
+				oView.getModel("ruleModel").setData(oRuleData);
+			});
+			oEmptyModel.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/EmptyPrecondition.json"));
+		},
+		/**
+		 * Handles the save action for a policy rule.
+		 *
+		 * This function:
+		 * 1. Retrieves the current view and OData model.
+		 * 2. Collects rule data from the "ruleModel".
+		 * 3. Prepares the payload for rule creation.
+		 * 4. Sends a create request to the "/PolRuleSet" entity set.
+		 * 5. On success:
+		 *    - Displays a confirmation message.
+		 *    - Reloads the policy rule details.
+		 *    - Destroys the edit rules dialog/fragment.
+		 *    - Loads the read-only policy rule fragment.
+		 * 6. On error:
+		 *    - Logs the error message.
+		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
+		 * @public
+		 * @function onPressSaveRuleBtn
+		 * @returns {void}
+		 */
+		onPressSaveRuleBtn: function () {
+			var oView = this.getView(), oDataModel = oView.getModel(),
 				oRuleData = oView.getModel("ruleModel").getData(), oPayload;
-			oEvent.getSource().setVisible(false);
-			this.getView().byId("editRuleBtn").setVisible(true);
-			oPayload = this._prepareRulePayload(oRuleData.types);
-			if (oPayload.to_Condition.length > 0) {
-				this._readPolicyRulesDetails(oView.getBindingContext().getObject().PolicyName);
-			} else {
-				this._readPolicyRulesDetails(oView.getBindingContext().getObject().PolicyName);
-			}
-			this._loadReadOnlyPolicyRuleFragment();
-		}
-		// onPressAddPreconditionBlock: function () {
-		// 	var oPreconditionBlock =
-		// 	{
-		// 		"RuleType": "Precondition",
-		// 		"Condition": [
-		// 			{
-		// 				"CType": "IF",
-		// 				"RuleType": "Precondition",
-		// 				"CTypeID": "P01",
-		// 				"Rules": [
-		// 					{
-		// 						"ContitionType": "",
-		// 						"Attribute": "",
-		// 						"AttributeDesc": "",
-		// 						"Operator": "=",
-		// 						"Value": "",
-		// 						"ValueDesc": "",
-		// 						"Rows": 1,
-		// 						"CTypeID": 0,
-		// 						"RuleType": "Precondition",
-		// 						"CondId": "P01",
-		// 						"ValueRange": {
-		// 							"Operator": "",
-		// 							"Value": ""
-		// 						}
-		// 					}
-		// 				]
-		// 			},
-		// 			{
-		// 				"CType": "END IF",
-		// 				"CTypeID": 20,
-		// 				"RuleType": "Precondition",
-		// 				"Rules": []
-		// 			}
-		// 		]
-		// 	};
+			oPayload = RuleModelHandler.prepareRuleCreatePayload(oView, oRuleData.types);
+			
+			oPayload.Policy = this._sPolicyName;
+			oDataModel.create("/PolRuleSet", oPayload, {
+				success: function () {
+					MessageToast.show("Rule has been update!");
+					this._readPolicyRulesDetails(this.getView().getBindingContext().getObject().PolicyName);
+					this._oEditRules.destroy();
+					this._oEditRules = null;
+					this._loadReadOnlyPolicyRuleFragment();
 
-		// 	var oPrecondtionData = this.getView().getModel("ruleModel").getData();
-		// 	if (oPrecondtionData && oPrecondtionData.types && oPrecondtionData.types.length > 0) {
-		// 		oPrecondtionData.types.unshift(oPreconditionBlock);
-		// 	} else {
-		// 		oPrecondtionData.types.push(oPreconditionBlock);
-		// 	}
-		// 	this.getView().getModel("ruleModel").setData(oPrecondtionData);
-		// },
-		// onPressAddRuleBlock: function () {
-		// 	var oRuleBlock = {
-		// 		"RuleType": "Rules",
-		// 		"CTypeID": "001",
-		// 		"Condition": [
-		// 			{
-		// 				"CType": "IF",
-		// 				"RuleType": "Rules",
-		// 				"CTypeID": "001",
-		// 				"Rules": [
-		// 					{
-		// 						"ContitionType": "",
-		// 						"Attribute": "",
-		// 						"AttributeDesc": "",
-		// 						"Operator": "=",
-		// 						"Value": "",
-		// 						"ValueDesc": "",
-		// 						"Rows": 1,
-		// 						"CTypeID": "001",
-		// 						"RuleType": "Rules",
-		// 						"CondId": "001",
-		// 						"ValueRange": {
-		// 							"Operator": "",
-		// 							"Value": ""
-		// 						}
-		// 					}
-		// 				]
-		// 			},
-		// 			{
-		// 				"CType": "END IF",
-		// 				"CTypeID": 40,
-		// 				"RuleType": "Rules",
-		// 				"Rules": []
-		// 			}
-		// 		]
-		// 	};
-		// 	var oRuleData = this.getView().getModel("ruleModel").getData();
-		// 	if (oRuleData && oRuleData.types && oRuleData.types.length > 0) {
-		// 		oRuleData.types.push(oRuleBlock);
-		// 	} else {
-		// 		oRuleData.types.push(oRuleBlock);
-		// 	}
-		// 	this.getView().getModel("ruleModel").setData(oRuleData);
-		// }
+				}.bind(this),
+				error: function (oError) {
+					Log.error(oError.message)
+				}
+			});
+		},
+		/**
+		 * Handles the cancel action for editing a policy rule.
+		 *
+		 * This function performs the following actions:
+		 * 1. Reloads the policy rule details for the currently selected policy.
+		 * 2. Destroys the edit rules dialog/fragment instance.
+		 * 3. Resets the edit rules reference to null.
+		 * 4. Loads the read-only policy rule fragment.
+		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
+		 * @public
+		 * @function onPressCancelRuleBtn
+		 * @returns {void}
+		 */
+		onPressCancelRuleBtn: function () {
+			this._readPolicyRulesDetails(this.getView().getBindingContext().getObject().PolicyName);
+			this._oEditRules.destroy();
+			this._oEditRules = null;
+			this._loadReadOnlyPolicyRuleFragment();
+
+		},
+		/**
+		 * Event handler triggered when the exposed attribute table completes its update.
+		 * Updates the table header toolbar with the total count of items.
+		 * 
+		 * @param {*} oEvent - The update finished event object
+		 * @param {*} oEvent.getSource() - The table/list that triggered the event
+		 * @param {number} oEvent.getParameter("total") - The total number of items in the table
+		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
+		 * @public
+		 */
+		onExposedAttributeTableUpdateFinished: function (oEvent) {
+			var oView = this.getView(), oBundle = oView.getModel("i18n").getResourceBundle();
+			if (oEvent.getSource().getBinding("items").isLengthFinal()) {
+				oEvent.getSource().getHeaderToolbar().getContent()[0].setText(oBundle.getText("titExposeAttribure", [oEvent.getParameter("total")]))
+			}
+		}
 
 	});
 });

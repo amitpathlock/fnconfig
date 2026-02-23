@@ -1,0 +1,87 @@
+    <core:FragmentDefinition
+        xmlns="sap.m"
+        xmlns:core="sap.ui.core"
+        xmlns:f="sap.ui.layout.form">
+         <!-- @ui5ignore -->
+        <Dialog class="PlDacDailogBox"
+        beforeOpen="onBeforeExposeAttributeDialogOpened"
+        contentWidth="600px"
+            icon="{viewModel>/Icon}"
+            title="{viewModel>/Title}">
+            <content>
+             <!-- @ui5ignore -->
+                <f:SimpleForm
+                    editable="true"
+                    layout="ResponsiveGridLayout"
+                    labelSpanXL="3"
+                    labelSpanL="3"
+                    labelSpanM="3"
+                    labelSpanS="12"
+                    adjustLabelSpan="false"
+                    emptySpanXL="4"
+                    emptySpanL="4"
+                    emptySpanM="4"
+                    emptySpanS="0"
+                    columnsXL="1"
+                    columnsL="1"
+                    columnsM="1"
+                    singleContainerFullSize="false">
+                    <f:content>
+                      <!-- @ui5ignore -->
+                        <Label text="Policy"  required="true"/>
+                         <!-- @ui5ignore -->
+                        <Input 
+                           editable="false"
+                         showSuggestion="true"
+                          value="{viewModel>/Data/PolicyToken}"
+                         >
+                        
+                        
+                        </Input>
+                        <Label text="Attribute" required="true"/>
+                          <!-- @ui5ignore -->
+                               <MultiInput  id="idExposeAttributes"  
+                            showSuggestion="true"
+                            showValueHelp="true"  width="100%"
+                            tokenChange="onExposeAttributeTokenUpdated"
+                            valueState="{viewModel>/AttrErrorState}"
+                            valueStateText="{viewModel>/AttrErrorMessage}"
+                            valueHelpRequest="onExponseAttributeVHRequested" 
+                            liveChange="onExposeAttributeInputChange"
+                            suggestionItemSelected="onExposeAttrSuggestionItemSelected"
+                           
+                        	suggestionRows="{
+                                path: '/DataAttrSet',
+                                length: 1000
+                            }" 
+                    >
+                        <suggestionColumns>
+                            <Column>
+                                <Label text="Name"/>
+                            </Column>
+                            <Column>
+                                <Label text="Description"/>
+                            </Column>
+                        </suggestionColumns>
+                        <suggestionRows>
+                            <!-- @ui5ignore -->
+                            <ColumnListItem >
+                                <Label text="{AttributeId}" />
+                                <Label text="{Description}" />
+                            </ColumnListItem>
+                        </suggestionRows>
+                    </MultiInput>
+                        <!-- Add more form fields as needed -->
+                    </f:content>
+                </f:SimpleForm>
+            </content>
+            <beginButton>
+             <!-- @ui5ignore -->
+                <Button text="Save" press="onPressSaveDialogExposeAttribute" />
+            </beginButton>
+            <endButton>
+             <!-- @ui5ignore -->
+                <Button text="Cancel" press="onPressCloseDialogExposeAttribute" />
+            </endButton>
+        </Dialog>
+    </core:FragmentDefinition>

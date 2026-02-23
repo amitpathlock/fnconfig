@@ -4,9 +4,10 @@
     xmlns:cus="pl.dac.apps.fnconfig.control"
     xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 > <!-- @ui5ignore -->
-   <Dialog showHeader="false" contentWidth="600px" contentHeight="580px" beforeOpen="onBeforeOpenDialog">   
+   <Dialog showHeader="false" contentWidth="640px" contentHeight="580px" beforeOpen="onBeforeOpenDialog">   
         <content>
-          <cus:PlDacSectionLayout
+        <!-- @ui5ignore -->
+          <cus:PlDacSectionLayout  addRowInSingleValue="onAddRowInSingleValue" addRowInValueRanges="onAddRowInValueRanges"
           >
               <cus:sections>
                
@@ -16,7 +17,7 @@
                     >
                         
                   
-                     <Table items="{SingleValues>/}"  customData:title="Single Values" customData:icon="sap-icon://list" >
+                     <Table items="{SingleValues>/}" sticky="HeaderToolbar,InfoToolbar,ColumnHeaders"  customData:title="Single Values" customData:icon="sap-icon://slim-arrow-down" >
                         <columns>
                          <Column 	  demandPopin="true">
                                 <Text text="Selection Option" />
@@ -44,7 +45,7 @@
                       </VBox>
                     <!-- Ranges Selection Table-->
                      <VBox>
-                     <Table items="{Ranges>/}"  customData:title="Ranges" customData:icon="sap-icon://direction-arrows" >
+                     <Table items="{Ranges>/}"  customData:title="Ranges" customData:icon="sap-icon://multi-select" sticky="HeaderToolbar,InfoToolbar,ColumnHeaders" >
                         <columns>
                          <Column 	  demandPopin="true">
                                 <Text text="Selection Option" />
@@ -59,9 +60,9 @@
                         <items>
                             <ColumnListItem vAlign="Middle" type="Active">
                                 <cells>
-                                    <Select  width="100%" items="{path:'Operators>/',templateShareable:true}" selectedKey="{Ranges>Operator}">
+                                    <Select  width="100%" items="{path:'OperatorsRange>/',templateShareable:true}" selectedKey="{Ranges>Operator}">
                                        <items>
-                                        <c:Item key="{Operators>Key}" text="{Operators>Text}" />
+                                        <c:Item key="{OperatorsRange>Key}" text="{OperatorsRange>Text}" />
                                        </items>
                                     </Select>
                                     <Input value="{Ranges>Lower}"/>
@@ -74,13 +75,13 @@
                         <Button icon="sap-icon://add" text="Rows" class="plDacAddRows"  press=".onPressAddRowInRanges" />    
                      </VBox>
                      <VBox>
-                      <Table items="{path:'/UserAttrSet'}"  customData:title="User Attributes"  customData:icon="sap-icon://person-placeholder" >
+                      <Table items="{path:'/UserAttrSet'}" mode="SingleSelectLeft" customData:title="User Attributes"  customData:icon="sap-icon://person-placeholder" >
                         <columns>
                             <Column 	minScreenWidth="Tablet"  demandPopin="true">
-                                <Text text="Name" />
+                                <Text text="{i18n>txtHeadrObjectPageExposeAttrTblColumnAttribute}" />
                             </Column> 
                              <Column 	minScreenWidth="Tablet"  demandPopin="true">
-                                <Text text="Description" />
+                                <Text text="{i18n>txtHeadrObjectPageExposeAttrTblColumnAttributeDesc}" />
                             </Column>     
                         </columns>
                         <items>
@@ -95,7 +96,9 @@
                     </Table>
                      </VBox>
                      <VBox>
-                      <Table items="{path:'/UserAttrSet'}"  customData:title="List"  customData:icon="sap-icon://activities" >
+                     <!-- @ui5ignore -->
+                      <Table items="{path:'/ListSet'}" class="plDacDialgTable" mode="SingleSelectLeft"  sticky="HeaderToolbar,InfoToolbar,ColumnHeaders"
+                       customData:title="List"  customData:icon="sap-icon://activities" alternateRowColors="true">
                         <columns>
                             <Column 	minScreenWidth="Tablet"  demandPopin="true">
                                 <Text text="Name" />
@@ -106,9 +109,9 @@
                         </columns>
                         <items>
                           <!-- @ui5ignore -->
-                            <ColumnListItem vAlign="Middle" type="Active" press="onPressUserAttributeItem">
+                            <ColumnListItem class="plDacRowSelected" vAlign="Middle" type="Active" press="onPressUserAttributeItem">
                                 <cells>
-                                    <ObjectIdentifier title="{ListName}" />
+                                    <ObjectIdentifier title="{ListId}" />
                                     <Text text="{Description}"/>
                                 </cells>
                             </ColumnListItem>

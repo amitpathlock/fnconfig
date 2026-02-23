@@ -1,54 +1,46 @@
-<core:FragmentDefinition 
-	xmlns="sap.m"
-	xmlns:core="sap.ui.core">
-	<Popover showHeader="false" class="PlDacPopover"
-    placement="Auto" resizable="true" contentHeight="280px" contentWidth="430px"
-		>
-       
-		<Page showHeader="true" >
-            <customHeader>
-            <Toolbar >
-                <content>
-                    <core:Icon src="sap-icon://fx"></core:Icon>
-                    <Title text="{popOverModel>/PolicyName}"></Title>
-                    <ToolbarSeparator />
-                </content>
-            </Toolbar>
-            </customHeader>
-        
-        
-         <content>
-             <Table id="idProductsTable"
-		inset="false"
-		items="{
-			path: 'popOverModel>/items'
-		}">
-        	<columns>
-			<Column
-				>
-				<Text text="Attribute Name" />
-			</Column>
-			<Column
-				minScreenWidth="Tablet"
-				demandPopin="true">
-				<Text text="Description" />
-			</Column>
-            </columns>
-            <ColumnListItem>
-				<cells>
-					
-					<Text
-						text="{popOverModel>AttributeId}" />
-					<Text  text="{popOverModel>Description}" />
-
-                </cells>
-             </ColumnListItem>
-        </Table>
-         </content>
-           
-        </Page>
-        
-        
-
-	</Popover>
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:f="sap.f">
+ <!-- @ui5ignore -->
+   <Popover showHeader="false"
+   afterClose="onAfterCloseAssignedAttributePopOver"
+    class="PlDacPopover" placement="Auto" resizable="true" contentHeight="280px" contentWidth="500px">
+      <content>
+         <f:DynamicPage class="sapUiNoContentPadding">
+            <f:content>
+             <!-- @ui5ignore -->
+               <Table id="idAssignedAttribures" items="{    path: 'popOverModel>/items'   }" alternateRowColors="true" noDataText="No data found" showNoData="true"> 
+                  <columns>
+                     <Column>
+                        <Text text="Attribute Name" />
+                     </Column>
+                     <Column minScreenWidth="Tablet" demandPopin="true">
+                        <Text text="Description" />
+                     </Column>
+                  </columns>
+                  <ColumnListItem>
+                     <cells>
+                        <Text text="{popOverModel>AttributeId}" />
+                        <Text text="{popOverModel>Description}" />
+                     </cells>
+                  </ColumnListItem>
+               </Table>
+            </f:content>
+            <f:title>
+               <f:DynamicPageTitle class="plDacDynamicPageTitle">
+                  <f:heading>
+                     <HBox alignItems="Center">
+                        <core:Icon src="sap-icon://documents" class="sapUiTinyMarginEnd plDacIconBrandColor" />
+                        <Title class="plDacTitleText" text="{popOverModel>/PolicyName} ({popOverModel>/PolicyDesc})" level="H3" titleStyle="H5" />
+                     </HBox>
+                  </f:heading>
+                  <f:expandedContent>
+                     <!-- <Label  text="{popOverModel>/PolicyDesc}" /> -->
+                  </f:expandedContent>
+                  <f:snappedContent>
+                     <!-- <Label  text="{popOverModel>/PolicyDesc}" /> -->
+                  </f:snappedContent>
+               </f:DynamicPageTitle>
+            </f:title>
+         </f:DynamicPage>
+      </content>
+   </Popover>
 </core:FragmentDefinition>
