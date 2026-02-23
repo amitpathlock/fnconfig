@@ -109,7 +109,7 @@ sap.ui.define([
 		 */
 		_onAddPolicyPolAdminButtonPress: function () {
 			var oView = this.getView();
-			oView.getModel("viewModel").setProperty("/Data", { PolicyName: "", PolicyDesc: "", Policy: "" });
+			oView.getModel("viewModel").setProperty("/Data", { PolicyName: "", PolicyDesc: "", Policy: "" ,Version:"00000",ApplArea:"",Description:"",AccessLog:"000",BusProcess:""});
 			oView.getModel("viewModel").setProperty("/PolicyNameEnabled", true);
 			if (!this._oDialogPolAdminPolicies) {
 				Fragment.load({
@@ -145,7 +145,7 @@ sap.ui.define([
 		_onEditPolicyPoladminButtonPress: function () {
 			var oView = this.getView();
 			var oSelectedContextData = oView.byId("idTablePolAdminPolicies").getSelectedItem().getBindingContext().getObject();
-
+			oSelectedContextData.Version = oSelectedContextData.Version.padStart(5,0);
 			oView.getModel("viewModel").setProperty("/Data", oSelectedContextData);
 			if (!this._oDialogPolAdminPolicies) {
 				Fragment.load({
@@ -214,7 +214,7 @@ sap.ui.define([
 			this.getOwnerComponent().getModel("routeModel").setProperty("/PolicyRoute",true);
 			oView.setModel(new JSONModel(
 				{
-					Name: oBundle.getText("lblPolicyName"),
+					Name: oBundle.getText("lblPolicyName")+" [Version]",
 					Description: oBundle.getText("lblDescription"),
 					Icon: "sap-icon://documents",
 					Title: oBundle.getText("titPolicy"),
@@ -224,6 +224,7 @@ sap.ui.define([
 						PolicyName: "",
 						Policy: "",
 						PolicyDesc: ""
+						
 					},
 					PolicyNameEnabled: true,
 					PolNameErrorState: "None",
@@ -361,6 +362,7 @@ sap.ui.define([
 				oView.byId("idPolAdminPolDesc").focus();
 				return;
 			}
+			
 			if (({}).hasOwnProperty.call(oEntry, "__metadata")) {
 
 				sPath = "/PolicySet('" + oEntry.Policy + "')";
