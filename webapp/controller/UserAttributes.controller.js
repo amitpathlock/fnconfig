@@ -18,15 +18,71 @@ sap.ui.define([
 ) {
 	"use strict";
 	return BaseController.extend("pl.dac.apps.fnconfig.controller.UserAttributes", {
+
+		/**
+		 * Lifecycle hook executed when the controller is initialized.
+		 *
+		 * This method performs the initial setup of the controller by:
+		 *
+		 * 1. Retrieving the application router instance from the owner component.
+		 * 2. Attaching the `_onRouteMatched` handler to the
+		 *    `ROUTE_PATH_USER_ATTRIBUTE` route pattern match event.
+		 * 3. Enhancing the SmartTable toolbar by adding additional custom
+		 *    buttons via `addAdditionalButtonIntoTheAttributeTableToolbar`.
+		 *
+		 * This ensures that:
+		 * - The view is properly initialized when the corresponding route is accessed.
+		 * - The user attribute table toolbar contains required custom actions.
+		 *
+		 * Dependencies:
+		 * - OwnerComponent router configuration
+		 * - PlDacConst.ROUTE_PATH_USER_ATTRIBUTE (route name constant)
+		 * - idSmartTableUserAttribute (sap.ui.comp.smarttable.SmartTable)
+		 *
+		 * @function onInit
+		 * @public
+		 * @override
+		 * @this sap.ui.core.mvc.Controller
+		 * @returns {void}
+		 */
 		onInit: function () {
 			this.oRouter = this.getOwnerComponent().getRouter();
 			this.oRouter.getRoute(PlDacConst.ROUTE_PATH_USER_ATTRIBUTE).attachPatternMatched(this._onRouteMatched, this);
 			this.addAdditionalButtonIntoTheAttributeTableToolbar(this.getView().byId("idSmartTableUserAttribute"));
 		},
 
-		/* ### A Method has been defined to implement onRouteMatched event.
-		*  -> Create viewModel with relavent properties
-		* @param {sap.ui.base.Event} oEvent
+		/**
+		 * Route match event handler.
+		 *
+		 * This method is executed when the associated route is matched.
+		 * It initializes and resets the view state by:
+		 *
+		 * 1. Retrieving the i18n resource bundle for localized texts.
+		 * 2. Creating and assigning a new `viewModel` (JSONModel) containing:
+		 *    - UI labels and placeholders (localized)
+		 *    - Default payload structure for attribute data
+		 *    - Initial UI control states (buttons, fullscreen mode, sorting, etc.)
+		 * 3. Hiding the global BusyIndicator once initialization is complete.
+		 * 4. Resetting table selections for the user attributes table, if present.
+		 *
+		 * The method ensures that the view is always loaded with a clean,
+		 * predictable initial state whenever the route is accessed.
+		 *
+		 * Model Structure (viewModel):
+		 * - Name, Description, Title – localized UI texts
+		 * - Payload – attribute data object (AttributeId, Description)
+		 * - UI state flags – Edit/Delete buttons, FullScreen mode, etc.
+		 * - Validation state – ErrorState and ErrorMessage fields
+		 *
+		 * Dependencies:
+		 * - i18n model (ResourceModel) for localized texts
+		 * - sap.ui.core.BusyIndicator
+		 * - idTableUserAttributes (sap.m.Table or sap.ui.table.Table)
+		 *
+		 * @function _onRouteMatched
+		 * @private
+		 * @this sap.ui.core.mvc.Controller
+		 * @returns {void}
 		 */
 		_onRouteMatched: function () {
 			var oView = this.getView(), oBundle = oView.getModel("i18n").getResourceBundle();
@@ -59,14 +115,55 @@ sap.ui.define([
 			), "viewModel");
 			sap.ui.core.BusyIndicator.hide();
 			this.oAttributeTable = oView.byId("idTableUserAttributes");
-			if(this.oAttributeTable){
+			if (this.oAttributeTable) {
 				this.oAttributeTable.removeSelections(true);
 			}
-			
+
 		},
 
-		/* ### A Method has been defined to implement save/update operation.
-		* @param {sap.ui.base.Event} oEvent
+		/**
+		 * Handles the save action of the User Attribute dialog.
+		 *
+		 * This method validates the user input and performs either an update
+		 * or create operation depending on whether the entry already exists.
+		 *
+		 * Processing flow:
+		 *
+		 * 1. Retrieves the attribute payload from `viewModel` (`/Data`).
+		 * 2. Validates mandatory fields:
+		 *    - AttributeId must not be empty.
+		 *    - Description must not be empty.
+		 *    If validation fails, the corresponding error state and message
+		 *    are set in the `viewModel`, and processing is stopped.
+		 *
+		 * 3. Determines persistence operation:
+		 *    - If the payload contains the `__metadata` property,
+		 *      an OData UPDATE request is executed.
+		 *    - If not, a CREATE flow is initiated via `_checkForDuplicateEntry`.
+		 *
+		 * 4. On successful update:
+		 *    - Displays a success message.
+		 *    - Refreshes the model.
+		 *    - Closes the dialog.
+		 *    - Clears table selections.
+		 *    - Resets viewModel data and button states.
+		 *
+		 * 5. On update error:
+		 *    - Logs the error.
+		 *    - Closes the dialog.
+		 *    - Displays a formatted backend error message.
+		 *
+		 * Dependencies:
+		 * - Default OData model (sap.ui.model.odata.v2.ODataModel)
+		 * - viewModel (JSONModel) for UI state and payload
+		 * - i18n resource bundle for localized texts
+		 * - PlDacConst.ENTITY_SET_USERATTRIBUTE_PATH (OData entity set path)
+		 * - sap.m.MessageBox
+		 *
+		 * @function onSaveAttributeDialog
+		 * @public
+		 * @this sap.ui.core.mvc.Controller
+		 * @returns {void}
 		 */
 		onSaveAttributeDialog: function () {
 			var sPath, oEntry,
@@ -113,10 +210,40 @@ sap.ui.define([
 
 			}
 		},
-		/** Private Method
-		 *  A Method  has been defined to create new entry
-		 * @param {} oEntry
+
+		/**
+		 * Creates a new User Attribute entry in the backend.
+		 *
+		 * This method sends a CREATE request to the OData service using the
+		 * provided entry payload. It persists the new User Attribute entity
+		 * to the backend entity set defined by
+		 * `PlDacConst.ENTITY_SET_USERATTRIBUTE_PATH`.
+		 *
+		 * On successful creation:
+		 * - Displays a localized success message including the AttributeId.
+		 * - Refreshes the OData model to reflect the newly created entry.
+		 * - Closes the attribute dialog.
+		 *
+		 * On error:
+		 * - Logs the backend error.
+		 * - Closes the dialog.
+		 * - Delegates error handling to `_displayErrorMessage`.
+		 *
+		 * Dependencies:
+		 * - Default OData model (sap.ui.model.odata.v2.ODataModel)
+		 * - i18n ResourceBundle for localized texts
+		 * - sap.m.MessageBox for user feedback
+		 * - PlDacConst.ENTITY_SET_USERATTRIBUTE_PATH (entity set path constant)
+		 *
+		 * @function _createEntry
+		 * @private
+		 * @param {Object} oEntry - The User Attribute payload to be created.
+		 * @param {string} oEntry.AttributeId - Unique identifier of the attribute.
+		 * @param {string} oEntry.Description - Description of the attribute.
+		 * @this sap.ui.core.mvc.Controller
+		 * @returns {void}
 		 */
+
 		_createEntry: function (oEntry) {
 			var that = this, oBundle, oView = this.getView(), oModel = oView.getModel();
 			oBundle = oView.getModel("i18n").getResourceBundle();
@@ -134,10 +261,42 @@ sap.ui.define([
 				}
 			});
 		},
-		/** ### Private Method
-		 *  A Method has been defined to check for Duplicate entry
-		 * @param {string} sPath
-		 * @param {} oEntry
+
+		/**
+		 * Checks whether a User Attribute entry already exists before creation.
+		 *
+		 * This method performs an OData READ request for a specific entity path
+		 * to determine if an entry with the same `AttributeId` already exists.
+		 *
+		 * Processing logic:
+		 *
+		 * - If the READ request succeeds:
+		 *   → The entity already exists.
+		 *   → Sets validation error state and localized duplicate message
+		 *     in the `viewModel`.
+		 *   → Moves focus back to the attribute name input field.
+		 *   → Creation process is stopped.
+		 *
+		 * - If the READ request returns an error (typically 404 Not Found):
+		 *   → The entity does not exist.
+		 *   → Delegates creation to `_createEntry(oEntry)`.
+		 *
+		 * This method ensures uniqueness of the User Attribute identifier
+		 * before issuing a CREATE request to the backend.
+		 *
+		 * Dependencies:
+		 * - Default OData model (sap.ui.model.odata.v2.ODataModel)
+		 * - viewModel (JSONModel) for validation state handling
+		 * - i18n ResourceBundle for localized messages
+		 * - `_createEntry` method for entity creation
+		 *
+		 * @function _checkForDuplicateEntry
+		 * @private
+		 * @param {string} sPath - OData entity path for the specific User Attribute.
+		 * @param {Object} oEntry - The User Attribute payload to validate.
+		 * @param {string} oEntry.AttributeId - Unique identifier of the attribute.
+		 * @this sap.ui.core.mvc.Controller
+		 * @returns {void}
 		 */
 		_checkForDuplicateEntry: function (sPath, oEntry) {
 			var oView = this.getView(), oModel = oView.getModel(), that = this,
@@ -157,30 +316,49 @@ sap.ui.define([
 				}
 			);
 		},
-		/** ### Event handler of "sap.m.OverflowToolButton~press"
-	 *  ### A Method has been defined to implement delete operation to table record.
-	 */
-		// onDeleteBtnPress: function () {
-		// 	var that = this, oBundle = this.getView().getModel("i18n").getResourceBundle();
-		// 	MessageBox.warning(oBundle.getText("msgDeleteConfirmation"), {
-		// 		actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-		// 		emphasizedAction: MessageBox.Action.OK,
-		// 		styleClass: "PlDacMessageBox",
-		// 		onClose: function (sAction) {
-		// 			if (sAction == "OK") {
-		// 				that._removeSelectedRecord(oBundle);
-		// 			}
-		// 		}
-		// 	});
-		// },
-		/** ### Event handler of "sap.m.OverflowToolButton~press"
-		 *  ### A Private method has been defined to implement delete selected record
-		 * @param {sap.base.i18n.ResourceBundle} oBundle
+
+
+		/**
+		 * Deletes the currently selected User Attribute record.
+		 *
+		 * This method retrieves the selected attribute identifier from the
+		 * `viewModel` (`/SelectedContextData`) and constructs the corresponding
+		 * OData entity path. It then issues a DELETE request to the backend.
+		 *
+		 * Processing flow:
+		 *
+		 * 1. Reads the selected `AttributeId` from the viewModel.
+		 * 2. Builds the OData entity path using
+		 *    `PlDacConst.ENTITY_SET_USERATTRIBUTE_PATH`.
+		 * 3. Executes an OData `remove` (DELETE) request.
+		 *
+		 * On successful deletion:
+		 * - Displays a localized success message.
+		 * - Refreshes the OData model.
+		 * - Clears table selections.
+		 * - Resets viewModel data.
+		 * - Disables Edit and Delete buttons.
+		 *
+		 * On error:
+		 * - Logs the backend error.
+		 * - Delegates error handling to `_displayErrorMessage`.
+		 *
+		 * Dependencies:
+		 * - Default OData model (sap.ui.model.odata.v2.ODataModel)
+		 * - viewModel (JSONModel) for selected context and UI state
+		 * - i18n ResourceBundle for localized messages
+		 * - sap.m.MessageBox for user feedback
+		 * - PlDacConst.ENTITY_SET_USERATTRIBUTE_PATH (entity set path constant)
+		 *
+		 * @function removeSelectedRecord
+		 * @public
+		 * @this sap.ui.core.mvc.Controller
+		 * @returns {void}
 		 */
 		removeSelectedRecord: function () {
 			var sPath, oView = this.getView(), oModel = oView.getModel(), that = this,
 				oBundle = oView.getModel("i18n").getResourceBundle(),
-				sAttributeId =  oView.getModel("viewModel").getProperty("/SelectedContextData").AttributeId;
+				sAttributeId = oView.getModel("viewModel").getProperty("/SelectedContextData").AttributeId;
 			//	sAttributeId = oView.byId("idTableUserAttributes").getSelectedItem().getBindingContext().getObject().AttributeId;
 			sPath = PlDacConst.ENTITY_SET_USERATTRIBUTE_PATH + "('" + sAttributeId + "')";
 			oModel.remove(sPath, {
@@ -199,24 +377,41 @@ sap.ui.define([
 			});
 		},
 
-		/** ### Method has been defined to handle table header sort button event
-		 * Event handler of "sap.m.OverflowToolbarButton~press"
-		 */
-		onSort: function () {
-			var oView = this.getView();
-			if (oView.getModel("viewModel").getProperty("/SortOrder") == "asc") {
-				oView.getModel("viewModel").setProperty("/SortOrder", "desc");
-				oView.byId("idTableUserAttributes").getBinding("items").sort([new Sorter("AttributeId", false)]);
-			} else {
-				oView.getModel("viewModel").setProperty("/SortOrder", "asc");
-				oView.byId("idTableUserAttributes").getBinding("items").sort([new Sorter("AttributeId", true)]);
-			}
 
-		},
-		/** Private method
-		 * ### A method has been defined to show an error message when an exception occurs ###
-		 * ### during CRUD operations in the OData Model.
-		 * @param {} oError
+
+		/**
+		 * Extracts and displays a meaningful error message from an OData error response.
+		 *
+		 * This method attempts to parse the backend error response and determine
+		 * the most relevant error message to display to the user.
+		 *
+		 * Error extraction logic:
+		 *
+		 * 1. If `oError.responseText` exists:
+		 *    - Attempts to parse it as JSON.
+		 *    - If available, extracts:
+		 *        a) `error.message.value`
+		 *        b) First entry from `error.errordetails[]`
+		 * 2. If JSON parsing fails:
+		 *    - Attempts to extract the message from an XML response body.
+		 * 3. If no structured message can be determined:
+		 *    - Falls back to a default generic error message.
+		 *
+		 * The final message is displayed using `sap.m.MessageBox.error`.
+		 *
+		 * This utility centralizes backend error handling to ensure consistent
+		 * user feedback across create, update, and delete operations.
+		 *
+		 * Dependencies:
+		 * - sap.m.MessageBox
+		 * - sap.base.Log (Log)
+		 *
+		 * @function _displayErrorMessage
+		 * @private
+		 * @param {Object} oError - The error object returned from an OData request.
+		 * @param {string} [oError.responseText] - Raw backend response body.
+		 * @this sap.ui.core.mvc.Controller
+		 * @returns {void}
 		 */
 		_displayErrorMessage: function (oError) {
 			var message = "An unknown error occurred.";
@@ -236,6 +431,26 @@ sap.ui.define([
 			}
 			MessageBox.error(message, { styleClass: "PlDacMessageBox" }); // Display using sap.m.MessageBox
 		},
+
+		/**
+		 * Lifecycle hook executed after the view has been rendered.
+		 *
+		 * This method is called automatically by the SAPUI5 framework
+		 * once the view's DOM is fully loaded and rendered.
+		 *
+		 * Current implementation:
+		 * - Hides the global BusyIndicator to ensure the UI is not blocked
+		 *   after initial rendering.
+		 *
+		 * Dependencies:
+		 * - sap.ui.core.BusyIndicator
+		 *
+		 * @function onAfterRendering
+		 * @public
+		 * @override
+		 * @this sap.ui.core.mvc.Controller
+		 * @returns {void}
+		 */
 		onAfterRendering: function () {
 			sap.ui.core.BusyIndicator.hide();
 		}

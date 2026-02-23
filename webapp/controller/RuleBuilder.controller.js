@@ -1434,6 +1434,26 @@ sap.ui.define([
 				oSubSection.addBlock(this._oEditRules);
 			}
 		},
+
+		/**
+		 * Event handler for the "Add Rule Block" button press.
+		 *
+		 * Loads an empty rule template from the application model (EmptyRule.json)
+		 * and appends it to the existing ruleModel under the `/types` collection.
+		 * After successfully adding the new rule block, the method updates the
+		 * viewModel properties to control UI visibility:
+		 *
+		 * - Hides the "Add Rule Block" button
+		 * - Shows the "Add Condition" section
+		 *
+		 * The rule template is loaded asynchronously. The rule block is added
+		 * only after the JSON request has completed successfully.
+		 *
+		 * @function onPressAddRuleBlockBtn
+		 * @memberof <YourControllerName>
+		 * @public
+		 * @returns {void}
+		 */
 		onPressAddRuleBlockBtn: function () {
 			var oEmptyRuleModel, oView = this.getView(), oRuleData;
 			oEmptyRuleModel = new JSONModel();
@@ -1446,6 +1466,38 @@ sap.ui.define([
 			});
 			oEmptyRuleModel.loadData(jQuery.sap.getModulePath("pl.dac.apps.fnconfig", "/model/EmptyRule.json"));
 		},
+
+		/**
+		 * Event handler for the "Add Precondition Block" button press.
+		 *
+		 * This method creates a new JSONModel instance and asynchronously loads
+		 * the precondition template from `EmptyPrecondition.json`.
+		 *
+		 * After the template is successfully loaded:
+		 * - If no rule blocks exist (`types` array is empty), the precondition
+		 *   block is added as the first entry using `push()`.
+		 * - If rule blocks already exist, the precondition block is inserted
+		 *   at the beginning of the `types` array using `unshift()`, ensuring
+		 *   it appears before other rule blocks.
+		 *
+		 * The method then:
+		 * - Hides the "Add Precondition Block" button by updating the `viewModel`
+		 *   property `/bVisibleAddPreBlock`.
+		 * - Updates the `ruleModel` with the modified rule data to refresh bindings.
+		 *
+		 * The operation is performed only after the JSON request completes
+		 * successfully via the `requestCompleted` event.
+		 *
+		 * Dependencies:
+		 * - ruleModel (JSONModel): Stores rule configuration data.
+		 * - viewModel (JSONModel): Controls UI state and visibility.
+		 *
+		 * @function onPressAddPreConditionBlockBtn
+		 * @memberof <YourControllerName>
+		 * @public
+		 * @this sap.ui.core.mvc.Controller
+		 * @returns {void}
+		 */
 		onPressAddPreConditionBlockBtn: function () {
 			var oEmptyModel, oView = this.getView(), oRuleData;
 			oEmptyModel = new JSONModel();
