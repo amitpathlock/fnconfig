@@ -633,6 +633,7 @@ sap.ui.define(
 					this._oVHDialog.getTableAsync().then(function (oTable) {
 						oTable.setModel(that.getView().getModel());
 						oTable.setSelectionMode("Single");
+						that._oVHDialog.setSupportMultiselect(false);
 						// For Desktop and tabled the default table is sap.ui.table.Table
 						if (oTable.bindRows) {
 							// Bind rows to the ODataModel and add columns

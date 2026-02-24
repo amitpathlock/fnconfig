@@ -335,7 +335,7 @@ sap.ui.define([
 			if (!this._oVHDialogAttr) {
 				this._oVHDialogAttr = sap.ui.xmlfragment("pl.dac.apps.fnconfig.fragments.AttributeVH", this);
 				oView.addDependent(this._oVHDialogAttr);
-				//	this._oVHDialogAttr.setFilterBar(oSearchField);
+				
 				this._oVHDialogAttr.setModel(oModel, "condition");
 				// Set key fields for filtering in the Define Conditions Tab
 				this._oVHDialogAttr.setRangeKeyFields([{
@@ -348,6 +348,7 @@ sap.ui.define([
 					oTable.setModel(oView.getModel());
 					oTable.setSelectionMode("Single");
 					that._oVHDialogAttr.setFilterBar(oFilterBar);
+					that._oVHDialogAttr.setSupportMultiselect(false);
 					// For Desktop and tabled the default table is sap.ui.table.Table
 					if (oTable.bindRows) {
 						// Bind rows to the ODataModel and add columns
@@ -758,6 +759,7 @@ sap.ui.define([
 					that._oVHDialogAttribute.setFilterBar(oFilterBar);
 					oTable.setModel(oView.getModel());
 					oTable.setSelectionMode("Single");
+					that._oVHDialogAttribute.setSupportMultiselect(false);
 					// For Desktop and tabled the default table is sap.ui.table.Table
 					if (oTable.bindRows) {
 						// Bind rows to the ODataModel and add columns
