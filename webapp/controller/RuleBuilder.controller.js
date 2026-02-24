@@ -1686,9 +1686,12 @@ sap.ui.define([
 			var oCtx;
 			oCtx = oEvent.getSource().getCustomData()[0].getValue();
 			if (oCtx.Operator == "BT") {
-				if (oCtx.ValueRange.length == 0) {
-					oCtx.ValueRange[0] = { Operator: 'BT', Lower: '', Upper: '' };
+				if (({}).hasOwnProperty.call(oCtx, "ValueRange")) {
+					if (oCtx.ValueRange.length == 0) {
+						oCtx.ValueRange[0] = { Operator: 'BT', Lower: '', Upper: '' };
+					}
 				}
+
 			} else {
 				if (({}).hasOwnProperty.call(oCtx, "Values")) {
 					if (oCtx.Values.length == 0) {
