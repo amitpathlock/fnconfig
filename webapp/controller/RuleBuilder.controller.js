@@ -335,7 +335,7 @@ sap.ui.define([
 			if (!this._oVHDialogAttr) {
 				this._oVHDialogAttr = sap.ui.xmlfragment("pl.dac.apps.fnconfig.fragments.AttributeVH", this);
 				oView.addDependent(this._oVHDialogAttr);
-				
+
 				this._oVHDialogAttr.setModel(oModel, "condition");
 				// Set key fields for filtering in the Define Conditions Tab
 				this._oVHDialogAttr.setRangeKeyFields([{
@@ -673,7 +673,7 @@ sap.ui.define([
 				}
 			}
 		},
-		
+
 		/**
 		 * Handles the token update event of the Expose Attribute MultiInput field.
 		 *
@@ -837,7 +837,7 @@ sap.ui.define([
 				this._oVHDialogAttribute.open();
 			}
 		},
-		
+
 		/**
 		 * Handles the OK press event of the Attribute Value Help dialog.
 		 *
@@ -884,7 +884,7 @@ sap.ui.define([
 
 			this._oVHDialogAttribute.close();
 		},
-		
+
 		/**
 		 * Handles the selection of a suggestion item in the Expose Attribute input field.
 		 *
@@ -1582,27 +1582,27 @@ sap.ui.define([
 		 * @returns {void}
 		 */
 		onPressSaveRuleBtn: function () {
-			var oView = this.getView(), oDataModel = oView.getModel(),sMessage="",
+			var oView = this.getView(), oDataModel = oView.getModel(), sMessage = "",
 				oRuleData = oView.getModel("ruleModel").getData(), oPayload;
 			oPayload = RuleModelHandler.prepareRuleCreatePayload(oView, oRuleData.types);
 			if (({}).hasOwnProperty.call(oPayload, "to_Condition") && oPayload.to_Condition.length == 0) {
 				if (this.bRuleDataUpdate) {
-					sMessage="The rule data has been deleted successfully.";
+					sMessage = "The rule data has been deleted successfully.";
 				} else {
-					sMessage="No data has been provided for the save.";
+					sMessage = "No data has been provided for the save.";
 				}
-			}else{
+			} else {
 				if (this.bRuleDataUpdate) {
-					sMessage="The rule data has been successfully updated.";
+					sMessage = "The rule data has been successfully updated.";
 				} else {
-					sMessage="The rule data has been successfully created.";
+					sMessage = "The rule data has been successfully created.";
 				}
 			}
 			oPayload.Policy = this._sPolicyName;
 			oDataModel.create("/PolRuleSet", oPayload, {
 				success: function () {
 					//if (this.bRuleDataUpdate) {
-						MessageToast.show(sMessage);
+					MessageToast.show(sMessage);
 					//} else {
 					//	MessageToast.show("The rule data has been successfully created.");
 					//}
@@ -1682,18 +1682,20 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		onOperatorSelectChange:function(oEvent){
+		onOperatorSelectChange: function (oEvent) {
 			var oCtx;
 			oCtx = oEvent.getSource().getCustomData()[0].getValue();
-			if(oCtx.Operator=="BT"){
-				if(oCtx.ValueRange.length==0){
-					oCtx.ValueRange[0]={Operator: 'BT', Lower: '', Upper: ''};
+			if (oCtx.Operator == "BT") {
+				if (oCtx.ValueRange.length == 0) {
+					oCtx.ValueRange[0] = { Operator: 'BT', Lower: '', Upper: '' };
 				}
-			}else{
-				if(oCtx.Values.length==0){
-					oCtx.Values[0]={"Operator":oCtx.Operator,"Value":""};
-				}else{
-					oCtx.Values[0].Operator =oCtx.Operator;
+			} else {
+				if (({}).hasOwnProperty.call(oCtx, "Values")) {
+					if (oCtx.Values.length == 0) {
+						oCtx.Values[0] = { "Operator": oCtx.Operator, "Value": "" };
+					} else {
+						oCtx.Values[0].Operator = oCtx.Operator;
+					}
 				}
 			}
 		},
@@ -1715,13 +1717,13 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		onRHSLiveInputChange:function(oEvent){
+		onRHSLiveInputChange: function (oEvent) {
 			var sNewValue = oEvent.getParameter("newValue"),
-			oRule=oEvent.getSource().getCustomData()[0].getValue();
-			if(oRule.Operator!="BT"){
-				oRule.Values[0] ={Operator:oRule.Operator,Value:sNewValue};
+				oRule = oEvent.getSource().getCustomData()[0].getValue();
+			if (oRule.Operator != "BT") {
+				oRule.Values[0] = { Operator: oRule.Operator, Value: sNewValue };
 			}
-			
+
 		}
 	});
 });
