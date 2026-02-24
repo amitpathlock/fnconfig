@@ -102,8 +102,12 @@ sap.ui.define([
         },
 
         _handleOnSectionClick: function (oEvent) {
-            var $target = $(oEvent.target);
-            var iIndex = parseInt($target.attr("data-key"), 10);
+            var iIndex, $target = $(oEvent.target);
+            if($target.is("span")){
+                iIndex = parseInt($target.parent().attr("data-key"), 10);
+            }else{
+                iIndex = parseInt($target.attr("data-key"), 10);
+            }
             this._updateVisibleOK(iIndex);
             this._switchSection(iIndex);
         },
