@@ -1391,6 +1391,7 @@ sap.ui.define([
 			} else {
 				this.bRuleDataUpdate = false;
 			}
+			oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", false);
 			oView.getModel("viewModel").setProperty("/bVisibleAddCondition", true);
 			aTypes = oView.getModel("ruleModel").getData().types;
 			for (iType = 0; iType < aTypes.length; iType++) {
@@ -1612,7 +1613,21 @@ sap.ui.define([
 			if (oEvent.getSource().getBinding("items").isLengthFinal()) {
 				oEvent.getSource().getHeaderToolbar().getContent()[0].setText(oBundle.getText("titExposeAttribure", [oEvent.getParameter("total")]))
 			}
+		},
+		onOperatorSelectChange:function(oEvent){
+			var oCtx;
+			oCtx = oEvent.getSource().getCustomData()[0].getValue();
+			if(oCtx.Operator=="BT"){
+				if(oCtx.ValueRange.length==0){
+					oCtx.ValueRange[0]={Operator: 'BT', Lower: '', Upper: ''};
+				}
+			}else{
+				if(oCtx.Values.length==0){
+					oCtx.Values[0]={"Operator":oCtx.Operator,"Value":""};
+				}else{
+					oCtx.Values[0].Operator =oCtx.Operator;
+				}
+			}
 		}
-
 	});
 });
