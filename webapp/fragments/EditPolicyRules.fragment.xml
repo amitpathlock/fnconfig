@@ -137,6 +137,7 @@
 													value="{ruleModel>ValueDesc}"
 													class="plDacRuleInputFontSize"
 													showValueDialog=".onShowValueDialog"
+													liveChange="onRHSLiveInputChange" 
 												>
 													<cc:customData>
 														<core:CustomData key="data" value="{ruleModel>}"/>

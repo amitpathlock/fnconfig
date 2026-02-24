@@ -357,8 +357,8 @@ sap.ui.define([
 		 * Event handler triggered when a suggestion item is selected from the policy input field.
 		 * 
 		 * @public
-		 * @param {*} oEvent - The event object containing selection data
-		 * @param {*} oEvent.getParameter("selectedRow") - The selected row from the suggestion list
+		 * @param {sap.ui.base.Event} oEvent - The event object containing selection data
+		 * @param {sap.ui.table.Row} oEvent.getParameter("selectedRow") - The selected row from the suggestion list
 		 * @returns {void}
 		 * 
 		 * @description

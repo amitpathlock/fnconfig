@@ -425,12 +425,13 @@ sap.ui.define([
 				});
 			}
 		},
+
 		/**
 		 * Event handler triggered when attribute tokens are updated (added or removed).
 		 * 
 		 * @public
 		 * @param {*} oEvent - The token update event object
-		 * @param {} oEvent.getParameter("type") - The type of token update ("removed", "removedAll", "added", etc.)
+		 * @param {string} oEvent.getParameter("type") - The type of token update ("removed", "removedAll", "added", etc.)
 		 * @returns {void}
 		 * 
 		 * @description

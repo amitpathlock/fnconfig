@@ -600,16 +600,22 @@ sap.ui.define([
 		},
 
 		/**
-		 * Event handler executed just before the "Expose Attribute" dialog is opened.
+		 * Lifecycle hook executed before the "Expose Attribute" dialog is opened.
 		 *
-		 * This method resets the dialog input state by clearing any existing text
-		 * and removing all tokens from the MultiInput control.
+		 * This method resets the MultiInput field inside the dialog by:
+		 *  - Clearing the current input value
+		 *  - Removing all existing tokens
 		 *
+		 * It ensures that no previously entered or selected attribute values
+		 * remain when the dialog is reopened.
+		 *
+		 * @function onBeforeExposeAttributeDialogOpened
 		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
 		 * @public
-		 * @function onBeforeExposeAttributeDialogOpened
-		 * @param {sap.ui.base.Event} oEvent - The event object triggered by the dialog open.
-		 * @param {0} oEvent.getSource() - The dialog instance being opened.
+		 *
+		 * @param {sap.ui.base.Event} oEvent - The event triggered before the dialog is opened.
+		 * @param {sap.m.Dialog} oEvent.getSource() - The dialog instance being opened.
+		 *
 		 * @returns {void}
 		 */
 		onBeforeExposeAttributeDialogOpened: function (oEvent) {
@@ -620,16 +626,32 @@ sap.ui.define([
 		},
 
 		/**
-		 * Handles changes in the Expose Attribute input field.
+		 * Handles the change event of the Attribute input field.
 		 *
-		 * This method performs validation and normalizes the input value:
-		 *   - Converts the entered value to uppercase.
-		 *   - Clears previous error states.
-		 *   - If the value length is greater than 6, it triggers server-side validation.
-		 *   - Otherwise, it marks the input as invalid and shows the appropriate error message.
+		 * This method:
+		 *  - Converts the entered value to uppercase.
+		 *  - Resets any existing error state and message.
+		 *  - Validates the attribute ID based on minimum length requirements.
+		 *  - Triggers extended validation if the value length is greater than 6 characters.
+		 *  - Sets appropriate error messages for empty or invalid input.
 		 *
-		 * @param {*} oEvent - The input change event.
-		 * @param {string} oEvent.getParameter("newValue") - The new value entered by the user.
+		 * Validation Rules:
+		 *  - Attribute ID is mandatory.
+		 *  - Attribute ID must be longer than 6 characters.
+		 *  - If valid length is met, {@link #validateAttibuteInput} is called for further validation.
+		 *
+		 * Model Updates:
+		 *  - /AttrErrorState → "None" | "Error"
+		 *  - /AttrErrorMessage → Localized validation message
+		 *  - /Data/AttributeId → Reset if validation fails
+		 *
+		 * @function onExposeAttributeInputChange
+		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
+		 * @public
+		 *
+		 * @param {sap.ui.base.Event} oEvent - The change event triggered by the Input control.
+		 * @param {string} oEvent.getParameter("newValue") - The newly entered value.
+		 *
 		 * @returns {void}
 		 */
 		onExposeAttributeInputChange: function (oEvent) {
@@ -651,25 +673,32 @@ sap.ui.define([
 				}
 			}
 		},
+		
 		/**
-		 * Event handler for token updates in the Expose Attribute MultiInput field.
+		 * Handles the token update event of the Expose Attribute MultiInput field.
 		 *
-		 * This method responds to token add/remove actions and updates the view model's
-		 * error state accordingly.
+		 * This method reacts to token changes and updates the validation state accordingly:
 		 *
 		 * - When a token is removed:
-		 *   - Sets error state to "Error".
-		 *   - Displays a mandatory attribute error message.
-		 *   - Focuses the MultiInput control to prompt user input.
+		 *    - Sets the attribute error state to "Error"
+		 *    - Displays a mandatory field validation message
+		 *    - Moves focus back to the MultiInput field
 		 *
 		 * - When a token is added:
-		 *   - Clears any previous error state and message.
+		 *    - Clears any existing error state
+		 *    - Removes validation messages
 		 *
+		 * Model Properties Updated:
+		 *  - /AttrErrorState
+		 *  - /AttrErrorMessage
+		 *
+		 * @function onExposeAttributeTokenUpdated
 		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
 		 * @public
-		 * @function onExposeAttributeTokenUpdated
-		 * @param {*} oEvent - Token update event object.
-		 * @param {string} oEvent.getParameter("type") - Type of token change ("added" or "removed").
+		 *
+		 * @param {sap.ui.base.Event} oEvent - The token update event from the MultiInput control.
+		 * @param {string} oEvent.getParameter("type") - The type of token update ("added" | "removed").
+		 *
 		 * @returns {void}
 		 */
 		onExposeAttributeTokenUpdated: function (oEvent) {
@@ -808,26 +837,24 @@ sap.ui.define([
 				this._oVHDialogAttribute.open();
 			}
 		},
+		
 		/**
-		 * Handles the confirmation action from the Attribute Value Help dialog.
+		 * Handles the OK press event of the Attribute Value Help dialog.
 		 *
-		 * This event is triggered when the user selects an attribute and presses the "OK"
-		 * button in the Value Help dialog.
+		 * This method processes the selected token(s) from the Value Help dialog:
+		 *  - Retrieves the first selected token and its associated custom data.
+		 *  - Updates the view model's `/Data/AttributeId` property with the selected attribute ID.
+		 *  - Refreshes the view model to propagate changes.
+		 *  - Closes the Value Help dialog.
+		 *  - Triggers attribute input validation on the MultiInput control.
 		 *
-		 * The method performs the following actions:
-		 *   1. Retrieves the selected token from the dialog event.
-		 *   2. Extracts the selected attribute data from the token's custom data.
-		 *   3. Updates the view model's "/Data/AttributeId" property with the selected AttributeId.
-		 *   4. Refreshes the view model to propagate changes to the UI.
-		 *   5. Closes the Value Help dialog.
-		 *   6. Validates the selected attribute by calling validateAttibuteInput() to ensure
-		 *      the attribute exists and to update the MultiInput field with a formatted token.
-		 *
+		 * @function onValueHelpAttributeOkPress
 		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
 		 * @public
-		 * @function onValueHelpAttributeOkPress
-		 * @param {*} oEvent - Event object fired from the Value Help dialog.
-		 * @param {*} oEvent.getParameter("tokens") - Array of selected tokens.
+		 *
+		 * @param {sap.ui.base.Event} oEvent - The OK press event from the Value Help dialog.
+		 * @param {sap.m.Token[]} oEvent.getParameter("tokens") - Array of tokens selected in the Value Help dialog.
+		 *
 		 * @returns {void}
 		 */
 		onValueHelpAttributeOkPress: function (oEvent) {
@@ -857,19 +884,22 @@ sap.ui.define([
 
 			this._oVHDialogAttribute.close();
 		},
+		
 		/**
-		 * Event handler for selection of an item from the Expose Attribute suggestion list.
+		 * Handles the selection of a suggestion item in the Expose Attribute input field.
 		 *
-		 * When the user selects a suggestion, this method retrieves the selected row's
-		 * binding context, extracts the `AttributeId`, and triggers validation.
-		 * The validation ensures the attribute exists and updates the MultiInput control
-		 * with a properly formatted token.
+		 * When a user selects a suggestion from the dropdown:
+		 *  - Retrieves the selected item's binding context data
+		 *  - Calls {@link #validateAttibuteInput} to validate the selected attribute ID
 		 *
+		 * @function onExposeAttrSuggestionItemSelected
 		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
 		 * @public
-		 * @function onExposeAttrSuggestionItemSelected
-		 * @param {*} oEvent - The event object fired when a suggestion is selected.
-		 * @param {*} oEvent.getParameter("selectedRow") - The selected suggestion row.
+		 *
+		 * @param {sap.ui.base.Event} oEvent - The selection event triggered by the suggestion item.
+		 * @param {sap.ui.table.Row} oEvent.getParameter("selectedRow") - The row selected from the suggestion list.
+		 * @param {sap.ui.core.Control} oEvent.getSource - The input control that triggered the selection.
+		 *
 		 * @returns {void}
 		 */
 		onExposeAttrSuggestionItemSelected: function (oEvent) {
@@ -1274,14 +1304,24 @@ sap.ui.define([
 		},
 
 		/**
-		 * Handles the selection of a user attribute item.
+		 * Handles the press event of a user attribute item.
 		 *
-		 * Retrieves the selected item's binding context data and updates
-		 * the rule model accordingly using the RuleModelHandler.
+		 * Retrieves the selected item's binding context data and delegates
+		 * the update logic to the RuleModelHandler to synchronize the rule model
+		 * with the selected user attribute.
+		 *
+		 * Responsibilities:
+		 *  - Extract selected item data from binding context
+		 *  - Forward the data along with the current view and dialog reference
+		 *    to RuleModelHandler for model update processing
+		 *
+		 * @function onPressUserAttributeItem
 		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
 		 * @public
-		 * @function onPressUserAttributeItem
-		 * @param {*} oEvent - The press event triggered by the user attribute item.
+		 *
+		 * @param {sap.ui.base.Event} oEvent - The press event triggered by the user attribute item.
+		 * @param {sap.ui.core.Control} oEvent.getSource() - The control that was pressed.
+		 *
 		 * @returns {void}
 		 */
 		onPressUserAttributeItem: function (oEvent) {
@@ -1458,7 +1498,7 @@ sap.ui.define([
 		 * only after the JSON request has completed successfully.
 		 *
 		 * @function onPressAddRuleBlockBtn
-		 * @memberof <YourControllerName>
+		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
 		 * @public
 		 * @returns {void}
 		 */
@@ -1501,7 +1541,7 @@ sap.ui.define([
 		 * - viewModel (JSONModel): Controls UI state and visibility.
 		 *
 		 * @function onPressAddPreConditionBlockBtn
-		 * @memberof <YourControllerName>
+		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
 		 * @public
 		 * @this sap.ui.core.mvc.Controller
 		 * @returns {void}
@@ -1598,14 +1638,22 @@ sap.ui.define([
 			this._loadReadOnlyPolicyRuleFragment();
 
 		},
+
 		/**
-		 * Event handler triggered when the exposed attribute table completes its update.
-		 * Updates the table header toolbar with the total count of items.
-		 * 
-		 * @param {*} oEvent - The update finished event object
-		 * @param {*} oEvent.getSource() - The table/list that triggered the event
-		 * @param {number} oEvent.getParameter("total") - The total number of items in the table
-		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
+		 * Event handler for the updateFinished event of the Exposed Attribute table.
+		 *
+		 * Updates the table header title with the total number of items
+		 * once the binding length is finalized.
+		 *
+		 * Behavior:
+		 * - Retrieves the i18n resource bundle from the view.
+		 * - Checks whether the table binding length is final.
+		 * - If final, updates the header toolbar title with the total
+		 *   number of items using the "titExposeAttribure" i18n key.
+		 *
+		 * @param {sap.ui.base.Event} oEvent - The updateFinished event object.
+		 * @param {int} oEvent.getParameter.total - Total number of items in the table binding.
+		 *
 		 * @public
 		 */
 		onExposedAttributeTableUpdateFinished: function (oEvent) {
@@ -1614,6 +1662,26 @@ sap.ui.define([
 				oEvent.getSource().getHeaderToolbar().getContent()[0].setText(oBundle.getText("titExposeAttribure", [oEvent.getParameter("total")]))
 			}
 		},
+		/**
+		 * Event handler for operator selection change.
+		 *
+		 * Updates the rule context object stored in the control's custom data
+		 * based on the selected operator.
+		 *
+		 * Behavior:
+		 * - Retrieves the rule context from the source control's custom data.
+		 * - If the selected operator is "BT" (Between):
+		 *    - Ensures a ValueRange entry exists.
+		 *    - Initializes the first ValueRange object with empty Lower and Upper bounds if missing.
+		 * - For all other operators:
+		 *    - Ensures a Values entry exists.
+		 *    - Initializes the first Values object if empty.
+		 *    - Otherwise updates the Operator of the existing Values entry.
+		 *
+		 * @param {sap.ui.base.Event} oEvent - The change event triggered by operator selection.
+		 *
+		 * @public
+		 */
 		onOperatorSelectChange:function(oEvent){
 			var oCtx;
 			oCtx = oEvent.getSource().getCustomData()[0].getValue();
@@ -1628,6 +1696,32 @@ sap.ui.define([
 					oCtx.Values[0].Operator =oCtx.Operator;
 				}
 			}
+		},
+
+		/**
+		 * Event handler for live change on RHS input field.
+		 *
+		 * Updates the first value of the rule object stored in the control's custom data
+		 * whenever the user types in the input field.
+		 *
+		 * Behavior:
+		 * - Retrieves the new input value from the `liveChange` event.
+		 * - Extracts the associated rule object from the control's custom data.
+		 * - If the rule operator is not "BT" (Between),
+		 *   updates the first entry in the rule's Values array.
+		 *
+		 * @param {sap.ui.base.Event} oEvent - The liveChange event object.
+		 * @param {string} oEvent.getParameter.newValue - The current value of the input field.
+		 *
+		 * @public
+		 */
+		onRHSLiveInputChange:function(oEvent){
+			var sNewValue = oEvent.getParameter("newValue"),
+			oRule=oEvent.getSource().getCustomData()[0].getValue();
+			if(oRule.Operator!="BT"){
+				oRule.Values[0] ={Operator:oRule.Operator,Value:sNewValue};
+			}
+			
 		}
 	});
 });

@@ -1241,5 +1241,4 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                 return oPayload;
             }
         };
-
     });
