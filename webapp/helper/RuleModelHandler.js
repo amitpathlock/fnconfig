@@ -436,12 +436,12 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                                     if (oSelectedItemData.AttributeId) {
                                         aCondition[iCondition].Rules[iRule].Value = oSelectedItemData.AttributeId;
                                         aCondition[iCondition].Rules[iRule].ValueDesc = oSelectedItemData.Description + "(" + oSelectedItemData.AttributeId + ")";
-                                        aCondition[iCondition].Rules[iRule].Values = [{ Operator: "EQ", Value: oSelectedItemData.AttributeId }];
+                                        aCondition[iCondition].Rules[iRule].Values = [{ Operator: oData.Operator, Value: oSelectedItemData.AttributeId }];
                                         aCondition[iCondition].Rules[iRule].ValueRange = [];
                                     } else {
                                         aCondition[iCondition].Rules[iRule].Value = oSelectedItemData.ListId;
                                         aCondition[iCondition].Rules[iRule].ValueDesc = oSelectedItemData.Description + "(" + oSelectedItemData.ListId + ")";
-                                        aCondition[iCondition].Rules[iRule].Values = [{ Operator: "EQ", Value: oSelectedItemData.ListId }];
+                                        aCondition[iCondition].Rules[iRule].Values = [{ Operator: oData.Operator, Value: oSelectedItemData.ListId }];
                                         aCondition[iCondition].Rules[iRule].ValueRange = [];
                                     }
 
@@ -461,13 +461,13 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                                         aCondition[iCondition].Rules[iRule].Value = oSelectedItemData.AttributeId;
                                         aCondition[iCondition].Rules[iRule].ValueDesc = oSelectedItemData.Description + "(" + oSelectedItemData.AttributeId + ")";
                                         aCondition[iCondition].Rules[iRule].ValueRange = [];
-                                        aCondition[iCondition].Rules[iRule].Values = [{ Operator: "EQ", Value: oSelectedItemData.AttributeId }];
+                                        aCondition[iCondition].Rules[iRule].Values = [{ Operator: oData.Operator, Value: oSelectedItemData.AttributeId }];
 
                                     } else {
                                         aCondition[iCondition].Rules[iRule].Value = oSelectedItemData.ListId;
                                         aCondition[iCondition].Rules[iRule].ValueDesc = oSelectedItemData.Description + "(" + oSelectedItemData.ListId + ")";
                                         aCondition[iCondition].Rules[iRule].ValueRange = [];
-                                        aCondition[iCondition].Rules[iRule].Values = [{ Operator: "EQ", Value: oSelectedItemData.ListId }];
+                                        aCondition[iCondition].Rules[iRule].Values = [{ Operator: oData.Operator, Value: oSelectedItemData.ListId }];
 
                                     }
                                     break;
