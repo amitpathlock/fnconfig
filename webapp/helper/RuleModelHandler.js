@@ -1208,10 +1208,6 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                                             }
                                         }
                                     }
-
-                                    // if (aRules[iRule].ValueDesc != "" && aRules[iRule].Value == "") {
-                                    //     _aValues.push({ Value: aRules[iRule].ValueDesc, Operator: aRules[iRule].Operator });
-                                    // }
                                     if (aRules[iRule].Operator == "BT") {
                                         for (var k = 0; k < _aValues.length; k++) {
                                             _oRule = {};
@@ -1227,7 +1223,6 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                                         }
                                         oCondition["to_Rule"].push(_oRule);
                                     }
-
                                 }
                             }
                             if (!bEmptyRule) {

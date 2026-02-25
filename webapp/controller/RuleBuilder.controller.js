@@ -1583,30 +1583,26 @@ sap.ui.define([
 		 */
 		onPressSaveRuleBtn: function () {
 			var oView = this.getView(), oDataModel = oView.getModel(), sMessage = "",
-				oRuleData = oView.getModel("ruleModel").getData(), oPayload;
+				oRuleData = oView.getModel("ruleModel").getData(), oPayload,
+				oBundle = oView.getModel("i18n").getResourceBundle();
 			oPayload = RuleModelHandler.prepareRuleCreatePayload(oView, oRuleData.types);
 			if (({}).hasOwnProperty.call(oPayload, "to_Condition") && oPayload.to_Condition.length == 0) {
 				if (this.bRuleDataUpdate) {
-					sMessage = "The rule data has been deleted successfully.";
+					sMessage = oBundle.getText("msgRuleBuilderDeteleSuccessful");// "The rule data has been deleted successfully.";
 				} else {
-					sMessage = "No data has been provided for the save.";
+					sMessage = oBundle.getText("msgRuleBuilderNoDataProvided");//"No data has been provided for the save.";
 				}
 			} else {
 				if (this.bRuleDataUpdate) {
-					sMessage = "The rule data has been successfully updated.";
+					sMessage = oBundle.getText("msgRuleBuilderUpdateSuccessful");//"The rule data has been successfully updated.";
 				} else {
-					sMessage = "The rule data has been successfully created.";
+					sMessage = oBundle.getText("msgRuleBuilderCreateSuccessful");//"The rule data has been successfully created.";
 				}
 			}
 			oPayload.Policy = this._sPolicyName;
 			oDataModel.create("/PolRuleSet", oPayload, {
 				success: function () {
-					//if (this.bRuleDataUpdate) {
 					MessageToast.show(sMessage);
-					//} else {
-					//	MessageToast.show("The rule data has been successfully created.");
-					//}
-
 					this._readPolicyRulesDetails(this.getView().getBindingContext().getObject().PolicyName);
 					this._oEditRules.destroy();
 					this._oEditRules = null;
@@ -1614,7 +1610,10 @@ sap.ui.define([
 
 				}.bind(this),
 				error: function (oError) {
-					Log.error(oError.message)
+					MessageBox.error(JSON.parse(oError.responseText).error.message.value,{
+						title:"Error ("+JSON.parse(oError.responseText).error.code+" )"
+					});
+					
 				}
 			});
 		},
@@ -1689,15 +1688,17 @@ sap.ui.define([
 				if (({}).hasOwnProperty.call(oCtx, "ValueRange")) {
 					if (oCtx.ValueRange.length == 0) {
 						oCtx.ValueRange[0] = { Operator: 'BT', Lower: '', Upper: '' };
+						oCtx.Values=[];
 					}
 				}
-
 			} else {
 				if (({}).hasOwnProperty.call(oCtx, "Values")) {
 					if (oCtx.Values.length == 0) {
 						oCtx.Values[0] = { "Operator": oCtx.Operator, "Value": "" };
+						oCtx.ValueRange=[];
 					} else {
 						oCtx.Values[0].Operator = oCtx.Operator;
+						oCtx.ValueRange=[];
 					}
 				}
 			}
