@@ -1611,7 +1611,7 @@ sap.ui.define([
 				}.bind(this),
 				error: function (oError) {
 					MessageBox.error(JSON.parse(oError.responseText).error.message.value,{
-						title:"Error ("+JSON.parse(oError.responseText).error.code+" )"
+						title:"Error"
 					});
 					
 				}

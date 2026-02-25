@@ -384,6 +384,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                             for (iRule = 0; iRule < aCondition[iCondition].Rules.length; iRule++) {
                                 if (aCondition[iCondition].Rules[iRule].Rows == oData.Rows) {
                                     aCondition[iCondition].Rules[iRule][sKey] = aValues;
+                                    aCondition[iCondition].Rules[iRule].Operator = aValues[0].Operator;
                                     aCondition[iCondition].Rules[iRule].Value = sValuesRanges;//aValues.map(oValue => oValue.Value).join(', ') // aValues[0].Value;
                                     aCondition[iCondition].Rules[iRule].ValueDesc = sValuesRanges;///aValues.map(oValue => oValue.Value).join(', ');//aValues[0].Value;
                                     break;
@@ -399,6 +400,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                             for (iRule = 0; iRule < aCondition[iCondition].Rules.length; iRule++) {
                                 if (aCondition[iCondition].Rules[iRule].Rows == oData.Rows) {
                                     aCondition[iCondition].Rules[iRule][sKey] = aValues;
+                                    aCondition[iCondition].Rules[iRule].Operator = aValues[0].Operator;
                                     aCondition[iCondition].Rules[iRule].Value = sValuesRanges;// aValues.map(oValue => oValue.Value).join(', ')//aValues[0].Value;
                                     aCondition[iCondition].Rules[iRule].ValueDesc = sValuesRanges;// aValues.map(oValue => oValue.Value).join(', ')//aValues[0].Value;
                                     break;
