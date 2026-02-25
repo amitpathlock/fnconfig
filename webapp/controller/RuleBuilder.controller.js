@@ -1607,6 +1607,8 @@ sap.ui.define([
 					this._oEditRules.destroy();
 					this._oEditRules = null;
 					this._loadReadOnlyPolicyRuleFragment();
+					oView.byId("idExposeAttributeTable").getBinding("items").refresh();
+					
 
 				}.bind(this),
 				error: function (oError) {
