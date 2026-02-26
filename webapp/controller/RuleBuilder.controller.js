@@ -1734,10 +1734,8 @@ sap.ui.define([
 					if(aRangeValue.length>1){
 						oRule.ValueRange[0] = { Operator: 'BT', Lower: aRangeValue[0], Upper: aRangeValue[1] };
 					}
-
 				}
 			}
-
 		}
 	});
 });
