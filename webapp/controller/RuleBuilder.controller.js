@@ -1724,10 +1724,18 @@ sap.ui.define([
 		 * @public
 		 */
 		onRHSLiveInputChange: function (oEvent) {
-			var sNewValue = oEvent.getParameter("newValue"),
+			var sNewValue = oEvent.getParameter("newValue"),aRangeValue,
 				oRule = oEvent.getSource().getCustomData()[0].getValue();
 			if (oRule.Operator != "BT") {
 				oRule.Values[0] = { Operator: oRule.Operator, Value: sNewValue };
+			}else{
+				if(sNewValue.includes(" to ")){
+					aRangeValue = sNewValue.split("to");
+					if(aRangeValue.length>1){
+						oRule.ValueRange[0] = { Operator: 'BT', Lower: aRangeValue[0], Upper: aRangeValue[1] };
+					}
+
+				}
 			}
 
 		}
