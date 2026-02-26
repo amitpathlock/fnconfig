@@ -1,0 +1,42 @@
+name: CI Pipeline Validation
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths-ignore:
+      - 'test/**'
+      - 'localService/**'
+
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  install-dependencies:
+    uses: ./.github/workflows/node-job.yml
+    with:
+      job-name: Install Dependencies
+
+  eslint-checks:
+    needs: install-dependencies
+    uses: ./.github/workflows/node-job.yml
+    with:
+      job-name: Run ESLint Checks
+      run-command: npm run lint:html
+      upload-artifact: true
+      artifact-name: eslint-report-html
+      artifact-path: ESLintReport.html
+
+  build-project:
+    needs: eslint-checks
+    uses: ./.github/workflows/node-job.yml
+    with:
+      job-name: Build Application
+      run-command: npm run build
+      upload-artifact: true
+      artifact-name: production-build
+      artifact-path: dist/
+      retention-days: 5
