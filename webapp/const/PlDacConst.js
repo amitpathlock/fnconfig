@@ -14,7 +14,6 @@ sap.ui.define([], function () {
         ROUTE_PATH_USER_ATTRIBUTE:"UserAttributes",
         PRE_CONDITION_CTYPE:"PRECONDITION",
         PRE_CONDITION_RULE_TYPE:"Precondition"
-
         
     };
 });
