@@ -1608,14 +1608,14 @@ sap.ui.define([
 					this._oEditRules = null;
 					this._loadReadOnlyPolicyRuleFragment();
 					oView.byId("idExposeAttributeTable").getBinding("items").refresh();
-					
+
 
 				}.bind(this),
 				error: function (oError) {
-					MessageBox.error(JSON.parse(oError.responseText).error.message.value,{
-						title:"Error"
+					MessageBox.error(JSON.parse(oError.responseText).error.message.value, {
+						title: "Error"
 					});
-					
+
 				}
 			});
 		},
@@ -1690,17 +1690,17 @@ sap.ui.define([
 				if (({}).hasOwnProperty.call(oCtx, "ValueRange")) {
 					if (oCtx.ValueRange.length == 0) {
 						oCtx.ValueRange[0] = { Operator: 'BT', Lower: '', Upper: '' };
-						oCtx.Values=[];
+						oCtx.Values = [];
 					}
 				}
 			} else {
 				if (({}).hasOwnProperty.call(oCtx, "Values")) {
 					if (oCtx.Values.length == 0) {
 						oCtx.Values[0] = { "Operator": oCtx.Operator, "Value": "" };
-						oCtx.ValueRange=[];
+						oCtx.ValueRange = [];
 					} else {
 						oCtx.Values[0].Operator = oCtx.Operator;
-						oCtx.ValueRange=[];
+						oCtx.ValueRange = [];
 					}
 				}
 			}
@@ -1724,17 +1724,97 @@ sap.ui.define([
 		 * @public
 		 */
 		onRHSLiveInputChange: function (oEvent) {
-			var sNewValue = oEvent.getParameter("newValue"),aRangeValue,
+			var sNewValue = oEvent.getParameter("newValue"), aRangeValue,
 				oRule = oEvent.getSource().getCustomData()[0].getValue();
 			if (oRule.Operator != "BT") {
 				oRule.Values[0] = { Operator: oRule.Operator, Value: sNewValue };
-			}else{
-				if(sNewValue.includes(" to ")){
+			} else {
+				if (sNewValue.includes(" to ")) {
 					aRangeValue = sNewValue.split("to");
-					if(aRangeValue.length>1){
+					if (aRangeValue.length > 1) {
 						oRule.ValueRange[0] = { Operator: 'BT', Lower: aRangeValue[0], Upper: aRangeValue[1] };
 					}
 				}
+			}
+		},
+
+		/**
+		 * Handles the change event of the operator selection in the selection dialog.
+		 *
+		 * This function clears previously entered Values or Ranges data when the operator changes.
+		 * It updates the corresponding rule inside the "ruleModel" based on:
+		 *  - Rule type (Pre-condition or Post-condition)
+		 *  - Condition ID (CTypeID / CondId)
+		 *  - Row identifier
+		 *
+		 * Workflow:
+		 * 1. Retrieves the selected operator key from the event.
+		 * 2. Locates the matching condition and rule entry inside the rule model.
+		 * 3. Clears the relevant property (Values or Ranges) in the rule.
+		 * 4. Refreshes the rule model to propagate changes.
+		 * 5. Clears the dialog input models:
+		 *    - If "Values": resets Operator and Value fields.
+		 *    - If "Ranges": resets Operator, Lower, and Upper fields.
+		 *
+		 * @function onSelectionDialogOperatorChange
+		 * @param {sap.ui.base.Event} oEvent - The selection change event triggered by the operator dropdown.
+		 *
+		 * @public
+		 *
+		 * @example
+		 * // Triggered when user selects a different operator
+		 * onSelectionDialogOperatorChange(oEvent);
+		 *
+		 */
+		onSelectionDialogOperatorChange: function (oEvent) {
+			var oView = this.getView(), aCondition, iCondition, iRule,aItems,
+			sClearKey = oEvent.getParameter("selectedItem").getCustomData()[0].getValue(),
+				oRuleModel, oData = this._oDialogSelection.getModel("setting").getData();
+			oRuleModel = oView.getModel("ruleModel").getData();
+			if (oData.RuleType == PlDacConst.PRE_CONDITION_RULE_TYPE) {
+				aCondition = oRuleModel.types[0].Condition;
+				for (iCondition = 0; iCondition < aCondition.length; iCondition++) {
+					if (aCondition[iCondition].CTypeID === oData.CondId) {
+						for (iRule = 0; iRule < aCondition[iCondition].Rules.length; iRule++) {
+							if (aCondition[iCondition].Rules[iRule].Rows == oData.Rows) {
+								aCondition[iCondition].Rules[iRule][sClearKey] = [];
+								break;
+							}
+						}
+					}
+				}
+				oRuleModel.types[0].Condition = aCondition;
+			} else {
+				aCondition = oRuleModel.types[oRuleModel.types.length - 1].Condition;
+				for (iCondition = 0; iCondition < aCondition.length; iCondition++) {
+					if (aCondition[iCondition].CTypeID === oData.CTypeID) {
+						for (iRule = 0; iRule < aCondition[iCondition].Rules.length; iRule++) {
+							if (aCondition[iCondition].Rules[iRule].Rows == oData.Rows) {
+								aCondition[iCondition].Rules[iRule][sClearKey] = [];
+								break;
+							}
+						}
+					}
+				}
+				oRuleModel.types[oRuleModel.types.length - 1].Condition = aCondition;
+			}
+			oView.getModel("ruleModel").setData(oRuleModel);
+			oView.getModel("ruleModel").refresh();
+			if(sClearKey=="Values"){
+				aItems = this._oDialogSelection.getContent()[0].getModel("SingleValues").getData();
+				aItems.forEach(obj => {
+					obj.Operator="";
+					obj.Value="";
+				});
+				this._oDialogSelection.getContent()[0].getModel("SingleValues").setData(aItems);
+			}else{
+				aItems = this._oDialogSelection.getContent()[0].getModel("Ranges").getData();
+				aItems.forEach(obj => {
+					obj.Operator="";
+					obj.Lower="";
+					obj.Upper="";
+				});
+				this._oDialogSelection.getContent()[0].getModel("Ranges").setData(aItems);
 			}
 		}
 	});
