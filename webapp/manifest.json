@@ -17,7 +17,7 @@
         },
         "dataSources": {
             "mainService": {
-                "uri": "/sap/opu/odata/APPSDM/DAC_FUNC_CONFIG_SRV_02/",
+                "uri": "/sap/opu/odata/APPSDM/DAC_FUNC_CONF_SRV/",
                 "type": "OData",
                 "settings": {
                     "odataVersion": "2.0",
