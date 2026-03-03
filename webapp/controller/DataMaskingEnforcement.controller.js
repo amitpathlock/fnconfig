@@ -425,12 +425,13 @@ sap.ui.define([
 				});
 			}
 		},
+
 		/**
 		 * Event handler triggered when attribute tokens are updated (added or removed).
 		 * 
 		 * @public
 		 * @param {*} oEvent - The token update event object
-		 * @param {} oEvent.getParameter("type") - The type of token update ("removed", "removedAll", "added", etc.)
+		 * @param {string} oEvent.getParameter("type") - The type of token update ("removed", "removedAll", "added", etc.)
 		 * @returns {void}
 		 * 
 		 * @description
@@ -608,6 +609,7 @@ sap.ui.define([
 				this._oPEPAttributeVHDialog.getTableAsync().then(function (oTable) {
 					oTable.setModel(oView.getModel());
 					oTable.setSelectionMode("Single");
+					that._oPEPAttributeVHDialog.setSupportMultiselect(false);
 					// For Desktop and tabled the default table is sap.ui.table.Table
 					if (oTable.bindRows) {
 						// Bind rows to the ODataModel and add columns

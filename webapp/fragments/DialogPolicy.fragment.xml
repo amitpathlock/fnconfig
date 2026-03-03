@@ -1,12 +1,13 @@
 <core:FragmentDefinition
 	xmlns:core="sap.ui.core"
 	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
 	xmlns:f="sap.ui.layout.form">
 	<!-- @ui5ignore -->
 	<Dialog class="PlDacDailogBox" 
    beforeOpen="onBeforePolAdminPolicyDialogOpened"
    afterOpen="onAfterPolAdminPolicyDialogOpen"
-   contentWidth="600px" resizable="false" icon="{viewModel>/Icon}" title="{viewModel>/Title}">
+   contentWidth="620px" resizable="false" icon="{viewModel>/Icon}" title="{viewModel>/Title}">
 		<content>
 			<!-- @ui5ignore -->
 			<f:SimpleForm editable="true" labelSpanXL="12" labelSpanL="12" labelSpanM="12" labelSpanS="12" layout="ResponsiveGridLayout" singleContainerFullSize="false">
@@ -14,13 +15,75 @@
 					<!-- @ui5ignore -->
 					<Label text="{viewModel>/Name}" required="true" />
 					<!-- @ui5ignore -->
-					<Input id="idPolAdminPolName"  enabled="{viewModel>/PolicyNameEnabled}" valueState="{viewModel>/PolNameErrorState}" valueStateText="{viewModel>/PolNameErrorMessage}" liveChange="onPolicyNameInputLiveChange" value="{viewModel>/Data/PolicyName}" />
-					<Label text="{viewModel>/Description}" class="sapUiTinyMarginTop" required="true" />
+					<Input id="idPolAdminPolName" maxLength="50"  enabled="{viewModel>/PolicyNameEnabled}" valueState="{viewModel>/PolNameErrorState}" valueStateText="{viewModel>/PolNameErrorMessage}" liveChange="onPolicyNameInputLiveChange" value="{viewModel>/Data/PolicyName}" >
+						<layoutData>
+						<l:GridData span="XL1 L10 M10 S10" />
+					</layoutData>
+					</Input>
+					<Input editable="false" value="{viewModel>/Data/Version}" >
+					<layoutData>
+						<l:GridData span="XL1 L2 M2 S2" />
+					</layoutData>
+					</Input>
+					
+					<Label text="{viewModel>/Description}" required="true" />
 					<!-- @ui5ignore -->
-					<Input id="idPolAdminPolDesc" value="{viewModel>/Data/PolicyDesc}" 
+					<Input id="idPolAdminPolDesc" maxLength="50" value="{viewModel>/Data/PolicyDesc}" 
                 submit="onSubmitPolAdminPolicyDesc"
                valueState="{viewModel>/PolDescErrorState}" valueStateText="{viewModel>/PolDescErrorMessage}" />
 					<!-- Add more form fields as needed -->
+					<!-- Add more form fields as needed -->
+					<Label text="{i18n>lblPolApplicationArea}"  />
+					<!-- @ui5ignore -->
+					<Select  items="{/ApplicationAreaSet}" selectedKey="{viewModel>/Data/ApplArea}">
+							<items>
+								<core:Item
+									
+									key="{ApplicationAreaID}"
+									text="{ApplicationAreaText}"
+									
+								>
+									
+								</core:Item>
+							</items>
+							<layoutData>
+						<l:GridData span="XL1 L8 M8 S8" />
+					</layoutData>
+					</Select>
+					<Label text="{i18n>lblPolProcessArea}"  />
+					<!-- @ui5ignore -->
+					<Select  items="{/ProcessAreaSet}" selectedKey="{viewModel>/Data/BusProcess}">
+						<items>
+								<core:Item
+									
+									key="{ProcessAreaID}"
+									text="{ProcessAreaText}"
+									
+								>
+									
+								</core:Item>
+							</items>
+					<layoutData>
+						<l:GridData span="XL1 L8 M8 S8" />
+					</layoutData>
+					</Select>
+					<Label text="{i18n>lblPolLog}"  />
+					<!-- @ui5ignore -->
+					<Select items="{/AccessLogSet}" selectedKey="{viewModel>/Data/AccessLog}" >
+							<items>
+								<core:Item
+									key="{AccessLogValue}"
+									text="{AccessLogText}"	
+								>	
+								</core:Item>
+							</items>
+					<layoutData>
+						<l:GridData span="XL1 L6 M6 S6" />
+					</layoutData>
+					</Select>
+
+					<Label text="{i18n>lblLongText}"  />
+					<TextArea growing="true" rows="3" value="{viewModel>/Data/Description}" maxLength="256" growingMaxLines="2"/>
 				</f:content>
 			</f:SimpleForm>
 		</content>

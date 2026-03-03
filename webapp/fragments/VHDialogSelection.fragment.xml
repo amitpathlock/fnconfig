@@ -30,10 +30,18 @@
                         <items>
                             <ColumnListItem vAlign="Middle" type="Active">
                                 <cells>
-                                    <Select width="100%" items="{path:'Operators>/',templateShareable:true}" selectedKey="{SingleValues>Operator}">
+                                <!-- @ui5ignore -->
+                                    <Select width="100%" change="onSelectionDialogOperatorChange" items="{path:'OperatorsSV>/',templateShareable:true}" selectedKey="{SingleValues>Operator}">
+                                        
+                                      
                                        <items>
-                                        <c:Item key="{Operators>Key}" text="{Operators>Text}" />
+                                        <c:Item key="{OperatorsSV>Key}" text="{OperatorsSV>Text}"
+                                        customData:ClearType="ValueRange"
+                                        >
+                                            
+                                        </c:Item>
                                        </items>
+                                      
                                     </Select>
                                     <Input value="{SingleValues>Value}"/>
                                 </cells>
@@ -60,10 +68,16 @@
                         <items>
                             <ColumnListItem vAlign="Middle" type="Active">
                                 <cells>
-                                    <Select  width="100%" items="{path:'OperatorsRange>/',templateShareable:true}" selectedKey="{Ranges>Operator}">
+                                  <!-- @ui5ignore -->
+                                    <Select  width="100%" change="onSelectionDialogOperatorChange" items="{path:'OperatorsRange>/',templateShareable:true}" selectedKey="{Ranges>Operator}">
+                                        
                                        <items>
-                                        <c:Item key="{OperatorsRange>Key}" text="{OperatorsRange>Text}" />
+                                        <c:Item key="{OperatorsRange>Key}" text="{OperatorsRange>Text}" 
+                                         customData:ClearType="Values" >
+                                       
+                                        </c:Item>
                                        </items>
+                                      
                                     </Select>
                                     <Input value="{Ranges>Lower}"/>
                                      <Input value="{Ranges>Upper}"/>

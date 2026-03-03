@@ -30,9 +30,5 @@
     {
         "Key":"NE",
         "Text":"Not Equal To"
-    },
-    {
-        "Key":"BT",
-        "Text":"Between"
     }
 ]

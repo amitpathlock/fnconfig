@@ -14,6 +14,7 @@ sap.ui.define([], function (
                 this.Rows = 0;
                 this.CTypeID = 1;
                 this.RuleType = "";
+                this.Values=[];
         }
     };
 });

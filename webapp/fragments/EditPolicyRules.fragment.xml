@@ -119,7 +119,9 @@
 														<FlexItemData growFactor="4" />
 													</layoutData>
 												</Input>
+												<!-- @ui5ignore -->
 												<Select items="{Operators>/}" selectedKey="{ruleModel>Operator}" width="100%"
+													change="onOperatorSelectChange"
 												class="plDacRuleSelectOperator">
 													<core:Item key="{Operators>Key}" text="{Operators>Text}" />
 													<customData>
@@ -135,6 +137,7 @@
 													value="{ruleModel>ValueDesc}"
 													class="plDacRuleInputFontSize"
 													showValueDialog=".onShowValueDialog"
+													liveChange="onRHSLiveInputChange" 
 												>
 													<cc:customData>
 														<core:CustomData key="data" value="{ruleModel>}"/>

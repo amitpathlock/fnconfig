@@ -384,6 +384,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                             for (iRule = 0; iRule < aCondition[iCondition].Rules.length; iRule++) {
                                 if (aCondition[iCondition].Rules[iRule].Rows == oData.Rows) {
                                     aCondition[iCondition].Rules[iRule][sKey] = aValues;
+                                    aCondition[iCondition].Rules[iRule].Operator = aValues[0].Operator;
                                     aCondition[iCondition].Rules[iRule].Value = sValuesRanges;//aValues.map(oValue => oValue.Value).join(', ') // aValues[0].Value;
                                     aCondition[iCondition].Rules[iRule].ValueDesc = sValuesRanges;///aValues.map(oValue => oValue.Value).join(', ');//aValues[0].Value;
                                     break;
@@ -399,6 +400,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                             for (iRule = 0; iRule < aCondition[iCondition].Rules.length; iRule++) {
                                 if (aCondition[iCondition].Rules[iRule].Rows == oData.Rows) {
                                     aCondition[iCondition].Rules[iRule][sKey] = aValues;
+                                    aCondition[iCondition].Rules[iRule].Operator = aValues[0].Operator;
                                     aCondition[iCondition].Rules[iRule].Value = sValuesRanges;// aValues.map(oValue => oValue.Value).join(', ')//aValues[0].Value;
                                     aCondition[iCondition].Rules[iRule].ValueDesc = sValuesRanges;// aValues.map(oValue => oValue.Value).join(', ')//aValues[0].Value;
                                     break;
@@ -436,12 +438,12 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                                     if (oSelectedItemData.AttributeId) {
                                         aCondition[iCondition].Rules[iRule].Value = oSelectedItemData.AttributeId;
                                         aCondition[iCondition].Rules[iRule].ValueDesc = oSelectedItemData.Description + "(" + oSelectedItemData.AttributeId + ")";
-                                        aCondition[iCondition].Rules[iRule].Values = [{ Operator: "EQ", Value: oSelectedItemData.AttributeId }];
+                                        aCondition[iCondition].Rules[iRule].Values = [{ Operator: oData.Operator, Value: oSelectedItemData.AttributeId }];
                                         aCondition[iCondition].Rules[iRule].ValueRange = [];
                                     } else {
                                         aCondition[iCondition].Rules[iRule].Value = oSelectedItemData.ListId;
                                         aCondition[iCondition].Rules[iRule].ValueDesc = oSelectedItemData.Description + "(" + oSelectedItemData.ListId + ")";
-                                        aCondition[iCondition].Rules[iRule].Values = [{ Operator: "EQ", Value: oSelectedItemData.ListId }];
+                                        aCondition[iCondition].Rules[iRule].Values = [{ Operator: oData.Operator, Value: oSelectedItemData.ListId }];
                                         aCondition[iCondition].Rules[iRule].ValueRange = [];
                                     }
 
@@ -461,13 +463,13 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                                         aCondition[iCondition].Rules[iRule].Value = oSelectedItemData.AttributeId;
                                         aCondition[iCondition].Rules[iRule].ValueDesc = oSelectedItemData.Description + "(" + oSelectedItemData.AttributeId + ")";
                                         aCondition[iCondition].Rules[iRule].ValueRange = [];
-                                        aCondition[iCondition].Rules[iRule].Values = [{ Operator: "EQ", Value: oSelectedItemData.AttributeId }];
+                                        aCondition[iCondition].Rules[iRule].Values = [{ Operator: oData.Operator, Value: oSelectedItemData.AttributeId }];
 
                                     } else {
                                         aCondition[iCondition].Rules[iRule].Value = oSelectedItemData.ListId;
                                         aCondition[iCondition].Rules[iRule].ValueDesc = oSelectedItemData.Description + "(" + oSelectedItemData.ListId + ")";
                                         aCondition[iCondition].Rules[iRule].ValueRange = [];
-                                        aCondition[iCondition].Rules[iRule].Values = [{ Operator: "EQ", Value: oSelectedItemData.ListId }];
+                                        aCondition[iCondition].Rules[iRule].Values = [{ Operator: oData.Operator, Value: oSelectedItemData.ListId }];
 
                                     }
                                     break;
@@ -1208,10 +1210,6 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                                             }
                                         }
                                     }
-
-                                    if (aRules[iRule].ValueDesc != "" && aRules[iRule].Value == "") {
-                                        _aValues.push({ Value: aRules[iRule].ValueDesc, Operator: aRules[iRule].Operator });
-                                    }
                                     if (aRules[iRule].Operator == "BT") {
                                         for (var k = 0; k < _aValues.length; k++) {
                                             _oRule = {};
@@ -1227,7 +1225,6 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                                         }
                                         oCondition["to_Rule"].push(_oRule);
                                     }
-
                                 }
                             }
                             if (!bEmptyRule) {
@@ -1241,5 +1238,4 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                 return oPayload;
             }
         };
-
     });
