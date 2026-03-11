@@ -48,7 +48,7 @@ sap.ui.define([
         */
         _loadActionSet: function () {
             var oFilter, aFilter, oModel = this.getOwnerComponent().getModel();
-            oFilter = new Filter("Status", FilterOperator.EQ, 1);
+            oFilter = new Filter("Status", FilterOperator.EQ, true);
             aFilter = [oFilter];
             oModel.read(PlDacConst.ENTITY_SET_ACTION_PATH, {
                 filters: aFilter,
