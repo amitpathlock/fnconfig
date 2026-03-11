@@ -27,7 +27,7 @@
     "deploy-config": "fiori add deploy-config",
     "start-noflp": "fiori run --open \"index.html?sap-ui-xx-viewCache=false\"",
     "start-variants-management": "fiori run --open \"preview.html?sap-ui-xx-viewCache=false&fiori-tools-rta-mode=true&sap-ui-rta-skip-flex-validation=true#preview-app\"",
-    "unit-tests": "fiori run --open 'test/unit/unitTests.qunit.html'",
+    "unit-tests": "fiori run --open test/unit/unitTests.qunit.html",
     "int-tests": "fiori run --open 'test/integration/opaTests.qunit.html'",
     "lint": "eslint .",
     "lint:fix": "eslint --fix --ext .js,.jsx .",
@@ -630,7 +630,8 @@
     "eslint-plugin-ava": "^15.1.0",
     "eslint-plugin-jsdoc": "^61.5.0",
     "global": "^4.4.0",
-    "globals": "^16.5.0"
+    "globals": "^16.5.0",
+    "ui5-middleware-code-coverage": "^3.0.0"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"

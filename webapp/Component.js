@@ -20,6 +20,7 @@ sap.ui.define([
                 UIComponent.prototype.init.apply(this, arguments);
               
                 this.setModel(new JSONModel({ layout: "OneColumn" }), "layoutMode");
+                this.setModel(new JSONModel({ PolicyRoute: false }), "routeModel");
                 this.getRouter().initialize();
             }
         });

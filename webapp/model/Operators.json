@@ -4,6 +4,10 @@
         "Text":""
     },
     {
+        "Key":"CP",
+        "Text":"Contains"
+    },
+    {
         "Key":"EQ",
         "Text":"Equal To"
     },
@@ -20,7 +24,7 @@
         "Text":"Greater than"
     },
     {
-        "Key":"<",
+        "Key":"LT",
         "Text":"Less than"
     },
     {

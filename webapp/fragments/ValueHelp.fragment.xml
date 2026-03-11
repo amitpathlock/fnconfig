@@ -6,7 +6,7 @@
 <ValueHelpDialog 
 		title="Categories"
 		ok=".onValueHelpOkPress"
-		cancel=".onValueHelpCancelPress"
+		cancel=".onPolEnfocementPolcyVHCancelPress"
 		afterClose=".onValueHelpAfterClose"
 		supportRanges="true"
 		key="PolicyName"

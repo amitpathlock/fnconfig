@@ -1,6 +1,6 @@
 
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	"pl/dac/apps/fnconfig/controller/BaseController",
 	"pl/dac/apps/fnconfig/const/PlDacConst",
 	"sap/ui/core/Fragment",
 	"sap/ui/model/json/JSONModel",
@@ -8,78 +8,78 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/base/Log"
 ], function (
-	Controller, PlDacConst, Fragment, JSONModel, MessageBox, Sorter, Log
+	BaseController, PlDacConst, Fragment, JSONModel, MessageBox, Sorter, Log
 ) {
 	"use strict";
 
-	return Controller.extend("pl.dac.apps.fnconfig.controller.DataAttributes", {
-
-		onInit: function () {
-			this._oRouter = this.getOwnerComponent().getRouter();
-
-			this._oRouter.getRoute(PlDacConst.ROUTE_PATH_DATA_ATTRIBUTE).attachPatternMatched(this._onRouteMatched, this);
-		},
-		/* ###Method has been defined to implement table header edit attribute event.
-		* @param {sap.ui.base.Event} oEvent
-		*/
-		onEditBtnPress: function () {
-			var oView = this.getView();
-			var oSelectedContextData = this.getView().byId("idTableDataAttributes").getSelectedItem().getBindingContext().getObject();
-			oView.getModel("viewModel").setProperty("/Data", oSelectedContextData);
-			if (!this._oDataAttributeDailog) {
-				Fragment.load({
-					id: oView.getId(),
-					name: "pl.dac.apps.fnconfig.fragments.DialogAttribute", // Path to your fragment
-					controller: this // Assign the current controller
-				}).then(function (oDialog) {
-					this._oDataAttributeDailog = oDialog;
-					oView.addDependent(oDialog); // Add dialog as dependent of the view
-					oDialog.open();
-				}.bind(this));
-			} else {
-				this._oDataAttributeDailog.open();
-			}
-			oView.getModel("viewModel").setProperty("/AttrNameEnabled", false);
-		},
-		/* ### A Method has been defined to implement table header add attribute event.
-		*  -> Add the AttributeId and Description in /Data namespace of viewModel
-		*  -> Initialized the this._oDataAttributeDailog
-		*  -> Open the this._oDataAttributeDailog
-		*  -> Set the AttrNameEnabled property as true of viewModel
-		* @param {sap.ui.base.Event} oEvent
+	return BaseController.extend("pl.dac.apps.fnconfig.controller.DataAttributes", {
+		/**
+		 * Controller initialization lifecycle hook.
+		 *
+		 * This method is called automatically when the controller is instantiated.
+		 * It performs the following setup tasks:
+		 *
+		 * 1. Retrieves the router instance from the owner component.
+		 * 2. Attaches the `_onRouteMatched` handler to the route
+		 *    defined by `PlDacConst.ROUTE_PATH_DATA_ATTRIBUTE`. This ensures
+		 *    `_onRouteMatched` is executed whenever the route is navigated to.
+		 * 3. Adds additional custom buttons to the SmartTable toolbar for
+		 *    `idSmartTableDataAttributes`.
+		 *
+		 * Dependencies:
+		 * - OwnerComponent router
+		 * - PlDacConst.ROUTE_PATH_DATA_ATTRIBUTE (route name constant)
+		 * - idSmartTableDataAttributes (sap.ui.comp.smarttable.SmartTable)
+		 *
+		 * @function onInit
+		 * @public
+		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
+		 * @override
+		 * @this sap.ui.core.mvc.Controller
+		 * @returns {void}
 		 */
-		onAddBtnPress: function () {
-			var oView = this.getView();
-			oView.getModel("viewModel").setProperty("/Data", { AttributeId: "", Description: "" });
-			oView.getModel("viewModel").setProperty("/AttrNameEnabled", true);
-			if (!this._oDataAttributeDailog) {
-				Fragment.load({
-					id: oView.getId(),
-					name: "pl.dac.apps.fnconfig.fragments.DialogAttribute", // Path to your fragment
-					controller: this // Assign the current controller
-				}).then(function (oDialog) {
-					this._oDataAttributeDailog = oDialog;
-					oView.addDependent(oDialog); // Add dialog as dependent of the view
-					oDialog.open();
-				}.bind(this));
-			} else {
-				this._oDataAttributeDailog.open();
-			}
-			oView.getModel("viewModel").setProperty("/AttrNameEnabled", true);
+		onInit: function () {
+
+			this._oRouter = this.getOwnerComponent().getRouter();
+			this._oRouter.getRoute(PlDacConst.ROUTE_PATH_DATA_ATTRIBUTE).attachPatternMatched(this._onRouteMatched, this);
+			this.addAdditionalButtonIntoTheAttributeTableToolbar(this.getView().byId("idSmartTableDataAttributes"));
 		},
-		onCloseDialog: function () {
-			if (this._oDataAttributeDailog) {
-				this._oDataAttributeDailog.close();
-			}
-		},
-		/* ### A Method has been defined to implement onRouteMatched event.
-		*  -> Create viewModel with relavent properties
-		* @param {sap.ui.base.Event} oEvent
+
+		/**
+		 * Route match event handler for the Data Attribute view.
+		 *
+		 * This method is executed whenever the `PlDacConst.ROUTE_PATH_DATA_ATTRIBUTE`
+		 * route is matched. It initializes the view by setting up a clean `viewModel`
+		 * with default values and localized texts.
+		 *
+		 * Processing steps:
+		 * 1. Retrieves the i18n resource bundle for localized labels and placeholders.
+		 * 2. Initializes the `viewModel` (JSONModel) with:
+		 *    - Localized UI labels (Name, Description, Title, PlaceHolder)
+		 *    - Payload structure for Data Attribute (`DataAttrSet`, `Description`)
+		 *    - UI state flags (buttons, full-screen mode, sorting, validation)
+		 *    - Attribute type set to `"DATA"`
+		 * 3. Hides the global BusyIndicator to unblock the UI.
+		 * 4. Resets selections in the data attribute table (`idTableDataAttributes`), if present.
+		 *
+		 * This ensures that each time the route is accessed, the view starts with
+		 * a clean, predictable state.
+		 *
+		 * Dependencies:
+		 * - i18n model (ResourceModel) for localized texts
+		 * - sap.ui.core.BusyIndicator
+		 * - idTableDataAttributes (sap.m.Table or sap.ui.table.Table)
+		 *
+		 * @function _onRouteMatched
+		 * @private
+		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
+		 * @this sap.ui.core.mvc.Controller
+		 * @returns {void}
 		 */
 		_onRouteMatched: function () {
-
-			var oBundle = this.getView().getModel("i18n").getResourceBundle();
-			this.getView().setModel(new JSONModel(
+			var oView = this.getView(),
+				oBundle = oView.getModel("i18n").getResourceBundle();
+			oView.setModel(new JSONModel(
 				{
 					Name: oBundle.getText("lblAttribute"),
 					Description: oBundle.getText("lblDescription"),
@@ -100,44 +100,66 @@ sap.ui.define([
 					FullScreen: true,
 					ExitFullScreen: false,
 					ExitColumn: true,
-					SortOrder: "asc"
+					SortOrder: "asc",
+					AttributeType: "DATA",
+					SelectedContextData: null
 				}
 			), "viewModel");
 			sap.ui.core.BusyIndicator.hide();
-		},
-		/* ### A Method has been defined to implement table selection change event.
-		* @param {sap.ui.base.Event} oEvent
-		 */
-		onTableSelectionChange: function () {
-			this.getView().getModel("viewModel").setProperty("/EditButtonEnabled", true);
-			this.getView().getModel("viewModel").setProperty("/DeleteButtonEnabled", true);
+			this.oAttributeTable = oView.byId("idTableDataAttributes");
+			if (this.oAttributeTable) {
+				this.oAttributeTable.removeSelections(true);
+			}
 
 		},
-		/* ### A Method has been defined to implement input live change.
-		* @param {sap.ui.base.Event} oEvent
+
+
+		/**
+		 * Handles the save action for the Data Attribute dialog.
+		 *
+		 * This method validates user input and performs either an UPDATE or CREATE
+		 * operation depending on whether the entry already exists.
+		 *
+		 * Processing steps:
+		 * 1. Retrieves the payload from the `viewModel` (`/Data`).
+		 * 2. Validates mandatory fields:
+		 *    - `AttributeId` must not be empty.
+		 *    - `Description` must not be empty.
+		 *    If validation fails, sets the appropriate error state and message
+		 *    in the `viewModel` and stops further processing.
+		 *
+		 * 3. Determines persistence operation:
+		 *    - If the payload contains `__metadata`, it issues an OData UPDATE request.
+		 *    - Otherwise, it checks for duplicates using `_checkForDuplicateEntry`
+		 *      before creating a new entry.
+		 *
+		 * 4. On successful update:
+		 *    - Displays a localized success message with the `AttributeId`.
+		 *    - Refreshes the OData model.
+		 *    - Closes the attribute dialog.
+		 *    - Clears table selections and resets `viewModel` data.
+		 *    - Disables Edit and Delete buttons.
+		 *
+		 * 5. On update error:
+		 *    - Logs the backend error.
+		 *    - Closes the dialog.
+		 *    - Displays a user-friendly error message using `displayErrorMessage`.
+		 *
+		 * Dependencies:
+		 * - Default OData model (`sap.ui.model.odata.v2.ODataModel`)
+		 * - viewModel (JSONModel) for UI state and payload
+		 * - i18n ResourceBundle for localized texts
+		 * - PlDacConst.ENTITY_SET_DATAATTRIBUTE_PATH (OData entity set path)
+		 * - sap.m.MessageBox for feedback
+		 * - `_checkForDuplicateEntry` method for uniqueness validation
+		 *
+		 * @function onSaveAttributeDialog
+		 * @public
+		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
+		 * @this sap.ui.core.mvc.Controller
+		 * @returns {void}
 		 */
-		onInputChange: function (oEvent) {
-			var sNewValue = oEvent.getParameter("newValue");
-			this.__oInput = oEvent.getSource();
-			this.__oInput.setValueState("None");
-			this.getView().getModel("viewModel").setProperty("/ErrorState", "None");
-			this.getView().getModel("viewModel").setProperty("/ErrorMessage", "");
-			this.__oInput.setValue(this.__oInput.getValue().toUpperCase());
-			this.__oInput.setValueStateText("");
-			if (sNewValue.length < 6) { // Example validation rule
-				this.getView().getModel("viewModel").setProperty("/ErrorState", "Error");
-				this.getView().getModel("viewModel").setProperty("/ErrorMessage", "Invalid input");
-			} else {
-				if (sNewValue.split(".")[0] != "DATA") {
-					this.getView().getModel("viewModel").setProperty("/ErrorState", "Error");
-					this.getView().getModel("viewModel").setProperty("/ErrorMessage", "An attribute name should begin with \"DATA.\" followed by the specific attribute name.");
-				}
-			}
-		},
-		/* ### A Method has been defined to implement save/update operation.
-		* @param {sap.ui.base.Event} oEvent
-		 */
-		onSave: function () {
+		onSaveAttributeDialog: function () {
 			var sPath, oView = this.getView(),
 				oModel = oView.getModel(), oBundle = oView.getModel("i18n").getResourceBundle(), oEntry, that = this;
 			oEntry = oView.getModel("viewModel").getData().Data;
@@ -160,12 +182,16 @@ sap.ui.define([
 					success: function () {
 						MessageBox.success(oBundle.getText("msgDAUpdateSuccessfully", [oEntry.AttributeId]), { styleClass: "PlDacMessageBox" });
 						oModel.refresh();
-						this._oDataAttributeDailog.close();
+						this.oAttributeDialog.close();
+						oView.byId("idTableDataAttributes").removeSelections(true);
+						oView.getModel("viewModel").setProperty("/Data", {});
+						oView.getModel("viewModel").setProperty("/EditButtonEnabled", false);
+						oView.getModel("viewModel").setProperty("/DeleteButtonEnabled", false);
 					}.bind(this),
 					error: function (oError) {
 						Log.error(oBundle.getText("msgErrorInUpdate") + oError);
-						that._oDataAttributeDailog.close();
-						that._displayErrorMessage(oError);
+						that.oAttributeDialog.close();
+						that.displayErrorMessage(oError);
 
 					}
 				});
@@ -175,9 +201,39 @@ sap.ui.define([
 
 			}
 		},
-		/** Private Method
-		 *  A Method  has been defined to create new entry
-		 * @param {} oEntry
+
+		/**
+		 * Creates a new Data Attribute entry in the backend.
+		 *
+		 * This method sends a CREATE request to the OData service using the provided
+		 * `oEntry` payload, persisting a new Data Attribute entity to the backend
+		 * entity set defined by `PlDacConst.ENTITY_SET_DATAATTRIBUTE_PATH`.
+		 *
+		 * On successful creation:
+		 * - Displays a localized success message including the `AttributeId`.
+		 * - Refreshes the OData model to reflect the newly created entry.
+		 * - Closes the attribute dialog.
+		 *
+		 * On error:
+		 * - Logs the backend error.
+		 * - Closes the dialog.
+		 * - Delegates error handling to `displayErrorMessage`.
+		 *
+		 * Dependencies:
+		 * - Default OData model (`sap.ui.model.odata.v2.ODataModel`)
+		 * - viewModel (JSONModel) for UI state (if needed)
+		 * - i18n ResourceBundle for localized texts
+		 * - sap.m.MessageBox for user feedback
+		 * - PlDacConst.ENTITY_SET_DATAATTRIBUTE_PATH (entity set path constant)
+		 *
+		 * @function _createEntry
+		 * @private
+		 * @param {Object} oEntry - The Data Attribute payload to be created.
+		 * @param {string} oEntry.AttributeId - Unique identifier of the attribute.
+		 * @param {string} oEntry.Description - Description of the attribute.
+		 * @this sap.ui.core.mvc.Controller
+		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
+		 * @returns {void}
 		 */
 		_createEntry: function (oEntry) {
 			var that = this, oBundle, oView = this.getView(), oModel = oView.getModel();
@@ -186,20 +242,51 @@ sap.ui.define([
 				success: function () {
 					MessageBox.success(oBundle.getText("msgDACreateSuccessfully", [oEntry.AttributeId]), { styleClass: "PlDacMessageBox" });
 					oView.getModel().refresh();
-					this._oDataAttributeDailog.close();
+					this.oAttributeDialog.close();
 				}.bind(this),
 				error: function (oError) {
 					Log.error(oBundle.getText("msgErrorInCreate") + oError);
-					that._oDataAttributeDailog.close();
-					that._displayErrorMessage(oError);
+					that.oAttributeDialog.close();
+					that.displayErrorMessage(oError);
 
 				}
 			});
 		},
-		/** ### Private Method
-		 *  A Method has been defined to check for Duplicate entry
-		 * @param {string} sPath
-		 * @param {} oEntry
+
+		/**
+		 * Checks whether a Data Attribute entry already exists before creation.
+		 *
+		 * This method performs an OData `read` request for the given entity path
+		 * to determine if an entry with the same `AttributeId` already exists.
+		 *
+		 * Processing logic:
+		 * - If the READ request succeeds:
+		 *   → The entity already exists.
+		 *   → Sets the error state and localized duplicate message in the `viewModel`.
+		 *   → Moves focus to the attribute name input field to prompt correction.
+		 *   → Stops the creation process.
+		 *
+		 * - If the READ request fails (typically 404 Not Found):
+		 *   → The entity does not exist.
+		 *   → Delegates creation to `_createEntry(oEntry)`.
+		 *
+		 * This ensures uniqueness of the Data Attribute identifier before
+		 * issuing a CREATE request to the backend.
+		 *
+		 * Dependencies:
+		 * - Default OData model (`sap.ui.model.odata.v2.ODataModel`)
+		 * - viewModel (JSONModel) for UI validation state
+		 * - i18n ResourceBundle for localized messages
+		 * - `_createEntry` method for entity creation
+		 *
+		 * @function _checkForDuplicateEntry
+		 * @private
+		 * @param {string} sPath - OData entity path for the specific Data Attribute.
+		 * @param {Object} oEntry - The Data Attribute payload to validate.
+		 * @param {string} oEntry.AttributeId - Unique identifier of the attribute.
+		 * @this sap.ui.core.mvc.Controller
+		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
+		 * @returns {void}
 		 */
 		_checkForDuplicateEntry: function (sPath, oEntry) {
 			var oView = this.getView(), oModel = oView.getModel(), that = this,
@@ -207,7 +294,7 @@ sap.ui.define([
 			oModel.read(sPath, // Path to the specific entity
 				{
 					success: function () {
-						that.__oInput.focus();
+						that.oInputAttributeName.focus();
 						oView.getModel("viewModel").setProperty("/ErrorMessage", oBundle.getText("msgErrorDuplicateEntry", [oEntry.AttributeId]));
 						oView.getModel("viewModel").setProperty("/ErrorState", "Error");
 						return;
@@ -218,97 +305,83 @@ sap.ui.define([
 				}
 			);
 		},
-		/** ### Event handler of "sap.m.OverflowToolButton~press"
-		 *  ### A Method has been defined to implement delete operation to table record.
+
+		/**
+		 * Checks whether a Data Attribute entry already exists before creation.
+		 *
+		 * This method performs an OData `read` request for the given entity path
+		 * to determine if an entry with the same `AttributeId` already exists.
+		 *
+		 * Processing logic:
+		 * - If the READ request succeeds:
+		 *   → The entity already exists.
+		 *   → Sets the error state and localized duplicate message in the `viewModel`.
+		 *   → Moves focus to the attribute name input field to prompt correction.
+		 *   → Stops the creation process.
+		 *
+		 * - If the READ request fails (typically 404 Not Found):
+		 *   → The entity does not exist.
+		 *   → Delegates creation to `_createEntry(oEntry)`.
+		 *
+		 * This ensures uniqueness of the Data Attribute identifier before
+		 * issuing a CREATE request to the backend.
+		 *
+		 * Dependencies:
+		 * - Default OData model (`sap.ui.model.odata.v2.ODataModel`)
+		 * - viewModel (JSONModel) for UI validation state
+		 * - i18n ResourceBundle for localized messages
+		 * - `_createEntry` method for entity creation
+		 *
+		 * @function _checkForDuplicateEntry
+		 * @private
+		 * @param {string} sPath - OData entity path for the specific Data Attribute.
+		 * @param {Object} oEntry - The Data Attribute payload to validate.
+		 * @param {string} oEntry.AttributeId - Unique identifier of the attribute.
+		 * @this sap.ui.core.mvc.Controller
+		 * @memberOf pl.dac.apps.fnconfig.controller.DataAttributes
+		 * @returns {void}
 		 */
-		onDeleteBtnPress: function () {
-			var that = this, oBundle = this.getView().getModel("i18n").getResourceBundle();
-			MessageBox.warning(oBundle.getText("msgDeleteConfirmation"), {
-				actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-				emphasizedAction: MessageBox.Action.OK,
-				styleClass: "PlDacMessageBox",
-				onClose: function (sAction) {
-					if (sAction == "OK") {
-						that._removeSelectedRecord(oBundle);
-					}
-				}
-			});
-		},
-		/** ### Event handler of "sap.m.OverflowToolButton~press"
-		 *  ### A Private method has been defined to implement delete selected record
-		 * @param {sap.base.i18n.ResourceBundle} oBundle
-		 */
-		_removeSelectedRecord: function (oBundle) {
+		removeSelectedRecord: function () {
 			var sPath, oView = this.getView(), oModel = oView.getModel(), that = this,
-				sAttributeId = oView.byId("idTableDataAttributes").getSelectedItem().getBindingContext().getObject().AttributeId;
+				oBundle = oView.getModel("i18n").getResourceBundle(),
+				sAttributeId = oView.getModel("viewModel").getProperty("/SelectedContextData").AttributeId;
+			//	sAttributeId = oView.byId("idTableDataAttributes").getSelectedItem().getBindingContext().getObject().AttributeId;
 			sPath = PlDacConst.ENTITY_SET_DATAATTRIBUTE_PATH + "('" + sAttributeId + "')";
 			oModel.remove(sPath, {
 				success: function () {
 					MessageBox.success(oBundle.getText("msgDADeleteSucceful", [sAttributeId]), { styleClass: "PlDacMessageBox" });
 					oModel.refresh();
+					oView.byId("idTableDataAttributes").removeSelections(true);
+					oView.getModel("viewModel").setProperty("/Data", {});
+					oView.getModel("viewModel").setProperty("/EditButtonEnabled", false);
+					oView.getModel("viewModel").setProperty("/DeleteButtonEnabled", false);
 				},
 				error: function (oError) {
 					Log.error(oBundle.getText("msgDAErrorInDelete") + oError);
-					that._displayErrorMessage(oError);
+					that.displayErrorMessage(oError);
 				}
 			});
 		},
-		/** ### Method has been defined to handle full sreen button event
-		 * Event handler of "sap.m.OverflowToolbarButton~press"
+		
+		/**
+		 * Lifecycle hook executed after the Data Attribute view has been rendered.
+		 *
+		 * This method is automatically called by the SAPUI5 framework once the
+		 * view's DOM is fully loaded and rendered.
+		 *
+		 * Current implementation:
+		 * - Hides the global BusyIndicator to ensure the UI is not blocked
+		 *   after initial rendering.
+		 *
+		 * Dependencies:
+		 * - sap.ui.core.BusyIndicator
+		 *
+		 * @function onAfterRendering
+		 * @public
+		 * @override
+		 * @this sap.ui.core.mvc.Controller
+		 * @returns {void}
 		 */
-		handleFullScreen: function () {
-			var oView = this.getView();
-			oView.getModel("layoutMode").setProperty("/layout", "MidColumnFullScreen");
-			oView.getModel("viewModel").setProperty("/FullScreen", false);
-			oView.getModel("viewModel").setProperty("/ExitFullScreen", true);
-		},
-
-		/** ### Method has been defined to handle exit full sreen button event
-		 * Event handler of "sap.m.OverflowToolbarButton~press"
-		 */
-		handleExitFullScreen: function () {
-			var oView = this.getView();
-			oView.getModel("layoutMode").setProperty("/layout", "TwoColumnsMidExpanded");
-			oView.getModel("viewModel").setProperty("/FullScreen", true);
-			oView.getModel("viewModel").setProperty("/ExitFullScreen", false);
-		},
-
-		/*###Event handler of "sap.m.OverflowTolbarButton~press"
-		* ### A method has been defined to implement sorting in the Data Attribute table based on the AttributeId.
-		 */
-		onSort: function () {
-			var oView = this.getView();
-			if (oView.getModel("viewModel").getProperty("/SortOrder") == "asc") {
-				oView.getModel("viewModel").setProperty("/SortOrder", "desc");
-				oView.byId("idTableDataAttributes").getBinding("items").sort([new Sorter("AttributeId", false)]);
-			} else {
-				oView.getModel("viewModel").setProperty("/SortOrder", "asc");
-				oView.byId("idTableDataAttributes").getBinding("items").sort([new Sorter("AttributeId", true)]);
-			}
-		},
-		/** Private method
-		 * ### A method has been defined to show an error message when an exception occurs ###
-		 * ### during CRUD operations in the OData Model.
-		 * @param {} oError
-		 */
-		_displayErrorMessage: function (oError) {
-			var message = "An unknown error occurred.";
-			if (oError && oError.responseText) {
-				try {
-					var errorBody = JSON.parse(oError.responseText);
-					if (errorBody.error && errorBody.error.message && errorBody.error.message.value) {
-						message = errorBody.error.message.value;
-					} else if (errorBody.error && errorBody.error.errordetails && errorBody.error.errordetails.length > 0) {
-						message = errorBody.error.errordetails[0].message;
-					}
-				} catch (e) {
-					Log.error(e);
-					// Handle cases where response body might not be valid JSON
-					message = $(oError.response.body).find('message').first().text();
-				}
-			}
-			MessageBox.error(message, { styleClass: "PlDacMessageBox" }); // Display using sap.m.MessageBox
-		},
 		onAfterRendering: function () {
 			sap.ui.core.BusyIndicator.hide();
 		}

@@ -17,7 +17,7 @@
         },
         "dataSources": {
             "mainService": {
-                "uri": "/sap/opu/odata/APPSDM/DAC_FUNC_CONFIG_SRV_02/",
+                "uri": "/sap/opu/odata/APPSDM/DAC_FUNC_CONF_SRV/",
                 "type": "OData",
                 "settings": {
                     "odataVersion": "2.0",
@@ -45,10 +45,14 @@
     "sap.ui5": {
         "flexEnabled": true,
         "dependencies": {
-            "minUI5Version": "1.71.64",
+            "minUI5Version": "1.84.57",
             "libs": {
                 "sap.m": {},
-                "sap.ui.core": {}
+                "sap.ui.core": {},
+                "sap.ui.comp":{},
+                "sap.ui.table":{},
+                "sap.uxap": {},
+                "sap.f":{}
             }
         },
         "contentDensities": {
