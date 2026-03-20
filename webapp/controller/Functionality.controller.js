@@ -36,11 +36,12 @@ sap.ui.define([
 		 * @this sap.ui.core.mvc.Controller
 		 * @returns {void}
 		 */
+		lArr: new Array(),
 		onInit: function () {
 			this._oRouter = this.getOwnerComponent().getRouter();
 			this._oRouter.getRoute(PlDacConst.ROUTE_PATH_FUNCTIONALITY).attachPatternMatched(this._onRouteMatched, this);
 		},
-		
+
 		/**
 		 * Route match event handler for the Functionality view.
 		 *
@@ -78,12 +79,28 @@ sap.ui.define([
 
 				},
 				error: function (oError) {
-					Log.error("Function import failed:"+ oError);
-					
+					Log.error("Function import failed:" + oError);
+
 				}
 			});
+			if (!this.oActionTreeTable) {
+				this.oActionTreeTable = oView.getParent().getParent().getAggregation("_beginColumnNav").getAggregation("pages")[0].getContent()[0].getContent()[0];
+			}
+			var oTree = this.oActionTreeTable;
+			this.oActionTreeTable.attachUpdateFinished(function () {
+				var lArr = this.lArr, aExpandedNodes, iExpand;
+				aExpandedNodes = oTree.getItems();
+				for (iExpand = 0; iExpand < aExpandedNodes.length; iExpand++) {
+					for (var i = 0; i < lArr.length; i++) {
+						if (aExpandedNodes[iExpand].getTitle() == lArr[i].getTitle()) {
+							oTree.onItemExpanderPressed(aExpandedNodes[iExpand], true);
+						}
+					}
+				}
+				oTree.setBusy(false);
+			}.bind(this));
 		},
-		
+
 		/**
 		 * Handles the switch toggle event to update the status of a functionality.
 		 *
@@ -119,28 +136,38 @@ sap.ui.define([
 		 * @returns {void}
 		 */
 		onSwitchChange: function (oEvent) {
-			var oCtx, oURLParameters, oPage, oBundle, oView = this.getView(), oModel = oView.getModel();
+			var oCtx, oURLParameters, aExpandedNodes, iExpand, oView = this.getView(), oModel = oView.getModel();
 			oCtx = oEvent.getSource().getBinding("state").getContext().getObject();
-			oPage = oView.getParent().getParent().getAggregation("_beginColumnNav").getAggregation("pages")[0];
+
 			oURLParameters = {
 				"FunctionalityType": oCtx.FunctionalityType,
 				"Status": oCtx.Status
 			};
+
+			this.lArr = new Array();
 			oView.setBusy(true);
-			oBundle = oView.getModel("i18n").getResourceBundle();
 			oModel.callFunction("/Func_Imp_Set_Status", {
 				method: "POST", // Or "POST" depending on your function import's HTTP method
 				urlParameters: oURLParameters,
-				success: function () {
-					oView.setBusy(false);
-					oPage.getController()._loadActionSet();
-					MessageToast.show(oBundle.getText("msgswitchButtonMsg"));
-				},
-				error: function (oError) {
-				
-					oView.setBusy(false);
-					Log.error("Function import failed:"+oError)
+				success: function (oData,oResponse) {
 					
+					oView.setBusy(false);
+
+					aExpandedNodes = this.oActionTreeTable.getItems();
+					for (iExpand = 0; iExpand < aExpandedNodes.length; iExpand++) {
+						if (aExpandedNodes[iExpand].getExpanded()) {
+							this.lArr.push(aExpandedNodes[iExpand]);
+						}
+					}
+					this.oActionTreeTable.getBinding("items").refresh();
+					this.oActionTreeTable.setBusy(true);
+					MessageToast.show(JSON.parse(oResponse.headers["sap-message"]).message);
+				}.bind(this),
+				error: function (oError) {
+
+					oView.setBusy(false);
+					Log.error("Function import failed:" + oError)
+
 				}
 			});
 		},

@@ -1,7 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
-    "pl/dac/apps/fnconfig/controller/Master.controller",
+    "pl/dac/apps/fnconfig/controller/ActionItems.controller",
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/json/JSONModel",
     "sap/ui/core/UIComponent"

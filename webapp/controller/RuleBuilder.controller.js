@@ -72,8 +72,8 @@ sap.ui.define([
 		 * @private
 		 */
 		_onRouteMatched: function (oEvent) {
-			var oView = this.getView();
-			var oModel = new JSONModel({
+			var oModel, oView = this.getView(),sPolicy=oEvent.getParameter("arguments").PolicyName;
+			 oModel = new JSONModel({
 				FullScreen: false,
 				ExitFullScreen: true,
 				ExitColumn: true,
@@ -87,64 +87,60 @@ sap.ui.define([
 				DisplayRuleBtnText: "",
 				bVisibleAddPreBlock: false,
 				bVisibleAddRuleBlock: false,
-				bVisibleAddCondition: false,
-				Data: {
-					Policy: "",
-					PolicyToken: "Policy test(POl_TEST)",
-					AttributeId: "",
-					AttributeToken: ""
-				}
+				bVisibleAddCondition: false
 			});
-			var sPath = this.getView().getModel().createKey("/PolicySet", {
-				Policy: oEvent.getParameter("arguments").PolicyName
-			});
-			oView.bindElement({
-				path: sPath,
-				parameters: {
-				}
+			oView.getModel().metadataLoaded().then(function () {
+				var sPath = oView.getModel().createKey("/PolicySet", {
+					Policy: sPolicy
+				});
+				oView.bindElement({
+					path: sPath,
+					parameters: {
+					}
 
-			});
-			var oRuleModel = new JSONModel({ types: [] });
-			oView.setModel(oRuleModel, "ruleModel");
-			this._sPolicyName = oEvent.getParameter("arguments").PolicyName;
-			oView.setModel(oModel, "viewModel");
-			this.getView().setModel(new JSONModel({ types: [] }), "ruleModel");
-			this._loadOperatorModel();
-			this._readPolicyRulesDetails(this._sPolicyName);
+				});
+				var oRuleModel = new JSONModel({ types: [] });
+				oView.setModel(oRuleModel, "ruleModel");
+				this._sPolicyName = sPolicy;
+				oView.setModel(oModel, "viewModel");
+				this.getView().setModel(new JSONModel({ types: [] }), "ruleModel");
+				this._loadOperatorModel();
+				this._readPolicyRulesDetails(this._sPolicyName);
 
-			//this.onPressEditRuleBtn();
-			if (this._oDialogSelection && this._oDialogSelection.getContent() && this._oDialogSelection.getContent()[0]) {
+				if (this._oDialogSelection && this._oDialogSelection.getContent() && this._oDialogSelection.getContent()[0]) {
 
-				if (oView.getModel("SingleValues")) {
-					oView.getModel("SingleValues").setData([]);
-				}
-				if (oView.getModel("Ranges")) {
-					oView.getModel("Ranges").setData([]);
+					if (oView.getModel("SingleValues")) {
+						oView.getModel("SingleValues").setData([]);
+					}
+					if (oView.getModel("Ranges")) {
+						oView.getModel("Ranges").setData([]);
+					}
+
 				}
 
-			}
+				this.handleFullScreen();
+				this._oExposedAttrTable = oView.byId("idExposeAttributeTable");
+				var oColumnListItemTemplate = new ColumnListItem({
+					cells: [
+						new ObjectIdentifier({ title: "{AttributeId}" }), // Bind text to the 'firstName' property
+						new Text({ text: "{Description}" }),
+						new OverflowToolbarButton({
+							icon: "sap-icon://delete",
+							type: "Reject",
+							tooltip: "Delete Entry",
+							press: this._onDeleteExposeAttributeInlineButtonPress.bind(this)
+						}).addStyleClass("plDacRuleButtonFontSize")
+					]
+				});
+				var oPolicy = new Filter("Policy", FilterOperator.EQ, this._sPolicyName);
+				var aFilters = [oPolicy]
+				this._oExposedAttrTable.bindAggregation("items", {
+					path: "/ExposeAttrSet", // The main entity set
+					template: oColumnListItemTemplate,
+					filters: aFilters
+				});
+			}.bind(this));
 
-			this.handleFullScreen();
-			var oTable = oView.byId("idExposeAttributeTable");
-			var oColumnListItemTemplate = new ColumnListItem({
-				cells: [
-					new ObjectIdentifier({ title: "{AttributeId}" }), // Bind text to the 'firstName' property
-					new Text({ text: "{Description}" }),
-					new OverflowToolbarButton({
-						icon: "sap-icon://delete",
-						type: "Reject",
-						tooltip: "Delete Entry",
-						press: this._onDeleteExposeAttributeInlineButtonPress.bind(this)
-					}).addStyleClass("plDacRuleButtonFontSize")
-				]
-			});
-			var oPolicy = new Filter("Policy", FilterOperator.EQ, this._sPolicyName);
-			var aFilters = [oPolicy]
-			oTable.bindAggregation("items", {
-				path: "/ExposeAttrSet", // The main entity set
-				template: oColumnListItemTemplate,
-				filters: aFilters
-			});
 
 		},
 
@@ -460,11 +456,6 @@ sap.ui.define([
 				oInput.getParent().getItems()[0].focus();
 				return;
 			}
-			// if (oCustomData.Operator.trim() == "") {
-			// 	MessageToast.show("Please choose any operator to continue.");
-			// 	oInput.getParent().getItems()[1].focus();
-			// 	return;
-			// }
 			if (!Array.isArray(oCustomData.ValueRange) && oCustomData.Value == "" && oCustomData.ValueDesc != "") {
 				oCustomData.ValueRange.Operator = oCustomData.Operator;
 				oCustomData.Value = oCustomData.ValueDesc;
@@ -517,23 +508,29 @@ sap.ui.define([
 		 * @returns {void}
 		 */
 		onPressAddExposeAttribute: function () {
-			var oView = this.getView(), oViewModel = oView.getModel("viewModel");
-			oViewModel.setProperty("/Data/Policy", oView.getBindingContext().getProperty("Policy"));
-			oViewModel.setProperty("/Data/PolicyToken", oView.getBindingContext().getProperty("PolicyDesc") + " (" + oView.getBindingContext().getProperty("Policy") + ")");
+			var oView = this.getView(), oContext, oDataModel = oView.getModel(), oViewModel = oView.getModel("viewModel");
 			oViewModel.setProperty("AttrErrorState", "None");
 			oViewModel.setProperty("AttrErrorMessage", "");
 			oViewModel.setProperty("/Data/AttributeId", "");
-
+			oContext = oDataModel.createEntry(this._oExposedAttrTable.getBinding("items").getPath(), {
+				properties: {
+					Policy: oView.getBindingContext().getProperty("Policy"),
+					AttributeId: ""
+				}
+			});
 			if (!this._oExposeAttributeDialog) {
 				Fragment.load({
 					name: "pl.dac.apps.fnconfig.fragments.DialogExposeAttribute",
 					controller: this
 				}).then(function (oDialog) {
 					this._oExposeAttributeDialog = oDialog;
+					this._oExposeAttributeDialog.setBindingContext(oContext);
 					oView.addDependent(this._oExposeAttributeDialog);
+
 					this._oExposeAttributeDialog.open();
 				}.bind(this));
 			} else {
+				this._oExposeAttributeDialog.setBindingContext(oContext);
 				this._oExposeAttributeDialog.open();
 			}
 		},
@@ -550,14 +547,14 @@ sap.ui.define([
 		 */
 		_onDeleteExposeAttributeInlineButtonPress: function (oEvent) {
 			var that = this, oBundle = this.getView().getModel("i18n").getResourceBundle(),
-				oEntry = oEvent.getSource().getBindingContext().getObject();
+				oContext = oEvent.getSource().getBindingContext();
 			MessageBox.warning(oBundle.getText("msgDeleteConfirmation"), {
 				actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
 				emphasizedAction: MessageBox.Action.OK,
 				styleClass: "PlDacMessageBox",
 				onClose: function (sAction) {
 					if (sAction == "OK") {
-						that._removeSelectedRecord(oEntry);
+						that._removeSelectedExposedAttrRecord(oContext);
 					}
 				}
 			});
@@ -583,17 +580,18 @@ sap.ui.define([
 		 * @param {string} oEntry.AttributeId - AttributeId key of the entry.
 		 * @returns {void}
 		 */
-		_removeSelectedRecord: function (oEntry) {
-			var oView = this.getView(), oBundle = oView.getModel("i18n").getResourceBundle(),
-				oDataModel = oView.getModel(), sPath;
-			sPath = PlDacConst.ENTITY_SET_EXPOSE_ATTRIBUTES + "(Policy='" + oEntry.Policy + "',AttributeId='" + oEntry.AttributeId + "')";
+		_removeSelectedExposedAttrRecord: function (oContext) {
+			var sPath, oView = this.getView(),
+				oDataModel = oView.getModel();
+			sPath = oContext.getPath();
 			oDataModel.remove(sPath, {
-				success: function () {
-					MessageBox.success(oBundle.getText("msgExposeAttributeDeleteSuccefully", [oEntry.AttributeId]), { styleClass: "PlDacMessageBox" });
-					oDataModel.refresh();
-				},
+				groupId: "deleteGroup",
+				success: function (oData, oResponse) {
+					MessageBox.success(JSON.parse(oResponse.headers["sap-message"]).message, { styleClass: "PlDacMessageBox", contentWidth: "480px" });
+					this._oExposedAttrTable.getBinding("items").refresh();
+					
+				}.bind(this),
 				error: function (oError) {
-					Log.error(oBundle.getText("msgDAErrorInDelete") + oError);
 					this.displayErrorMessage(oError);
 				}.bind(this)
 			});
@@ -619,10 +617,15 @@ sap.ui.define([
 		 * @returns {void}
 		 */
 		onBeforeExposeAttributeDialogOpened: function (oEvent) {
-			var oDialog = oEvent.getSource(),
+			var oDialog = oEvent.getSource(), oView = this.getView(), oViewContext = oView.getBindingContext(),
+				oPolicyMultiInput = oDialog.getContent()[0].getAggregation("form").getFormContainers()[0].getFormElements()[0].getFields()[0],
 				oMultiInput = oDialog.getContent()[0].getAggregation("form").getFormContainers()[0].getFormElements()[1].getFields()[0];
 			oMultiInput.setValue("");
 			oMultiInput.removeAllTokens();
+
+			oPolicyMultiInput.removeAllTokens();
+			oPolicyMultiInput.addToken(new Token({ key: oViewContext.getProperty("Policy"), text: oViewContext.getProperty("PolicyName") + "(" + oViewContext.getProperty("PolicyDesc") + ")" }));
+
 		},
 
 		/**
@@ -862,8 +865,7 @@ sap.ui.define([
 			var oMultiInput, oValue, aTokens = oEvent.getParameter("tokens"), oView = this.getView();
 			oMultiInput = this._oExposeAttributeDialog.getContent()[0].getAggregation("form").getFormContainers()[0].getFormElements()[1].getFields()[0];
 			oValue = aTokens[0].getCustomData()[0].getValue();
-			oView.getModel("viewModel").setProperty("/Data/AttributeId", oValue.AttributeId);
-			oView.getModel("viewModel").refresh();
+			oView.getModel().setProperty(this._oExposeAttributeDialog.getBindingContext().getPath() + "/AttributeId", oValue.AttributeId);
 			this._oVHDialogAttribute.close();
 			this.validateAttibuteInput(aTokens[0].getKey(), oMultiInput);
 		},
@@ -941,7 +943,7 @@ sap.ui.define([
 						oMultiInput.setTokens([new Token({ key: sAttribute, text: sAttribute.toUpperCase() + " (" + oData.Description + ")" })]);
 						oViewModel.setProperty("/AttrErrorState", "None");
 						oViewModel.setProperty("/AttrErrorMessage", "");
-						oViewModel.setProperty("/Data/AttributeId", oData.AttributeId);
+						oDataModel.setProperty(this._oExposeAttributeDialog.getBindingContext().getPath() + "/AttributeId", oData.AttributeId);
 
 					} else {
 						oViewModel.setProperty("/AttrErrorState", "Error");
@@ -975,15 +977,36 @@ sap.ui.define([
 		 * @returns {void}
 		 */
 		onPressSaveDialogExposeAttribute: function () {
-			var oBundle, oMultiInput, oView = this.getView(), oViewModel = oView.getModel("viewModel"), oEntry;
-			oMultiInput = this._oExposeAttributeDialog.getContent()[0].getAggregation("form").getFormContainers()[0].getFormElements()[1].getFields()[0]
-			//oDataModel = oView.getModel();
-			oBundle = oView.getModel("i18n").getResourceBundle();
-			oEntry = oViewModel.getProperty("/Data");
-			if (oEntry.AttributeId != "" && oEntry.Policy != "") {
-				oViewModel.setProperty("/AttrErrorState", "None");
+			// var oBundle, oMultiInput, oView = this.getView(), oViewModel = oView.getModel("viewModel"), oEntry;
+			// oMultiInput = this._oExposeAttributeDialog.getContent()[0].getAggregation("form").getFormContainers()[0].getFormElements()[1].getFields()[0]
+			// //oDataModel = oView.getModel();
+			// oBundle = oView.getModel("i18n").getResourceBundle();
+			// oEntry = oViewModel.getProperty("/Data");
+			// if (oEntry.AttributeId != "" && oEntry.Policy != "") {
+			// 	oViewModel.setProperty("/AttrErrorState", "None");
+			// }
+			// if (oViewModel.getProperty("/Data/AttributeId") == "" || oViewModel.getProperty("/AttrErrorState") == "Error") {
+			// 	oViewModel.setProperty("/AttrErrorState", "Error");
+			// 	oViewModel.setProperty("/AttrErrorMessage", oBundle.getText("msgErrorAttributeNameMandatory"));
+			// 	oMultiInput.focus();
+			// 	return;
+			// } else {
+			// 	oViewModel.setProperty("/AttrErrorState", "None");
+			// 	oViewModel.setProperty("/AttrErrorMessage", "");
+			// }
+			// this._checkForDuplicateEntry(oEntry, oMultiInput);
+			var oContext,
+				oView = this.getView(), oViewModel = oView.getModel("viewModel"),
+				oDataModel = oView.getModel(),
+				oMultiInput = this._oExposeAttributeDialog.getContent()[0].getAggregation("form").getFormContainers()[0].getFormElements()[1].getFields()[0],
+				oBundle = oView.getModel("i18n").getResourceBundle();
+			oContext = this._oExposeAttributeDialog.getBindingContext();
+
+			if (oContext.getProperty("AttributeId").trim() == "") {
+				oView.getModel("viewModel").setProperty("/AttrErrorState", "Error");
 			}
-			if (oViewModel.getProperty("/Data/AttributeId") == "" || oViewModel.getProperty("/AttrErrorState") == "Error") {
+			if (oContext.getProperty("AttributeId").trim() == "" || oViewModel.getProperty("/AttrErrorState") == "Error") {
+				oView.getModel("viewModel").setProperty("/AttrErrorState", "Error");
 				oViewModel.setProperty("/AttrErrorState", "Error");
 				oViewModel.setProperty("/AttrErrorMessage", oBundle.getText("msgErrorAttributeNameMandatory"));
 				oMultiInput.focus();
@@ -992,106 +1015,40 @@ sap.ui.define([
 				oViewModel.setProperty("/AttrErrorState", "None");
 				oViewModel.setProperty("/AttrErrorMessage", "");
 			}
-			this._checkForDuplicateEntry(oEntry, oMultiInput);
-
-		},
-		/**
-		 * Checks whether the selected attribute already exists for the selected policy.
-		 *
-		 * This method queries the backend OData service to ensure that the combination of
-		 * Policy and AttributeId is unique. It prevents duplicate entries from being
-		 * exposed for the same policy.
-		 *
-		 * The method performs the following actions:
-		 *   1. Builds an OData filter using Policy and AttributeId.
-		 *   2. Reads the Expose Attributes entity set with the combined filter.
-		 *   3. If a record already exists:
-		 *        - sets an error state in the view model
-		 *        - displays a duplicate entry message
-		 *        - focuses the MultiInput control
-		 *   4. If no record exists:
-		 *        - calls `_addExposeAttributeEntry` to create the new entry.
-		 *
-		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
-		 * @private
-		 * @function _checkForDuplicateEntry
-		 * @param {Object} oEntry - Object containing the Policy and AttributeId to be added.
-		 * @param {sap.m.MultiInput} oMultiInput - MultiInput control used for attribute entry.
-		 * @returns {void}
-		 */
-		_checkForDuplicateEntry: function (oEntry, oMultiInput) {
-			var oBundle, oDataModel, oViewModel, oView = this.getView(), oCombinedFilter,
-				oAttribute = new Filter("AttributeId", FilterOperator.EQ, oEntry.AttributeId),
-				oPolicy = new Filter("Policy", FilterOperator.EQ, oEntry.Policy);
-			oDataModel = oView.getModel();
-			oViewModel = oView.getModel("viewModel");
-			oBundle = oView.getModel("i18n").getResourceBundle();
-
-			oCombinedFilter = new Filter({
-				filters: [oPolicy, oAttribute],
-				and: true // all filters must be true (AND condition)
+			oDataModel.createEntry(oContext.getPath(), {
+				properties: oContext.getObject(),
+				groupId: "createAttribute"
 			});
-			oDataModel.read(PlDacConst.ENTITY_SET_EXPOSE_ATTRIBUTES, {
-				filters: [oCombinedFilter], // Pass the array of filters here
+			oDataModel.submitChanges({
 				success: function (oData) {
-					if (oData.results && oData.results.length > 0) {
-						oViewModel.setProperty("/AttrErrorState", "Error");
-						oViewModel.setProperty("/AttrErrorMessage", oBundle.getText("msgErrorDuplicateEntryCombination", [oEntry.Policy + "~" + oEntry.AttributeId]));
-						oMultiInput.focus();
-						return;
+					if (({}).hasOwnProperty.call(oData, "__batchResponses") && ({}).hasOwnProperty.call(oData.__batchResponses[0], "__changeResponses")) {
+						if (oData.__batchResponses[0].__changeResponses[0].statusCode == "201") {
+							MessageBox.success(JSON.parse(oData.__batchResponses[0].__changeResponses[0].headers["sap-message"]).message, { contentWidth: "480px" });
+							this._oExposeAttributeDialog.close();
+							this._oExposedAttrTable.getBinding("items").refresh();
+							return;
+						}
+						if (oData.__batchResponses[0].__changeResponses[0].statusCode == "204") {
+							MessageBox.success(JSON.parse(oData.__batchResponses[0].__changeResponses[0].headers["sap-message"]).message, { contentWidth: "480px" });
+							this._oExposeAttributeDialog.close();
+							
+							this._oExposedAttrTable.getBinding("items").refresh();
+							return;
+						}
+					} else if (({}).hasOwnProperty.call(oData, "__batchResponses")) {
+						if (oData.__batchResponses[0].response.statusCode == "409") {
+							oMultiInput.focus();
+							oView.getModel("viewModel").setProperty("/AttrErrorMessage", JSON.parse(oData.__batchResponses[0].response.body).error.message.value);
+							oView.getModel("viewModel").setProperty("/AttrErrorState", "Error");
+						}
 					}
-					this._addExposeAttributeEntry(oEntry);
-					// Success handler: data.results contains the filtered data
-
-				}.bind(this),
-				error: function () {
-					// Error handler
-					//console.error(oError);
-				}
-			});
-		},
-		/**
-		 * Creates a new Expose Attribute entry in the backend.
-		 *
-		 * This method sends a create request to the OData service to persist the selected
-		 * attribute for the current policy. It performs the following steps:
-		 *   1. Removes temporary UI tokens (PolicyToken and AttributeToken) from the entry object
-		 *      before sending the payload to the backend.
-		 *   2. Calls ODataModel.create() to add the record to the `ExposeAttributes` entity set.
-		 *   3. On success:
-		 *        - displays a success message with the attribute ID
-		 *        - refreshes the model to update the UI list
-		 *        - closes the Expose Attribute dialog
-		 *   4. On error:
-		 *        - logs the error
-		 *        - closes the dialog
-		 *        - displays an error message using `displayErrorMessage`
-		 *
-		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
-		 * @private
-		 * @function _addExposeAttributeEntry
-		 * @param {Object} oEntry - The Expose Attribute entry data containing Policy and AttributeId.
-		 * @returns {void}
-		 */
-		_addExposeAttributeEntry: function (oEntry) {
-			var oBundle, oView = this.getView(), oModel = oView.getModel(), sAttributeId;
-			oBundle = oView.getModel("i18n").getResourceBundle();
-			delete oEntry.PolicyToken;
-			delete oEntry.AttributeToken;
-			sAttributeId = oEntry.AttributeId;
-			oModel.create(PlDacConst.ENTITY_SET_EXPOSE_ATTRIBUTES, oEntry, {
-				success: function () {
-					MessageBox.success(oBundle.getText("msgExposeAttrAddedSuccessfully", [sAttributeId]), { styleClass: "PlDacMessageBox" });
-					oView.getModel().refresh();
-					this._oExposeAttributeDialog.close();
 				}.bind(this),
 				error: function (oError) {
-					Log.error(oBundle.getText("msgErrorInCreate") + oError);
-					this._oExposeAttributeDialog.close();
+					this._oAttributeDialog.close();
 					this.displayErrorMessage(oError);
-
 				}.bind(this)
 			});
+
 		},
 
 		/**
@@ -1113,9 +1070,9 @@ sap.ui.define([
 			var oView = this.getView(), oViewModelData = oView.getModel("viewModel").getData();
 			oViewModelData.AttrErrorState = "None";
 			oViewModelData.AttrErrorMessage = "";
-			oViewModelData.Data.AttributeId = "";
 			oView.getModel("viewModel").setData(oViewModelData);
 			this._oExposeAttributeDialog.close();
+			oView.getModel().deleteCreatedEntry(this._oExposeAttributeDialog.getBindingContext());
 		},
 
 		/**
@@ -1582,27 +1539,26 @@ sap.ui.define([
 		 * @returns {void}
 		 */
 		onPressSaveRuleBtn: function () {
-			var oView = this.getView(), oDataModel = oView.getModel(), sMessage = "",
-				oRuleData = oView.getModel("ruleModel").getData(), oPayload,
-				oBundle = oView.getModel("i18n").getResourceBundle();
+			var oView = this.getView(), oDataModel = oView.getModel(),
+				oRuleData = oView.getModel("ruleModel").getData(), oPayload;
 			oPayload = RuleModelHandler.prepareRuleCreatePayload(oView, oRuleData.types);
-			if (({}).hasOwnProperty.call(oPayload, "to_Condition") && oPayload.to_Condition.length == 0) {
-				if (this.bRuleDataUpdate) {
-					sMessage = oBundle.getText("msgRuleBuilderDeteleSuccessful");// "The rule data has been deleted successfully.";
-				} else {
-					sMessage = oBundle.getText("msgRuleBuilderNoDataProvided");//"No data has been provided for the save.";
-				}
-			} else {
-				if (this.bRuleDataUpdate) {
-					sMessage = oBundle.getText("msgRuleBuilderUpdateSuccessful");//"The rule data has been successfully updated.";
-				} else {
-					sMessage = oBundle.getText("msgRuleBuilderCreateSuccessful");//"The rule data has been successfully created.";
-				}
-			}
+			// if (({}).hasOwnProperty.call(oPayload, "to_Condition") && oPayload.to_Condition.length == 0) {
+			// 	if (this.bRuleDataUpdate) {
+			// 		sMessage = oBundle.getText("msgRuleBuilderDeteleSuccessful");// "The rule data has been deleted successfully.";
+			// 	} else {
+			// 		sMessage = oBundle.getText("msgRuleBuilderNoDataProvided");//"No data has been provided for the save.";
+			// 	}
+			// } else {
+			// 	if (this.bRuleDataUpdate) {
+			// 		sMessage = oBundle.getText("msgRuleBuilderUpdateSuccessful");//"The rule data has been successfully updated.";
+			// 	} else {
+			// 		sMessage = oBundle.getText("msgRuleBuilderCreateSuccessful");//"The rule data has been successfully created.";
+			// 	}
+			// }
 			oPayload.Policy = this._sPolicyName;
 			oDataModel.create("/PolRuleSet", oPayload, {
-				success: function () {
-					MessageToast.show(sMessage);
+				success: function (oData,oResponse) {
+					MessageToast.show(JSON.parse(oResponse.headers["sap-message"]).message);
 					this._readPolicyRulesDetails(this.getView().getBindingContext().getObject().PolicyName);
 					this._oEditRules.destroy();
 					this._oEditRules = null;
@@ -1767,8 +1723,8 @@ sap.ui.define([
 		 *
 		 */
 		onSelectionDialogOperatorChange: function (oEvent) {
-			var oView = this.getView(), aCondition, iCondition, iRule,aItems,
-			sClearKey = oEvent.getParameter("selectedItem").getCustomData()[0].getValue(),
+			var oView = this.getView(), aCondition, iCondition, iRule, aItems,
+				sClearKey = oEvent.getParameter("selectedItem").getCustomData()[0].getValue(),
 				oRuleModel, oData = this._oDialogSelection.getModel("setting").getData();
 			oRuleModel = oView.getModel("ruleModel").getData();
 			if (oData.RuleType == PlDacConst.PRE_CONDITION_RULE_TYPE) {
@@ -1800,19 +1756,19 @@ sap.ui.define([
 			}
 			oView.getModel("ruleModel").setData(oRuleModel);
 			oView.getModel("ruleModel").refresh();
-			if(sClearKey=="Values"){
+			if (sClearKey == "Values") {
 				aItems = this._oDialogSelection.getContent()[0].getModel("SingleValues").getData();
 				aItems.forEach(obj => {
-					obj.Operator="";
-					obj.Value="";
+					obj.Operator = "";
+					obj.Value = "";
 				});
 				this._oDialogSelection.getContent()[0].getModel("SingleValues").setData(aItems);
-			}else{
+			} else {
 				aItems = this._oDialogSelection.getContent()[0].getModel("Ranges").getData();
 				aItems.forEach(obj => {
-					obj.Operator="";
-					obj.Lower="";
-					obj.Upper="";
+					obj.Operator = "";
+					obj.Lower = "";
+					obj.Upper = "";
 				});
 				this._oDialogSelection.getContent()[0].getModel("Ranges").setData(aItems);
 			}

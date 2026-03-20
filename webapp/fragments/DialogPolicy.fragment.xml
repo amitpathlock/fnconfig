@@ -15,12 +15,14 @@
 					<!-- @ui5ignore -->
 					<Label text="{viewModel>/Name}" required="true" />
 					<!-- @ui5ignore -->
-					<Input id="idPolAdminPolName" maxLength="50"  enabled="{viewModel>/PolicyNameEnabled}" valueState="{viewModel>/PolNameErrorState}" valueStateText="{viewModel>/PolNameErrorMessage}" liveChange="onPolicyNameInputLiveChange" value="{viewModel>/Data/PolicyName}" >
+					<Input id="idPolAdminPolName" maxLength="50"  enabled="{viewModel>/PolicyNameEnabled}" valueState="{viewModel>/PolNameErrorState}" valueStateText="{viewModel>/PolNameErrorMessage}" liveChange="onPolicyNameInputLiveChange" value="{PolicyName}" >
 						<layoutData>
 						<l:GridData span="XL1 L10 M10 S10" />
 					</layoutData>
 					</Input>
-					<Input editable="false" value="{viewModel>/Data/Version}" >
+					<!-- @ui5ignore -->
+					<Text  text="{Policy}" visible="false" id="idTextPolicy"/>
+					<Input editable="false" value="{path:'Version',formatter:'.handleVersionFormat'}" >
 					<layoutData>
 						<l:GridData span="XL1 L2 M2 S2" />
 					</layoutData>
@@ -28,14 +30,14 @@
 					
 					<Label text="{viewModel>/Description}" required="true" />
 					<!-- @ui5ignore -->
-					<Input id="idPolAdminPolDesc" maxLength="50" value="{viewModel>/Data/PolicyDesc}" 
+					<Input id="idPolAdminPolDesc" maxLength="50" value="{PolicyDesc}" 
                 submit="onSubmitPolAdminPolicyDesc"
                valueState="{viewModel>/PolDescErrorState}" valueStateText="{viewModel>/PolDescErrorMessage}" />
 					<!-- Add more form fields as needed -->
 					<!-- Add more form fields as needed -->
 					<Label text="{i18n>lblPolApplicationArea}"  />
 					<!-- @ui5ignore -->
-					<Select  items="{/ApplicationAreaSet}" selectedKey="{viewModel>/Data/ApplArea}">
+					<Select  items="{/ApplicationAreaSet}" selectedKey="{ApplArea}">
 							<items>
 								<core:Item
 									
@@ -52,7 +54,7 @@
 					</Select>
 					<Label text="{i18n>lblPolProcessArea}"  />
 					<!-- @ui5ignore -->
-					<Select  items="{/ProcessAreaSet}" selectedKey="{viewModel>/Data/BusProcess}">
+					<Select  items="{/ProcessAreaSet}" selectedKey="{BusProcess}">
 						<items>
 								<core:Item
 									
@@ -69,7 +71,7 @@
 					</Select>
 					<Label text="{i18n>lblPolLog}"  />
 					<!-- @ui5ignore -->
-					<Select items="{/AccessLogSet}" selectedKey="{viewModel>/Data/AccessLog}" >
+					<Select items="{/AccessLogSet}" selectedKey="{AccessLog}" >
 							<items>
 								<core:Item
 									key="{AccessLogValue}"
@@ -83,7 +85,7 @@
 					</Select>
 
 					<Label text="{i18n>lblLongText}"  />
-					<TextArea growing="true" rows="3" value="{viewModel>/Data/Description}" maxLength="256" growingMaxLines="2"/>
+					<TextArea growing="true" rows="3" value="{Description}" maxLength="256" growingMaxLines="2"/>
 				</f:content>
 			</f:SimpleForm>
 		</content>

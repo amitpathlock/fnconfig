@@ -97,7 +97,7 @@
                    
                     <Label text="{viewModel>/Action}" required="true" class="plDacLabelMarginTop"/>
                       <!-- @ui5ignore -->
-                    <Select 	selectedKey="{viewModel>/Data/PolicyResult}" id="idPEPActionResult"
+                    <Select 	selectedKey="{PolicyResult}" id="idPEPActionResult"
                      valueState="{viewModel>/ActionErrorState}"
                         valueStateText="{viewModel>/ActionErrorMessage}"
                     >
@@ -112,11 +112,13 @@
                         <Label text="{i18n>lblStatus}"  class="sapUiTinyMarginTop" />
                         <!-- @ui5ignore -->
                         <Switch
+                            id="idPEPState"
                             type="AcceptReject"
                             enabled="true"
-                            state="{viewModel>/Data/IsActive}"
+                            state="" 
                             class="sapUiSmallMarginBegin"
-                            tooltip="{=${viewModel>/Data/IsActive}?'Active':'Inactive'}"
+                            tooltip=""
+                            change="onSwitchStateChanged"
                         />
                     </HBox>
                      

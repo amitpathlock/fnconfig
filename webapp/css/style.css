@@ -780,3 +780,10 @@ html .sapUiContainer-Wide .sapUxAPObjectPageHeaderIdentifier {
 .plDacVHFilter>div:nth-child(3)>div{width:88% !important;}
 
 .plDacRulePanel .sapMPanelContent {padding-top:0;}
+.not-allowed { cursor: not-allowed !important; }
+
+.not-allowed>div>svg>.sapMRbBOut{
+    stroke: #d6d3d3 !important;
+    fill: #fff !important;
+    stroke-width: .0625rem !important;
+}

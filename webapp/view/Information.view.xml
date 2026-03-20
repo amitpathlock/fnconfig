@@ -1,25 +1,11 @@
 <mvc:View
 	controllerName="pl.dac.apps.fnconfig.controller.Information"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m"
-	
+	xmlns:core="sap.ui.core"
 	displayBlock="true"
 	height="100%"
 	busyIndicatorDelay="0"
 >
 
-<Page  showHeader="false" class="plDacInfoPage" >
-    <content>
-	
-
-        <VBox justifyContent="Center" alignItems="Center" alignContent="Center" height="100%" >
-            	<!-- @ui5ignore -->
-				<Image  id="idInfoPageImg" />
-                <Title text="Pathlock" level="H1" class="plDacInfoPageTitle"/>
-                <Title text="Dynamic Access Control" level="H2" class="plDacInfoPageTitle" />
-				<!-- @ui5ignore -->
-				<Text id="idTextProductVersion" text="" />
-        </VBox>
-    </content>
-</Page>
+<core:Fragment fragmentName="pl.dac.lib.reuse.fragments.Info" type="XML" />
 </mvc:View>

@@ -52,7 +52,8 @@
                 "sap.ui.comp":{},
                 "sap.ui.table":{},
                 "sap.uxap": {},
-                "sap.f":{}
+                "sap.f":{},
+                "pl.dac.lib.reuse": {}
             }
         },
         "contentDensities": {
@@ -69,7 +70,13 @@
              "": {
                 "type": "sap.ui.model.odata.v2.ODataModel",
                 "dataSource": "mainService",
-                "preload": true
+                "preload": true,
+                "settings": {
+                    "autoSubmit": false,
+                    "useBatch": true,
+                    "defaultBindingMode": "TwoWay",
+                    "updateGroupId":"myCustomGroup"
+                }
             }
         },
         "resources": {
@@ -93,14 +100,14 @@
                     "name": "RouteMaster",
                     "pattern": ":?query:",
                     "target": [
-                        "TargetMaster"
+                        "ActionItems"
                     ]
                 },
                 {
                     "name": "Info",
                     "pattern": "Info",
                     "target": [
-                        "TargetMaster",
+                        "ActionItems",
                         "Info"
                     ]
                 },
@@ -108,7 +115,7 @@
                     "name": "Functionality",
                     "pattern": "Functionality",
                     "target": [
-                        "TargetMaster",
+                        "ActionItems",
                         "Functionality"
                     ]
                 },
@@ -116,7 +123,7 @@
                     "name": "DataAttributes",
                     "pattern": "DataAttributes",
                     "target": [
-                        "TargetMaster",
+                        "ActionItems",
                         "DataAttributes"
                     ]
                 },
@@ -124,7 +131,7 @@
                     "name": "UserAttributes",
                     "pattern": "UserAttributes",
                     "target": [
-                        "TargetMaster",
+                        "ActionItems",
                         "UserAttributes"
                     ]
                 },
@@ -132,7 +139,7 @@
                     "name": "Policies",
                     "pattern": "Policies",
                     "target": [
-                        "TargetMaster",
+                        "ActionItems",
                         "Policies"
                     ]
                 },
@@ -140,7 +147,7 @@
                     "name": "DataMasking",
                     "pattern": "DataMasking",
                     "target": [
-                        "TargetMaster",
+                        "ActionItems",
                         "DataMasking"
                     ]
                 },
@@ -148,7 +155,7 @@
                     "name": "DataRestriction",
                     "pattern": "DataRestriction",
                     "target": [
-                        "TargetMaster",
+                        "ActionItems",
                         "DataRestriction"
                     ]
                 },
@@ -156,17 +163,25 @@
                     "name": "PolicyRules",
                     "pattern": "PolicyRules/{PolicyName}",
                     "target": [
-                        "TargetMaster",
+                        "ActionItems",
                         "PolicyRules"
+                    ]
+                },
+                {
+                    "name":"EnvAttribute",
+                    "pattern": "EnvAttribute",
+                    "target":[
+                        "ActionItems",
+                        "EnvAttribute"
                     ]
                 }
             ],
             "targets": {
-                "TargetMaster": {
+                "ActionItems": {
                     "viewType": "XML",
                     "transition": "slide",
-                    "viewId": "Master",
-                    "viewName": "Master"
+                    "viewId": "ActionItems",
+                    "viewName": "ActionItems"
                 },
                    
                 "Functionality": {
@@ -216,6 +231,12 @@
                     "transition": "slide",
                     "viewName": "RuleBuilder",
                     "controlAggregation": "endColumnPages"
+                },
+                "EnvAttribute":{
+                    "viewType": "XML",
+                    "transition": "slide",
+                    "viewName": "EnvAttribute",
+                    "controlAggregation": "midColumnPages"
                 }
             }
         },

@@ -38,10 +38,13 @@ sap.ui.define([
 		 * /// Automatically called by the UI5 framework during controller instantiation
 		 */
 		onInit: function () {
-			this.bShowMaskPattern = true;
+			
+			this.setMaskingPatternVisibility(true);
 			this._oRouter = this.getOwnerComponent().getRouter();
 			this._oRouter.getRoute("DataMasking").attachPatternMatched(this._onRouteMatched, this);
+			
 			this.addAdditionalButtonIntoThePolicyEnforcementTableToolbar(this.getView().byId("idSmartTableDataMaskingEnforcement"));
+		
 		},
 		/**
 		 * Route matched event handler for the DataMasking route.
@@ -95,7 +98,6 @@ sap.ui.define([
 					FullScreen: true,
 					ExitFullScreen: false,
 					ExitColumn: true,
-					SelectedContextData: null,
 					VisibleAttribute: true,
 					AttributeNameEnabled: true,
 					PatternErrorState: "",
@@ -103,7 +105,8 @@ sap.ui.define([
 					PatternData: { AttributeId: "", Description: "", MaskPattern: "" }
 				}
 			), "viewModel");
-			this.oPolicyEnforcementTable = oView.byId("idTableDataMaskingEnforcement");
+
+			
 			this._readMaskingPatternsResults();
 		},
 		/**
@@ -173,8 +176,10 @@ sap.ui.define([
 		 * this.loadMaskingPatternDetailsByAttributeId();
 		 */
 		loadMaskingPatternDetailsByAttributeId: function () {
-			var sPath, oView = this.getView(), oDataModel = oView.getModel(), oViewModel = oView.getModel("viewModel"), oSelectedData = oViewModel.getData().SelectedContextData;
-			sPath = "/AttrPatternSet('" + oSelectedData.AttributeId + "')";
+			var sPath, oView = this.getView(), sAttributeId, oDataModel = oView.getModel(), oViewModel = oView.getModel("viewModel");
+
+			sAttributeId = this.oEditContext.getProperty("AttributeId");
+			sPath = "/AttrPatternSet('" + sAttributeId + "')";
 			oDataModel.read(sPath, {
 				urlParameters: {
 					"$expand": "to_Pattern"
@@ -313,17 +318,17 @@ sap.ui.define([
 			oDataModel.callFunction("/Func_Imp_Update_Attr_Pattern", {
 				method: "POST", // Use POST if the function has side effects, otherwise GET
 				urlParameters: oURLParameters,
-				success: function () {
-					// Handle the success case
-					//sap.m.MessageToast.show("Function import called successfully!");
+				success: function (oData,oResponse) {
+					
 					this.oPolicyEnforcementTable.removeSelections(true);
 					oViewModel.setProperty("/EditButtonEnabled", false);
 					oViewModel.setProperty("/DeleteButtonEnabled", false);
 					oViewModel.setProperty("/PatternErrorState", "");
 					oViewModel.setProperty("/PatternErrroMSG", "");
 					this._oMaskingPatternDialog.close();
+					this.oPolicyEnforcementTable.getBinding("items").refresh();
 					oDataModel.refresh();
-					MessageBox.success(oBundle.getText("msgUpdatePatternSuccessful"));
+					MessageBox.success(JSON.parse(oResponse.headers["sap-message"]).message);
 					// The returned data is available in the oData parameter
 				}.bind(this), // Use .bind(this) to maintain context
 				error: function () {
@@ -458,121 +463,7 @@ sap.ui.define([
 				oView.byId("idPEPAttributes").focus();
 			}
 		},
-		/**
-		 * Saves or updates a data masking policy enforcement entry in the OData model.
-		 * 
-		 * @public
-		 * @returns {void}
-		 * 
-		 * @description
-		 * This method handles both create and update operations for data masking policy enforcement entries by:
-		 * - Validating that the policy field is not empty
-		 * - Cleaning up unnecessary navigation properties (PolicyDesc, PolicyName, to_Policy, to_Attr)
-		 * - Converting IsActive boolean to 'X' (true) or '' (false)
-		 * - Checking for __metadata to determine if it's an update or create operation:
-		 *   - If __metadata exists: Performs an UPDATE operation on existing entry
-		 *   - If __metadata doesn't exist: Calls _checkForDuplicateEntry to validate and CREATE new entry
-		 * - Displaying success/error messages based on operation result
-		 * - Refreshing the UI, closing dialog, and resetting button states on success
-		 * 
-		 * @fires sap.m.MessageBox#success - Shows success message on update
-		 * @fires sap.m.MessageBox#error - Shows error message on failure
-		 * 
-		 * @example
-		* /// Called when user clicks save button in policy enforcement dialog
-		* /// <Button text="Save" press=".onSavePolicyInforcement">
-		*/
-		onSavePolicyInforcement: function () {
-			var oBundle, oEntry, sPolicyName, sUriKey, sPath, oView = this.getView(), oViewModel = oView.getModel("viewModel");
-			oEntry = oViewModel.getData().Data;
-			oBundle = oView.getModel("i18n").getResourceBundle();
-			if (oViewModel.getProperty("/ErrorState") == "Error") {
-				oView.byId("idPEPPolicyName").focus();
-				return;
-			}
-			if (oViewModel.getProperty("/AttrErrorState") == "Error") {
-				oView.byId("idPEPAttributes").focus();
-				return;
-			}
-			if (oEntry.Policy.trim() == "") {
-				oViewModel.setProperty("/ErrorState", "Error");
-				oViewModel.setProperty("/ErrorMessage", oBundle.getText("msgErrorPolicyNameMandatory"));
-				oView.byId("idPEPPolicyName").focus();
-				return;
-			}
-			if (!({}).hasOwnProperty.call(oEntry, "AttributeId") || oEntry.AttributeId.trim() == "") {
-				oViewModel.setProperty("/AttrErrorState", "Error");
-				oViewModel.setProperty("/AttrErrorMessage", oBundle.getText("msgErrorAttributeNameMandatory"));
-				oView.byId("idPEPAttributes").focus();
-				return;
-			}
-			if (oEntry.PolicyResult == "") {
-				oViewModel.setProperty("/ActionErrorState", "Error");
-				oViewModel.setProperty("/ActionErrorMessage", oBundle.getText("msgErrorResultNameMandatory"));
-				oView.byId("idPEPActionResult").focus();
-				return;
-			}
-			sPolicyName = oEntry.PolicyName + "~" + oEntry.AttributeId;
-
-			delete oEntry.to_Policy;
-			delete oEntry.to_Attr;
-			oEntry.Policy = oEntry.Policy.split("~")[0];
-			oEntry.IsActive = oEntry.IsActive ? "X" : "";
-			if (({}).hasOwnProperty.call(oEntry, "__metadata")) {
-				delete oEntry.PolicyDesc;
-				delete oEntry.PolicyName;
-				delete oEntry.__metadata;
-				sUriKey = oEntry.Policy + "~" + oEntry.AttributeId;
-				sPath = "/DataMaskingEnforcementSet('" + sUriKey + "')";
-				oView.getModel().update(sPath, oEntry, {
-					success: function () {
-						MessageBox.success(oBundle.getText("msgPoEnforcementUpdateSuccessfully", [sPolicyName]));
-						oViewModel.setProperty("/Data", {});
-						this.oPolicyInforcementDialog.close();
-						this.oPolicyEnforcementTable.removeSelections(true);
-						oViewModel.setProperty("/EditButtonEnabled", false);
-						oViewModel.setProperty("/DeleteButtonEnabled", false);
-						oView.getModel().refresh();
-					}.bind(this),
-					error: function (e) {
-						Log.error(e);
-						MessageBox.error("Error has occured while updating record");
-					}
-				});
-			} else {
-				this._checkForDuplicateEntry(PlDacConst.ENTITY_SET_DATAMASKINGENFORCEMENT + "('" + oEntry.Policy + "')", oEntry);
-			}
-		},
-		/**
-		 * Clears all validation error states and messages in the view model.
-		 * 
-		 * @public
-		 * @returns {void}
-		 * 
-		 * @description
-		 * This method resets all error states and error messages in the view model by:
-		 * - Clearing the general error state and message (ErrorState, ErrorMessage)
-		 * - Clearing the attribute error state and message (AttrErrorState, AttrErrorMessage)
-		 * - Clearing the action/result error state and message (ActionErrorState, ActionErrorMessage)
-		 * - Setting all error states to "None"
-		 * - Setting all error messages to empty strings
-		 * 
-		 * This is typically called when opening dialogs or resetting forms to ensure a clean state
-		 * without any lingering validation errors from previous operations.
-		 * 
-		 * @example
-		 * /// Called before opening a new policy enforcement dialog
-		 * this.clearValidationError();
-		 */
-		clearValidationError: function () {
-			var oView = this.getView(), oViewModel = oView.getModel("viewModel");
-			oViewModel.setProperty("/ErrorState", "None");
-			oViewModel.setProperty("/ErrorMessage", "");
-			oViewModel.setProperty("/AttrErrorState", "None");
-			oViewModel.setProperty("/AttrErrorMessage", "");
-			oViewModel.setProperty("/ActionErrorState", "None");
-			oViewModel.setProperty("/ActionErrorMessage", "");
-		},
+	
 		/**
 		 * Event handler triggered when the attribute value help is requested.
 		 * 
@@ -695,9 +586,12 @@ sap.ui.define([
 		 * /// <ValueHelpDialog ok=".onPEPAttributeVHOkPress">
 		 */
 		onPEPAttributeVHOkPress: function (oEvent) {
-			var oValue, aTokens = oEvent.getParameter("tokens"), oView = this.getView();
+			var oValue, aTokens = oEvent.getParameter("tokens"),oContext, oView = this.getView(),oDataModel=oView.getModel();
 			oValue = aTokens[0].getCustomData()[0].getValue();
-			oView.getModel("viewModel").setProperty("/Data/PolicyDesc", oValue.PolicyDesc);
+			oContext = this.getPolicyInforcementDialog().getBindingContext();
+			oDataModel.setProperty(oContext.getPath()+"/AttributeId", oValue.AttributeId);
+			oView.getModel("viewModel").setProperty("/ErrorState", "None");
+			oView.getModel("viewModel").setProperty("/ErrorMessage", "");
 			oView.getModel("viewModel").refresh();
 			this._oPEPAttributeVHDialog.close();
 			this.validateAttibuteInput(aTokens[0].getKey());
@@ -721,7 +615,9 @@ sap.ui.define([
 		 * /// <Input showSuggestion="true" suggestionItemSelected=".onPEPAttributeSuggestionItemSelected">
 		 */
 		onPEPAttributeSuggestionItemSelected: function (oEvent) {
-			var oCtx = oEvent.getParameter("selectedRow").getBindingContext().getObject();
+			var oContext, oView=this.getView(),oDataModel =oView.getModel(), oCtx = oEvent.getParameter("selectedRow").getBindingContext().getObject();
+			oContext=this.getPolicyInforcementDialog().getBindingContext();
+			oDataModel.setProperty(oContext.getPath()+"/AttributeId", oCtx.AttributeId);
 			this.validateAttibuteInput(oCtx.AttributeId);
 		},
 		/**
@@ -749,21 +645,25 @@ sap.ui.define([
 		 * this.validateAttibuteInput("ATTR001");
 		 */
 		validateAttibuteInput: function (sAttribute) {
-			var oBundle, oView = this.getView(), oDataModel = oView.getModel(),
+			var oBundle, oView = this.getView(), oDataModel = oView.getModel(), oContext,
 				oViewModel = oView.getModel("viewModel"),
 				sPath = "/AttrSet('" + sAttribute.toUpperCase() + "')";
 			oViewModel.setProperty("/Data/AttributeId", sAttribute);
 			oBundle = oView.getModel("i18n").getResourceBundle();
+
 			oDataModel.read(sPath, {
 				// Success callback function
 				success: function (oData) {
-					if (oData.Description) {
+					if (oData.AttributeId) {
+						oContext = this.getPolicyInforcementDialog().getBindingContext();
 						oView.byId("idPEPAttributes").setValue("");
 						oView.byId("idPEPAttributes").setTokens([new Token({ key: sAttribute, text: sAttribute.toUpperCase() + " (" + oData.Description + ")" })]);
 						oViewModel.setProperty("/AttrErrorState", "None");
 						oViewModel.setProperty("/AttrErrorMessage", "");
 						oViewModel.setProperty("/Data/AttributeId", oData.AttributeId);
+						oDataModel.setProperty(oContext.getPath() + "/AttributeId", oData.AttributeId);
 						if (oView.byId("idPEPPolicyName").getTokens()[0]) {
+							oDataModel.setProperty(oContext.getPath() + "/Policy", oView.byId("idPEPPolicyName").getTokens()[0].getKey());
 							oViewModel.setProperty("/Data/Policy", oView.byId("idPEPPolicyName").getTokens()[0].getKey());
 						}
 
@@ -781,63 +681,7 @@ sap.ui.define([
 				}
 			});
 		},
-		/**
-		 * Checks if a data masking policy enforcement entry already exists before creating a new one.
-		 * 
-		 * @private
-		 * @param {string} sPath - The OData path (unused in this implementation)
-		 * @param {object} oEntry - The entry object to be created if no duplicate exists
-		 * @param {string} oEntry.Policy - The policy identifier to check for duplicates
-		 * @param {string} oEntry.AttributeId - The attribute identifier to check for duplicates
-		 * @returns {void}
-		 * 
-		 * @description
-		 * This method validates that a policy enforcement entry with the same policy and attribute combination doesn't already exist by:
-		 * - Converting IsActive status from 'X' to boolean in the view model
-		 * - Creating filters for Policy and AttributeId
-		 * - Reading the DataMaskingEnforcementSet entity with filters and expanded to_Policy navigation
-		 * - Displaying an error message if a duplicate policy-attribute combination is found
-		 * - Calling _createEntry to create the entry if no duplicate exists
-		 * - Setting focus to the policy name input field if duplicate is found
-		 * - Clearing error state on read failure
-		 * 
-		 * @example
-		 * this._checkForDuplicateEntry(
-		 *   "DataMaskingEnforcementSet('POLICY001')",
-		 *   { Policy: "POLICY001", AttributeId: "ATTR001", IsActive: true }
-		 * );
-		 */
-		_checkForDuplicateEntry: function (sPath, oEntry) {
-			var oView = this.getView(), oModel = oView.getModel(), oViewModel = oView.getModel("viewModel"),
-				oBundle = oView.getModel("i18n").getResourceBundle(), oPolicy, aFilters, oAttribute;
-			oViewModel.getProperty("/Data/IsActive") == "X" ? oViewModel.setProperty("/Data/IsActive", true) : oViewModel.setProperty("/Data/IsActive", false);
-			oPolicy = new Filter("Policy", FilterOperator.EQ, oEntry.Policy.split("~")[0]);
-			oAttribute = new Filter("AttributeId", FilterOperator.EQ, oEntry.AttributeId);
-			aFilters = [oPolicy, oAttribute];
-			oModel.read("/DataMaskingEnforcementSet", // Path to the specific entity
-				{
-					filters: aFilters,
-					urlParameters: {
-						"$expand": "to_Policy" // Expand to_ActionItem
-					},
-					success: function (oData) {
-						if (oData && oData.results.length > 0) {
-							oViewModel.setProperty("/ErrorMessage", oBundle.getText("msgErrorDuplicateEntry", [oData.results[0].to_Policy.PolicyName + "~" + oEntry.AttributeId]));
-							oViewModel.setProperty("/ErrorState", "Error");
-							this.oPolicyNameInput.focus();
-						} else {
-							this._createEntry(oEntry);
-						}
-						return;
-					}.bind(this),
-					error: function () {
-						oViewModel.setProperty("/ErrorMessage", "");
-						oViewModel.setProperty("/ErrorState", "None");
-						this._createEntry(oEntry);
-					}.bind(this)
-				}
-			);
-		},
+		
 		/**
 		 * Event handler triggered when the attribute name input value changes.
 		 * 
@@ -875,111 +719,7 @@ sap.ui.define([
 				}
 			}
 		},
-		/**
-		 * Creates a new data masking enforcement entry in the OData model.
-		 * 
-		 * @private
-		 * @param {object} oEntry - The entry object containing policy enforcement data to be created
-		 * @param {string} oEntry.Policy - The policy identifier
-		 * @param {string} oEntry.AttributeId - The attribute identifier for masking
-		 * @param {boolean|string} oEntry.IsActive - Active status flag (converted to 'X' or '')
-		 * @returns {void}
-		 * 
-		 * @description
-		 * This method creates a new data masking policy enforcement entry by:
-		 * - Converting the IsActive boolean flag to 'X' (true) or '' (false)
-		 * - Making a POST request to the DataMaskingEnforcementSet entity
-		 * - Showing success/error messages based on the operation result
-		 * - Refreshing the UI and clearing selections on success
-		 * - Closing the policy enforcement dialog
-		 * - Resetting button states (Edit, Delete) to disabled
-		 * - Displaying error messages via displayErrorMessage on failure
-		 * 
-		 * @example
-		 * this._createEntry({
-		 *   Policy: "POLICY001",
-		 *   AttributeId: "ATTR001",
-		 *   IsActive: true
-		 * });
-		 */
-		_createEntry: function (oEntry) {
-			var sMSGUri, oBundle, oView = this.getView(), oDataModel = oView.getModel(), oViewModel = oView.getModel("viewModel");
-			oEntry.IsActive = oEntry.IsActive == true ? 'X' : '';
-			oBundle = oView.getModel("i18n").getResourceBundle();
-			// if (oViewModel.getProperty("/SelectedContextData") && oViewModel.getProperty("/SelectedContextData").PolicyName) {
-			// 	sMSGUri = oViewModel.getProperty("/SelectedContextData").PolicyName + "~" + oEntry.AttributeId;
-			// } else {
-			sMSGUri = oEntry.PolicyName + "~" + oEntry.AttributeId;
-			//}
-			delete oEntry.PolicyDesc;
-			delete oEntry.PolicyName;
-			oDataModel.create(PlDacConst.ENTITY_SET_DATAMASKINGENFORCEMENT, oEntry, {
-				success: function () {
-					MessageBox.success(oBundle.getText("msgPolEnforcementSuccessful", [sMSGUri]), { styleClass: "PlDacMessageBox" });
-					this.oPolicyEnforcementTable.removeSelections(true);
-					oViewModel.setProperty("/Data", {});
-					this.oPolicyInforcementDialog.close();
-					this.oPolicyEnforcementTable.removeSelections(true);
-					oViewModel.setProperty("/EditButtonEnabled", false);
-					oViewModel.setProperty("/DeleteButtonEnabled", false);
-					oDataModel.refresh();
-				}.bind(this),
-				error: function (oError) {
-					Log.error(oBundle.getText("msgErrorInCreate") + oError);
-					this.oPolicyInforcementDialog.close();
-					this.displayErrorMessage(oError);
-				}.bind(this)
-			});
-		},
-		/**
-		 * Removes the selected data masking enforcement policy record from the OData model.
-		 * 
-		 * @public
-		 * @returns {void}
-		 * 
-		 * @description
-		 * This method deletes the currently selected data masking policy enforcement record by:
-		 * - Retrieving the selected item's PolicyName from the table's binding context
-		 * - Constructing the OData path for the specific policy entry in DataMaskingEnforcementSet
-		 * - Executing a DELETE operation on the OData model
-		 * - Displaying success message and refreshing the UI on successful deletion
-		 * - Clearing table selections and resetting view model data
-		 * - Resetting button states (Edit, Delete) to disabled
-		 * - Displaying error message if the deletion fails
-		 * 
-		 * @fires sap.m.MessageBox#success - Shows success message on deletion
-		 * @fires sap.m.MessageBox#error - Shows error message if deletion fails
-		 * 
-		 * @example
-		 * /// Called when user confirms deletion of selected record
-		 * this.removeSelectedRecord();
-		 */
-		removeSelectedRecord: function () {
-			var sMSGUri, oView = this.getView(), oDataModel = oView.getModel(), oCTx, oBundle = oView.getModel("i18n").getResourceBundle(),
-				oViewModel = oView.getModel("viewModel"), sUriKey, sPath;
-			oCTx = oView.byId("idTableDataMaskingEnforcement").getSelectedItem().getBindingContext().getObject();
 
-			sUriKey = oCTx.Policy.split("~").length > 1 ? oCTx.Policy : oCTx.Policy + "~" + oCTx.AttributeId;
-			if (oViewModel.getProperty("/SelectedContextData") && oViewModel.getProperty("/SelectedContextData").PolicyName) {
-				sMSGUri = oViewModel.getProperty("/SelectedContextData").PolicyName + "~" + oCTx.AttributeId;
-			} else {
-				sMSGUri = oCTx.Policy + "~" + oCTx.AttributeId;
-			}
-			sPath = "/DataMaskingEnforcementSet('" + sUriKey + "')";
-			oDataModel.remove(sPath, {
-				success: function () {
-					MessageBox.success(oBundle.getText("msgPolEnforcementDeleteSucceful", [sMSGUri]), { styleClass: "PlDacMessageBox" });
-					this.oPolicyEnforcementTable.removeSelections(true);
-					oViewModel.setProperty("/Data", {});
-					oViewModel.setProperty("/EditButtonEnabled", false);
-					oViewModel.setProperty("/DeleteButtonEnabled", false);
-					oDataModel.refresh();
-				}.bind(this),
-				error: function () {
-					MessageBox.error("Error has occured while removing record");
-				}
-			});
-		},
 		/**
 		 * Lifecycle hook called after the controller's view is rendered.
 		 * 
@@ -995,7 +735,7 @@ sap.ui.define([
 		 * /// Automatically called by the UI5 framework after view rendering
 		 */
 		onAfterRendering: function () {
-			this.getView().getModel().refresh();
+			//this.getView().getModel().refresh();
 		}
 	});
 });

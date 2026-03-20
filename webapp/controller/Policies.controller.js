@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/m/ToolbarSpacer",
 	"sap/m/OverflowToolbarButton",
-	"pl/dac/apps/fnconfig/const/PlDacConst"
+	"pl/dac/apps/fnconfig/const/PlDacConst",
+	"sap/ui/core/CustomData"
 ], function (
 	BaseController,
 	Fragment,
@@ -16,7 +17,8 @@ sap.ui.define([
 	Sorter,
 	ToolbarSpacer,
 	OverflowToolbarButton,
-	PlDacConst
+	PlDacConst,
+	CustomData
 ) {
 	"use strict";
 
@@ -37,6 +39,7 @@ sap.ui.define([
 		 * - Adds additional toolbar buttons (Add, Edit, Delete) to the Policy Administrator SmartTable
 		 */
 		onInit: function () {
+			
 			this._oRouter = this.getOwnerComponent().getRouter();
 			this._oRouter.getRoute("Policies").attachPatternMatched(this._onRouteMatched, this);
 			this._addAddintionButtonIntoThePolicyAdministratorTableToolbar(this.getView().byId("idSmartPolAdminTable"));
@@ -66,12 +69,19 @@ sap.ui.define([
 		*/
 		_addAddintionButtonIntoThePolicyAdministratorTableToolbar: function (oSmartTable) {
 			var oToolbar = oSmartTable.getToolbar();
+			this._oTablePolAdminPolicies = oSmartTable.getTable();
 			if (oToolbar.getContent().length == 0) {
 				oToolbar.addContent(new ToolbarSpacer());
 				oToolbar.addContent(new OverflowToolbarButton({
 					text: "Add",
 					icon: "sap-icon://add",
 					tooltip: "{i18n>toolTipAddPolicy}",
+					customData: [
+						new CustomData({
+							key: "entitySet",
+							value: oSmartTable.getEntitySet()
+						})
+					],
 					press: this._onAddPolicyPolAdminButtonPress.bind(this)
 				}));
 				oToolbar.addContent(new OverflowToolbarButton({
@@ -107,10 +117,23 @@ sap.ui.define([
 		 * - If dialog already exists, simply opens it
 		 * - The dialog is added as a dependent to the view for proper lifecycle management
 		 */
-		_onAddPolicyPolAdminButtonPress: function () {
-			var oView = this.getView();
-			oView.getModel("viewModel").setProperty("/Data", { PolicyName: "", PolicyDesc: "", Policy: "" ,Version:"00000",ApplArea:"",Description:"",AccessLog:"000",BusProcess:""});
+		_onAddPolicyPolAdminButtonPress: function (oEvent) {
+			var oView = this.getView(), oDataModel = oView.getModel(), oContext,
+				aCustomData = oEvent.getSource().getCustomData();
+			//	oView.getModel("viewModel").setProperty("/Data", { PolicyName: "", PolicyDesc: "", Policy: "" ,Version:"00000",ApplArea:"",Description:"",AccessLog:"000",BusProcess:""});
 			oView.getModel("viewModel").setProperty("/PolicyNameEnabled", true);
+			oContext = oDataModel.createEntry("/" + aCustomData[0].getValue(), {
+				properties: {
+					PolicyName: "",
+					PolicyDesc: "",
+					Policy: "",
+					Version: "0000",
+					ApplArea: "",
+					Description: "",
+					AccessLog: "000",
+					BusProcess: ""
+				}
+			});
 			if (!this._oDialogPolAdminPolicies) {
 				Fragment.load({
 					id: oView.getId(),
@@ -118,10 +141,12 @@ sap.ui.define([
 					controller: this // Assign the current controller
 				}).then(function (oDialog) {
 					this._oDialogPolAdminPolicies = oDialog;
+					this._oDialogPolAdminPolicies.setBindingContext(oContext);
 					oView.addDependent(oDialog); // Add dialog as dependent of the view
 					oDialog.open();
 				}.bind(this));
 			} else {
+				this._oDialogPolAdminPolicies.setBindingContext(oContext);
 				this._oDialogPolAdminPolicies.open();
 			}
 		},
@@ -144,9 +169,7 @@ sap.ui.define([
 		 */
 		_onEditPolicyPoladminButtonPress: function () {
 			var oView = this.getView();
-			var oSelectedContextData = oView.byId("idTablePolAdminPolicies").getSelectedItem().getBindingContext().getObject();
-			oSelectedContextData.Version = oSelectedContextData.Version.padStart(5,0);
-			oView.getModel("viewModel").setProperty("/Data", oSelectedContextData);
+			
 			if (!this._oDialogPolAdminPolicies) {
 				Fragment.load({
 					id: oView.getId(),
@@ -154,10 +177,12 @@ sap.ui.define([
 					controller: this // Assign the current controller
 				}).then(function (oDialog) {
 					this._oDialogPolAdminPolicies = oDialog;
+					this._oDialogPolAdminPolicies.setBindingContext(this.oEditContext);
 					oView.addDependent(oDialog); // Add dialog as dependent of the view
 					oDialog.open();
 				}.bind(this));
 			} else {
+				this._oDialogPolAdminPolicies.setBindingContext(this.oEditContext);
 				this._oDialogPolAdminPolicies.open();
 			}
 			oView.getModel("viewModel").setProperty("/PolicyNameEnabled", false);
@@ -178,15 +203,20 @@ sap.ui.define([
 		 * - Resets the UI state after dialog closure
 		 */
 		onClosePolAdminPolicyDialog: function () {
-			var oView = this.getView(),oViewModel=oView.getModel("viewModel");
+			var oView = this.getView(), oViewModel = oView.getModel("viewModel");
 			if (this._oDialogPolAdminPolicies) {
 				this._oDialogPolAdminPolicies.close();
-				if(oView.byId("idTablePolAdminPolicies")){
+				if (oView.byId("idTablePolAdminPolicies")) {
 					oView.byId("idTablePolAdminPolicies").removeSelections(true);
 				}
+				if (this.oEditContext) {
+					oView.getModel().resetChanges([this.oEditContext.getPath()]);
+				}
+				oView.getModel().deleteCreatedEntry(this._oDialogPolAdminPolicies.getBindingContext());
 				
-				oViewModel.setProperty("/EditButtonEnabled",false);
-				oViewModel.setProperty("/DeleteButtonEnabled",false);
+				oViewModel.setProperty("/EditButtonEnabled", false);
+				oViewModel.setProperty("/DeleteButtonEnabled", false);
+				this._oTablePolAdminPolicies.getBinding("items").refresh();
 			}
 		},
 		/**
@@ -211,21 +241,15 @@ sap.ui.define([
 		_onRouteMatched: function () {
 
 			var oView = this.getView(), oBundle = oView.getModel("i18n").getResourceBundle();
-			this.getOwnerComponent().getModel("routeModel").setProperty("/PolicyRoute",true);
+			this.getOwnerComponent().getModel("routeModel").setProperty("/PolicyRoute", true);
 			oView.setModel(new JSONModel(
 				{
-					Name: oBundle.getText("lblPolicyName")+" [Version]",
+					Name: oBundle.getText("lblPolicyName") + " [Version]",
 					Description: oBundle.getText("lblDescription"),
 					Icon: "sap-icon://documents",
 					Title: oBundle.getText("titPolicy"),
 					PlaceHolder: "",
 					EditButtonEnabled: false,
-					Payload: {
-						PolicyName: "",
-						Policy: "",
-						PolicyDesc: ""
-						
-					},
 					PolicyNameEnabled: true,
 					PolNameErrorState: "None",
 					PolNameErrorMessage: "",
@@ -314,11 +338,18 @@ sap.ui.define([
 		 * - Enables the Delete button by setting DeleteButtonEnabled to true in the viewModel
 		 * - This allows users to perform edit and delete operations on the selected policy
 		 */
-		onTableSelectionChange: function () {
-			var oView = this.getView();
-			oView.getModel("viewModel").setProperty("/EditButtonEnabled", true);
-			oView.getModel("viewModel").setProperty("/DeleteButtonEnabled", true);
+		onTableSelectionChange: function (oEvent) {
+			var oView = this.getView(), oModel = oView.getModel("viewModel"), oItem = oEvent.getParameter("listItem");
+			oModel.setProperty("/EditButtonEnabled", true);
+			oModel.setProperty("/DeleteButtonEnabled", true);
+			this.oEditContext = oItem.getBindingContext();
 
+		},
+		handleVersionFormat: function (sVersion) {
+			if (sVersion) {
+				return sVersion.padStart(5, 0);
+			}
+			return "00000";
 		},
 		/**
 		 * Handles the save action for Policy Administrator policy dialog.
@@ -341,49 +372,79 @@ sap.ui.define([
 		 * - For new entries: Calls _checksForDuplicateEntry to prevent duplicate policy names
 		 */
 		onSavePolAdminPolicy: function () {
-			var oBundle, sPath, oView = this.getView(), oViewModel = oView.getModel("viewModel"),
+			var oBundle, oView = this.getView(), oContext, oViewModel = oView.getModel("viewModel"),
 				oDataModel = oView.getModel();
 			oBundle = oView.getModel("i18n").getResourceBundle();
-			var oEntry = oViewModel.getProperty("/Data");
-			if (oEntry.PolicyName.trim() == "") {
+			oContext = this._oDialogPolAdminPolicies.getBindingContext();
+			//var oEntry = oViewModel.getProperty("/Data");
+			if (oContext.getProperty("PolicyName").trim() == "") {
 				oViewModel.setProperty("/PolNameErrorState", "Error");
 				oViewModel.setProperty("/PolNameErrorMessage", oBundle.getText("msgErrorPolicyNameMandatory"));
 				oView.byId("idPolAdminPolName").focus();
 				oViewModel.setProperty("/PolDescErrorState", "None");
-				oViewModel.setProperty("/PolDescErrorMessage","");
+				oViewModel.setProperty("/PolDescErrorMessage", "");
 				return;
-			}else{
+			} else {
 				oViewModel.setProperty("/PolNameErrorState", "None");
-				oViewModel.setProperty("/PolNameErrorMessage","");
+				oViewModel.setProperty("/PolNameErrorMessage", "");
 			}
-			if (oEntry.PolicyDesc.trim() == "") {
+			if (oContext.getProperty("PolicyDesc").trim() == "") {
 				oViewModel.setProperty("/PolDescErrorState", "Error");
 				oViewModel.setProperty("/PolDescErrorMessage", oBundle.getText("msgErrorPolicyNameMandatory"));
 				oView.byId("idPolAdminPolDesc").focus();
 				return;
 			}
-			
-			if (({}).hasOwnProperty.call(oEntry, "__metadata")) {
-
-				sPath = "/PolicySet('" + oEntry.Policy + "')";
-				oDataModel.update(sPath, oEntry, {
-					success: function () {
-						MessageBox.success(oBundle.getText("msgPolicyUpdateSuccessful", [oEntry.PolicyName]));
-						oView.byId("idTablePolAdminPolicies").removeSelections(true);
-						oDataModel.refresh();
-						this._oDialogPolAdminPolicies.close();
-						oViewModel.setProperty("/EditButtonEnabled",false);
-						oViewModel.setProperty("/DeleteButtonEnabled",false);
-					}.bind(this),
-					error: function () {
-						MessageBox.error("Error has occured while updating record");
-					}
+			if (this.oEditContext == null) {
+				var oData = oContext.getObject();
+				var sPath= oContext.getPath();
+				oDataModel.createEntry(sPath, {
+					properties: oData,
+					groupId: "createPolicy"
 				});
 			} else {
-				oEntry.Policy = oEntry.PolicyName;
-				this._checksForDuplicateEntry(PlDacConst.ENTITY_SET_POLICIES + "(" + oEntry.Policy + ")", oEntry);
+				var oChanges = oDataModel.getPendingChanges();
+				sPath = oContext.getPath();
+				var bHasChanges = Object.keys(oChanges).some(function (sKey) {
+					return sKey.indexOf(sPath.replace("/", "")) === 0;
+				});
 
+				if (!bHasChanges) {
+					sap.m.MessageToast.show(oBundle.getText("msgUpdateNoChanges"));
+					return;
+				}
 			}
+			oDataModel.submitChanges({
+				success: function (oData) {
+					if (({}).hasOwnProperty.call(oData, "__batchResponses") && ({}).hasOwnProperty.call(oData.__batchResponses[0], "__changeResponses")) {
+						if (oData.__batchResponses[0].__changeResponses[0].statusCode == "201") {
+							MessageBox.success(JSON.parse(oData.__batchResponses[0].__changeResponses[0].headers["sap-message"]).message, { contentWidth: "480px" });
+							this._oDialogPolAdminPolicies.close();
+							this._oTablePolAdminPolicies.removeSelections(true);
+							this._oTablePolAdminPolicies.setBusy(false);
+							this._oTablePolAdminPolicies.getBinding("items").refresh();
+							return;
+						}
+						if (oData.__batchResponses[0].__changeResponses[0].statusCode == "204") {
+							MessageBox.success(JSON.parse(oData.__batchResponses[0].__changeResponses[0].headers["sap-message"]).message, { contentWidth: "480px" });
+							this._oDialogPolAdminPolicies.close();
+							this._oTablePolAdminPolicies.removeSelections(true);
+							this._oTablePolAdminPolicies.setBusy(false);
+							this._oTablePolAdminPolicies.getBinding("items").refresh();
+							return;
+						}
+					} else if (({}).hasOwnProperty.call(oData, "__batchResponses")) {
+						if (oData.__batchResponses[0].response.statusCode == "409") {
+							this.oPolicyNameInput.focus();
+							oView.getModel("viewModel").setProperty("/PolNameErrorMessage", JSON.parse(oData.__batchResponses[0].response.body).error.message.value);
+							oView.getModel("viewModel").setProperty("/PolNameErrorState", "Error");
+						}
+					}
+				}.bind(this),
+				error: function (oError) {
+					this._oDialogPolAdminPolicies.close();
+					this.displayErrorMessage(oError);
+				}.bind(this)
+			});
 		},
 		/**
 		 * Handles the before open event of the Policy Administrator policy dialog.
@@ -401,6 +462,7 @@ sap.ui.define([
 		 */
 		onBeforePolAdminPolicyDialogOpened: function () {
 			this._removelAllValidationError();
+			this.oPolicyNameInput = this.getView().byId("idPolAdminPolName");
 		},
 		/**
 		 * Handles the after open event of the Policy Administrator policy dialog.
@@ -452,51 +514,7 @@ sap.ui.define([
 			oView.getModel("viewModel").setProperty("/PolDescErrorState", "None");
 
 		},
-		/**
-		 * Checks if a policy with the same name already exists before creating a new entry.
-		 * Prevents duplicate policy entries by validating against existing records.
-		 *
-		 * @function _checksForDuplicateEntry
-		 * @private
-		 * @memberOf pl.dac.apps.fnconfig.controller.Policies
-		 * @param {string} sPath - The OData path to check for the policy entity
-		 * @param {object} oEntry - The policy entry object to be created if no duplicate exists
-		 * @returns {void}
-		 *
-		 * @description
-		 * - Performs an OData READ operation to check if the policy already exists
-		 * - On success (record found):
-		 *   - Sets error state with duplicate entry message if policy exists
-		 *   - Focuses the policy name input field
-		 *   - If policy doesn't exist, proceeds to create the entry
-		 * - On error (record not found):
-		 *   - Clears any error messages and error states
-		 *   - Proceeds to create the new entry via _createEntry
-		 * - Prevents creation of duplicate policies in the system
-		 */
-		_checksForDuplicateEntry: function (sPath, oEntry) {
-			var oView = this.getView(), oDataModel = oView.getModel(), that = this,
-				oBundle = oView.getModel("i18n").getResourceBundle();
-			oDataModel.read(sPath, // Path to the specific entity
-				{
-					success: function (oData) {
-						if (oData && oData.Policy != "") {
-							oView.getModel("viewModel").setProperty("/PolNameErrorMessage", oBundle.getText("msgErrorDuplicateEntry", [oData.to_Policy.PolicyName]));
-							oView.getModel("viewModel").setProperty("/PolNameErrorState", "Error");
-						} else {
-							that._createEntry(oEntry);
-						}
-						that.oPolicyNameInput.focus();
-						return;
-					},
-					error: function () {
-						oView.getModel("viewModel").setProperty("/PolNameErrorMessage", "");
-						oView.getModel("viewModel").setProperty("/PolNameErrorState", "None");
-						that._createEntry(oEntry);
-					}
-				}
-			);
-		},
+		
 		/**
 		 * Handles the live change event on the policy name input field.
 		 * Automatically converts user input to uppercase for consistency.
@@ -514,47 +532,13 @@ sap.ui.define([
 		 * - Ensures consistent formatting of policy names throughout the application
 		 */
 		onPolicyNameInputLiveChange: function (oEvent) {
-			var sNewValue = oEvent.getParameter("newValue");
+			var sNewValue = oEvent.getParameter("newValue"),oView=this.getView();
 			if (sNewValue) {
 				oEvent.getSource().setValue(sNewValue.toUpperCase());
+				oView.byId("idTextPolicy").setText(sNewValue.toUpperCase());
 			}
 		},
-		/**
-		 * Creates a new policy entry in the backend via OData service.
-		 * Handles the creation of a new policy record after validation and duplicate checks.
-		 *
-		 * @function _createEntry
-		 * @private
-		 * @memberOf pl.dac.apps.fnconfig.controller.Policies
-		 * @param {object} oEntry - The policy entry object to be created
-		 * @returns {void}
-		 *
-		 * @description
-		 * - Performs an OData CREATE operation to add the new policy to PolicySet
-		 * - On success:
-		 *   - Displays success message with the policy name
-		 *   - Refreshes the OData model to update the table
-		 *   - Closes the policy dialog
-		 * - On error:
-		 *   - Displays error message indicating creation failure
-		 * - Called after successful duplicate entry validation
-		 */
-		_createEntry: function (oEntry) {
-			var oViewModel,oView = this.getView(), oDataModel = oView.getModel(), oBundle = oView.getModel("i18n").getResourceBundle();
-			oViewModel= oView.getModel("viewModel");
-			oDataModel.create(PlDacConst.ENTITY_SET_POLICIES, oEntry, {
-				success: function () {
-					MessageBox.success(oBundle.getText("msgPolicyCreatedSuccessful", [oEntry.PolicyName]));
-					oDataModel.refresh();
-					this._oDialogPolAdminPolicies.close();
-					oViewModel.setProperty("/EditButtonEnabled",false);
-					oViewModel.setProperty("/DeleteButtonEnabled",false);
-				}.bind(this),
-				error: function () {
-					MessageBox.error("Error has occured while creating record");
-				}
-			});
-		},
+		
 		/**
 		 * Handles the press event of the Delete button in the Policy Administrator table toolbar.
 		 * Displays a confirmation dialog before deleting the selected policy.
@@ -573,13 +557,13 @@ sap.ui.define([
 		 * - Prevents accidental deletion by requiring explicit user confirmation
 		 */
 		_onDeletePolicyPolAdminButtonPress: function () {
-			 var that = this, oBundle = this.getView().getModel("i18n").getResourceBundle();
+			var that = this, oBundle = this.getView().getModel("i18n").getResourceBundle();
 			MessageBox.warning(oBundle.getText("msgDeleteConfirmation"), {
 				actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
 				emphasizedAction: MessageBox.Action.OK,
 				onClose: function (sAction) {
 					if (sAction == "OK") {
-						that._removeSelectedRecord();
+						that._removeSelectedPolicyRecord();
 					}
 				}
 			});
@@ -607,15 +591,15 @@ sap.ui.define([
 		 *   - Sets focus back to the policy description input field
 		 * - Enables form submission via Enter key for improved user experience
 		 */
-		onSubmitPolAdminPolicyDesc:function(oEvent){
-			var oView=this.getView(),
-			oBundle = oView.getModel("i18n").getResourceBundle(),
-			oViewModel = oView.getModel("viewModel"), sValue = oEvent.getSource().getValue();
-			if(sValue && sValue.trim()!=""){
+		onSubmitPolAdminPolicyDesc: function (oEvent) {
+			var oView = this.getView(),
+				oBundle = oView.getModel("i18n").getResourceBundle(),
+				oViewModel = oView.getModel("viewModel"), sValue = oEvent.getSource().getValue();
+			if (sValue && sValue.trim() != "") {
 				oViewModel.setProperty("/PolDescErrorState", "None");
-				oViewModel.setProperty("/PolDescErrorMessage","");
+				oViewModel.setProperty("/PolDescErrorMessage", "");
 				this.onSavePolAdminPolicy();
-			}else{
+			} else {
 				oViewModel.setProperty("/PolDescErrorState", "Error");
 				oViewModel.setProperty("/PolDescErrorMessage", oBundle.getText("msgErrorPolicyNameMandatory"));
 				oView.byId("idPolAdminPolDesc").focus();
@@ -626,7 +610,7 @@ sap.ui.define([
 		 * Removes the selected policy record from the backend via OData DELETE operation.
 		 * Executes the actual deletion after user confirmation.
 		 *
-		 * @function _removeSelectedRecord
+		 * @function _removeSelectedPolicyRecord
 		 * @private
 		 * @memberOf pl.dac.apps.fnconfig.controller.Policies
 		 * @returns {void}
@@ -645,26 +629,24 @@ sap.ui.define([
 		 *   - Displays formatted error message
 		 * - Called after user confirms deletion in the confirmation dialog
 		 */
-		_removeSelectedRecord: function () {
-			var oViewModel, oBundle,sPolicy,oSelectedItemData,sErrorMSG, sPath, oView = this.getView(), oModel = oView.getModel();
-			oSelectedItemData = oView.byId("idTablePolAdminPolicies").getSelectedItem().getBindingContext().getObject();
-			sPolicy = oSelectedItemData.Policy;
-			sPath = "/PolicySet('" + sPolicy + "')";
-			oBundle = oView.getModel("i18n").getResourceBundle();
-			oViewModel =oView.getModel("viewModel");
-			oModel.remove(sPath, {
-				success: function () {
-					MessageBox.success(oBundle.getText("msgPolicyDeleteSuccessful",[oSelectedItemData.PolicyName]));
-					oView.byId("idTablePolAdminPolicies").removeSelections(true);
-					oViewModel.setProperty("/EditButtonEnabled",false);
-					oViewModel.setProperty("/DeleteButtonEnabled",false);
-					oModel.refresh();
-				},
-				error: function (e) {
-					sErrorMSG = JSON.parse(e.responseText).error.message.value.replace(oSelectedItemData.Policy, oSelectedItemData.PolicyName);
-					MessageBox.error(sErrorMSG);
-				}
-			});
+		_removeSelectedPolicyRecord: function () {
+			var sPath, oView = this.getView(),
+					oDataModel = oView.getModel();
+				sPath = this.oEditContext.getPath();
+				oDataModel.remove(sPath, {
+					groupId: "deletePolicy",
+					success: function (oData, oResponse) {
+						MessageBox.success(JSON.parse(oResponse.headers["sap-message"]).message, { styleClass: "PlDacMessageBox", contentWidth: "480px" });
+						this._oTablePolAdminPolicies.removeSelections(true);
+						oView.getModel("viewModel").setProperty("/EditButtonEnabled", false);
+						oView.getModel("viewModel").setProperty("/DeleteButtonEnabled", false);
+						this._oTablePolAdminPolicies.getBinding("items").refresh();
+					}.bind(this),
+					error: function (oError) {
+						this.displayErrorMessage(oError);
+					}.bind(this)
+				});
+			
 		},
 		/**
 		 * Handles the press event on the policy rules link.

@@ -36,7 +36,7 @@ sap.ui.define([
 		 * /// Automatically called by the UI5 framework during controller instantiation
 		 */
 		onInit: function () {
-			this.bShowMaskPattern=false;
+			this.setMaskingPatternVisibility(false);
 			this._oRouter = this.getOwnerComponent().getRouter();
 			this._oRouter.getRoute("DataRestriction").attachPatternMatched(this._onRouteMatched, this);
 			this.addAdditionalButtonIntoThePolicyEnforcementTableToolbar(this.getView().byId("idSmartTablePOPRestriction"));
@@ -115,10 +115,6 @@ sap.ui.define([
 					Title: oBundle.getText("titPolInforcementDataRestriction"),
 					PlaceHolder: "",
 					EditButtonEnabled: false,
-					Payload: {
-						AttributeName: "",
-						Description: ""
-					},
 					PolicyNameEnabled: true,
 					ErrorState: "None",
 					ErrorMessage: "",
@@ -129,254 +125,14 @@ sap.ui.define([
 					FullScreen: true,
 					ExitFullScreen: false,
 					ExitColumn: true,
-					SortOrder: "asc",
-					SelectedContextData: null,
 					VisibleAttribute: false
 				}
 			), "viewModel");
 			sap.ui.core.BusyIndicator.hide();
-			this.oPolicyEnforcementTable = oView.byId("idTableDataRestrictionEnforcement");
+			//this.oPolicyEnforcementTable = oView.byId("idTableDataRestrictionEnforcement");
 		},
-		/**
-		 * Saves or updates a policy enforcement entry in the OData model.
-		 * 
-		 * @public
-		 * @returns {void}
-		 * 
-		 * @description
-		 * This method handles both create and update operations for policy enforcement entries by:
-		 * - Validating that the policy field is not empty
-		 * - Cleaning up unnecessary navigation properties (PolicyDesc, PolicyName, to_Policy, to_Attr)
-		 * - Converting IsActive boolean to 'X' (true) or '' (false)
-		 * - Checking for __metadata to determine if it's an update or create operation:
-		 *   - If __metadata exists: Performs an UPDATE operation on existing entry
-		 *   - If __metadata doesn't exist: Calls _checkForDuplicateEntry to validate and CREATE new entry
-		 * - Displaying success/error messages based on operation result
-		 * - Refreshing the UI, closing dialog, and resetting button states on success
-		 * 
-		 * @fires sap.m.MessageBox#success - Shows success message on update
-		 * @fires sap.m.MessageBox#error - Shows error message on failure
-		 * 
-		 * @example
-		 * /// Called when user clicks save button in policy enforcement dialog
-		 * /// <Button text="Save" press=".onSavePolicyInforcement">
-		 */
-		onSavePolicyInforcement: function () {
-			var sPolicyName, oBundle, sPath, oEntry, oView = this.getView(), oViewModel = oView.getModel("viewModel");
-			oEntry = oViewModel.getData().Data;
-			oBundle = oView.getModel("i18n").getResourceBundle();
-			if (oViewModel.getProperty("/ErrorState") == "Error") {
-				oView.byId("idPEPPolicyName").focus();
-				return;
-			}
-			if (oEntry.Policy.trim() == "") {
-				oViewModel.setProperty("/ErrorState", "Error");
-				oViewModel.setProperty("/ErrorMessage", oBundle.getText("msgErrorPolicyNameMandatory"));
-				oView.byId("idPEPPolicyName").focus();
-				return;
-			}
-			if (oEntry.PolicyResult == "") {
-				oViewModel.setProperty("/ActionErrorState", "Error");
-				oViewModel.setProperty("/ActionErrorMessage", oBundle.getText("msgErrorResultNameMandatory"));
-				oView.byId("idPEPActionResult").focus();
-				return;
-			}
-			sPolicyName = oEntry.PolicyName;
-			delete oEntry.PolicyDesc;
-			
-			delete oEntry.to_Policy;
-			delete oEntry.to_Attr;
-			//oView.byId("idPEPIsActive")
-			oEntry.IsActive = oEntry.IsActive ? "X" : "";
-			if (({}).hasOwnProperty.call(oEntry, "__metadata")) {
-				delete oEntry.__metadata;
-				delete oEntry.PolicyName;
-				sPath = PlDacConst.ENTITY_SET_DATARESTRICTIONENFORCEMENT + "('" + oEntry.Policy + "')";
-				oView.getModel().update(sPath, oEntry, {
-					success: function () {
-						MessageBox.success(oBundle.getText("msgPoEnforcementUpdateSuccessfully", [sPolicyName]));
-						oViewModel.setProperty("/Data", {});
-						this.oPolicyInforcementDialog.close();
-						this.oPolicyEnforcementTable.removeSelections(true);
-						oViewModel.setProperty("/EditButtonEnabled", false);
-						oViewModel.setProperty("/DeleteButtonEnabled", false);
-						oView.getModel().refresh();
-					}.bind(this),
-					error: function (e) {
-						Log.error(e);
-						MessageBox.error("Error has occured while updating record");
-					}
-				});
-			} else {
-				/** Initiate a create call. */
-				this._checkForDuplicateEntry(PlDacConst.ENTITY_SET_DATARESTRICTIONENFORCEMENT + "('" + oEntry.Policy + "')", oEntry);
-			}
-		},
-		/**
-		 * Creates a new data restriction enforcement entry in the OData model.
-		 * 
-		 * @private
-		 * @param {object} oEntry - The entry object containing policy enforcement data to be created
-		 * @param {string} oEntry.Policy - The policy identifier
-		 * @param {boolean|string} oEntry.IsActive - Active status flag (converted to 'X' or '')
-		 * @returns {void}
-		 * 
-		 * @description
-		 * This method creates a new policy enforcement entry by:
-		 * - Converting the IsActive boolean flag to 'X' (true) or '' (false)
-		 * - Making a POST request to the DataRestrictionEnforcementSet entity
-		 * - Showing success/error messages based on the operation result
-		 * - Refreshing the UI and clearing selections on success
-		 * 
-		 * @example
-		 * this._createEntry({
-		 *   Policy: "POLICY001",
-		 *   IsActive: true,
-		 *   Description: "Sample policy"
-		 * });
- */
-		_createEntry: function (oEntry) {
-			var that = this, oBundle, oView = this.getView(), oDataModel = oView.getModel(),
-				oViewModel = oView.getModel("viewModel"),sPolicyName;
-			oEntry.IsActive = oEntry.IsActive == true ? 'X' : '';
-			oBundle = oView.getModel("i18n").getResourceBundle();
-			sPolicyName = oEntry.PolicyName;
-			delete oEntry.PolicyName;
-			oDataModel.create(PlDacConst.ENTITY_SET_DATARESTRICTIONENFORCEMENT, oEntry, {
-				success: function () {
-					MessageBox.success(oBundle.getText("msgPolEnforcementSuccessful", [sPolicyName]), { styleClass: "PlDacMessageBox" });
-					this.oPolicyEnforcementTable.removeSelections(true);
-					oViewModel.setProperty("/Data", {});
-					this.oPolicyInforcementDialog.close();
-					this.oPolicyEnforcementTable.removeSelections(true);
-					oViewModel.setProperty("/EditButtonEnabled", false);
-					oViewModel.setProperty("/DeleteButtonEnabled", false);
-					oDataModel.refresh();
+	
 
-				}.bind(this),
-				error: function (oError) {
-					Log.error(oBundle.getText("msgErrorInCreate") + oError);
-					that.oPolicyInforcementDialog.close();
-					that.displayErrorMessage(oError);
-				}
-			});
-		},
-		/**
-		 * Checks if a policy enforcement entry already exists before creating a new one.
-		 * 
-		 * @private
-		 * @param {string} sPath - The OData path to check for existing entry (e.g., "DataRestrictionEnforcementSet('POLICY001')")
-		 * @param {object} oEntry - The entry object to be created if no duplicate exists
-		 * @param {string} oEntry.Policy - The policy identifier to check for duplicates
-		 * @returns {void}
-		 * 
-		 * @description
-		 * This method validates that a policy enforcement entry doesn't already exist by:
-		 * - Converting IsActive status from 'X' to boolean in the view model
-		 * - Reading the OData entity with expanded to_Policy navigation
-		 * - Displaying an error message if a duplicate policy is found
-		 * - Calling _createEntry to create the entry if no duplicate exists or on read error
-		 * - Setting focus back to the policy name input field after validation
-		 * 
-		 * @example
-		 * this._checkForDuplicateEntry(
-		 *   "DataRestrictionEnforcementSet('POLICY001')",
-		 *   { Policy: "POLICY001", IsActive: true }
-		 * );
-		 */
-		_checkForDuplicateEntry: function (sPath, oEntry) {
-			var oView = this.getView(), oModel = oView.getModel(), that = this,
-				oBundle = oView.getModel("i18n").getResourceBundle();
-			oView.getModel("viewModel").getProperty("/Data/IsActive") == "X" ? oView.getModel("viewModel").setProperty("/Data/IsActive", true) : oView.getModel("viewModel").setProperty("/Data/IsActive", false);
-			oModel.read(sPath, // Path to the specific entity
-				{
-					urlParameters: {
-						"$expand": "to_Policy" // Expand to_ActionItem
-					},
-					success: function (oData) {
-						if (oData && oData.Policy != "" && ({}).hasOwnProperty.call(oData, "to_Policy") && oData.to_Policy.PolicyName != "") {
-							oView.getModel("viewModel").setProperty("/ErrorMessage", oBundle.getText("msgErrorDuplicateEntry", [oData.to_Policy.PolicyName]));
-							oView.getModel("viewModel").setProperty("/ErrorState", "Error");
-						} else {
-							that._createEntry(oEntry);
-						}
-						that.oPolicyNameInput.focus();
-						return;
-					},
-					error: function () {
-						that.oPolicyNameInput.setValueState("None");
-						that.oPolicyNameInput.setValueStateText("");
-						that._createEntry(oEntry);
-					}
-				}
-			);
-		},
-		/**
-		 * Removes the selected data restriction enforcement policy record from the OData model.
-		 * 
-		 * @public
-		 * @returns {void}
-		 * 
-		 * @description
-		 * This method deletes the currently selected policy enforcement record by:
-		 * - Retrieving the selected policy name from the view model's SelectedContextData
-		 * - Constructing the OData path for the specific policy entry
-		 * - Executing a DELETE operation on the OData model
-		 * - Displaying success message and refreshing the UI on successful deletion
-		 * - Clearing table selections and resetting button states
-		 * - Displaying error message if the deletion fails
-		 * 
-		 * @fires sap.m.MessageBox#success - Shows success message with deleted policy name
-		 * @fires sap.m.MessageBox#error - Shows error message if deletion fails
-		 * 
-		 * @example
-		 * // Called when user confirms deletion of selected record
-		 * this.removeSelectedRecord();
-		 */
-		removeSelectedRecord: function () {
-			var oView = this.getView(), oModel = oView.getModel(), sPath, that = this,
-				oBundle = oView.getModel("i18n").getResourceBundle(),
-				sPolicyName = oView.getModel("viewModel").getProperty("/SelectedContextData").PolicyName;
-			sPath = PlDacConst.ENTITY_SET_DATARESTRICTIONENFORCEMENT + "('" + sPolicyName + "')";
-			oModel.remove(sPath, {
-				success: function () {
-					MessageBox.success(oBundle.getText("msgPolEnforcementDeleteSucceful", [sPolicyName]), { styleClass: "PlDacMessageBox" });
-					oModel.refresh();
-					that.oPolicyEnforcementTable.removeSelections(true);
-					oView.getModel("viewModel").setProperty("/Data", {});
-					oView.getModel("viewModel").setProperty("/EditButtonEnabled", false);
-					oView.getModel("viewModel").setProperty("/DeleteButtonEnabled", false);
-				},
-				error: function (oError) {
-					Log.error(oBundle.getText("msgDAErrorInDelete") + oError);
-					that.displayErrorMessage(oError);
-				}
-			});
-		},
-		/**
-		 * Event handler triggered when a suggestion item is selected from the policy input field.
-		 * 
-		 * @public
-		 * @param {sap.ui.base.Event} oEvent - The event object containing selection data
-		 * @param {sap.ui.table.Row} oEvent.getParameter("selectedRow") - The selected row from the suggestion list
-		 * @returns {void}
-		 * 
-		 * @description
-		 * This method handles the selection of a policy from the suggestion list by:
-		 * - Retrieving the selected policy context object from the binding context
-		 * - Setting the PolicyDesc property in the view model with the selected policy's description
-		 * - Triggering validation for the selected policy using validatePolicyInput
-		 * 
-		 * @example
-		 * /// Automatically called when user selects a policy from suggestion list
-		 * /// <Input showSuggestion="true" suggestionItemSelected=".onSuggestionItemSelected">
-		 */
-		onSuggestionItemSelected: function (oEvent) {
-			var oView = this.getView(),
-				oCtx = oEvent.getParameter("selectedRow").getBindingContext().getObject();
-			oView.getModel("viewModel").setProperty("/Data/PolicyDesc", oCtx.PolicyDesc);
-			this.validatePolicyInput(oCtx.Policy);
-		},
 		/**
 		 * Event handler triggered when a link is pressed in the table to view assigned attributes.
 		 * 
@@ -462,13 +218,7 @@ sap.ui.define([
 				}
 			});
 		},
-		clearValidationError: function () {
-			var oView = this.getView(), oViewModel = oView.getModel("viewModel");
-			oViewModel.setProperty("/ErrorState", "None");
-			oViewModel.setProperty("/ErrorMessage", "");
-			oViewModel.setProperty("/ActionErrorState", "None");
-			oViewModel.setProperty("/ActionErrorMessage", "");
-		},
+		
 		onAfterCloseAssignedAttributePopOver:function(){
 			this._oPopover.destroy();
 			this._oPopover=null;

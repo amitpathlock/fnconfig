@@ -50,7 +50,7 @@
             >
             <!-- @ui5ignore -->
                 <Table mode="SingleSelectLeft" id="idTableDataMaskingEnforcement" 
-                    selectionChange="onTableSelectionChange"
+                    selectionChange="onTableSelectionChange"  busy="true" updateFinished="onTableUpdateFinished"
                     sticky="ColumnHeaders,HeaderToolbar" alternateRowColors="true"
                    growingScrollToLoad="true" growing="true" 
                 >

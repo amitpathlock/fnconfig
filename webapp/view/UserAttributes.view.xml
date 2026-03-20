@@ -51,6 +51,7 @@
                     sticky="ColumnHeaders,HeaderToolbar"
                     selectionChange="onTableSelectionChange"
                     growing="true"
+                     busy="true"
                     growingThreshold="20"
                     updateFinished="onTableUpdateFinished"
                 >

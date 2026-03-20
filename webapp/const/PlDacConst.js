@@ -12,6 +12,7 @@ sap.ui.define([], function () {
         ROUTE_PATH_FUNCTIONALITY:"Functionality",
         ROUTE_PATH_DATA_ATTRIBUTE:"DataAttributes",
         ROUTE_PATH_USER_ATTRIBUTE:"UserAttributes",
+        ROUTE_PATH_ENV_ATTRIBUTE:"EnvAttribute",
         PRE_CONDITION_CTYPE:"PRECONDITION",
         PRE_CONDITION_RULE_TYPE:"Precondition"
         

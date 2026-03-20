@@ -30,14 +30,11 @@
                       <!-- @ui5ignore -->
                         <Label text="Policy"  required="true"/>
                          <!-- @ui5ignore -->
-                        <Input 
-                           editable="false"
-                         showSuggestion="true"
-                          value="{viewModel>/Data/PolicyToken}"
-                         >
                         
-                        
-                        </Input>
+                        <MultiInput editable="false" id="idPolicyMultiInput"
+                    >
+                   
+                </MultiInput>
                         <Label text="Attribute" required="true"/>
                           <!-- @ui5ignore -->
                                <MultiInput  id="idExposeAttributes"  
