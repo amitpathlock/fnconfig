@@ -327,7 +327,6 @@ sap.ui.define([
 					oViewModel.setProperty("/PatternErrroMSG", "");
 					this._oMaskingPatternDialog.close();
 					this.oPolicyEnforcementTable.getBinding("items").refresh();
-					oDataModel.refresh();
 					MessageBox.success(JSON.parse(oResponse.headers["sap-message"]).message);
 					// The returned data is available in the oData parameter
 				}.bind(this), // Use .bind(this) to maintain context
