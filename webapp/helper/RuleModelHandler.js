@@ -423,7 +423,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @param {Object} oSelectedItemData - Selected item data from dialog.
          * @returns {void}
          */
-            updateRuleModelWithUserAttrSelectionData: function (oView, oDialog, oSelectedItemData) {
+            updateRuleModelWithAttrSelectionData: function (oView, oDialog, oSelectedItemData) {
                 var iCondition, aCondition, iRule, oData, oRuleData;
                 oData = oDialog.getModel("setting").getData();
                 oDialog.close();

@@ -46,7 +46,6 @@ sap.ui.define([
 
 	return BaseController.extend("pl.dac.apps.fnconfig.controller.RuleBuilder", {
 		formatter: PLDACFormatter,
-		bRuleDataUpdate: false,
 		/**
 		 * Controller initialization lifecycle hook.
 		 * Initializes the router and attaches the pattern matched event handler for the "PolicyRules" route.
@@ -449,7 +448,8 @@ sap.ui.define([
 		 */
 
 		onShowValueDialog: function (oEvent) {
-			var oView = this.getView(), oInput = oEvent.getSource(), oUserAttributeTable, oListTable;
+			var oView = this.getView(), oInput = oEvent.getSource(), oUserAttributeTable, oListTable,
+			oEvnAttributeTable;
 			var oCustomData = oInput.getCustomData()[0].getValue();
 			if (oCustomData.Attribute.trim() == "") {
 				MessageToast.show("Please choose any attributes to continue.");
@@ -481,9 +481,11 @@ sap.ui.define([
 					this._oDialogSelection = oDialog;
 					oView.addDependent(this._oDialogSelection);
 					this._oDialogSelection.setModel(oSettingModel, "setting");
-					oUserAttributeTable = this._oDialogSelection.getContent()[0].getAggregation("sections")[2].getItems()[0];
-					oUserAttributeTable.addEventDelegate(this._userAttributeTableEventDelegate, this);
-					oListTable = this._oDialogSelection.getContent()[0].getAggregation("sections")[3].getItems()[0];
+					oEvnAttributeTable = this._oDialogSelection.getContent()[0].getAggregation("sections")[2].getItems()[0];
+					oEvnAttributeTable.addEventDelegate(this._attributeTableEventDelegate, this);
+					oUserAttributeTable = this._oDialogSelection.getContent()[0].getAggregation("sections")[3].getItems()[0];
+					oUserAttributeTable.addEventDelegate(this._attributeTableEventDelegate, this);
+					oListTable = this._oDialogSelection.getContent()[0].getAggregation("sections")[4].getItems()[0];
 					oListTable.addEventDelegate(this._listTableEventDelegate, this);
 					RuleModelHandler.loadInitialModelValues(oCustomData);
 					RuleModelHandler.loadValueRangeModel(oDialog, oSettingModel, oCustomData);
@@ -977,24 +979,7 @@ sap.ui.define([
 		 * @returns {void}
 		 */
 		onPressSaveDialogExposeAttribute: function () {
-			// var oBundle, oMultiInput, oView = this.getView(), oViewModel = oView.getModel("viewModel"), oEntry;
-			// oMultiInput = this._oExposeAttributeDialog.getContent()[0].getAggregation("form").getFormContainers()[0].getFormElements()[1].getFields()[0]
-			// //oDataModel = oView.getModel();
-			// oBundle = oView.getModel("i18n").getResourceBundle();
-			// oEntry = oViewModel.getProperty("/Data");
-			// if (oEntry.AttributeId != "" && oEntry.Policy != "") {
-			// 	oViewModel.setProperty("/AttrErrorState", "None");
-			// }
-			// if (oViewModel.getProperty("/Data/AttributeId") == "" || oViewModel.getProperty("/AttrErrorState") == "Error") {
-			// 	oViewModel.setProperty("/AttrErrorState", "Error");
-			// 	oViewModel.setProperty("/AttrErrorMessage", oBundle.getText("msgErrorAttributeNameMandatory"));
-			// 	oMultiInput.focus();
-			// 	return;
-			// } else {
-			// 	oViewModel.setProperty("/AttrErrorState", "None");
-			// 	oViewModel.setProperty("/AttrErrorMessage", "");
-			// }
-			// this._checkForDuplicateEntry(oEntry, oMultiInput);
+			
 			var oContext,
 				oView = this.getView(), oViewModel = oView.getModel("viewModel"),
 				oDataModel = oView.getModel(),
@@ -1096,10 +1081,10 @@ sap.ui.define([
 		 *
 		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
 		 * @private
-		 * @name _userAttributeTableEventDelegate
+		 * @name _attributeTableEventDelegate
 		 * @property {function} onAfterRendering - Handler executed after the table is rendered.
 		 */
-		_userAttributeTableEventDelegate: {
+		_attributeTableEventDelegate: {
 			onAfterRendering: function (oEvent) {
 				var aItems, iItem, oItemData, oCustomData, oItem;
 				oCustomData = this._oDialogSelection.getModel("setting").getData();
@@ -1272,7 +1257,7 @@ sap.ui.define([
 		 *  - Forward the data along with the current view and dialog reference
 		 *    to RuleModelHandler for model update processing
 		 *
-		 * @function onPressUserAttributeItem
+		 * @function onPressAttributeItem
 		 * @memberof pl.dac.apps.fnconfig.controller.RuleBuilder
 		 * @public
 		 *
@@ -1281,12 +1266,12 @@ sap.ui.define([
 		 *
 		 * @returns {void}
 		 */
-		onPressUserAttributeItem: function (oEvent) {
+		onPressAttributeItem: function (oEvent) {
 			var oSelectedItemData = oEvent.getSource()
 				.getBindingContext()
 				.getObject();
 
-			RuleModelHandler.updateRuleModelWithUserAttrSelectionData(
+			RuleModelHandler.updateRuleModelWithAttrSelectionData(
 				this.getView(),
 				this._oDialogSelection,
 				oSelectedItemData
@@ -1383,11 +1368,7 @@ sap.ui.define([
 			var oView = this.getView(), oSubSection = oView.byId("idRuleSubSectionBlock"),
 				oRuleData = oView.getModel("ruleModel").getData(),
 				oEmptyRuleModel, aTypes, iType, oEmptyRule, bPreCondition = false;
-			if (({}).hasOwnProperty.call(oRuleData, "types") && oRuleData.types.length > 0) {
-				this.bRuleDataUpdate = true;
-			} else {
-				this.bRuleDataUpdate = false;
-			}
+			
 			oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", false);
 			oView.getModel("viewModel").setProperty("/bVisibleAddCondition", true);
 			aTypes = oView.getModel("ruleModel").getData().types;
@@ -1542,19 +1523,7 @@ sap.ui.define([
 			var oView = this.getView(), oDataModel = oView.getModel(),
 				oRuleData = oView.getModel("ruleModel").getData(), oPayload;
 			oPayload = RuleModelHandler.prepareRuleCreatePayload(oView, oRuleData.types);
-			// if (({}).hasOwnProperty.call(oPayload, "to_Condition") && oPayload.to_Condition.length == 0) {
-			// 	if (this.bRuleDataUpdate) {
-			// 		sMessage = oBundle.getText("msgRuleBuilderDeteleSuccessful");// "The rule data has been deleted successfully.";
-			// 	} else {
-			// 		sMessage = oBundle.getText("msgRuleBuilderNoDataProvided");//"No data has been provided for the save.";
-			// 	}
-			// } else {
-			// 	if (this.bRuleDataUpdate) {
-			// 		sMessage = oBundle.getText("msgRuleBuilderUpdateSuccessful");//"The rule data has been successfully updated.";
-			// 	} else {
-			// 		sMessage = oBundle.getText("msgRuleBuilderCreateSuccessful");//"The rule data has been successfully created.";
-			// 	}
-			// }
+			
 			oPayload.Policy = this._sPolicyName;
 			oDataModel.create("/PolRuleSet", oPayload, {
 				success: function (oData,oResponse) {

@@ -7,6 +7,8 @@ sap.ui.define([
     function (UIComponent, Device, models, JSONModel) {
         "use strict";
         return UIComponent.extend('pl.dac.apps.fnconfig.Component', {
+
+            oActionTreeTable:null,
             metadata: {
                 manifest: "json"
             },

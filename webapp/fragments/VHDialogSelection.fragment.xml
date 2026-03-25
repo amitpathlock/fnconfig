@@ -4,7 +4,7 @@
     xmlns:cus="pl.dac.apps.fnconfig.control"
     xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 > <!-- @ui5ignore -->
-   <Dialog showHeader="false" contentWidth="640px" contentHeight="580px" beforeOpen="onBeforeOpenDialog">   
+   <Dialog showHeader="false" contentWidth="840px" contentHeight="580px" beforeOpen="onBeforeOpenDialog">   
         <content>
         <!-- @ui5ignore -->
           <cus:PlDacSectionLayout  addRowInSingleValue="onAddRowInSingleValue" addRowInValueRanges="onAddRowInValueRanges"
@@ -88,6 +88,27 @@
                     <!-- @ui5ignore -->
                         <Button icon="sap-icon://add" text="Rows" class="plDacAddRows"  press=".onPressAddRowInRanges" />    
                      </VBox>
+                        <VBox>
+                      <Table items="{path:'/EnvironmentAttSet'}" mode="SingleSelectLeft" customData:title="Env. Attributes"  customData:icon="sap-icon://world" >
+                        <columns>
+                            <Column 	minScreenWidth="Tablet"  demandPopin="true">
+                                <Text text="{i18n>txtHeadrObjectPageExposeAttrTblColumnAttribute}" />
+                            </Column> 
+                             <Column 	minScreenWidth="Tablet"  demandPopin="true">
+                                <Text text="{i18n>txtHeadrObjectPageExposeAttrTblColumnAttributeDesc}" />
+                            </Column>     
+                        </columns>
+                        <items>
+                          <!-- @ui5ignore -->
+                            <ColumnListItem vAlign="Middle" type="Active" press="onPressAttributeItem">
+                                <cells>
+                                    <ObjectIdentifier title="{AttributeId}" />
+                                    <Text text="{Description}"/>
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                     </VBox>
                      <VBox>
                       <Table items="{path:'/UserAttrSet'}" mode="SingleSelectLeft" customData:title="User Attributes"  customData:icon="sap-icon://person-placeholder" >
                         <columns>
@@ -100,7 +121,7 @@
                         </columns>
                         <items>
                           <!-- @ui5ignore -->
-                            <ColumnListItem vAlign="Middle" type="Active" press="onPressUserAttributeItem">
+                            <ColumnListItem vAlign="Middle" type="Active" press="onPressAttributeItem">
                                 <cells>
                                     <ObjectIdentifier title="{AttributeId}" />
                                     <Text text="{Description}"/>
@@ -123,7 +144,7 @@
                         </columns>
                         <items>
                           <!-- @ui5ignore -->
-                            <ColumnListItem class="plDacRowSelected" vAlign="Middle" type="Active" press="onPressUserAttributeItem">
+                            <ColumnListItem class="plDacRowSelected" vAlign="Middle" type="Active" press="onPressAttributeItem">
                                 <cells>
                                     <ObjectIdentifier title="{ListId}" />
                                     <Text text="{Description}"/>

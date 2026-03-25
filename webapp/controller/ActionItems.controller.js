@@ -32,9 +32,9 @@ sap.ui.define([
          * @returns {void}
          */
         onInit: function () {
-           var oView = this.getView();
-         this.oActionTreeTable = oView.getContent()[0].getContent()[0]; // Tree table
-          this._oRouter = this.getOwnerComponent().getRouter();
+            var oView = this.getView();
+            this.getOwnerComponent().oActionTreeTable = oView.getContent()[0].getContent()[0]; // Tree table
+            this._oRouter = this.getOwnerComponent().getRouter();
         },
 
         /**
@@ -65,7 +65,7 @@ sap.ui.define([
         onSelectionChange: function (oEvent) {
             var oContextData = oEvent.getParameter("listItem").getBinding("icon").getContext().getObject();
             this.getView().getModel("layoutMode").setProperty("/layout", "TwoColumnsMidExpanded");
-            
+
             if (oContextData.Target != "") {
                 if (hasher.getHashAsArray()[1] && hasher.getHashAsArray()[1] != oContextData.Target.trim()) {
                     sap.ui.core.BusyIndicator.show();
@@ -73,7 +73,7 @@ sap.ui.define([
                 this._oRouter.navTo(oContextData.Target.trim());
             }
         },
-        
+
 
         /**
          * Lifecycle hook executed after the view has been rendered.

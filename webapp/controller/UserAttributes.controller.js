@@ -41,8 +41,8 @@ sap.ui.define([
 		 */
 		onInit: function () {
 			this.oEditContext = null;
-			this.oRouter = this.getOwnerComponent().getRouter();
-			this.oRouter.getRoute(PlDacConst.ROUTE_PATH_USER_ATTRIBUTE).attachPatternMatched(this._onRouteMatched, this);
+			this._oRouter = this.getOwnerComponent().getRouter();
+			this._oRouter.getRoute(PlDacConst.ROUTE_PATH_USER_ATTRIBUTE).attachPatternMatched(this._onRouteMatched, this);
 			this.addAdditionalButtonIntoTheAttributeTableToolbar(this.getView().byId("idSmartTableUserAttribute"));
 		},
 
@@ -116,7 +116,29 @@ sap.ui.define([
 
 		},
 
-	
+		/** Event handler for `onTableUpdateFinished` table event
+			 * Retrieves the reference to the current table and stores it in the local variable `oTable`
+			 * Invoke the `removeSelections` method on the table and pass in a parameter of `true`.
+			 * @param {sap.ui.base.Event} oEvent 
+			 * @public
+			 * @memberOf pl.dac.apps.fnconfig.controller.EnvAttribute
+			 */
+		onTableUpdateFinished: function (oEvent) {
+			var oTable = oEvent.getSource(), aItems, iItem, oCtx, oSingleSelect;
+			oTable.setBusy(false);
+			oTable.removeSelections(true);
+			aItems = oTable.getItems();
+			for (iItem = 0; iItem < aItems.length; iItem++) {
+				oSingleSelect = aItems[iItem].getSingleSelectControl();
+				oCtx = aItems[iItem].getBindingContext();
+				if (oCtx.getProperty("PreDefined") == "X") {
+					oSingleSelect.setEditable(false);
+					oSingleSelect.addStyleClass("not-allowed");
+					oSingleSelect.setTooltip("Selection is disabled because it is not permitted for predefined");
+				}
+			}
+
+		},
 
 		/**
 		 * Lifecycle hook executed after the view has been rendered.

@@ -83,10 +83,10 @@ sap.ui.define([
 
 				}
 			});
-			if (!this.oActionTreeTable) {
-				this.oActionTreeTable = oView.getParent().getParent().getAggregation("_beginColumnNav").getAggregation("pages")[0].getContent()[0].getContent()[0];
+			if (!this.getOwnerComponent().oActionTreeTable) {
+				this.getOwnerComponent().oActionTreeTable = oView.getParent().getParent().getAggregation("_beginColumnNav").getAggregation("pages")[0].getContent()[0].getContent()[0];
 			}
-			var oTree = this.oActionTreeTable;
+			var oTree = this.getOwnerComponent().oActionTreeTable;
 			this.oActionTreeTable.attachUpdateFinished(function () {
 				var lArr = this.lArr, aExpandedNodes, iExpand;
 				aExpandedNodes = oTree.getItems();
