@@ -37,7 +37,7 @@
                 smartFilterId="smartFilterBar-ua"
                 tableType="ResponsiveTable"
                 header="{i18n>titPIPSmartTableUserAttribute}"
-               
+                beforeRebindTable="onBeforeRebindTable"
                 persistencyKey="SmartTableAnalytical_Explored"
                 enableAutoBinding="true"
                 demandPopin="true"

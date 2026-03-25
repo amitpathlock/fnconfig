@@ -139,6 +139,16 @@ sap.ui.define([
 			}
 
 		},
+		onBeforeRebindTable: function (oEvent) {
+			var oBindingParams = oEvent.getParameter("bindingParams");
+			if (oBindingParams.parameters.select) {
+				if (!oBindingParams.parameters.select.includes("PreDefined")) {
+					oBindingParams.parameters.select = oBindingParams.parameters.select + ",PreDefined";
+				}
+
+			}
+
+		},
 
 		/**
 		 * Lifecycle hook executed after the view has been rendered.
