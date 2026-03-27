@@ -87,7 +87,7 @@ sap.ui.define([
 				this.getOwnerComponent().oActionTreeTable = oView.getParent().getParent().getAggregation("_beginColumnNav").getAggregation("pages")[0].getContent()[0].getContent()[0];
 			}
 			var oTree = this.getOwnerComponent().oActionTreeTable;
-			this.oActionTreeTable.attachUpdateFinished(function () {
+			oTree.attachUpdateFinished(function () {
 				var lArr = this.lArr, aExpandedNodes, iExpand;
 				aExpandedNodes = oTree.getItems();
 				for (iExpand = 0; iExpand < aExpandedNodes.length; iExpand++) {
@@ -153,14 +153,14 @@ sap.ui.define([
 					
 					oView.setBusy(false);
 
-					aExpandedNodes = this.oActionTreeTable.getItems();
+					aExpandedNodes = this.getOwnerComponent().oActionTreeTable.getItems();
 					for (iExpand = 0; iExpand < aExpandedNodes.length; iExpand++) {
 						if (aExpandedNodes[iExpand].getExpanded()) {
 							this.lArr.push(aExpandedNodes[iExpand]);
 						}
 					}
-					this.oActionTreeTable.getBinding("items").refresh();
-					this.oActionTreeTable.setBusy(true);
+					this.getOwnerComponent().oActionTreeTable.getBinding("items").refresh();
+					this.getOwnerComponent().oActionTreeTable.setBusy(true);
 					MessageToast.show(JSON.parse(oResponse.headers["sap-message"]).message);
 				}.bind(this),
 				error: function (oError) {
