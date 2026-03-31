@@ -240,6 +240,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     return lineHTML;
                 }.bind(this);
 
+
                 // Build Precondition HTML
                 if (aPreconditions.length > 0) {
                     sPreConditionHTML = `<div class="plDacHTMLruleBlock">
@@ -271,7 +272,10 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     });
                     sRulesHTML += `</div></div>`;
                 }
-
+                
+                if(sPreConditionHTML!=""){
+                    sPreConditionHTML+=`<div style='color:#354a5f;padding-left:12px;margin-top:3px;'>${"*".repeat(140)}</div>`;;
+                }
                 // Determine content and toolbar
                 var oContent, sBtnText, sBtnIcon;
                 if (!sPreConditionHTML && !sRulesHTML) {
