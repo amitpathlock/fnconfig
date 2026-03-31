@@ -143,7 +143,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     `<span ${style}>${text}</span>`;
 
                 let sContent = "";
-                sContent="<div style='color:#354a5f;font-size:14px;font-weight:600;margin-bottom: 2px;'>Attribute ID: "+oDialog.data("AttributeId")+"</div>";
+                sContent = "<div style='color:#354a5f;font-size:14px;font-weight:600;margin-bottom: 2px;'>Attribute ID: " + oDialog.data("AttributeId") + "</div>";
                 sContent += `<div style='color:#354a5f'>${"*".repeat(98)}</div>`;
                 aRules.forEach((rule, ruleIndex) => {
                     sContent += `<div class='plDacDCRules'><b> Rule : ${ruleIndex + 1} </b></div>`;
@@ -192,7 +192,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                 oDialog.setBusy(false);
                 oDialog.addContent(new HTML({ content: sContent, preferDOM: true }));
             },
-            
+
             /**
              * Creates a read-only rule display panel.
              * 
@@ -203,106 +203,125 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
              * @param {sap.ui.core.mvc.Controller} oController - Controller instance for Edit action.
              * @returns {sap.m.Panel} Rendered panel containing HTML rule display.
              */
-            createDiplayRuleReadOnly: function (lRuleTypes, oView) {
-                var iRule, sBtnText, sBtnIcon, iCondition, oContent, sPolicyName, iRuleTypes, oToolbar,
-                    oSubSection = oView.byId("idRuleSubSectionBlock"), aPrecondition = null, aRulesCondition = null, sPreConditon = "", sRule = "", aRules;
-                for (iRuleTypes = 0; iRuleTypes < lRuleTypes.length; iRuleTypes++) {
-                    if (lRuleTypes[iRuleTypes].RuleType == PlDacConst.PRE_CONDITION_RULE_TYPE) {
-                        aPrecondition = lRuleTypes[iRuleTypes].Condition;
+            createDisplayRuleReadOnly: function (lRuleTypes, oView) {
+                var oSubSection = oView.byId("idRuleSubSectionBlock"),
+                    aPreconditions = [],
+                    aRulesConditions = [],
+                    sPolicyName = oView.getElementBinding().getBoundContext().getProperty("PolicyName"),
+                    sPreConditionHTML = "",
+                    sRulesHTML = "";
+
+                // Separate preconditions and rules
+                lRuleTypes.forEach(function (ruleType) {
+                    if (ruleType.RuleType === PlDacConst.PRE_CONDITION_RULE_TYPE) {
+                        aPreconditions = aPreconditions.concat(ruleType.Condition || []);
                     } else {
-                        aRulesCondition = lRuleTypes[iRuleTypes].Condition;
+                        aRulesConditions = aRulesConditions.concat(ruleType.Condition || []);
                     }
-                }
+                });
 
-                if (aPrecondition && aPrecondition.length > 0) {
-                    sPreConditon = "<div class=\"plDacHTMLruleBlock\"><div class=\"plDacHTMLRuleTitle\">Precondition:</div>";
-                    sPreConditon += "<div class=\"plDacHTMLIfblock\" ><div style=\"height: 23px;color: #0a6ed1;font-weight:600;\">IF</div>";
-                    for (iCondition = 0; iCondition < aPrecondition.length; iCondition++) {
-                        aRules = aPrecondition[iCondition].Rules;
-                        for (iRule = 0; iRule < aRules.length; iRule++) {
-                            if (iRule == 0) {
-                                sPreConditon += "<div class=\"plDacHTMLRuleLine\">" + aRules[iRule].Attribute + "<b style=\"margin-left:12px;margin-right:12px;\">" + aRules[iRule].Operator + "</b>" + this._mergeValues(aRules[iRule]) + "</div>";
-                            } else {
-                                sPreConditon += "<div class=\"plDacHTMLRuleLine\"><span style=\"margin-right:10px;color: #e9730c;font-weight:600;\">" + aRules[iRule].ContitionType + "</span>" + aRules[iRule].Attribute + "<b style=\"margin-left:12px;margin-right:12px;\">" + aRules[iRule].Operator + "</b>" + this._mergeValues(aRules[iRule]) + "</div>";
-                            }
-                        }
+                // Helper function to build rule line HTML
+                var buildRuleLine = function (rule, showConditionType) {
+                    var lineHTML = "";
+                    if (showConditionType) {
+                        lineHTML += `<div class="plDacHTMLRuleLine">
+                            <span class="plDacConditionType" style="color: #e9730c;font-weight:600;">${rule.ContitionType}</span>`;
+                    } else {
+                        lineHTML += `<div class="plDacHTMLRuleLine">`;
                     }
-                    sPreConditon += "</div></div>";
-                    sPreConditon += "<div style=\"background:#fff;padding-left: 1rem;\">*******************************************************************</div>";
-                }
 
-                if (aRulesCondition && aRulesCondition.length > 0) {
-                    sRule = "<div class=\"plDacHTMLruleBlock\"><div class=\"plDacHTMLRuleTitle\">Rule:</div>";
-                    sRule += "<div class=\"plDacHTMLIfblock\" ><div style=\"height: 23px;color: #0a6ed1;font-weight:600;\">IF</div>";
-                    for (iCondition = 0; iCondition < aRulesCondition.length; iCondition++) {
-                        aRules = aRulesCondition[iCondition].Rules;
-                        if (aRulesCondition[iCondition].CType == "ELSE IF") {
-                            sRule += "<div class=\"plDacHTMLRuleOR\" style='color: #e9730c;font-weight:600;'>OR</div>";
-                            sRule += "<div style=\"height: 23px;color: #0a6ed1;font-weight:600;\">IF</div>";
-                        }
-                        for (iRule = 0; iRule < aRules.length; iRule++) {
-                            if (iRule == 0) {
-                                if ((aRules[iRule].Attribute).includes("DATA.CLASS")) {
-                                    sRule += "<div class=\"plDacHTMLRuleLine\"><a href='#' class='plDacDataClassification' title='Click here to view the classification rules'>" + aRules[iRule].Attribute + "</a><b style=\"margin-left:12px;margin-right:12px;\">" + aRules[iRule].Operator + "</b>" + this._mergeValues(aRules[iRule]) + "</div>";
-                                } else {
-                                    sRule += "<div class=\"plDacHTMLRuleLine\">" + aRules[iRule].Attribute + "<b style=\"margin-left:12px;margin-right:12px;\">" + aRules[iRule].Operator + "</b>" + this._mergeValues(aRules[iRule]) + "</div>";
-                                }
-
-                            } else {
-                                sRule += "<div class=\"plDacHTMLRuleLine\"><span  style='margin-right:10px;color: #e9730c;font-weight:600;'>" + aRules[iRule].ContitionType + "</span>" + aRules[iRule].Attribute + "<b style=\"margin-left:12px;margin-right:12px;\">" + aRules[iRule].Operator + "</b>" + this._mergeValues(aRules[iRule]) + "</div>";
-                            }
-                        }
+                    if (rule.Attribute.includes("DATA.CLASS")) {
+                        lineHTML += `<span><a href="#" class="plDacDataClassification" title="Click here to view the classification rules">${rule.Attribute}</a></span>`;
+                    } else {
+                        lineHTML += '<span>' + rule.Attribute + '</span>';
                     }
-                    sRule += "</div></div>";
-                }
 
-                sPolicyName = oView.getElementBinding().oElementContext.getProperty("PolicyName");
-                if (sPreConditon == "" && sRule == "") {
-                    oContent = new sap.m.Title({
-                        text: "There is no rule data available for the policy `" + sPolicyName + "`.",
-                        visible: "{viewModel>/ShowNoRecordFound}"
+                    lineHTML += `<span><b class="plDacOperator">${rule.Operator}</b></span>${this._mergeValues(rule)}</div>`;
+                    return lineHTML;
+                }.bind(this);
+
+                // Build Precondition HTML
+                if (aPreconditions.length > 0) {
+                    sPreConditionHTML = `<div class="plDacHTMLruleBlock">
+                                <div class="plDacHTMLRuleTitle">Precondition:</div>
+                                <div class="plDacHTMLIfblock">
+                                    <div class="plDacIfTitle" style="margin-bottom:4px;color: #0a6ed1;font-weight:600;">IF</div>`;
+                    aPreconditions.forEach(function (condition) {
+                        condition.Rules.forEach(function (rule, index) {
+                            sPreConditionHTML += buildRuleLine(rule, index > 0);
+                        });
                     });
-                    oContent.addStyleClass("plDacNoRecordFound");
+                    sPreConditionHTML += `</div></div>
+                              <div class="plDacRuleSeparator"></div>`;
+                }
+
+                // Build Rules HTML
+                if (aRulesConditions.length > 0) {
+                    sRulesHTML = `<div class="plDacHTMLruleBlock">
+                        <div class="plDacHTMLRuleTitle">Rule:</div>
+                        <div class="plDacHTMLIfblock">
+                            <div class="plDacIfTitle" style="margin-bottom:4px;color: #0a6ed1;font-weight:600;">IF</div>`;
+                    aRulesConditions.forEach(function (condition) {
+                        if (condition.CType === "ELSE IF") {
+                            sRulesHTML += `<div class="plDacHTMLRuleOR" style="color: #e9730c;font-weight:600;">OR</div><div class="plDacIfTitle" style="margin-bottom:4px;color: #0a6ed1;font-weight:600;">IF</div>`;
+                        }
+                        condition.Rules.forEach(function (rule, index) {
+                            sRulesHTML += buildRuleLine(rule, index > 0);
+                        });
+                    });
+                    sRulesHTML += `</div></div>`;
+                }
+
+                // Determine content and toolbar
+                var oContent, sBtnText, sBtnIcon;
+                if (!sPreConditionHTML && !sRulesHTML) {
+                    oContent = new sap.m.Title({
+                        text: `There is no rule data available for the policy "${sPolicyName}".`,
+                        visible: "{viewModel>/ShowNoRecordFound}"
+                    }).addStyleClass("plDacNoRecordFound");
                     sBtnIcon = "sap-icon://add";
                     sBtnText = "Manage Rule";
                 } else {
-                    oContent = new HTML({
-                        // The 'content' property holds the raw HTML string
-                        content:
-                            sPreConditon + sRule,
-                        preferDOM: true // Renders the HTML as a native DOM element
+                    oContent = new sap.ui.core.HTML({
+                        content: sPreConditionHTML + sRulesHTML,
+                        preferDOM: true
                     });
                     sBtnIcon = "sap-icon://edit";
                     sBtnText = "Modify Rule";
                 }
-                oToolbar = new Toolbar({
+
+                var oToolbar = new sap.m.Toolbar({
                     content: [
-                        new sap.m.ToolbarSpacer(), // Pushes buttons to the right
-                        new Button({ text: sBtnText, icon: sBtnIcon, press: oView.getController().onPressEditRuleBtn.bind(oView.getController()) }).addStyleClass("plDacHTMLEditBtn"),
+                        new sap.m.ToolbarSpacer(),
+                        new sap.m.Button({
+                            text: sBtnText,
+                            icon: sBtnIcon,
+                            press: oView.getController().onPressEditRuleBtn.bind(oView.getController())
+                        }).addStyleClass("plDacHTMLEditBtn")
                     ]
-                });
-                oToolbar.addStyleClass("plDacHTMLRuleToolbar");
+                }).addStyleClass("plDacHTMLRuleToolbar");
+
                 oSubSection.removeAllBlocks();
-                var oPanel = new Panel({
-                    // headerToolbar: oHeaderToolbar,
+
+                var oPanel = new sap.m.Panel({
                     content: [oToolbar, oContent]
                 }).addStyleClass("plDacRulePanel");
-                if (oPanel) {
-                    oPanel.addEventDelegate({
-                        onAfterRendering: function () {
 
-                            document.querySelector(".plDacDataClassification").onclick = function (oEvent) {
+                // Event binding for all DATA.CLASS links
+                oPanel.addEventDelegate({
+                    onAfterRendering: function () {
+                        document.querySelectorAll(".plDacDataClassification").forEach(function (el) {
+                            el.onclick = function (oEvent) {
                                 oEvent.preventDefault();
                                 oView.getController().displayDataClassificationRules(oEvent.target.innerHTML);
                             };
+                        });
+                    }
+                });
 
-
-                        }
-                    }, this);
-                }
                 return oPanel;
             },
-
+           
             /**
          * Converts rule values and value ranges into a readable string format.
          * Used in display mode to show combined values like:
@@ -316,51 +335,45 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @returns {string} A formatted string representation of the rule values.
          */
             _mergeValues: function (oRule) {
-                var aValueRange, iValueRange, bComman = false, sMergeValue = "", aValueRangeU, iValueRangeU;
-                if (oRule.Operator == "BT") {
+                let sMergeValue = "";
 
-                    aValueRange = oRule.ValueRange;
-                    for (iValueRange = 0; iValueRange < aValueRange.length; iValueRange++) {
-                        if (iValueRange > 0) {
-                            sMergeValue += ",&ensp;&ensp;";
-                        }
-                        sMergeValue += "<span style=\"margin-right:12px; color: #107e3e;\">" + aValueRange[iValueRange].Lower + "</span >AND<span style=\"margin-left:12px;margin-right:0;\">" + aValueRange[iValueRange].Upper + "</span>";
-                    }
+                // Case 1: "Between" operator
+                if (oRule.Operator === "BT") {
+                    sMergeValue = oRule.ValueRange
+                        .map(range =>
+                            `<span style="margin-right:12px; color: #107e3e;">${range.Lower}</span>` +
+                            `AND` +
+                            `<span style="margin-left:12px;margin-right:0;">${range.Upper}</span>`
+                        )
+                        .join(",&ensp;&ensp;");
+
+                    // Merge with additional value conditions if needed
                     sMergeValue = this._mergeValueRangeAndValueContition(oRule.Values, oRule, sMergeValue);
+
                 } else {
-                    aValueRange = oRule.Values;
-                    //var bComman = false;
-                    aValueRangeU = Array.from(new Map(oRule.Values.map(item => [item.Operator, item])).values());
-                    for (iValueRangeU = 0; iValueRangeU < aValueRangeU.length; iValueRangeU++) {
-                        if (iValueRangeU == 0) {
-                            for (iValueRange = 0; iValueRange < aValueRange.length; iValueRange++) {
-                                if (aValueRangeU[iValueRangeU].Operator == aValueRange[iValueRange].Operator) {
-                                    if (bComman) {
-                                        sMergeValue += ",&ensp;&ensp;";
-                                    }
-                                    sMergeValue += "<span style='color: #107e3e;'>"+aValueRange[iValueRange].Value+"</span>";
-                                    bComman = true;
-                                }
+                    // Case 2: Other operators
+                    // Group values by Operator
+                    const groupedValues = oRule.Values.reduce((acc, { Operator, Value }) => {
+                        if (!acc[Operator]) acc[Operator] = [];
+                        acc[Operator].push(Value);
+                        return acc;
+                    }, {});
 
-                            }
-                        } else {
-                            sMergeValue += "<span style=\"margin-left:1rem;\"><b>" + aValueRangeU[iValueRangeU].Operator + "</b></span>";
-                            bComman = false;
-                            for (iValueRange = 0; iValueRange < aValueRange.length; iValueRange++) {
-                                if (aValueRangeU[iValueRangeU].Operator == aValueRange[iValueRange].Operator) {
-                                    if (bComman) {
-                                        sMergeValue += ",&ensp;&ensp;";
-                                    }
-                                    sMergeValue +="<span style='color: #107e3e;'>"+ aValueRange[iValueRange].Value+"</span>";
-                                    bComman = true;
-                                }
+                    const operators = Object.keys(groupedValues);
+                    sMergeValue = operators.map((op, index) => {
+                        const valuesHTML = groupedValues[op]
+                            .map(val => `<span style="color: #107e3e;">${val}</span>`)
+                            .join(",&ensp;&ensp;");
 
-                            }
-                        }
-                    }
+                        return index === 0
+                            ? valuesHTML
+                            : `<span style="margin-left:1rem;"><b>${op}</b></span>${valuesHTML}`;
+                    }).join("");
                 }
+
                 return sMergeValue;
             },
+            
             /**
              * Merges value range conditions from a rule object into a formatted HTML string.
              *

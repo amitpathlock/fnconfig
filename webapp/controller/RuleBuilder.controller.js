@@ -101,11 +101,11 @@ sap.ui.define([
 				});
 				var oRuleModel = new JSONModel({ types: [] });
 				oView.setModel(oRuleModel, "ruleModel");
-				this._sPolicyName = sPolicy;
+
 				oView.setModel(oModel, "viewModel");
 				this.getView().setModel(new JSONModel({ types: [] }), "ruleModel");
 				this._loadOperatorModel();
-				this._readPolicyRulesDetails(this._sPolicyName);
+				this._readPolicyRulesDetails(sPolicy);
 
 				if (this._oDialogSelection && this._oDialogSelection.getContent() && this._oDialogSelection.getContent()[0]) {
 
@@ -132,7 +132,7 @@ sap.ui.define([
 						}).addStyleClass("plDacRuleButtonFontSize")
 					]
 				});
-				var oPolicy = new Filter("Policy", FilterOperator.EQ, this._sPolicyName);
+				var oPolicy = new Filter("Policy", FilterOperator.EQ, sPolicy);
 				var aFilters = [oPolicy]
 				this._oExposedAttrTable.bindAggregation("items", {
 					path: "/ExposeAttrSet", // The main entity set
@@ -176,9 +176,13 @@ sap.ui.define([
 		 * @private
 		 */
 		_readPolicyRulesDetails: function (sPolicyName) {
-			var oView = this.getView(), oViewModel = oView.getModel("viewModel"),
-				oDataModel = oView.getModel(),
-				sPath = "/PolRuleSet('" + sPolicyName + "')";
+			var oView = this.getView(), oViewModel = oView.getModel("viewModel"), sPath,
+				oDataModel = oView.getModel();
+
+			sPath = oView.getModel().createKey("/PolRuleSet", {
+				Policy: sPolicyName
+			});
+
 			oDataModel.read(sPath, {
 				urlParameters: {
 					"$expand": "to_Condition/to_Rule/to_Value,to_Condition/to_Rule/to_Value/to_ValueRange" // Expand to_Condition/to_Rule/to_Value
@@ -220,7 +224,7 @@ sap.ui.define([
 			aTypes = oView.getModel("ruleModel").getData().types;
 			aTypes = aTypes ? aTypes : [];
 			oSubSection.addBlock(new sap.m.VBox({ height: "300px" }));
-			oSubSection.addBlock(RuleModelHandler.createDiplayRuleReadOnly(aTypes, oView));
+			oSubSection.addBlock(RuleModelHandler.createDisplayRuleReadOnly(aTypes, oView));
 
 		},
 		/**
@@ -748,8 +752,11 @@ sap.ui.define([
 		 */
 		onExponseAttributeVHRequested: function () {
 			var oView = this.getView(), oColAttrName, oFilterBar,
-				oColAttrDesc,
+				oColAttrDesc, oFilterDataAttr, oFilterEnvAttr,
 				that = this;
+			oFilterDataAttr = new sap.ui.model.Filter("AttributeId", sap.ui.model.FilterOperator.Contains, "DATA.");
+			oFilterEnvAttr = new sap.ui.model.Filter("AttributeId", sap.ui.model.FilterOperator.Contains, "ENV.");
+
 			oFilterBar = new sap.ui.comp.filterbar.FilterBar({
 				advancedMode: true,
 				// filterContainerWidth: "10rem",
@@ -799,7 +806,8 @@ sap.ui.define([
 					if (oTable.bindRows) {
 						// Bind rows to the ODataModel and add columns
 						oTable.bindAggregation("rows", {
-							path: "/DataAttrSet",
+							path: "/AttrSet",
+							filters: [oFilterDataAttr, oFilterEnvAttr],
 							events: {
 								dataReceived: function () {
 									that._oVHDialogAttribute.update();
@@ -817,12 +825,15 @@ sap.ui.define([
 							fieldName: "Description"
 						});
 						oTable.addColumn(oColAttrDesc);
+
 					}
 					// For Mobile the default table is sap.m.Table
 					if (oTable.bindItems) {
+
 						// Bind items to the ODataModel and add columns
 						oTable.bindAggregation("items", {
-							path: "/DataAttrSet",
+							path: "/AttrSet",
+							filters: [oFilterDataAttr, oFilterEnvAttr],
 							template: new ColumnListItem({
 								cells: [new Label({ text: "{AttributeId}" }), new Label({ text: "{Description}" })]
 							}),
@@ -834,6 +845,7 @@ sap.ui.define([
 						});
 						oTable.addColumn(new Column({ header: new Label({ text: "Attribute Name" }) }));
 						oTable.addColumn(new Column({ header: new Label({ text: "Description" }) }));
+
 					}
 					that._oVHDialogAttribute.update();
 				});
@@ -933,8 +945,11 @@ sap.ui.define([
 		 */
 		validateAttibuteInput: function (sAttribute, oMultiInput) {
 			var oBundle, oView = this.getView(), oDataModel = oView.getModel(),
-				oViewModel = oView.getModel("viewModel"),
-				sPath = "/AttrSet('" + sAttribute.toUpperCase() + "')";
+				oViewModel = oView.getModel("viewModel"),sPath;
+
+			sPath = oView.getModel().createKey("/AttrSet", {
+				AttributeId: sAttribute.toUpperCase()
+			});	
 			oViewModel.setProperty("/Data/AttributeId", sAttribute);
 			oBundle = oView.getModel("i18n").getResourceBundle();
 			oDataModel.read(sPath, {
@@ -1525,7 +1540,7 @@ sap.ui.define([
 				oRuleData = oView.getModel("ruleModel").getData(), oPayload;
 			oPayload = RuleModelHandler.prepareRuleCreatePayload(oView, oRuleData.types);
 
-			oPayload.Policy = this._sPolicyName;
+			oPayload.Policy = oView.getElementBinding().getBoundContext().getProperty("Policy");
 			oDataModel.create("/PolRuleSet", oPayload, {
 				success: function (oData, oResponse) {
 					MessageToast.show(JSON.parse(oResponse.headers["sap-message"]).message);
@@ -1776,7 +1791,7 @@ sap.ui.define([
 		},
 		onDialogDataClassBeforeOpen: function (oEvent) {
 			var oView = this.getView(), oDataModel = oView.getModel(), sPath, oDialog = oEvent.getSource();
-
+			
 			sPath = "/ClassificationAttrSet('" + oEvent.getSource().data("AttributeId") + "')";
 			oDataModel.read(sPath, {
 				urlParameters: {
@@ -1785,7 +1800,7 @@ sap.ui.define([
 				success: function (oData) {
 					if (oData.to_Value.results.length > 0) {
 						RuleModelHandler.createDataClassificationRuleReadOnly(oData.to_Value.results, oDialog);
-					} 
+					}
 
 				}.bind(this),
 				error: function (oError) {

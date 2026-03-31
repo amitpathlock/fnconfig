@@ -48,7 +48,11 @@
                             suggestionItemSelected="onExposeAttrSuggestionItemSelected"
                            
                         	suggestionRows="{
-                                path: '/DataAttrSet',
+                                path: '/AttrSet',
+                                filters: [ 
+                                    { path: 'AttributeId', operator: 'Contains', value1: 'DATA.' },
+                                    { path: 'AttributeId', operator: 'Contains', value1: 'ENV.' } 
+                                ] ,
                                 length: 1000
                             }" 
                     >
