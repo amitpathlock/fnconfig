@@ -143,7 +143,8 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     `<span ${style}>${text}</span>`;
 
                 let sContent = "";
-
+                sContent="<div style='color:#354a5f;font-size:14px;font-weight:600;margin-bottom: 2px;'>Attribute ID: "+oDialog.data("AttributeId")+"</div>";
+                sContent += `<div style='color:#354a5f'>${"*".repeat(98)}</div>`;
                 aRules.forEach((rule, ruleIndex) => {
                     sContent += `<div class='plDacDCRules'><b> Rule : ${ruleIndex + 1} </b></div>`;
 
@@ -185,7 +186,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     );
 
                     // Divider
-                    sContent += `<div style='color:#354a5f'>${".".repeat(120)}</div>`;
+                    sContent += `<div style='color:#354a5f'>${".".repeat(136)}</div>`;
                 });
 
                 oDialog.setBusy(false);

@@ -1785,9 +1785,7 @@ sap.ui.define([
 				success: function (oData) {
 					if (oData.to_Value.results.length > 0) {
 						RuleModelHandler.createDataClassificationRuleReadOnly(oData.to_Value.results, oDialog);
-					} else {
-						//
-					}
+					} 
 
 				}.bind(this),
 				error: function (oError) {
