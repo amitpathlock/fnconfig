@@ -189,10 +189,12 @@ sap.ui.define([
 
                 var sPrefix = oSettingData.Value.split(".")[0];
 
-                if (sPrefix === "USER") {
+                if (sPrefix === "ENV") {
                     iIndex = 2;
-                } else if (sPrefix === "LIST") {
+                } else if (sPrefix === "USER") {
                     iIndex = 3;
+                } else if (sPrefix === "LIST") {
+                    iIndex = 4;
                 }
             }
             // Hide all content divs except the idx==iIndex
