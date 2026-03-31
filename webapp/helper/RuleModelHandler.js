@@ -6,7 +6,13 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
     "sap/m/Button",
     "pl/dac/apps/fnconfig/const/PlDacConst"
 ],
-    function (JSONModel, Rule, HTML, Panel, Toolbar, Button,PlDacConst) {
+    function (JSONModel,
+        Rule,
+        HTML,
+        Panel,
+        Toolbar,
+        Button,
+        PlDacConst) {
         "use strict";
         /**
      * Rule Utility Library
@@ -40,7 +46,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                         oConditionRules = {
                             CType: "IF",
                             RuleType: PlDacConst.PRE_CONDITION_RULE_TYPE,
-                            Rows:iResult+1,
+                            Rows: iResult + 1,
                             CTypeID: aResults[iResult].CondId, Rules: []
                         };
                         oConditionRules["Rules"] = this._preparePreconditionRuleBody(aResults[iResult], iResult);
@@ -54,20 +60,20 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                                 oConditionRules = {
                                     CType: "IF",
                                     RuleType: "Rules",
-                                    CTypeID: iResult+1,
+                                    CTypeID: iResult + 1,
                                     Rules: []
                                 };
-                                oConditionRules["Rules"] = this._prepareRuleBody(aResults[iResult], iResult+1);
+                                oConditionRules["Rules"] = this._prepareRuleBody(aResults[iResult], iResult + 1);
                                 lArr.push(oConditionRules);
                             }
                         } else {
                             oConditionRules = {
                                 CType: "ELSE IF",
                                 RuleType: "Rules",
-                                CTypeID: iResult+1,
+                                CTypeID: iResult + 1,
                                 Rules: []
                             };
-                            oConditionRules["Rules"] = this._prepareRuleBody(aResults[iResult], iResult+1);
+                            oConditionRules["Rules"] = this._prepareRuleBody(aResults[iResult], iResult + 1);
                             lArr.push(oConditionRules);
 
                         }
@@ -81,21 +87,126 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                 oView.getModel("ruleModel").setData({ types: lRuleTypes });
             },
 
+            _handleDataClassificationMultipleValues: function (aValues) {
+                if (!Array.isArray(aValues) || aValues.length === 0) return "";
+
+                const formatBT = (item) =>
+                    `${item.Low} AND ${item.High}`;
+
+                const wrap = (option, content) =>
+                    `<span><b>${option}</b></span><span style='color:#107e3e;'>${content}</span>`;
+
+                // Single value case
+                if (aValues.length === 1) {
+                    const item = aValues[0];
+                    const content = item.Options === "BT"
+                        ? formatBT(item)
+                        : item.Low;
+
+                    return wrap(item.Options, content);
+                }
+
+                // Group by Options (instead of Operator — assuming that's what you intended)
+                const grouped = aValues.reduce((acc, item) => {
+                    if (!acc[item.Options]) acc[item.Options] = [];
+                    acc[item.Options].push(item);
+                    return acc;
+                }, {});
+
+                // Build content
+                let sContent = "";
+
+                Object.keys(grouped).forEach(option => {
+                    const values = grouped[option];
+
+                    const content = values.map(item =>
+                        option === "BT"
+                            ? formatBT(item)
+                            : item.Low
+                    ).join(", ");
+
+                    sContent += wrap(option, content);
+                });
+
+                return sContent;
+            },
+            createDataClassificationRuleReadOnly: function (aRules, oDialog) {
+                if (!Array.isArray(aRules) || !oDialog) return;
+
+                const wrapLine = (content, extraClass = "") =>
+                    `<div class='plDacHTMLRuleLine ${extraClass}'>${content}</div>`;
+
+                const label = (text, color) =>
+                    `<span style='color:${color};font-weight:600;'>${text}</span>`;
+
+                const span = (text, style = "") =>
+                    `<span ${style}>${text}</span>`;
+
+                let sContent = "";
+
+                aRules.forEach((rule, ruleIndex) => {
+                    sContent += `<div class='plDacDCRules'><b> Rule : ${ruleIndex + 1} </b></div>`;
+
+                    const conditions = rule?.to_Condition?.results || [];
+
+                    conditions.forEach((condition, condIndex) => {
+                        const attributes = condition?.to_AttributeId?.results || [];
+
+                        // IF / OR block
+                        if (condIndex === 0) {
+                            sContent += wrapLine(label("IF", "#0a6ed1"), "mb-0");
+                        } else {
+                            sContent += wrapLine(label("OR", "#e9730c"));
+                            sContent += wrapLine(label("IF", "#0a6ed1"));
+                        }
+
+                        attributes.forEach((attr, attrIndex) => {
+                            const values = attr?.to_Rule?.results || "";
+                            const attrHtml =
+                                span(attr.AttributeId) +
+                                span(this._handleDataClassificationMultipleValues(values));
+
+                            if (attrIndex === 0) {
+                                sContent += wrapLine(attrHtml);
+                            } else {
+                                sContent += wrapLine(
+                                    label("AND", "#e9730c") + attrHtml
+                                );
+                            }
+                        });
+                    });
+
+                    // THEN block
+                    sContent += wrapLine(
+                        label("THEN", "#107e3e") +
+                        span(rule.DclAttribute) +
+                        span("<b>EQ</b>") +
+                        span(rule.DclAttrVal, "style='color:#107e3e;'")
+                    );
+
+                    // Divider
+                    sContent += `<div style='color:#354a5f'>${".".repeat(120)}</div>`;
+                });
+
+                oDialog.setBusy(false);
+                oDialog.addContent(new HTML({ content: sContent, preferDOM: true }));
+            },
+            
             /**
-         * Creates a read-only rule display panel.
-         * 
-         * This method builds HTML markup dynamically to show rules in a formatted
-         * block. Used for display purposes only.
-         * 
-         * @param {Array} lRuleTypes - Prepared rule structure from `prepareRuleModel`.
-         * @param {sap.ui.core.mvc.Controller} oController - Controller instance for Edit action.
-         * @returns {sap.m.Panel} Rendered panel containing HTML rule display.
-         */
+             * Creates a read-only rule display panel.
+             * 
+             * This method builds HTML markup dynamically to show rules in a formatted
+             * block. Used for display purposes only.
+             * 
+             * @param {Array} lRuleTypes - Prepared rule structure from `prepareRuleModel`.
+             * @param {sap.ui.core.mvc.Controller} oController - Controller instance for Edit action.
+             * @returns {sap.m.Panel} Rendered panel containing HTML rule display.
+             */
             createDiplayRuleReadOnly: function (lRuleTypes, oView) {
                 var iRule, sBtnText, sBtnIcon, iCondition, oContent, sPolicyName, iRuleTypes, oToolbar,
                     oSubSection = oView.byId("idRuleSubSectionBlock"), aPrecondition = null, aRulesCondition = null, sPreConditon = "", sRule = "", aRules;
                 for (iRuleTypes = 0; iRuleTypes < lRuleTypes.length; iRuleTypes++) {
-                    if (lRuleTypes[iRuleTypes].RuleType ==PlDacConst.PRE_CONDITION_RULE_TYPE) {
+                    if (lRuleTypes[iRuleTypes].RuleType == PlDacConst.PRE_CONDITION_RULE_TYPE) {
                         aPrecondition = lRuleTypes[iRuleTypes].Condition;
                     } else {
                         aRulesCondition = lRuleTypes[iRuleTypes].Condition;
@@ -104,14 +215,14 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
 
                 if (aPrecondition && aPrecondition.length > 0) {
                     sPreConditon = "<div class=\"plDacHTMLruleBlock\"><div class=\"plDacHTMLRuleTitle\">Precondition:</div>";
-                    sPreConditon += "<div class=\"plDacHTMLIfblock\" ><div style=\"height: 23px;\">IF</div>";
+                    sPreConditon += "<div class=\"plDacHTMLIfblock\" ><div style=\"height: 23px;color: #0a6ed1;font-weight:600;\">IF</div>";
                     for (iCondition = 0; iCondition < aPrecondition.length; iCondition++) {
                         aRules = aPrecondition[iCondition].Rules;
                         for (iRule = 0; iRule < aRules.length; iRule++) {
                             if (iRule == 0) {
                                 sPreConditon += "<div class=\"plDacHTMLRuleLine\">" + aRules[iRule].Attribute + "<b style=\"margin-left:12px;margin-right:12px;\">" + aRules[iRule].Operator + "</b>" + this._mergeValues(aRules[iRule]) + "</div>";
                             } else {
-                                sPreConditon += "<div class=\"plDacHTMLRuleLine\"><span style=\"margin-right:10px;\">" + aRules[iRule].ContitionType + "</span>" + aRules[iRule].Attribute + "<b style=\"margin-left:12px;margin-right:12px;\">" + aRules[iRule].Operator + "</b>" + this._mergeValues(aRules[iRule]) + "</div>";
+                                sPreConditon += "<div class=\"plDacHTMLRuleLine\"><span style=\"margin-right:10px;color: #e9730c;font-weight:600;\">" + aRules[iRule].ContitionType + "</span>" + aRules[iRule].Attribute + "<b style=\"margin-left:12px;margin-right:12px;\">" + aRules[iRule].Operator + "</b>" + this._mergeValues(aRules[iRule]) + "</div>";
                             }
                         }
                     }
@@ -121,18 +232,23 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
 
                 if (aRulesCondition && aRulesCondition.length > 0) {
                     sRule = "<div class=\"plDacHTMLruleBlock\"><div class=\"plDacHTMLRuleTitle\">Rule:</div>";
-                    sRule += "<div class=\"plDacHTMLIfblock\" ><div style=\"height: 23px;\">IF</div>";
+                    sRule += "<div class=\"plDacHTMLIfblock\" ><div style=\"height: 23px;color: #0a6ed1;font-weight:600;\">IF</div>";
                     for (iCondition = 0; iCondition < aRulesCondition.length; iCondition++) {
                         aRules = aRulesCondition[iCondition].Rules;
                         if (aRulesCondition[iCondition].CType == "ELSE IF") {
-                            sRule += "<div class=\"plDacHTMLRuleOR\">OR</div>";
-                            sRule += "<div style=\"height: 23px;\">IF</div>";
+                            sRule += "<div class=\"plDacHTMLRuleOR\" style='color: #e9730c;font-weight:600;'>OR</div>";
+                            sRule += "<div style=\"height: 23px;color: #0a6ed1;font-weight:600;\">IF</div>";
                         }
                         for (iRule = 0; iRule < aRules.length; iRule++) {
                             if (iRule == 0) {
-                                sRule += "<div class=\"plDacHTMLRuleLine\">" + aRules[iRule].Attribute + "<b style=\"margin-left:12px;margin-right:12px;\">" + aRules[iRule].Operator + "</b>" + this._mergeValues(aRules[iRule]) + "</div>";
+                                if ((aRules[iRule].Attribute).includes("DATA.CLASS")) {
+                                    sRule += "<div class=\"plDacHTMLRuleLine\"><a href='#' class='plDacDataClassification' title='Click here to view the classification rules'>" + aRules[iRule].Attribute + "</a><b style=\"margin-left:12px;margin-right:12px;\">" + aRules[iRule].Operator + "</b>" + this._mergeValues(aRules[iRule]) + "</div>";
+                                } else {
+                                    sRule += "<div class=\"plDacHTMLRuleLine\">" + aRules[iRule].Attribute + "<b style=\"margin-left:12px;margin-right:12px;\">" + aRules[iRule].Operator + "</b>" + this._mergeValues(aRules[iRule]) + "</div>";
+                                }
+
                             } else {
-                                sRule += "<div class=\"plDacHTMLRuleLine\"><span style=\"margin-right:10px;\">" + aRules[iRule].ContitionType + "</span>" + aRules[iRule].Attribute + "<b style=\"margin-left:12px;margin-right:12px;\">" + aRules[iRule].Operator + "</b>" + this._mergeValues(aRules[iRule]) + "</div>";
+                                sRule += "<div class=\"plDacHTMLRuleLine\"><span  style='margin-right:10px;color: #e9730c;font-weight:600;'>" + aRules[iRule].ContitionType + "</span>" + aRules[iRule].Attribute + "<b style=\"margin-left:12px;margin-right:12px;\">" + aRules[iRule].Operator + "</b>" + this._mergeValues(aRules[iRule]) + "</div>";
                             }
                         }
                     }
@@ -166,10 +282,24 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                 });
                 oToolbar.addStyleClass("plDacHTMLRuleToolbar");
                 oSubSection.removeAllBlocks();
-                return new Panel({
+                var oPanel = new Panel({
                     // headerToolbar: oHeaderToolbar,
                     content: [oToolbar, oContent]
                 }).addStyleClass("plDacRulePanel");
+                if (oPanel) {
+                    oPanel.addEventDelegate({
+                        onAfterRendering: function () {
+
+                            document.querySelector(".plDacDataClassification").onclick = function (oEvent) {
+                                oEvent.preventDefault();
+                                oView.getController().displayDataClassificationRules(oEvent.target.innerHTML);
+                            };
+
+
+                        }
+                    }, this);
+                }
+                return oPanel;
             },
 
             /**
@@ -193,7 +323,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                         if (iValueRange > 0) {
                             sMergeValue += ",&ensp;&ensp;";
                         }
-                        sMergeValue += "<span style=\"margin-right:12px;\">" + aValueRange[iValueRange].Lower + "</span >AND<span style=\"margin-left:12px;margin-right:0;\">" + aValueRange[iValueRange].Upper + "</span>";
+                        sMergeValue += "<span style=\"margin-right:12px; color: #107e3e;\">" + aValueRange[iValueRange].Lower + "</span >AND<span style=\"margin-left:12px;margin-right:0;\">" + aValueRange[iValueRange].Upper + "</span>";
                     }
                     sMergeValue = this._mergeValueRangeAndValueContition(oRule.Values, oRule, sMergeValue);
                 } else {
@@ -207,7 +337,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                                     if (bComman) {
                                         sMergeValue += ",&ensp;&ensp;";
                                     }
-                                    sMergeValue += aValueRange[iValueRange].Value;
+                                    sMergeValue += "<span style='color: #107e3e;'>"+aValueRange[iValueRange].Value+"</span>";
                                     bComman = true;
                                 }
 
@@ -220,7 +350,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                                     if (bComman) {
                                         sMergeValue += ",&ensp;&ensp;";
                                     }
-                                    sMergeValue += aValueRange[iValueRange].Value;
+                                    sMergeValue +="<span style='color: #107e3e;'>"+ aValueRange[iValueRange].Value+"</span>";
                                     bComman = true;
                                 }
 
@@ -368,9 +498,9 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                         if (aValueRanges[iValueRanges].Lower.trim() != "" && aValueRanges[iValueRanges].Upper.trim() != "") {
                             aValueRanges[iValueRanges].Operator = "BT";
                             aValues.push(aValueRanges[iValueRanges]);
-                        
+
                         }
-                       
+
                     }
                     if (aValues.length > 0) {
                         sValuesRanges = aValues[0].Lower + " to " + aValues[0].Upper;
@@ -928,7 +1058,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                             iLen = aCondition[i].Rules.length;
                             oRule["CTypeID"] = oValue.CTypeID;
                             oRule["Rows"] = iLen + 1;
-                            oRule["CondId"]= oValue.CTypeID;
+                            oRule["CondId"] = oValue.CTypeID;
                             oRule["RuleType"] = PlDacConst.PRE_CONDITION_RULE_TYPE;
                             if (iLen > 0) {
                                 oRule["ContitionType"] = "AND";

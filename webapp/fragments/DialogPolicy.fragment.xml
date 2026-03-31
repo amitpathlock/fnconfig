@@ -7,7 +7,9 @@
 	<Dialog class="PlDacDailogBox" 
    beforeOpen="onBeforePolAdminPolicyDialogOpened"
    afterOpen="onAfterPolAdminPolicyDialogOpen"
-   contentWidth="620px" resizable="false" icon="{viewModel>/Icon}" title="{viewModel>/Title}">
+    contentWidth="50%"
+    contentHeight="auto"
+    resizable="false" icon="{viewModel>/Icon}" title="{viewModel>/Title}">
 		<content>
 			<!-- @ui5ignore -->
 			<f:SimpleForm editable="true" labelSpanXL="12" labelSpanL="12" labelSpanM="12" labelSpanS="12" layout="ResponsiveGridLayout" singleContainerFullSize="false">

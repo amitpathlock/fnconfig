@@ -741,7 +741,7 @@ html .sapUiContainer-Wide .sapUxAPObjectPageHeaderIdentifier {
 .plDacHTMLruleBlock{padding:12px;padding-bottom: 0;background: #fff}
 .plDacHTMLRuleTitle{margin-bottom: 12px;font-weight: 600;font-size: 14px;}
 .plDacHTMLIfblock{padding-left: 1rem;font-size: 14px;}
-.plDacHTMLRuleLine{font-size: 12px;height: 23px;color:#354a5f;}
+.plDacHTMLRuleLine{font-size: 13px;height: 23px;color:#354a5f;}
 .plDacHTMLRuleLine div{display: inline-block;}
 .plDacHTMLRuleLine span{margin-right: 1rem;}
 .plDacHTMLRuleToolbar{background:#fff;}
@@ -787,3 +787,7 @@ html .sapUiContainer-Wide .sapUxAPObjectPageHeaderIdentifier {
     fill: #fff !important;
     stroke-width: .0625rem !important;
 }
+.plDacDataClassification{font-weight: 600;}
+
+.plDacDataClassRuleDialog img{height: 1.2rem !important;width: 1.4rem !important;margin-left:-3px !important;}
+.plDacDCRules{font-size: 13px; margin-bottom: 8px;margin-top: 12px;}

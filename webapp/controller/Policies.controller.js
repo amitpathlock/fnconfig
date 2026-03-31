@@ -219,6 +219,7 @@ sap.ui.define([
 				this._oTablePolAdminPolicies.getBinding("items").refresh();
 			}
 		},
+		
 		/**
 		 * Handles the route matched event for the Policies route.
 		 * Initializes the view model with default values and configurations for the Policies view.

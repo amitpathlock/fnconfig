@@ -71,11 +71,12 @@ sap.ui.define([
 		 * @private
 		 */
 		_onRouteMatched: function (oEvent) {
-			var oModel, oView = this.getView(),sPolicy=oEvent.getParameter("arguments").PolicyName;
-			 oModel = new JSONModel({
+			var oModel, oView = this.getView(), sPolicy = oEvent.getParameter("arguments").PolicyName;
+			oModel = new JSONModel({
 				FullScreen: false,
 				ExitFullScreen: true,
 				ExitColumn: true,
+				DataClassIcon: jQuery.sap.getModulePath("pl.dac.apps.fnconfig") + "/assets/data-class.svg",
 				VisibleOK: true,
 				ShowNoRecordFound: false,
 				Title: "Expose Attribute",
@@ -449,7 +450,7 @@ sap.ui.define([
 
 		onShowValueDialog: function (oEvent) {
 			var oView = this.getView(), oInput = oEvent.getSource(), oUserAttributeTable, oListTable,
-			oEvnAttributeTable;
+				oEvnAttributeTable;
 			var oCustomData = oInput.getCustomData()[0].getValue();
 			if (oCustomData.Attribute.trim() == "") {
 				MessageToast.show("Please choose any attributes to continue.");
@@ -591,7 +592,7 @@ sap.ui.define([
 				success: function (oData, oResponse) {
 					MessageBox.success(JSON.parse(oResponse.headers["sap-message"]).message, { styleClass: "PlDacMessageBox", contentWidth: "480px" });
 					this._oExposedAttrTable.getBinding("items").refresh();
-					
+
 				}.bind(this),
 				error: function (oError) {
 					this.displayErrorMessage(oError);
@@ -979,7 +980,7 @@ sap.ui.define([
 		 * @returns {void}
 		 */
 		onPressSaveDialogExposeAttribute: function () {
-			
+
 			var oContext,
 				oView = this.getView(), oViewModel = oView.getModel("viewModel"),
 				oDataModel = oView.getModel(),
@@ -1016,7 +1017,7 @@ sap.ui.define([
 						if (oData.__batchResponses[0].__changeResponses[0].statusCode == "204") {
 							MessageBox.success(JSON.parse(oData.__batchResponses[0].__changeResponses[0].headers["sap-message"]).message, { contentWidth: "480px" });
 							this._oExposeAttributeDialog.close();
-							
+
 							this._oExposedAttrTable.getBinding("items").refresh();
 							return;
 						}
@@ -1368,7 +1369,7 @@ sap.ui.define([
 			var oView = this.getView(), oSubSection = oView.byId("idRuleSubSectionBlock"),
 				oRuleData = oView.getModel("ruleModel").getData(),
 				oEmptyRuleModel, aTypes, iType, oEmptyRule, bPreCondition = false;
-			
+
 			oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", false);
 			oView.getModel("viewModel").setProperty("/bVisibleAddCondition", true);
 			aTypes = oView.getModel("ruleModel").getData().types;
@@ -1523,10 +1524,10 @@ sap.ui.define([
 			var oView = this.getView(), oDataModel = oView.getModel(),
 				oRuleData = oView.getModel("ruleModel").getData(), oPayload;
 			oPayload = RuleModelHandler.prepareRuleCreatePayload(oView, oRuleData.types);
-			
+
 			oPayload.Policy = this._sPolicyName;
 			oDataModel.create("/PolRuleSet", oPayload, {
-				success: function (oData,oResponse) {
+				success: function (oData, oResponse) {
 					MessageToast.show(JSON.parse(oResponse.headers["sap-message"]).message);
 					this._readPolicyRulesDetails(this.getView().getBindingContext().getObject().PolicyName);
 					this._oEditRules.destroy();
@@ -1741,6 +1742,59 @@ sap.ui.define([
 				});
 				this._oDialogSelection.getContent()[0].getModel("Ranges").setData(aItems);
 			}
+		},
+		displayDataClassificationRules: function (sDataClassificationAttr) {
+			// Check if dialog already exists
+			if (!this._oDialogDataClassificationRule) {
+				// Load fragment
+				this._oDialogDataClassificationRule = Fragment.load({
+					name: "pl.dac.apps.fnconfig.fragments.DataClassification",
+					controller: this
+				}).then(function (oDialog) {
+					// Connect dialog to view lifecycle
+					this.getView().addDependent(oDialog);
+					oDialog.data("AttributeId", sDataClassificationAttr);
+					oDialog.removeAllContent();
+					oDialog.setBusy(true);
+					oDialog.open();
+					return oDialog;
+				}.bind(this));
+			} else {
+				this._oDialogDataClassificationRule.then(function (oDialog) {
+					oDialog.removeAllContent();
+					oDialog.setBusy(true);
+					oDialog.open();
+					oDialog.data("AttributeId", sDataClassificationAttr);
+
+				});
+			}
+		},
+		onDialogDataClassifictionOk: function () {
+			this._oDialogDataClassificationRule.then(function (oDialog) {
+				oDialog.close();
+			});
+		},
+		onDialogDataClassBeforeOpen: function (oEvent) {
+			var oView = this.getView(), oDataModel = oView.getModel(), sPath, oDialog = oEvent.getSource();
+
+			sPath = "/ClassificationAttrSet('" + oEvent.getSource().data("AttributeId") + "')";
+			oDataModel.read(sPath, {
+				urlParameters: {
+					"$expand": "to_Value/to_Condition/to_AttributeId/to_Rule" // Expand to_Condition/to_Rule/to_Value
+				},
+				success: function (oData) {
+					if (oData.to_Value.results.length > 0) {
+						RuleModelHandler.createDataClassificationRuleReadOnly(oData.to_Value.results, oDialog);
+					} else {
+						//
+					}
+
+				}.bind(this),
+				error: function (oError) {
+					Log.error("Read failed:" + oError);
+					sap.ui.core.BusyIndicator.hide();
+				}
+			});
 		}
 	});
 });

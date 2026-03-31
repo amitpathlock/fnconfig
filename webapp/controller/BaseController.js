@@ -1270,7 +1270,7 @@ sap.ui.define(
 							enabled: "{viewModel>/EditButtonEnabled}",
 							press: this.getView().getController()._onManageMaskingPatternBtnPress.bind(this)
 						});
-						//	btn.setIcon(jQuery.sap.getModulePath("pl.dac.apps.fnconfig") + "/assets/pattern.svg")
+						
 						btn.addStyleClass("plDacMaskingPattern");
 						oToolbar.addContent(btn);
 					}

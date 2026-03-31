@@ -40,7 +40,7 @@
                </columns>
                <!-- Data -->
                <items>
-                  <ColumnListItem>
+                  <ColumnListItem >
                    <customData>
                               <core:CustomData value="{Policy}" />
                            </customData>

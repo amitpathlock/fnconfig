@@ -1,0 +1,27 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Dialog
+       
+        title="Policy Details"
+       icon="sap-icon://documents"
+       class="PlDacDailogBox sapUiContentPadding"
+       contentWidth="50%"
+    contentHeight="auto"
+        beforeOpen="onDialogDataClassBeforeOpen"
+        
+       >
+
+       
+
+        <!-- Dialog buttons -->
+        <beginButton>
+        <!--@ui5ignore-->
+            <Button
+                text="OK"
+                press="onDialogDataClassifictionOk"/>
+        </beginButton>
+       
+    </Dialog>
+
+</core:FragmentDefinition>

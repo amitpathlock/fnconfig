@@ -4,7 +4,7 @@
         xmlns:f="sap.ui.layout.form">
          <!-- @ui5ignore -->
         <Dialog class="PlDacDailogBox"
-            icon="sap-icon://course-book"
+            icon="{viewModel>/PartternDialogIcon}"
             beforeOpen="onMaskingPatternDialogBeforeOpen"
             contentWidth="500px"
             resizable="false"

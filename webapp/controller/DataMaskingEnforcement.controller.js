@@ -81,6 +81,7 @@ sap.ui.define([
 					Description: oBundle.getText("lblDescription"),
 					Attribute: "Attribute",
 					Icon: "sap-icon://hide",
+					PartternDialogIcon:jQuery.sap.getModulePath("pl.dac.apps.fnconfig") + "/assets/pattern.svg",
 					Title: oBundle.getText("titPolInforcementDataMasking"),
 					PlaceHolder: "",
 					EditButtonEnabled: false,
