@@ -272,9 +272,9 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     });
                     sRulesHTML += `</div></div>`;
                 }
-                
-                if(sPreConditionHTML!=""){
-                    sPreConditionHTML+=`<div style='color:#354a5f;padding-left:12px;margin-top:3px;'>${"*".repeat(140)}</div>`;;
+
+                if (sPreConditionHTML != "") {
+                    sPreConditionHTML += `<div style='color:#354a5f;padding-left:12px;margin-top:3px;'>${"*".repeat(140)}</div>`;;
                 }
                 // Determine content and toolbar
                 var oContent, sBtnText, sBtnIcon;
@@ -325,7 +325,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
 
                 return oPanel;
             },
-           
+
             /**
          * Converts rule values and value ranges into a readable string format.
          * Used in display mode to show combined values like:
@@ -366,8 +366,8 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     const operators = Object.keys(groupedValues);
                     sMergeValue = operators.map((op, index) => {
                         const valuesHTML = groupedValues[op]
-                            .map(val => `<span style="color: #107e3e;">${val}</span>`)
-                            .join(",&ensp;&ensp;");
+                            .map(val => `<span style="color: #107e3e;margin-right:2px;">${val}</span>`)
+                            .join(",&ensp;");
 
                         return index === 0
                             ? valuesHTML
@@ -377,7 +377,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
 
                 return sMergeValue;
             },
-            
+
             /**
              * Merges value range conditions from a rule object into a formatted HTML string.
              *
@@ -493,76 +493,87 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
         * @param {sap.ui.core.mvc.View} oView - View that contains the ruleModel.
         * @returns {void}
         */
+
             updateRuleModelWithValueAndRangesSelectionData: function (oDialog, oView) {
-                var oData, aCondition, iCondition, iRule, oRuleModel, iValueRanges, sValuesRanges = "", aValues = [], aValueRanges, sKey = "";
-                oData = oDialog.getModel("setting").getData();
-                //if (oData.Values.length > 0) {
-                aValueRanges = oDialog.getContent()[0].getModel("SingleValues").getData();
-                sKey = "Values";
-                for (iValueRanges = 0; iValueRanges < aValueRanges.length; iValueRanges++) {
-                    if (aValueRanges[iValueRanges].Value && aValueRanges[iValueRanges].Value.trim() != "") {
-                        if (aValueRanges[iValueRanges].Operator.trim() == "") {
-                            aValueRanges[iValueRanges].Operator = "EQ";
-                        }
-                        aValues.push(aValueRanges[iValueRanges]);
-                    }
-                }
+                const oSettingData = oDialog.getModel("setting").getData();
+                const oContent = oDialog.getContent()[0];
+
+                let aValues = [];
+                let sKey = "Values";
+                let sValueDisplay = "";
+
+                // --- Helper to check non-empty string ---
+                const isNotEmpty = (val) => val && val.trim() !== "";
+
+                // --- Get Single Values ---
+                const aSingleValues = oContent.getModel("SingleValues").getData() || [];
+
+                aValues = aSingleValues
+                    .filter(item => isNotEmpty(item.Value))
+                    .map(item => ({
+                        ...item,
+                        Operator: isNotEmpty(item.Operator) ? item.Operator : "EQ"
+                    }));
+
                 if (aValues.length > 0) {
-                    sValuesRanges = aValues[0].Value;
+                    sValueDisplay = aValues[0].Value;
                 } else {
-                    aValueRanges = oDialog.getContent()[0].getModel("Ranges").getData();
+                    // --- Fallback to Ranges ---
+                    const aRanges = oContent.getModel("Ranges").getData() || [];
                     sKey = "ValueRange";
-                    for (iValueRanges = 0; iValueRanges < aValueRanges.length; iValueRanges++) {
-                        if (aValueRanges[iValueRanges].Lower.trim() != "" && aValueRanges[iValueRanges].Upper.trim() != "") {
-                            aValueRanges[iValueRanges].Operator = "BT";
-                            aValues.push(aValueRanges[iValueRanges]);
 
-                        }
+                    aValues = aRanges
+                        .filter(item => isNotEmpty(item.Lower) && isNotEmpty(item.Upper))
+                        .map(item => ({
+                            ...item,
+                            Operator: "BT"
+                        }));
 
-                    }
                     if (aValues.length > 0) {
-                        sValuesRanges = aValues[0].Lower + " to " + aValues[0].Upper;
+                        sValueDisplay = `${aValues[0].Lower} to ${aValues[0].Upper}`;
                     }
                 }
-                oRuleModel = oView.getModel("ruleModel").getData();
-                if (oData.RuleType == PlDacConst.PRE_CONDITION_RULE_TYPE) {
-                    aCondition = oRuleModel.types[0].Condition;
-                    for (iCondition = 0; iCondition < aCondition.length; iCondition++) {
-                        if (aCondition[iCondition].CTypeID === oData.CondId) {
-                            for (iRule = 0; iRule < aCondition[iCondition].Rules.length; iRule++) {
-                                if (aCondition[iCondition].Rules[iRule].Rows == oData.Rows) {
-                                    aCondition[iCondition].Rules[iRule][sKey] = aValues;
-                                    aCondition[iCondition].Rules[iRule].Operator = aValues[0].Operator;
-                                    aCondition[iCondition].Rules[iRule].Value = sValuesRanges;//aValues.map(oValue => oValue.Value).join(', ') // aValues[0].Value;
-                                    aCondition[iCondition].Rules[iRule].ValueDesc = sValuesRanges;///aValues.map(oValue => oValue.Value).join(', ');//aValues[0].Value;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    oRuleModel.types[0].Condition = aCondition;
-                } else {
-                    aCondition = oRuleModel.types[oRuleModel.types.length - 1].Condition;
-                    for (iCondition = 0; iCondition < aCondition.length; iCondition++) {
-                        if (aCondition[iCondition].CTypeID === oData.CTypeID) {
-                            for (iRule = 0; iRule < aCondition[iCondition].Rules.length; iRule++) {
-                                if (aCondition[iCondition].Rules[iRule].Rows == oData.Rows) {
-                                    aCondition[iCondition].Rules[iRule][sKey] = aValues;
-                                    aCondition[iCondition].Rules[iRule].Operator = aValues[0].Operator;
-                                    aCondition[iCondition].Rules[iRule].Value = sValuesRanges;// aValues.map(oValue => oValue.Value).join(', ')//aValues[0].Value;
-                                    aCondition[iCondition].Rules[iRule].ValueDesc = sValuesRanges;// aValues.map(oValue => oValue.Value).join(', ')//aValues[0].Value;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    oRuleModel.types[oRuleModel.types.length - 1].Condition = aCondition;
+
+                if (aValues.length === 0) {
+                    oDialog.close();
+                    return;
                 }
-                oView.getModel("ruleModel").setData(oRuleModel);
-                oView.getModel("ruleModel").refresh();
+
+                const oRuleModel = oView.getModel("ruleModel");
+                const oRuleData = oRuleModel.getData();
+
+                // --- Decide condition set ---
+                const isPreCondition = oSettingData.RuleType === PlDacConst.PRE_CONDITION_RULE_TYPE;
+                const aTypes = oRuleData.types;
+                const oTargetType = isPreCondition ? aTypes[0] : aTypes[aTypes.length - 1];
+
+                const sCondIdKey = isPreCondition ? "CondId" : "CTypeID";
+                const sCondIdValue = oSettingData[sCondIdKey];
+
+                // --- Update matching rule ---
+                const oCondition = oTargetType.Condition.find(
+                    cond => cond.CTypeID === sCondIdValue
+                );
+
+                if (oCondition) {
+                    const oRule = oCondition.Rules.find(
+                        rule => rule.Rows === oSettingData.Rows
+                    );
+
+                    if (oRule) {
+                        oRule[sKey] = aValues;
+                        oRule.Operator = aValues[0].Operator;
+                        oRule.Value = sValueDisplay;
+                        oRule.ValueDesc = sValueDisplay;
+                    }
+                }
+
+                // --- Refresh model ---
+                oRuleModel.setData(oRuleData);
+                oRuleModel.refresh();
+
                 oDialog.close();
             },
-
             /**
          * Updates rule model when user selects attribute/list item from selection dialog.
          *
@@ -572,63 +583,45 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @returns {void}
          */
             updateRuleModelWithAttrSelectionData: function (oView, oDialog, oSelectedItemData) {
-                var iCondition, aCondition, iRule, oData, oRuleData;
-                oData = oDialog.getModel("setting").getData();
-                oDialog.close();
-                oRuleData = oView.getModel("ruleModel").getData();
+                const oData = oDialog?.getModel("setting")?.getData();
+                const oRuleModel = oView?.getModel("ruleModel");
+                const oRuleData = oRuleModel?.getData();
 
-                if (oData.RuleType == PlDacConst.PRE_CONDITION_RULE_TYPE) {
-                    aCondition = oRuleData.types[0].Condition;
-                    for (iCondition = 0; iCondition < aCondition.length; iCondition++) {
-                        if (aCondition[iCondition].CTypeID == oData.CondId) {
-                            for (iRule = 0; iRule < aCondition[iCondition].Rules.length; iRule++) {
-                                if (aCondition[iCondition].Rules[iRule].Rows == oData.Rows) {
-                                    if (oSelectedItemData.AttributeId) {
-                                        aCondition[iCondition].Rules[iRule].Value = oSelectedItemData.AttributeId;
-                                        aCondition[iCondition].Rules[iRule].ValueDesc = oSelectedItemData.Description + "(" + oSelectedItemData.AttributeId + ")";
-                                        aCondition[iCondition].Rules[iRule].Values = [{ Operator: oData.Operator, Value: oSelectedItemData.AttributeId }];
-                                        aCondition[iCondition].Rules[iRule].ValueRange = [];
-                                    } else {
-                                        aCondition[iCondition].Rules[iRule].Value = oSelectedItemData.ListId;
-                                        aCondition[iCondition].Rules[iRule].ValueDesc = oSelectedItemData.Description + "(" + oSelectedItemData.ListId + ")";
-                                        aCondition[iCondition].Rules[iRule].Values = [{ Operator: oData.Operator, Value: oSelectedItemData.ListId }];
-                                        aCondition[iCondition].Rules[iRule].ValueRange = [];
-                                    }
-
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    oRuleData.types[0].Condition = aCondition;
-                } else {
-                    aCondition = oRuleData.types[oRuleData.types.length - 1].Condition;
-                    for (iCondition = 0; iCondition < aCondition.length; iCondition++) {
-                        if (aCondition[iCondition].CTypeID == oData.CTypeID) {
-                            for (iRule = 0; iRule < aCondition[iCondition].Rules.length; iRule++) {
-                                if (aCondition[iCondition].Rules[iRule].Rows == oData.Rows) {
-                                    if (oSelectedItemData.AttributeId) {
-                                        aCondition[iCondition].Rules[iRule].Value = oSelectedItemData.AttributeId;
-                                        aCondition[iCondition].Rules[iRule].ValueDesc = oSelectedItemData.Description + "(" + oSelectedItemData.AttributeId + ")";
-                                        aCondition[iCondition].Rules[iRule].ValueRange = [];
-                                        aCondition[iCondition].Rules[iRule].Values = [{ Operator: oData.Operator, Value: oSelectedItemData.AttributeId }];
-
-                                    } else {
-                                        aCondition[iCondition].Rules[iRule].Value = oSelectedItemData.ListId;
-                                        aCondition[iCondition].Rules[iRule].ValueDesc = oSelectedItemData.Description + "(" + oSelectedItemData.ListId + ")";
-                                        aCondition[iCondition].Rules[iRule].ValueRange = [];
-                                        aCondition[iCondition].Rules[iRule].Values = [{ Operator: oData.Operator, Value: oSelectedItemData.ListId }];
-
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    oRuleData.types[oRuleData.types.length - 1].Condition = aCondition;
+                if (!oData || !oRuleData || !oRuleData.types?.length) {
+                    return;
                 }
-                oView.getModel("ruleModel").setData(oRuleData);
+
+                oDialog.close();
+
+                const iTypeIndex = (oData.RuleType === PlDacConst.PRE_CONDITION_RULE_TYPE)
+                    ? 0
+                    : oRuleData.types.length - 1;
+
+                const aCondition = oRuleData.types[iTypeIndex]?.Condition || [];
+                const sCTypeID = oData.CTypeID || oData.CTypeID;
+
+                const oCondition = aCondition.find(c => c.CTypeID === sCTypeID);
+                if (!oCondition) return;
+
+                const oRule = oCondition.Rules?.find(r => r.Rows === oData.Rows);
+                if (!oRule) return;
+
+                // Determine value source
+                const sValue = oSelectedItemData.AttributeId ?? oSelectedItemData.ListId;
+                const sDescription = oSelectedItemData.Description || "";
+
+                // Update rule
+                Object.assign(oRule, {
+                    Value: sValue,
+                    ValueDesc: `${sDescription}(${sValue})`,
+                    Values: [{ Operator: oData.Operator, Value: sValue }],
+                    ValueRange: []
+                });
+
+                // Persist changes
+                oRuleModel.setData(oRuleData);
             },
+
 
             /**
          * Builds precondition rule objects from OData condition response.
@@ -640,29 +633,28 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @returns {Array<Object>} Array of prepared rule objects.
          */
             _preparePreconditionRuleBody: function (oCondition, iCondition) {
-                var lArr = oCondition.to_Rule.results, i, oRule, aRules = [], oValue;
-                if (lArr.length > 0) {
-                    for (i = 0; i < lArr.length; i++) {
-                        oRule = new Rule();
-                        oValue = this._readRuleConditionValue(lArr[i].to_Value.results);
-                        oRule["ContitionType"] = i == 0 ? "" : "AND";
-                        oRule["Attribute"] = lArr[i].AttributeId;
-                        oRule["AttributeDesc"] = lArr[i].Description;
-                        oRule["Operator"] = oValue.Operator;
-                        oRule["Value"] = oValue.Value;
-                        oRule["ValueDesc"] = oValue.ValueDesc != "" ? oValue.ValueDesc : oValue.Value;
-                        oRule["Rows"] = i + 1;
-                        oRule["CTypeID"] = iCondition;
-                        oRule["RuleType"] = PlDacConst.PRE_CONDITION_RULE_TYPE;
-                        oRule["CondId"] = lArr[i].CondId;
-                        oRule["ValueRange"] = oValue.ValueRange;
-                        oRule["Values"] = oValue.Values;
-                        aRules.push(oRule);
-                    }
-                }
-                return aRules;
-            },
+                const rules = oCondition?.to_Rule?.results || [];
 
+                return rules.map((item, index) => {
+                    const oValue = this._readRuleConditionValue(item?.to_Value?.results || []);
+
+                    return {
+                        ContitionType: index === 0 ? "" : "AND",
+                        Attribute: item.AttributeId,
+                        AttributeDesc: item.Description,
+                        Operator: oValue.Operator,
+                        Value: oValue.Value,
+                        ValueDesc: oValue.ValueDesc || oValue.Value,
+                        Rows: index + 1,
+                        CTypeID: iCondition,
+                        RuleType: PlDacConst.PRE_CONDITION_RULE_TYPE,
+                        CondId: item.CondId,
+                        ValueRange: oValue.ValueRange,
+                        Values: oValue.Values
+                    };
+                });
+            },
+            
             /**
          * Builds normal rule objects from OData condition response.
          *
@@ -672,28 +664,31 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @returns {Array<Object>} Array of prepared rule objects.
          */
             _prepareRuleBody: function (oCondition, iCondition) {
-                var lArr = oCondition.to_Rule.results, i, oRule, aRules = [], oValue;
-                if (lArr.length > 0) {
-                    for (i = 0; i < lArr.length; i++) {
-                        oValue = this._readRuleConditionValue(lArr[i].to_Value.results);
-                        oRule = new Rule();
-                        oRule["ContitionType"] = i == 0 ? "" : "AND";
-                        oRule["Attribute"] = lArr[i].AttributeId;
-                        oRule["AttributeDesc"] = lArr[i].Description;
-                        oRule["Operator"] = oValue.Operator;
-                        oRule["Value"] = oValue.Value;
-                        oRule["ValueDesc"] = oValue.ValueDesc != "" ? oValue.ValueDesc : oValue.Value;
-                        oRule["Rows"] = i + 1;
-                        oRule["CTypeID"] = iCondition;
-                        oRule["RuleType"] = "Rules";
-                        oRule["CondId"] = lArr[i].CondId;
-                        oRule["ValueRange"] = oValue.ValueRange;
-                        oRule["Values"] = oValue.Values;
-                        aRules.push(oRule);
-                    }
-                }
-                return aRules;
+                const rules = oCondition?.to_Rule?.results || [];
+
+                return rules.map((item, index) => {
+                    const oValue = this._readRuleConditionValue(item?.to_Value?.results || []);
+                    const oRule = new Rule();
+
+                    Object.assign(oRule, {
+                        ContitionType: index === 0 ? "" : "AND",
+                        Attribute: item.AttributeId,
+                        AttributeDesc: item.Description,
+                        Operator: oValue.Operator,
+                        Value: oValue.Value,
+                        ValueDesc: oValue.ValueDesc || oValue.Value,
+                        Rows: index + 1,
+                        CTypeID: iCondition,
+                        RuleType: "Rules",
+                        CondId: item.CondId,
+                        ValueRange: oValue.ValueRange,
+                        Values: oValue.Values
+                    });
+
+                    return oRule;
+                });
             },
+            
             /**
          * Reads values and ranges from OData value results.
          * Supports both single values and range values.
@@ -702,67 +697,83 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @param {Array<Object>} aResult - Array of value records from OData.
          * @returns {Object} Parsed value object with Value, ValueDesc, Values, ValueRange.
          */
-            _readRuleConditionValue: function (aResult) {
-                var oValue = {}, iResult, i, sValue = "", lArrValue = new Array(), lArrValueR = new Array();
-                if (aResult.length > 0) {
-                    if (aResult.length > 1) {
-                        for (iResult = 0; iResult < aResult.length; iResult++) {
-                            if (iResult == 0) {
-                                oValue["Operator"] = aResult[iResult].Operator;
-                            }
-                            if (aResult[iResult].Operator == "BT") {
-                                //sValue = aResult[iResult].Value;
-                                if (({}).hasOwnProperty.call(aResult[iResult].to_ValueRange, "results") && aResult[iResult].to_ValueRange.results.length > 0) {
-                                    for (i = 0; i < aResult[iResult].to_ValueRange.results.length; i++) {
-                                        lArrValueR.push(aResult[iResult].to_ValueRange.results[i]);
-                                    }
-                                }
+            _readRuleConditionValue: function (aResult = []) {
+                const oValue = {
+                    Operator: "",
+                    Value: "",
+                    ValueDesc: "",
+                    Values: [],
+                    ValueRange: []
+                };
 
-                            } else {
-                                if (iResult == 0) {
-                                    sValue = aResult[iResult].Value;
-                                    oValue["Operator"] = aResult[iResult].Operator;
-                                }
-                                lArrValue.push({ Operator: aResult[iResult].Operator, Value: aResult[iResult].Value, ValueDesc: aResult[iResult].ValueDesc })
-                            }
+                if (!aResult.length) return oValue;
 
+                const getRangeResults = (item) =>
+                    item?.to_ValueRange?.results?.length ? item.to_ValueRange.results : [];
+
+                // Multiple results
+                if (aResult.length > 1) {
+                    let sValue = "";
+                    let rangeValues = [];
+
+                    aResult.forEach((item, index) => {
+                        if (index === 0) {
+                            oValue.Operator = item.Operator;
                         }
-                        oValue["Value"] = sValue;
-                        oValue["ValueDesc"] = sValue;
-                        oValue["Values"] = lArrValue;
-                        oValue["ValueRange"] = [];
-                        if (lArrValueR.length > 0) {
-                            if (sValue == "") {
-                                for (i = 0; i < 2; i++) {
-                                    if (sValue != "") {
-                                        sValue += " to ";
-                                    }
-                                    sValue += lArrValueR[i].Value;
-                                }
+
+                        if (item.Operator === "BT") {
+                            rangeValues.push(...getRangeResults(item));
+                        } else {
+                            if (index === 0) {
+                                sValue = item.Value;
                             }
 
-                            oValue["ValueRange"] = this._readRuleValueRangeValues(lArrValueR, oValue);
-                            oValue["ValueDesc"] = sValue;
+                            oValue.Values.push({
+                                Operator: item.Operator,
+                                Value: item.Value,
+                                ValueDesc: item.ValueDesc
+                            });
                         }
-                    } else {
-                        for (iResult = 0; iResult < aResult.length; iResult++) {
-                            oValue["Operator"] = aResult[iResult].Operator;
-                            oValue["Value"] = aResult[iResult].Value;
-                            oValue["ValueDesc"] = aResult[iResult].ValueDesc;
-                            oValue["Values"] = [];
-                            oValue["ValueRange"] = [];
-                            if (({}).hasOwnProperty.call(aResult[iResult].to_ValueRange, "results") && aResult[iResult].to_ValueRange.results.length > 0) {
-                                oValue["ValueRange"] = this._readRuleValueRangeValues(aResult[iResult].to_ValueRange.results, oValue);
-                            }
-                            else {
-                                oValue["Values"] = [{ Operator: aResult[iResult].Operator, Value: aResult[iResult].Value }];
-                            }
+                    });
+
+                    oValue.Value = sValue;
+                    oValue.ValueDesc = sValue;
+
+                    if (rangeValues.length) {
+                        if (!sValue) {
+                            sValue = rangeValues
+                                .slice(0, 2)
+                                .map(v => v.Value)
+                                .join(" to ");
                         }
+
+                        oValue.ValueRange = this._readRuleValueRangeValues(rangeValues, oValue);
+                        oValue.ValueDesc = sValue;
                     }
+
+                    return oValue;
                 }
+
+                // Single result
+                const item = aResult[0];
+                oValue.Operator = item.Operator;
+                oValue.Value = item.Value;
+                oValue.ValueDesc = item.ValueDesc;
+
+                const rangeResults = getRangeResults(item);
+
+                if (rangeResults.length) {
+                    oValue.ValueRange = this._readRuleValueRangeValues(rangeResults, oValue);
+                } else {
+                    oValue.Values = [{
+                        Operator: item.Operator,
+                        Value: item.Value
+                    }];
+                }
+
                 return oValue;
             },
-
+           
             /**
          * Converts raw ValueRange records into internal range structure.
          *
@@ -772,23 +783,34 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @returns {Array<Object>} Parsed range array.
          */
             _readRuleValueRangeValues: function (aResult, oValue) {
-                var i = 0, lArr = new Array(), nMin = 0;
-                for (i = 0; i < aResult.length; i++) {
-                    if ((i + 1) % 2 == 0) {
-                        lArr.push({ Operator: "BT", Lower: nMin, Upper: aResult[i].Value });
-                        if (!oValue["Value"]) {
-                            oValue["Value"] = nMin + " to " + aResult[i].Value;
-                        } else {
-                            oValue["Value"] = oValue["Value"] + ", ";
-                        }
-                        nMin = 0;
-                    } else {
-                        nMin = aResult[i].Value;
-                    }
-                }
-                return lArr;
-            },
+                const ranges = [];
+                let lower = 0;
 
+                aResult.forEach((item, index) => {
+                    if ((index + 1) % 2 === 0) {
+                        // Create range object
+                        ranges.push({
+                            Operator: "BT",
+                            Lower: lower,
+                            Upper: item.Value
+                        });
+
+                        // Update oValue.Value string
+                        if (!oValue.Value) {
+                            oValue.Value = `${lower} to ${item.Value}`;
+                        } else {
+                            oValue.Value += `, ${lower} to ${item.Value}`;
+                        }
+
+                        lower = 0; // Reset lower for next range
+                    } else {
+                        lower = item.Value;
+                    }
+                });
+
+                return ranges;
+            },
+            
             /**
          * Inserts a new condition block into rule model.
          * If rule block doesn't exist, it creates one.
@@ -797,69 +819,60 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @param {sap.m.Button} oButton - Button clicked to insert condition.
          * @returns {void}
          */
-            insertConditonInConditionBlock: function (oView, oButton) {
-                //var oBtn = oEvent.getSource();
+            insertConditionInConditionBlock: function (oView, oButton) {
                 var oValue = oButton.getCustomData()[0].getValue();
                 var oRuleData = oView.getModel("ruleModel").getData();
-                for (var i = 0; i < oRuleData.types.length; i++) {
-                    if (oRuleData.types[i].RuleType == "Rules") {
-                        oValue = oRuleData.types[i];
-                    }
-                }
-                var oRule = new Rule();
+
+                // Find existing 'Rules' type if oValue is not provided
                 if (!oValue) {
-                    oRule["RuleType"] = "Rules";
-                    oRule["Rows"] = 1;
-                    oRuleData.types[oRuleData.types.length - 1] = {};
-                    oRuleData.types[oRuleData.types.length - 1].Condition = new Array();
-                    oRuleData.types[oRuleData.types.length - 1].Condition.push({
-
-                        CType: "IF",
-                        CTypeID: 1,
-                        RuleType: "Rules",
-                        Rules: [
-                            oRule
-                        ]
-                    }
-                    );
-                } else {
-                    if (oValue.RuleType == "Rules") {
-                        if (oRuleData.types[oRuleData.types.length - 1].Condition.length == 0) {
-                            oRule["RuleType"] = "Rules";
-                            oRule["Rows"] = 1;
-                            oRuleData.types[oRuleData.types.length - 1].Condition.push({
-
-                                CType: "IF",
-                                CTypeID: 1,
-                                RuleType: "Rules",
-                                Rules: [
-                                    oRule
-                                ]
-                            });
-                        } else {
-                            oRuleData.types[oRuleData.types.length - 1].Condition = this._reindexCondition(oRuleData.types[oRuleData.types.length - 1].Condition);
-
-                            oRule["ContitionType"] = "OR";
-                            oRule["CTypeID"] = oRuleData.types[oRuleData.types.length - 1].Condition.length + 1;
-                            oRule["Rows"] = 1;
-                            oRule["RuleType"] = "Rules";
-                            oRuleData.types[oRuleData.types.length - 1].Condition.push({
-
-                                CType: "ELSE IF",
-                                CTypeID: oRuleData.types[oRuleData.types.length - 1].Condition.length + 1,
-                                RuleType: "Rules",
-
-                                Rules: [
-                                    oRule
-                                ]
-                            }
-                            );
+                    for (var i = 0; i < oRuleData.types.length; i++) {
+                        if (oRuleData.types[i].RuleType === "Rules") {
+                            oValue = oRuleData.types[i];
+                            break;
                         }
                     }
                 }
+
+                var oRule = new Rule();
+                oRule.RuleType = "Rules";
+                oRule.Rows = 1;
+
+                // Ensure last type exists
+                if (!oRuleData.types[oRuleData.types.length - 1]) {
+                    oRuleData.types[oRuleData.types.length - 1] = {};
+                }
+                var lastType = oRuleData.types[oRuleData.types.length - 1];
+
+                // Ensure 'Condition' array exists
+                if (!Array.isArray(lastType.Condition)) {
+                    lastType.Condition = [];
+                }
+
+                if (!oValue) {
+                    // If no value found, add initial IF condition
+                    lastType.Condition.push({
+                        CType: "IF",
+                        CTypeID: 1,
+                        RuleType: "Rules",
+                        Rules: [oRule]
+                    });
+                } else if (oValue.RuleType === "Rules") {
+                    // Reindex existing conditions
+                    lastType.Condition = this._reindexCondition(lastType.Condition);
+
+                    var newCTypeID = lastType.Condition.length + 1;
+                    oRule.CTypeID = newCTypeID;
+                    lastType.Condition.push({
+                        CType: lastType.Condition.length === 0 ? "IF" : "ELSE IF",
+                        CTypeID: newCTypeID,
+                        RuleType: "Rules",
+                        Rules: [oRule]
+                    });
+                }
+
                 oView.getModel("ruleModel").setData(oRuleData);
             },
-
+            
             /**
          * Reindexes the rule rows after deletion or insertion.
          *
@@ -868,12 +881,12 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @returns {Array<Object>} Updated rule array with correct row numbers.
          */
             _reindexConditionRules: function (aRules) {
-                var i;
-                for (i = 0; i < aRules.length; i++) {
-                    aRules[i].Rows = i + 1;
-                }
-                return aRules;
+                return aRules.map((rule, index) => {
+                    rule.Rows = index + 1;
+                    return rule;
+                });
             },
+           
 
             /**
          * Deletes an inline rule from a specific condition block.
@@ -882,68 +895,57 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @param {sap.m.Button} oButton - Button containing rule info in custom data.
          * @returns {void}
          */
+           
             deleteInlineRule: function (oView, oButton) {
-                var i, aRules, nRules = new Array(), j, aCondition, oRuleData, oValue;
-                oValue = oButton.getCustomData()[0].getValue();
-                oRuleData = oView.getModel("ruleModel").getData();
-                if (oValue.RuleType == "Rules") {
-                    aCondition = oRuleData.types[oRuleData.types.length - 1].Condition;
-                    for (i = 0; i < aCondition.length; i++) {
-                        if (aCondition[i].CTypeID == oValue.CTypeID) {
-                            aRules = aCondition[i].Rules;
-                            for (j = 0; j < aRules.length; j++) {
-                                if (aRules[j].Rows !== oValue.Rows) {
-                                    nRules.push(aRules[j]);
-                                }
-                            }
-                            aRules = this._reindexConditionRules(nRules);
-                            if (aRules.length > 0) {
-                                aCondition[i].Rules = aRules;
-                            } else {
-                                aCondition.splice(i, 1);
-                            }
+                const oValue = oButton.getCustomData()[0].getValue();
+                const oRuleData = oView.getModel("ruleModel").getData();
+                let lastTypeIndex, aCondition;
 
-                            break;
+                // Determine the type block to operate on
+                if (oValue.RuleType === "Rules") {
+                    lastTypeIndex = oRuleData.types.length - 1;
+                    aCondition = oRuleData.types[lastTypeIndex].Condition;
+                } else {
+                    lastTypeIndex = 0;
+                    aCondition = oRuleData.types[0].Condition;
+                }
+
+                // Process the relevant condition
+                for (let i = 0; i < aCondition.length; i++) {
+                    const cond = aCondition[i];
+                    const idMatch = (oValue.RuleType === "Rules") ? cond.CTypeID === oValue.CTypeID
+                        : cond.CTypeID === oValue.CondId;
+                    if (idMatch) {
+                        // Keep only rules not matching the row to delete
+                        cond.Rules = this._reindexConditionRules(
+                            cond.Rules.filter(rule => rule.Rows !== oValue.Rows)
+                        );
+
+                        // If no rules remain, remove the condition
+                        if (cond.Rules.length === 0) {
+                            aCondition.splice(i, 1);
                         }
+                        break;
                     }
-                    if (aCondition.length == 0) {
-                        oRuleData.types.splice(oRuleData.types.length - 1, 1);
+                }
+
+                // Update type block visibility and remove empty type if needed
+                if (aCondition.length === 0) {
+                    oRuleData.types.splice(lastTypeIndex, 1);
+                    if (oValue.RuleType === "Rules") {
                         oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", true);
                         oView.getModel("viewModel").setProperty("/bVisibleAddCondition", false);
                     } else {
-                        oRuleData.types[oRuleData.types.length - 1].Condition = aCondition;
+                        oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock", true);
+                    }
+                } else {
+                    oRuleData.types[lastTypeIndex].Condition = aCondition;
+                    if (oValue.RuleType === "Rules") {
                         oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", false);
                     }
-
-                } else {
-                    aCondition = oRuleData.types[0].Condition;
-                    for (i = 0; i < aCondition.length; i++) {
-                        if (aCondition[i].CTypeID == oValue.CondId) {
-                            aRules = aCondition[i].Rules;
-                            for (j = 0; j < aRules.length; j++) {
-                                if (aRules[j].Rows !== oValue.Rows) {
-                                    nRules.push(aRules[j]);
-                                }
-                            }
-                            aRules = this._reindexConditionRules(nRules);
-
-                            if (aRules.length == 0) {
-                                aCondition.splice(i, 1);
-                                oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock", true);
-                            } else {
-                                aCondition[i].Rules = aRules;
-                            }
-                            break;
-                        }
-                    }
-                    if (aCondition.length == 0) {
-                        oRuleData.types.splice(0, 1);
-                        oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock", true);
-                    } else {
-                        oRuleData.types[0].Condition = aCondition;
-                    }
-
                 }
+
+                // Update the model
                 oView.getModel("ruleModel").setData(oRuleData);
             },
             /**
@@ -953,65 +955,56 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @param {sap.m.Button} oButton - Button containing rule info in custom data.
          * @returns {void}
          */
+           
             deleteEntireRuleBlock: function (oView, oButton) {
-                var i, nConditions = [], aCondition;
-                var oValue = oButton.getCustomData()[0].getValue();
-                var oRuleData = oView.getModel("ruleModel").getData();
-                if (oValue.RuleType == "Rules") {
-                    if (oValue.CTypeID == 0) {
-                        oRuleData.types.splice(oRuleData.types.length - 1, 1);
+                const oValue = oButton.getCustomData()[0].getValue();
+                const oRuleData = oView.getModel("ruleModel").getData();
+                let targetTypeIndex = oValue.RuleType === "Rules" ? oRuleData.types.length - 1 : 0;
+                let aCondition = oRuleData.types[targetTypeIndex]?.Condition || [];
+                let nConditions = [];
+
+                if (oValue.RuleType === "Rules") {
+                    if (oValue.CTypeID === 0 || (aCondition[0]?.CTypeID === oValue.CTypeID)) {
+                        // Remove entire type block
+                        oRuleData.types.splice(targetTypeIndex, 1);
                         oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", true);
                         oView.getModel("viewModel").setProperty("/bVisibleAddCondition", false);
                     } else {
-                        aCondition = oRuleData.types[oRuleData.types.length - 1].Condition;
-                        if (aCondition.length > 0 && aCondition[0].CTypeID == oValue.CTypeID) {
-                            oRuleData.types.splice(oRuleData.types.length - 1, 1);
+                        // Remove only the specific condition
+                        aCondition = aCondition.filter(cond => cond.CTypeID !== oValue.CTypeID);
+
+                        if (aCondition.length === 0) {
+                            oRuleData.types.splice(targetTypeIndex, 1);
                             oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", true);
                             oView.getModel("viewModel").setProperty("/bVisibleAddCondition", false);
                         } else {
-                            for (i = 0; i < aCondition.length; i++) {
-                                if (aCondition[i].CTypeID == oValue.CTypeID) {
-                                    aCondition.splice(i, 1);
-                                }
-                            }
-                            if (aCondition.length == 0) {
-                                oRuleData.types.splice(oRuleData.types.length - 1, 1);
-                                oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", true);
-                                oView.getModel("viewModel").setProperty("/bVisibleAddCondition", false);
-                            } else {
-                                oRuleData.types[oRuleData.types.length - 1].Condition = aCondition;
-                                oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", false);
-                            }
+                            oRuleData.types[targetTypeIndex].Condition = aCondition;
+                            oView.getModel("viewModel").setProperty("/bVisibleAddRuleBlock", false);
                         }
-
                     }
                 } else {
-                    aCondition = oRuleData.types[0].Condition;
-                    if (oValue.CTypeID == 1 && aCondition.length == 2) {
-                        oRuleData.types[oRuleData.types.length - 1].Condition = nConditions;
-                    } else if (oValue.CTypeID == 1 && aCondition.length > 2) {
-                        for (i = 0; i < aCondition.length; i++) {
-                            if (aCondition[i].CTypeID != oValue.CTypeID) {
-                                nConditions.push(aCondition[i]);
-                            }
+                    // Non-"Rules" type
+                    if (oValue.CTypeID === 1 && aCondition.length > 1) {
+                        nConditions = aCondition.filter(cond => cond.CTypeID !== oValue.CTypeID);
+                        if (nConditions.length > 0) {
+                            nConditions[0].CType = "IF";
+                            nConditions[0].CTypeID = 1;
+                            oRuleData.types[targetTypeIndex].Condition = nConditions;
+                        } else {
+                            oRuleData.types.splice(targetTypeIndex, 1);
+                            oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock", true);
                         }
-                        nConditions[0].CType = "IF";
-                        nConditions[0].CTypeID = 1;
-                        oRuleData.types[0].Condition = nConditions;
                     } else {
-                        for (i = 0; i < aCondition.length; i++) {
-                            if (aCondition[i].CTypeID != oValue.CTypeID) {
-                                nConditions.push(aCondition[i]);
-                            }
-                        }
-                        if (nConditions.length == 0) {
-                            oRuleData.types.splice(0, 1);
+                        nConditions = aCondition.filter(cond => cond.CTypeID !== oValue.CTypeID);
+                        if (nConditions.length === 0) {
+                            oRuleData.types.splice(targetTypeIndex, 1);
                             oView.getModel("viewModel").setProperty("/bVisibleAddPreBlock", true);
                         } else {
-                            oRuleData.types[0].Condition = nConditions;
+                            oRuleData.types[targetTypeIndex].Condition = nConditions;
                         }
                     }
                 }
+
                 oView.getModel("ruleModel").setData(oRuleData);
             },
             /**
@@ -1039,58 +1032,48 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @param {sap.m.Button} oButton - Button with custom data.
          * @returns {void}
          */
+           
             insertRuleInBlock: function (oView, oButton) {
-                var i, iLen, oRule, oValue, oRuleData;
-                oValue = oButton.getCustomData()[0].getValue();
-                oRuleData = oView.getModel("ruleModel").getData();
-                // if (oRuleData.types.length == 1) {
-                //  aCondition = oRuleData.types[0].Condition;
-                // } else {
-                aCondition = oRuleData.types[oRuleData.types.length - 1].Condition;
-                // }
-                if (oValue.RuleType == "Rules") {
-                    //var aCondition = oRuleData.types[1].Condition;
-                    for (i = 0; i < aCondition.length; i++) {
-                        if (aCondition[i].CTypeID == oValue.CTypeID) {
-                            aCondition[i].Rules = this._reindexConditionRules(aCondition[i].Rules);
-                            iLen = aCondition[i].Rules.length;
-                            oRule = {};
-                            oRule["CTypeID"] = oValue.CTypeID;
-                            oRule["Rows"] = iLen + 1;
-                            oRule["RuleType"] = "Rules";
-                            if (iLen > 0) {
-                                oRule["ContitionType"] = "AND";
-                                aCondition[i].Rules.push(oRule);
-                            } else {
-                                aCondition[i].Rules.push(oRule);
-                            }
+                const oValue = oButton.getCustomData()[0].getValue();
+                const oRuleData = oView.getModel("ruleModel").getData();
+
+                // Determine which type block to operate on
+                const targetTypeIndex = oValue.RuleType === "Rules"
+                    ? oRuleData.types.length - 1
+                    : 0;
+
+                const aCondition = oRuleData.types[targetTypeIndex].Condition;
+
+                // Find the condition to insert into
+                for (let i = 0; i < aCondition.length; i++) {
+                    if (aCondition[i].CTypeID === oValue.CTypeID) {
+                        // Reindex existing rules
+                        aCondition[i].Rules = this._reindexConditionRules(aCondition[i].Rules);
+                        const iLen = aCondition[i].Rules.length;
+
+                        // Create new rule
+                        const oRule = {
+                            CTypeID: oValue.CTypeID,
+                            Rows: iLen + 1,
+                            RuleType: oValue.RuleType === "Rules"
+                                ? "Rules"
+                                : PlDacConst.PRE_CONDITION_RULE_TYPE
+                        };
+
+                        if (iLen > 0) {
+                            oRule.ContitionType = "AND"; // Keep typo for backward compatibility
                         }
+
+                        // Push new rule into condition
+                        aCondition[i].Rules.push(oRule);
+                        break; // Condition found, exit loop
                     }
-                    oRuleData.types[oRuleData.types.length - 1].Condition = aCondition;
-                } else {
-                    var aCondition = oRuleData.types[0].Condition;
-                    for (i = 0; i < aCondition.length; i++) {
-                        if (aCondition[i].CTypeID == oValue.CTypeID) {
-                            aCondition[i].Rules = this._reindexConditionRules(aCondition[i].Rules);
-                            oRule = {};
-                            iLen = aCondition[i].Rules.length;
-                            oRule["CTypeID"] = oValue.CTypeID;
-                            oRule["Rows"] = iLen + 1;
-                            oRule["CondId"] = oValue.CTypeID;
-                            oRule["RuleType"] = PlDacConst.PRE_CONDITION_RULE_TYPE;
-                            if (iLen > 0) {
-                                oRule["ContitionType"] = "AND";
-                                aCondition[i].Rules.push(oRule);
-                            } else {
-                                aCondition[i].Rules.push(oRule);
-                            }
-                        }
-                    }
-                    oRuleData.types[0].Condition = aCondition;
-                }//end if
+                }
+
+                // Update model
+                oRuleData.types[targetTypeIndex].Condition = aCondition;
                 oView.getModel("ruleModel").setData(oRuleData);
             },
-
             /**
          * Updates rule model after user selects suggestion item from input.
          *
@@ -1099,43 +1082,33 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @param {sap.ui.core.Item} oItem - Selected suggestion item.
          * @returns {void}
          */
+            
             updateRuleModelWithSuggestionItem: function (oView, oInput, oItem) {
-                var i, aCondition, j, oData, oValue, oRuleData;
-                oData = oInput.getCustomData()[0].getValue();
-                oValue = oItem.getBindingContext().getObject();
-                oRuleData = oView.getModel("ruleModel").getData();
-                if (oData.RuleType == PlDacConst.PRE_CONDITION_RULE_TYPE) {
-                    aCondition = oRuleData.types[0].Condition;
-                    for (i = 0; i < aCondition.length; i++) {
-                        if (aCondition[i].CTypeID == oData.CTypeID) {
-                            for (j = 0; j < aCondition[i].Rules.length; j++) {
-                                if (aCondition[i].Rules[j].Rows == oData.Rows) {
-                                    aCondition[i].Rules[j].Attribute = oValue.AttributeId;
-                                    aCondition[i].Rules[j].AttributeDesc = oValue.Description + " (" + oValue.AttributeId + ")";
-                                    break;
-                                }
-                            }
-                        }
+                const { RuleType, CTypeID, Rows } = oInput.getCustomData()[0].getValue();
+                const { AttributeId, Description } = oItem.getBindingContext().getObject();
+                const oRuleData = oView.getModel("ruleModel").getData();
+
+                // Select the type to update: first type for pre-condition, last type otherwise
+                const typeIndex = (RuleType === PlDacConst.PRE_CONDITION_RULE_TYPE)
+                    ? 0
+                    : oRuleData.types.length - 1;
+
+                const conditions = oRuleData.types[typeIndex].Condition;
+
+                // Find the matching condition
+                const condition = conditions.find(c => c.CTypeID === CTypeID);
+                if (condition) {
+                    // Find the matching rule within the condition
+                    const rule = condition.Rules.find(r => r.Rows === Rows);
+                    if (rule) {
+                        rule.Attribute = AttributeId;
+                        rule.AttributeDesc = `${Description} (${AttributeId})`;
                     }
-                    oRuleData.types[0].Condition = aCondition;
-                } else {
-                    aCondition = oRuleData.types[oRuleData.types.length - 1].Condition;
-                    for (i = 0; i < aCondition.length; i++) {
-                        if (aCondition[i].CTypeID == oData.CTypeID) {
-                            for (j = 0; j < aCondition[i].Rules.length; j++) {
-                                if (aCondition[i].Rules[j].Rows == oData.Rows) {
-                                    aCondition[i].Rules[j].Attribute = oValue.AttributeId;
-                                    aCondition[i].Rules[j].AttributeDesc = oValue.Description + " (" + oValue.AttributeId + ")";
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    oRuleData.types[oRuleData.types.length - 1].Condition = aCondition;
                 }
+
+                // Update the model
                 oView.getModel("ruleModel").setData(oRuleData);
             },
-
             /**
          * Updates rule model after value help selection token is chosen.
          *
@@ -1144,44 +1117,33 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @param {sap.m.Dialog} oDialog - Value help dialog.
          * @returns {void}
          */
+            
             updateRuleModelWithValueHelpItem: function (oView, oToken, oDialog) {
-                var i, aCondition, j, oData, oRuleData, oValue;
-                oData = oDialog.getModel("condition").getData();
-                oRuleData = oView.getModel("ruleModel").getData();
-                oValue = oToken.getCustomData()[0].getValue();
-                if (oData.RuleType == PlDacConst.PRE_CONDITION_RULE_TYPE) {
-                    aCondition = oRuleData.types[0].Condition;
-                    for (i = 0; i < aCondition.length; i++) {
-                        if (aCondition[i].CTypeID == oData.CTypeID) {
-                            for (j = 0; j < aCondition[i].Rules.length; j++) {
-                                if (aCondition[i].Rules[j].Rows == oData.Rows) {
-                                    aCondition[i].Rules[j].Attribute = oValue.AttributeId;
-                                    aCondition[i].Rules[j].AttributeDesc = oValue.Description + " (" + oValue.AttributeId + ")";
+                const oData = oDialog.getModel("condition").getData();
+                const oValue = oToken.getCustomData()[0].getValue();
+                const oRuleData = oView.getModel("ruleModel").getData();
 
-                                    break;
-                                }
-                            }
-                        }
+                // Determine type index: first type for pre-condition, last type otherwise
+                const typeIndex = (oData.RuleType === PlDacConst.PRE_CONDITION_RULE_TYPE)
+                    ? 0
+                    : oRuleData.types.length - 1;
+
+                const conditions = oRuleData.types[typeIndex].Condition;
+
+                // Find the matching condition
+                const condition = conditions.find(c => c.CTypeID === oData.CTypeID);
+                if (condition) {
+                    // Find the matching rule within the condition
+                    let rule = condition.Rules.find(r => r.Rows === oData.Rows);
+                    if (rule) {
+                        rule.Attribute = oValue.AttributeId;
+                        rule.AttributeDesc = `${oValue.Description} (${oValue.AttributeId})`;
                     }
-                    oRuleData.types[0].Condition = aCondition;
-                } else {
-                    aCondition = oRuleData.types[oRuleData.types.length - 1].Condition;
-                    for (i = 0; i < aCondition.length; i++) {
-                        if (aCondition[i].CTypeID == oData.CTypeID) {
-                            for (j = 0; j < aCondition[i].Rules.length; j++) {
-                                if (aCondition[i].Rules[j].Rows == oData.Rows) {
-                                    aCondition[i].Rules[j].Attribute = oValue.AttributeId;
-                                    aCondition[i].Rules[j].AttributeDesc = oValue.Description + " (" + oValue.AttributeId + ")";
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    oRuleData.types[oRuleData.types.length - 1].Condition = aCondition;
                 }
+
+                // Update the model
                 oView.getModel("ruleModel").setData(oRuleData);
             },
-
             /**
          * Loads a JSON model for Single Values selection dialog.
          *
@@ -1231,27 +1193,31 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @param {Array<Object>} aItems - Template range items.
          * @returns {void}
          */
+            
             _updateRangesValue: function (oDialog, aValues, aItems) {
-                var i, oData;
-                if (oDialog) {
-                    if (!Array.isArray(aValues)) {
-                        aItems[0].Lower = aValues.Min.trim();
-                        aItems[0].Upper = aValues.Max.trim();
-                        aItems[0].Operator = aValues.Operator;
-                    } else {
-                        if (aItems.length > aValues.length) {
-                            for (i = 0; i < aValues.length; i++) {
-                                aItems[i] = aValues[i];
-                            }
-                        } else {
-                            aItems = aValues;
-                        }
-                    }
-                    oData = aItems;
-                    oDialog.getContent()[0].getModel("Ranges").setData(oData);
-                }
-            },
+                if (!oDialog) return;
 
+                let updatedItems;
+
+                if (!Array.isArray(aValues)) {
+                    // Single value range
+                    updatedItems = [{
+                        Lower: aValues.Min.trim(),
+                        Upper: aValues.Max.trim(),
+                        Operator: aValues.Operator
+                    }];
+                } else {
+                    // Multiple ranges
+                    if (aItems.length > aValues.length) {
+                        updatedItems = aItems.map((item, index) => aValues[index] || item);
+                    } else {
+                        updatedItems = [...aValues];
+                    }
+                }
+
+                // Update the model
+                oDialog.getContent()[0].getModel("Ranges").setData(updatedItems);
+            },
             /**
          * Updates the Single Values model with existing values from rule.
          *
@@ -1261,27 +1227,37 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @param {Array<Object>} aItems - Template value items.
          * @returns {void}
          */
+            
             _updateSingleValuesModel: function (oDialog, aValues, aItems) {
-                var i, oData;
-                if (oDialog) {
-                    if (!Array.isArray(aValues)) {
-                        aItems[0].Value = aValues.Value;
-                        aItems[0].Operator = aValues.Operator;
-                    } else {
-                        if (aItems.length > aValues.length) {
-                            for (i = 0; i < aValues.length; i++) {
-                                aValues[i].Value = aValues[i].Value.trim();
-                                aItems[i] = aValues[i];
-                            }
-                        } else {
-                            aItems = aValues;
-                        }
-                    }
-                    oData = aItems;
-                    oDialog.getContent()[0].getModel("SingleValues").setData(oData);
-                }
-            },
+                if (!oDialog) return;
 
+                let updatedItems;
+
+                if (!Array.isArray(aValues)) {
+                    // Single value
+                    updatedItems = [{
+                        Value: aValues.Value,
+                        Operator: aValues.Operator
+                    }];
+                } else {
+                    // Multiple values
+                    if (aItems.length > aValues.length) {
+                        updatedItems = aValues.map((val, index) => ({
+                            ...val,
+                            Value: val.Value.trim()
+                        }));
+                        // Preserve extra existing items if any
+                        for (let i = aValues.length; i < aItems.length; i++) {
+                            updatedItems.push(aItems[i]);
+                        }
+                    } else {
+                        updatedItems = aValues.map(val => ({ ...val, Value: val.Value.trim() }));
+                    }
+                }
+
+                // Update the model
+                oDialog.getContent()[0].getModel("SingleValues").setData(updatedItems);
+            },
             /**
         * Converts a ValueDesc string into Values or ValueRange arrays.
         *
@@ -1291,28 +1267,34 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
         * @param {Object} oRule - Rule object containing ValueDesc.
         * @returns {Object} Updated rule object with Values or ValueRange.
         */
+            
             _createRangesAndValues: function (oRule) {
-                var i, aValues;
-                oRule["ValueRange"] = new Array();
-                oRule["Values"] = new Array();
-                if (oRule.Operator == "BT") {
-                    aValues = oRule.ValueDesc.split(",");
-                    for (i = 0; i < aValues.length; i++) {
-                        if ((aValues[i].split("to")[0] && aValues[i].split("to")[0].trim() != "") && (aValues[i].split("to")[1] && aValues[i].split("to")[1].trim() != "")) {
-                            oRule["ValueRange"].push({ Operator: oRule.Operator, Lower: aValues[i].split("to")[0], Upper: aValues[i].split("to")[1] })
-                        }
-                    }
+                oRule.ValueRange = [];
+                oRule.Values = [];
+
+                const aValues = oRule.ValueDesc.split(",");
+
+                if (oRule.Operator === "BT") {
+                    oRule.ValueRange = aValues
+                        .map(v => v.split("to").map(s => s.trim()))
+                        .filter(([lower, upper]) => lower && upper)
+                        .map(([lower, upper]) => ({
+                            Operator: oRule.Operator,
+                            Lower: lower,
+                            Upper: upper
+                        }));
                 } else {
-                    aValues = oRule.ValueDesc.split(",");
-                    for (i = 0; i < aValues.length; i++) {
-                        if (aValues[i] && aValues[i].trim() != "") {
-                            oRule["Values"].push({ Operator: oRule.Operator, Value: aValues[i] });
-                        }
-                    }
+                    oRule.Values = aValues
+                        .map(v => v.trim())
+                        .filter(v => v)
+                        .map(v => ({
+                            Operator: oRule.Operator,
+                            Value: v
+                        }));
                 }
+
                 return oRule;
             },
-
             /**
          * Converts the ruleModel into a backend payload structure.
          *
@@ -1322,67 +1304,60 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @param {Array<Object>} aTypes - Array of rule types (Precondition + Rules).
          * @returns {Object} Payload object to send to backend.
          */
+            
             prepareRuleCreatePayload: function (oView, aTypes) {
-                var iType, iCondition, aCondition, iRule, aRules, _aRules, _oRule,
-                    oCondition, _aValues, aValueRanges, iValueRange,
-                    oPayload = {}, bEmptyRule = true;
-                _aRules = [];
-                for (iType = 0; iType < aTypes.length; iType++) {
-                    aCondition = aTypes[iType].Condition;
-                    for (iCondition = 0; iCondition < aCondition.length; iCondition++) {
-                        if (aCondition[iCondition].CType != "END IF") {
-                            oCondition = {};
-                            bEmptyRule = true;
-                            oCondition["CondId"] = Number.isFinite(aCondition[iCondition].CTypeID) ? String(aCondition[iCondition].CTypeID) : aCondition[iCondition].CTypeID;
-                            oCondition["to_Rule"] = [];
-                            aRules = aCondition[iCondition].Rules;
-                            for (iRule = 0; iRule < aRules.length; iRule++) {
-                                if (aRules[iRule].Attribute != '') {
-                                    bEmptyRule = false;
-                                    _oRule = {};
-                                    _oRule["AttributeId"] = aRules[iRule].Attribute;
-                                    _oRule["to_Value"] = [];
-                                    _aValues = [];
-                                    if (!({}).hasOwnProperty.call(aRules[iRule], "ValueRange") && !({}).hasOwnProperty.call(aRules[iRule], "Values")) {
-                                        aRules[iRule] = this._createRangesAndValues(aRules[iRule]);
-                                    }
-                                    aValueRanges = aRules[iRule].ValueRange.length > 0 ? aRules[iRule].ValueRange : aRules[iRule].Values;
-                                    if (aValueRanges) {
-                                        if (aRules[iRule].Operator == "BT") {
-                                            for (iValueRange = 0; iValueRange < aValueRanges.length; iValueRange++) {
-                                                _aValues.push({ Lower: aValueRanges[iValueRange].Lower, Upper: aValueRanges[iValueRange].Upper });
-                                            }
-                                        } else {
-                                            for (iValueRange = 0; iValueRange < aValueRanges.length; iValueRange++) {
-                                                _aValues.push({ Value: aValueRanges[iValueRange].Value, Operator: aValueRanges[iValueRange].Operator });
-                                            }
-                                        }
-                                    }
-                                    if (aRules[iRule].Operator == "BT") {
-                                        for (var k = 0; k < _aValues.length; k++) {
-                                            _oRule = {};
-                                            _oRule["AttributeId"] = aRules[iRule].Attribute;
-                                            _oRule["to_Value"] = [];
-                                            _oRule["to_Value"].push({ Operator: aRules[iRule].Operator, to_ValueRange: [{ Value: _aValues[k].Lower }, { Value: _aValues[k].Upper }] });
-                                            oCondition["to_Rule"].push(_oRule);
-                                        }
+                const oPayload = { to_Condition: [] };
 
-                                    } else {
-                                        for (var i = 0; i < _aValues.length; i++) {
-                                            _oRule["to_Value"].push(_aValues[i]);
-                                        }
-                                        oCondition["to_Rule"].push(_oRule);
-                                    }
-                                }
+                aTypes.forEach(type => {
+                    type.Condition.forEach(cond => {
+                        if (cond.CType === "END IF") return;
+
+                        const oCondition = {
+                            CondId: Number.isFinite(cond.CTypeID) ? String(cond.CTypeID) : cond.CTypeID,
+                            to_Rule: []
+                        };
+
+                        let hasRules = false;
+
+                        cond.Rules.forEach(rule => {
+                            if (!rule.Attribute) return;
+
+                            hasRules = true;
+
+                            // Ensure ValueRange/Values exist
+                            if (!rule.hasOwnProperty.call("ValueRange") && !rule.hasOwnProperty.call("Values")) {
+                                rule = this._createRangesAndValues(rule);
                             }
-                            if (!bEmptyRule) {
-                                _aRules.push(oCondition);
+
+                            const valueRanges = rule.ValueRange.length ? rule.ValueRange : rule.Values;
+                            if (!valueRanges) return;
+
+                            if (rule.Operator === "BT") {
+                                valueRanges.forEach(vr => {
+                                    oCondition.to_Rule.push({
+                                        AttributeId: rule.Attribute,
+                                        to_Value: [{
+                                            Operator: rule.Operator,
+                                            to_ValueRange: [{ Value: vr.Lower }, { Value: vr.Upper }]
+                                        }]
+                                    });
+                                });
+                            } else {
+                                oCondition.to_Rule.push({
+                                    AttributeId: rule.Attribute,
+                                    to_Value: valueRanges.map(v => ({ Value: v.Value, Operator: v.Operator }))
+                                });
                             }
+                        });
+
+                        if (hasRules) {
+                            oPayload.to_Condition.push(oCondition);
                         }
-                    }
-                }
-                oPayload["to_Condition"] = _aRules;
-                oPayload["Policy"] = oView.getBindingContext().getObject().PolicyName;
+                    });
+                });
+
+                oPayload.Policy = oView.getBindingContext().getObject().PolicyName;
+
                 return oPayload;
             }
         };

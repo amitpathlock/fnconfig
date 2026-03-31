@@ -237,7 +237,7 @@ sap.ui.define([
 		 * @public
 		 */
 		onPressAddConditionBtn: function (oEvent) {
-			RuleModelHandler.insertConditonInConditionBlock(this.getView(), oEvent.getSource());
+			RuleModelHandler.insertConditionInConditionBlock(this.getView(), oEvent.getSource());
 		},
 
 		/**
@@ -1775,12 +1775,11 @@ sap.ui.define([
 					return oDialog;
 				}.bind(this));
 			} else {
-				this._oDialogDataClassificationRule.then(function (oDialog) {
+				this._oDialogDataClassificationRule.then(function (oDialog) {	
+					oDialog.data("AttributeId", sDataClassificationAttr);
 					oDialog.removeAllContent();
 					oDialog.setBusy(true);
 					oDialog.open();
-					oDialog.data("AttributeId", sDataClassificationAttr);
-
 				});
 			}
 		},
