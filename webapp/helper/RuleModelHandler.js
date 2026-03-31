@@ -359,7 +359,11 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     // Group values by Operator
                     const groupedValues = oRule.Values.reduce((acc, { Operator, Value }) => {
                         if (!acc[Operator]) acc[Operator] = [];
+                        if(Value.split(".")[0]=="USER"||Value.split(".")[0]=="ENV" ||Value.split(".")[0]=="LIST"){
+                            acc[Operator].push(oRule.ValueDesc);
+                         } else{
                         acc[Operator].push(Value);
+                         }
                         return acc;
                     }, {});
 
@@ -1289,7 +1293,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                         .filter(v => v)
                         .map(v => ({
                             Operator: oRule.Operator,
-                            Value: v
+                            Value: oRule.Value
                         }));
                 }
 
