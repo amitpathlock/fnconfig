@@ -8,7 +8,8 @@
        class="PlDacDailogBox sapUiContentPadding"
        contentWidth="50%"
     contentHeight="auto"
-        beforeOpen="onDialogDataClassBeforeOpen"
+     afterOpen="onDialogDataClassAftereOpen"
+      
         
        >
 

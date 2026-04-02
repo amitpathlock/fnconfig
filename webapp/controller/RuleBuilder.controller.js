@@ -945,11 +945,11 @@ sap.ui.define([
 		 */
 		validateAttibuteInput: function (sAttribute, oMultiInput) {
 			var oBundle, oView = this.getView(), oDataModel = oView.getModel(),
-				oViewModel = oView.getModel("viewModel"),sPath;
+				oViewModel = oView.getModel("viewModel"), sPath;
 
 			sPath = oView.getModel().createKey("/AttrSet", {
 				AttributeId: sAttribute.toUpperCase()
-			});	
+			});
 			oViewModel.setProperty("/Data/AttributeId", sAttribute);
 			oBundle = oView.getModel("i18n").getResourceBundle();
 			oDataModel.read(sPath, {
@@ -1759,6 +1759,32 @@ sap.ui.define([
 			}
 		},
 		displayDataClassificationRules: function (sDataClassificationAttr) {
+			var oView = this.getView(), oDataModel = oView.getModel(), sPath, oHTML;
+			sPath = "/ClassificationAttrSet('" + sDataClassificationAttr + "')";
+			oDataModel.read(sPath, {
+				urlParameters: {
+					"$expand": "to_Value/to_Condition/to_AttributeId/to_Rule" // Expand to_Condition/to_Rule/to_Value
+				},
+				success: function (oData) {
+					if (oData.to_Value.results.length > 0) {
+						oHTML = RuleModelHandler.createDataClassificationRuleReadOnly(oData.to_Value.results, sDataClassificationAttr);
+						this.openDialogDataClassificationAttribute(oHTML);
+					}else{
+						MessageToast.show("The selected attribute is not classified.");
+					}
+				}.bind(this),
+				error: function (oError) {
+					Log.error("Read failed:" + oError);
+					sap.ui.core.BusyIndicator.hide();
+				}
+			});
+		},
+		onDialogDataClassifictionOk: function () {
+			this._oDialogDataClassificationRule.then(function (oDialog) {
+				oDialog.close();
+			});
+		},
+		openDialogDataClassificationAttribute: function (oHTML) {
 			// Check if dialog already exists
 			if (!this._oDialogDataClassificationRule) {
 				// Load fragment
@@ -1768,45 +1794,23 @@ sap.ui.define([
 				}).then(function (oDialog) {
 					// Connect dialog to view lifecycle
 					this.getView().addDependent(oDialog);
-					oDialog.data("AttributeId", sDataClassificationAttr);
 					oDialog.removeAllContent();
 					oDialog.setBusy(true);
+					oDialog.addContent(oHTML);
 					oDialog.open();
 					return oDialog;
 				}.bind(this));
 			} else {
-				this._oDialogDataClassificationRule.then(function (oDialog) {	
-					oDialog.data("AttributeId", sDataClassificationAttr);
+				this._oDialogDataClassificationRule.then(function (oDialog) {
 					oDialog.removeAllContent();
 					oDialog.setBusy(true);
+					oDialog.addContent(oHTML);
 					oDialog.open();
 				});
 			}
 		},
-		onDialogDataClassifictionOk: function () {
-			this._oDialogDataClassificationRule.then(function (oDialog) {
-				oDialog.close();
-			});
-		},
-		onDialogDataClassBeforeOpen: function (oEvent) {
-			var oView = this.getView(), oDataModel = oView.getModel(), sPath, oDialog = oEvent.getSource();
-			
-			sPath = "/ClassificationAttrSet('" + oEvent.getSource().data("AttributeId") + "')";
-			oDataModel.read(sPath, {
-				urlParameters: {
-					"$expand": "to_Value/to_Condition/to_AttributeId/to_Rule" // Expand to_Condition/to_Rule/to_Value
-				},
-				success: function (oData) {
-					if (oData.to_Value.results.length > 0) {
-						RuleModelHandler.createDataClassificationRuleReadOnly(oData.to_Value.results, oDialog);
-					}
-
-				}.bind(this),
-				error: function (oError) {
-					Log.error("Read failed:" + oError);
-					sap.ui.core.BusyIndicator.hide();
-				}
-			});
+		onDialogDataClassAftereOpen: function (oEvent) {
+			oEvent.getSource().setBusy(false);
 		}
 	});
 });

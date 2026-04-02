@@ -130,8 +130,8 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
 
                 return sContent;
             },
-            createDataClassificationRuleReadOnly: function (aRules, oDialog) {
-                if (!Array.isArray(aRules) || !oDialog) return;
+            createDataClassificationRuleReadOnly: function (aRules,sDataClassificationAttr) {
+                if (!Array.isArray(aRules)) return;
 
                 const wrapLine = (content, extraClass = "") =>
                     `<div class='plDacHTMLRuleLine ${extraClass}'>${content}</div>`;
@@ -143,7 +143,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     `<span ${style}>${text}</span>`;
 
                 let sContent = "";
-                sContent = "<div style='color:#354a5f;font-size:14px;font-weight:600;margin-bottom: 2px;'>Attribute ID: " + oDialog.data("AttributeId") + "</div>";
+                sContent = "<div style='color:#354a5f;font-size:14px;font-weight:600;margin-bottom: 2px;'>Attribute ID: " + sDataClassificationAttr + "</div>";
                 sContent += `<div style='color:#354a5f'>${"*".repeat(98)}</div>`;
                 aRules.forEach((rule, ruleIndex) => {
                     sContent += `<div class='plDacDCRules'><b> Rule : ${ruleIndex + 1} </b></div>`;
@@ -188,9 +188,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     // Divider
                     sContent += `<div style='color:#354a5f'>${".".repeat(136)}</div>`;
                 });
-
-                oDialog.setBusy(false);
-                oDialog.addContent(new HTML({ content: sContent, preferDOM: true }));
+               return new HTML({ content: sContent, preferDOM: true });
             },
 
             /**
@@ -359,11 +357,11 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     // Group values by Operator
                     const groupedValues = oRule.Values.reduce((acc, { Operator, Value }) => {
                         if (!acc[Operator]) acc[Operator] = [];
-                        if(Value.split(".")[0]=="USER"||Value.split(".")[0]=="ENV" ||Value.split(".")[0]=="LIST"){
+                        if (Value.split(".")[0] == "USER" || Value.split(".")[0] == "ENV" || Value.split(".")[0] == "LIST") {
                             acc[Operator].push(oRule.ValueDesc);
-                         } else{
-                        acc[Operator].push(Value);
-                         }
+                        } else {
+                            acc[Operator].push(Value);
+                        }
                         return acc;
                     }, {});
 
@@ -658,7 +656,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     };
                 });
             },
-            
+
             /**
          * Builds normal rule objects from OData condition response.
          *
@@ -692,7 +690,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     return oRule;
                 });
             },
-            
+
             /**
          * Reads values and ranges from OData value results.
          * Supports both single values and range values.
@@ -777,7 +775,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
 
                 return oValue;
             },
-           
+
             /**
          * Converts raw ValueRange records into internal range structure.
          *
@@ -814,7 +812,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
 
                 return ranges;
             },
-            
+
             /**
          * Inserts a new condition block into rule model.
          * If rule block doesn't exist, it creates one.
@@ -876,7 +874,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
 
                 oView.getModel("ruleModel").setData(oRuleData);
             },
-            
+
             /**
          * Reindexes the rule rows after deletion or insertion.
          *
@@ -890,7 +888,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     return rule;
                 });
             },
-           
+
 
             /**
          * Deletes an inline rule from a specific condition block.
@@ -899,7 +897,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @param {sap.m.Button} oButton - Button containing rule info in custom data.
          * @returns {void}
          */
-           
+
             deleteInlineRule: function (oView, oButton) {
                 const oValue = oButton.getCustomData()[0].getValue();
                 const oRuleData = oView.getModel("ruleModel").getData();
@@ -959,7 +957,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @param {sap.m.Button} oButton - Button containing rule info in custom data.
          * @returns {void}
          */
-           
+
             deleteEntireRuleBlock: function (oView, oButton) {
                 const oValue = oButton.getCustomData()[0].getValue();
                 const oRuleData = oView.getModel("ruleModel").getData();
@@ -1036,7 +1034,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @param {sap.m.Button} oButton - Button with custom data.
          * @returns {void}
          */
-           
+
             insertRuleInBlock: function (oView, oButton) {
                 const oValue = oButton.getCustomData()[0].getValue();
                 const oRuleData = oView.getModel("ruleModel").getData();
@@ -1086,7 +1084,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @param {sap.ui.core.Item} oItem - Selected suggestion item.
          * @returns {void}
          */
-            
+
             updateRuleModelWithSuggestionItem: function (oView, oInput, oItem) {
                 const { RuleType, CTypeID, Rows } = oInput.getCustomData()[0].getValue();
                 const { AttributeId, Description } = oItem.getBindingContext().getObject();
@@ -1121,7 +1119,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @param {sap.m.Dialog} oDialog - Value help dialog.
          * @returns {void}
          */
-            
+
             updateRuleModelWithValueHelpItem: function (oView, oToken, oDialog) {
                 const oData = oDialog.getModel("condition").getData();
                 const oValue = oToken.getCustomData()[0].getValue();
@@ -1197,7 +1195,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @param {Array<Object>} aItems - Template range items.
          * @returns {void}
          */
-            
+
             _updateRangesValue: function (oDialog, aValues, aItems) {
                 if (!oDialog) return;
 
@@ -1231,7 +1229,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @param {Array<Object>} aItems - Template value items.
          * @returns {void}
          */
-            
+
             _updateSingleValuesModel: function (oDialog, aValues, aItems) {
                 if (!oDialog) return;
 
@@ -1271,7 +1269,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
         * @param {Object} oRule - Rule object containing ValueDesc.
         * @returns {Object} Updated rule object with Values or ValueRange.
         */
-            
+
             _createRangesAndValues: function (oRule) {
                 oRule.ValueRange = [];
                 oRule.Values = [];
@@ -1308,7 +1306,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
          * @param {Array<Object>} aTypes - Array of rule types (Precondition + Rules).
          * @returns {Object} Payload object to send to backend.
          */
-            
+
             prepareRuleCreatePayload: function (oView, aTypes) {
                 const oPayload = { to_Condition: [] };
 
