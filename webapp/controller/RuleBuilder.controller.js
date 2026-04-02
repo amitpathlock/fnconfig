@@ -46,6 +46,7 @@ sap.ui.define([
 
 	return BaseController.extend("pl.dac.apps.fnconfig.controller.RuleBuilder", {
 		formatter: PLDACFormatter,
+		_oRHSInput:null,
 		/**
 		 * Controller initialization lifecycle hook.
 		 * Initializes the router and attaches the pattern matched event handler for the "PolicyRules" route.
@@ -456,6 +457,7 @@ sap.ui.define([
 			var oView = this.getView(), oInput = oEvent.getSource(), oUserAttributeTable, oListTable,
 				oEvnAttributeTable;
 			var oCustomData = oInput.getCustomData()[0].getValue();
+			this._oRHSInput = oInput;
 			if (oCustomData.Attribute.trim() == "") {
 				MessageToast.show("Please choose any attributes to continue.");
 				oInput.getParent().getItems()[0].focus();
@@ -1769,13 +1771,14 @@ sap.ui.define([
 					if (oData.to_Value.results.length > 0) {
 						oHTML = RuleModelHandler.createDataClassificationRuleReadOnly(oData.to_Value.results, sDataClassificationAttr);
 						this.openDialogDataClassificationAttribute(oHTML);
-					}else{
+					} else {
 						MessageToast.show("The selected attribute is not classified.");
 					}
 				}.bind(this),
 				error: function (oError) {
-					Log.error("Read failed:" + oError);
-					sap.ui.core.BusyIndicator.hide();
+					MessageBox.warning(JSON.parse(oError.responseText).error.message.value, {
+						styleClass: "PlDacMessageBox"
+					});
 				}
 			});
 		},
@@ -1811,6 +1814,10 @@ sap.ui.define([
 		},
 		onDialogDataClassAftereOpen: function (oEvent) {
 			oEvent.getSource().setBusy(false);
-		}
+		},
+		onRHSInputValueChanged:function(oEvent ){
+			this._oRHSInput= oEvent.getSource();
+			//debugger;
+		},
 	});
 });
