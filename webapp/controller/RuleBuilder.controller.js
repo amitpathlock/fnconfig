@@ -46,7 +46,8 @@ sap.ui.define([
 
 	return BaseController.extend("pl.dac.apps.fnconfig.controller.RuleBuilder", {
 		formatter: PLDACFormatter,
-		_oRHSInput:null,
+		_oRHSInput: null,
+		_oDCErrorStack: [],
 		/**
 		 * Controller initialization lifecycle hook.
 		 * Initializes the router and attaches the pattern matched event handler for the "PolicyRules" route.
@@ -88,7 +89,8 @@ sap.ui.define([
 				DisplayRuleBtnText: "",
 				bVisibleAddPreBlock: false,
 				bVisibleAddRuleBlock: false,
-				bVisibleAddCondition: false
+				bVisibleAddCondition: false,
+				bEnableSave: true
 			});
 			oView.getModel().metadataLoaded().then(function () {
 				var sPath = oView.getModel().createKey("/PolicySet", {
@@ -299,6 +301,7 @@ sap.ui.define([
 			var oView = this.getView(), oFilterBar, oInput = oEvent.getSource(), oColAttryName,
 				oColAttrDesc, oModel = new JSONModel(oInput.getCustomData()[0].getValue()),
 				that = this;
+			this.oLHSInput= oInput;
 			oFilterBar = new sap.ui.comp.filterbar.FilterBar({
 				advancedMode: true,
 				// filterContainerWidth: "10rem",
@@ -438,6 +441,19 @@ sap.ui.define([
 			var aTokens = oEvent.getParameter("tokens");
 			this._oVHDialogAttr.close();
 			RuleModelHandler.updateRuleModelWithValueHelpItem(this.getView(), aTokens[0], this._oVHDialogAttr);
+			if(this.oLHSInput){
+				if(this.oLHSInput.getBinding("value").getContext().getProperty("Attribute").includes("DATA.CLASS")){
+					this.oLHSInput.getParent().getItems()[2].setShowValueHelp(false)
+				}else{
+					this.oLHSInput.getParent().getItems()[2].setShowValueHelp(true)
+				}
+			}
+		},
+		handleValueHelpVisibilty:function(sAttribute){
+			if(sAttribute && sAttribute.includes("DATA.CLASS")){
+				return false;
+			}
+			return true;
 		},
 		/**
 		 * Opens the value selection dialog based on operator type.
@@ -1288,7 +1304,7 @@ sap.ui.define([
 			var oSelectedItemData = oEvent.getSource()
 				.getBindingContext()
 				.getObject();
-
+			
 			RuleModelHandler.updateRuleModelWithAttrSelectionData(
 				this.getView(),
 				this._oDialogSelection,
@@ -1760,16 +1776,20 @@ sap.ui.define([
 				this._oDialogSelection.getContent()[0].getModel("Ranges").setData(aItems);
 			}
 		},
-		displayDataClassificationRules: function (sDataClassificationAttr) {
-			var oView = this.getView(), oDataModel = oView.getModel(), sPath, oHTML;
-			sPath = "/ClassificationAttrSet('" + sDataClassificationAttr + "')";
+		displayDataClassificationRules: function (oEvent) {
+			var oView = this.getView(), oDataModel = oView.getModel(), 
+			sPolicy = oEvent.srcElement.getAttribute("data-policy"),
+			sAttribute = oEvent.srcElement.getAttribute("data-attribute"),
+			sPath, oHTML;
+			sPath = "/ClassificationAttrSet('" + sAttribute + "')";
 			oDataModel.read(sPath, {
 				urlParameters: {
+					"$filter":"Policy eq '" +sPolicy +"'",
 					"$expand": "to_Value/to_Condition/to_AttributeId/to_Rule" // Expand to_Condition/to_Rule/to_Value
 				},
 				success: function (oData) {
 					if (oData.to_Value.results.length > 0) {
-						oHTML = RuleModelHandler.createDataClassificationRuleReadOnly(oData.to_Value.results, sDataClassificationAttr);
+						oHTML = RuleModelHandler.createDataClassificationRuleReadOnly(oData.to_Value.results, sAttribute);
 						this.openDialogDataClassificationAttribute(oHTML);
 					} else {
 						MessageToast.show("The selected attribute is not classified.");
@@ -1815,9 +1835,59 @@ sap.ui.define([
 		onDialogDataClassAftereOpen: function (oEvent) {
 			oEvent.getSource().setBusy(false);
 		},
-		onRHSInputValueChanged:function(oEvent ){
-			this._oRHSInput= oEvent.getSource();
-			//debugger;
+		onRHSInputValueChanged: function (oEvent) {
+			var sAttribute = oEvent.getSource().getBinding("value").getContext().getProperty("Attribute"),
+				sAttributeValue = oEvent.getParameter("value"), oView = this.getView(), sKey;
+
+			this._oRHSInput = oEvent.getSource();
+			this._oRHSInput.getParent().getItems()[0].setValueState("None");
+			this._oRHSInput.getParent().getItems()[0].setValueStateText("");
+			this._oRHSInput.setValueState("None");
+			this._oRHSInput.setValueStateText("");
+			oView.getModel("viewModel").setProperty("/bEnableSave", true);
+			if (sAttribute.includes("DATA.CLASS") == 0) {
+
+				for (sKey in this._oDCErrorStack) {
+					if (this._oDCErrorStack[sKey].getValueState() == "Error") {
+						oView.getModel("viewModel").setProperty("/bEnableSave", false);
+					}
+				}
+				return;
+			}
+			this.displayDataClassificationValidationError(sAttribute, sAttributeValue);
+
 		},
+		displayDataClassificationValidationError: function (sAttribute, sAttributeValue) {
+			var oView = this.getView(), oDataModel = oView.getModel();
+			oDataModel.callFunction("/Func_Imp_DC_Val", {
+				method: "GET",
+				urlParameters: {
+					AttributeId: sAttribute,
+					AttributeValue: sAttributeValue
+				},
+				success: function () {
+					delete this._oDCErrorStack[this._oRHSInput.getId()];
+					oView.getModel("viewModel").setProperty("/bEnableSave", true);
+				}.bind(this),
+				error: function (e) {
+					var oError = JSON.parse(e.responseText).error;
+					oView.getModel("viewModel").setProperty("/bEnableSave", false);
+					if (oError.code == "/APPSDM/ABAC/225") {
+
+						this._oRHSInput.getParent().getItems()[0].setValueState("Error");
+						this._oRHSInput.getParent().getItems()[0].setValueStateText(oError.message.value);
+						this._oRHSInput.getParent().getItems()[0].focus();
+						this._oDCErrorStack[this._oRHSInput.getId()] = this._oRHSInput;
+					} else {
+						this._oRHSInput.setValueState("Error");
+
+						this._oRHSInput.setValueStateText(oError.message.value);
+						this._oRHSInput.focus();
+						this._oDCErrorStack[this._oRHSInput.getId()] = this._oRHSInput;
+					}
+
+				}.bind(this)
+			});
+		}
 	});
 });

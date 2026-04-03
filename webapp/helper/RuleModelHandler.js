@@ -206,6 +206,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     aPreconditions = [],
                     aRulesConditions = [],
                     sPolicyName = oView.getElementBinding().getBoundContext().getProperty("PolicyName"),
+                    sPolicy=oView.getElementBinding().getBoundContext().getProperty("Policy"),
                     sPreConditionHTML = "",
                     sRulesHTML = "";
 
@@ -229,7 +230,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     }
 
                     if (rule.Attribute.includes("DATA.CLASS")) {
-                        lineHTML += `<span><a href="#" class="plDacDataClassification" title="Click here to view the classification rules">${rule.Attribute}</a></span>`;
+                        lineHTML += `<span><a href="#" class="plDacDataClassification" data-policy='${sPolicy}' data-attribute='${rule.Attribute}' title="Click here to view the classification rules">${rule.Attribute}</a></span>`;
                     } else {
                         lineHTML += '<span>' + rule.Attribute + '</span>';
                     }
@@ -315,7 +316,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                         document.querySelectorAll(".plDacDataClassification").forEach(function (el) {
                             el.onclick = function (oEvent) {
                                 oEvent.preventDefault();
-                                oView.getController().displayDataClassificationRules(oEvent.target.innerHTML);
+                                oView.getController().displayDataClassificationRules(oEvent);
                             };
                         });
                     }
@@ -600,8 +601,8 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     : oRuleData.types.length - 1;
 
                 const aCondition = oRuleData.types[iTypeIndex]?.Condition || [];
-                const sCTypeID = oData.CTypeID || oData.CTypeID;
-
+                let sCTypeID = oData.CTypeID || oData.CTypeID;
+                if(iTypeIndex==0 && sCTypeID==0) sCTypeID= aCondition[iTypeIndex].CTypeID;
                 const oCondition = aCondition.find(c => c.CTypeID === sCTypeID);
                 if (!oCondition) return;
 
@@ -1131,7 +1132,8 @@ sap.ui.define(["sap/ui/model/json/JSONModel",
                     : oRuleData.types.length - 1;
 
                 const conditions = oRuleData.types[typeIndex].Condition;
-
+              //  let sCTypeID = oData.CTypeID || oData.CTypeID;
+                if(typeIndex==0 && oData.CTypeID==0) oData.CTypeID= conditions[typeIndex].CTypeID;
                 // Find the matching condition
                 const condition = conditions.find(c => c.CTypeID === oData.CTypeID);
                 if (condition) {

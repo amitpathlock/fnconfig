@@ -88,7 +88,7 @@ sap.ui.define([
                 }.bind(this)
             });
             oIcon.addStyleClass("plDacRuleInputIcon");
-            this.setAggregation("_vhIcon", oIcon);
+           // this.setAggregation("_vhIcon", oIcon);
         },
         /**
         * Cleans up internal resources.
@@ -115,7 +115,7 @@ sap.ui.define([
                 InputRenderer.render(oRm, oControl);
 
                 // Render the value help icon
-                oRm.renderControl(oControl.getAggregation("_vhIcon"));
+              //  oRm.renderControl(oControl.getAggregation("_vhIcon"));
 
                 oRm.close("div");
             }

@@ -14,13 +14,13 @@
 				<!-- @ui5ignore -->
 				<Button icon="sap-icon://add" visible="{viewModel>/bVisibleAddRuleBlock}" class="plDacRuleTopButton" press="onPressAddRuleBlockBtn"  text="Rule" tooltip="Add Rule"/>
 				<!-- @ui5ignore -->
-				<Button icon="sap-icon://add" visible="{viewModel>/bVisibleAddCondition}" class="plDacRuleTopButton" press="onPressAddConditionBtn"  text="Condition" tooltip="Save Rule">
+				<Button icon="sap-icon://add" visible="{viewModel>/bVisibleAddCondition}" class="plDacRuleTopButton" press="onPressAddConditionBtn"  text="Condition" tooltip="Add Condition">
 					<customData>
 							<core:CustomData key="data" value="{ruleModel>}"/>
 						</customData>
 				</Button>
 				<!-- @ui5ignore -->
-				<Button icon="sap-icon://save" class="plDacRuleTopButton" press="onPressSaveRuleBtn"  text="Save" tooltip="Save Rule"/>
+				<Button icon="sap-icon://save" class="plDacRuleTopButton" enabled="{viewModel>/bEnableSave}" press="onPressSaveRuleBtn"  text="Save" tooltip="Save Rule"/>
 				<!-- @ui5ignore -->
 				<Button icon="sap-icon://decline" class="plDacRuleTopButton" press="onPressCancelRuleBtn"  text="Cancel" tooltip="Save Rule" />
 			</OverflowToolbar>
@@ -132,21 +132,22 @@
 													</layoutData>
 												</Select>
 												<!-- @ui5ignore -->
-												<cc:PlDacRuleInput
+												<Input
 													width="100%"
 													value="{ruleModel>ValueDesc}"
 													class="plDacRuleInputFontSize"
-													showValueDialog=".onShowValueDialog"
+													showValueHelp="{path:'ruleModel>Attribute',formatter:'.handleValueHelpVisibilty'}"
+													valueHelpRequest=".onShowValueDialog"
 													liveChange="onRHSLiveInputChange" 
 													change="onRHSInputValueChanged"
 												>
-													<cc:customData>
+													<customData>
 														<core:CustomData key="data" value="{ruleModel>}"/>
-													</cc:customData>
-													<cc:layoutData>
+													</customData>
+													<layoutData>
 														<FlexItemData growFactor="4" />
-													</cc:layoutData>
-												</cc:PlDacRuleInput>
+													</layoutData>
+												</Input>
 												<!-- @ui5ignore -->
 												<Button icon="sap-icon://delete" class="plDacRuleTopButton" type="Reject" press="onPressDeleteSingleRowRule">
 													<customData>
