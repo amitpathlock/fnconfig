@@ -1,0 +1,88 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+    xmlns:cus="pl.dac.apps.fnconfig.control"
+    xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+> <!-- @ui5ignore -->
+   <Dialog showHeader="false" contentWidth="840px" contentHeight="580px" beforeOpen="onBeforeOpenDialog">   
+        <content>
+        <!-- @ui5ignore -->
+          <cus:PlDacSectionLayout  addRowInSingleValue="onAddRowInSingleValue" addRowInValueRanges="onAddRowInValueRanges"
+          >
+              <cus:sections>
+               
+                    <!-- Single Values Selection Table-->
+                    <VBox>
+                     <Table items="{SingleValues>/}" sticky="HeaderToolbar,InfoToolbar,ColumnHeaders"  customData:title="Single Values" customData:icon="sap-icon://slim-arrow-down" >
+                        <columns>
+                         <Column 	  demandPopin="true">
+                                <Text text="Selection Option" />
+                            </Column> 
+                            <Column 	  demandPopin="true">
+                                <Text text="Values" />
+                            </Column> 
+                           
+                        </columns>
+                        <items>
+                            <ColumnListItem vAlign="Middle" type="Active">
+                                <cells>
+                                <!-- @ui5ignore -->
+                                    <Select width="100%" change="onSelectionDialogOperatorChange" items="{path:'OperatorsSV>/',templateShareable:true}" selectedKey="{SingleValues>Operator}">
+                                        
+                                      
+                                       <items>
+                                        <c:Item key="{OperatorsSV>Key}" text="{OperatorsSV>Text}"
+                                        customData:ClearType="ValueRange"
+                                        >
+                                            
+                                        </c:Item>
+                                       </items>
+                                      
+                                    </Select>
+                                    <Input value="{SingleValues>Value}"/>
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                     <!-- @ui5ignore -->
+                        <Button icon="sap-icon://add" text="Rows" class="plDacAddRows"  press=".onPressAddRowInValues" />    
+                      </VBox>
+                
+               
+                     <VBox>
+                      <Table items="{path:'/UserAttrSet'}" mode="SingleSelectLeft" customData:title="User Attributes"  customData:icon="sap-icon://person-placeholder" >
+                        <columns>
+                            <Column 	minScreenWidth="Tablet"  demandPopin="true">
+                                <Text text="{i18n>txtHeadrObjectPageExposeAttrTblColumnAttribute}" />
+                            </Column> 
+                             <Column 	minScreenWidth="Tablet"  demandPopin="true">
+                                <Text text="{i18n>txtHeadrObjectPageExposeAttrTblColumnAttributeDesc}" />
+                            </Column>     
+                        </columns>
+                        <items>
+                          <!-- @ui5ignore -->
+                            <ColumnListItem vAlign="Middle" type="Active" press="onPressAttributeItem">
+                                <cells>
+                                    <ObjectIdentifier title="{AttributeId}" />
+                                    <Text text="{Description}"/>
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                     </VBox>
+                   
+              </cus:sections>
+          </cus:PlDacSectionLayout>
+
+        </content> 
+            <beginButton>
+                 <!-- @ui5ignore -->
+             <Button text="Ok" press="onValueDialogOkPress" visible="{viewModel>/VisibleOK}" />
+            </beginButton> 
+          <endButton>
+          
+           <!-- @ui5ignore -->
+                <Button text="Cancel" press="onCloseValueDialog" />
+            </endButton>      
+    </Dialog>
+</c:FragmentDefinition>

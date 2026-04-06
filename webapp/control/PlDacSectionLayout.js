@@ -103,9 +103,9 @@ sap.ui.define([
 
         _handleOnSectionClick: function (oEvent) {
             var iIndex, $target = $(oEvent.target);
-            if($target.is("span")){
+            if ($target.is("span")) {
                 iIndex = parseInt($target.parent().attr("data-key"), 10);
-            }else{
+            } else {
                 iIndex = parseInt($target.attr("data-key"), 10);
             }
             this._updateVisibleOK(iIndex);
@@ -176,18 +176,44 @@ sap.ui.define([
         },
         _applyInitialState: function () {
 
-            var $sections, iIndex, oSettingData, aContents, oParent = this.getParent(), oDom = oParent.getDomRef();
+            var sPrefix, $sections, iIndex, oSettingData, aContents, oParent = this.getParent(), oDom = oParent.getDomRef();
             oSettingData = oParent.getModel("setting").getData();
             aContents = oDom.querySelectorAll("div.plDacSectionItem");
             $sections = this.$().find(".plDacSection");
 
             iIndex = 0;
+            sPrefix = oSettingData.Value.split(".")[0];
+            /**Special handling for Classification Attribute */
+            if (oSettingData.Attribute.includes("DATA.CLASS")) {
+                aContents.forEach(function (el, idx) {
+                    if (idx == 0 || idx == 3) {
+                        el.style.display = "block";
+                    } else {
+                        el.style.display = "none";
+                    }
 
+                });
+                $sections.each(function (idx, el) {
+                    if (idx == 0 || idx == 3) {
+                        el.style.display = "block";
+                    } else {
+                        el.style.display = "none";
+                    }
+                });
+                if (sPrefix === "USER") {
+                    iIndex = 3;
+                }
+                aContents.forEach(function (el, idx) {
+                    el.style.display = idx === iIndex ? "block" : "none";
+                });
+                $sections.removeClass("plDacSectionSelected")
+                .eq(iIndex).addClass("plDacSectionSelected");
+                return;
+            }
+            /**End for case handling for Classification Attribute */
             if (oSettingData.Operator === "BT") {
                 iIndex = 1;
             } else if (oSettingData.Value) {
-
-                var sPrefix = oSettingData.Value.split(".")[0];
 
                 if (sPrefix === "ENV") {
                     iIndex = 2;

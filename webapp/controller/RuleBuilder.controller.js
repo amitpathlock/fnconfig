@@ -502,8 +502,8 @@ sap.ui.define([
 					controller: this
 				}).then(function (oDialog) {
 					this._oDialogSelection = oDialog;
-					oView.addDependent(this._oDialogSelection);
-					this._oDialogSelection.setModel(oSettingModel, "setting");
+					 oView.addDependent(this._oDialogSelection);
+					 this._oDialogSelection.setModel(oSettingModel, "setting");
 					oEvnAttributeTable = this._oDialogSelection.getContent()[0].getAggregation("sections")[2].getItems()[0];
 					oEvnAttributeTable.addEventDelegate(this._attributeTableEventDelegate, this);
 					oUserAttributeTable = this._oDialogSelection.getContent()[0].getAggregation("sections")[3].getItems()[0];
@@ -1835,28 +1835,28 @@ sap.ui.define([
 		onDialogDataClassAftereOpen: function (oEvent) {
 			oEvent.getSource().setBusy(false);
 		},
-		onRHSInputValueChanged: function (oEvent) {
-			var sAttribute = oEvent.getSource().getBinding("value").getContext().getProperty("Attribute"),
-				sAttributeValue = oEvent.getParameter("value"), oView = this.getView(), sKey;
+		// onRHSInputValueChanged: function (oEvent) {
+		// 	var sAttribute = oEvent.getSource().getBinding("value").getContext().getProperty("Attribute"),
+		// 		sAttributeValue = oEvent.getParameter("value"), oView = this.getView(), sKey;
 
-			this._oRHSInput = oEvent.getSource();
-			this._oRHSInput.getParent().getItems()[0].setValueState("None");
-			this._oRHSInput.getParent().getItems()[0].setValueStateText("");
-			this._oRHSInput.setValueState("None");
-			this._oRHSInput.setValueStateText("");
-			oView.getModel("viewModel").setProperty("/bEnableSave", true);
-			if (sAttribute.includes("DATA.CLASS") == 0) {
+		// 	this._oRHSInput = oEvent.getSource();
+		// 	this._oRHSInput.getParent().getItems()[0].setValueState("None");
+		// 	this._oRHSInput.getParent().getItems()[0].setValueStateText("");
+		// 	this._oRHSInput.setValueState("None");
+		// 	this._oRHSInput.setValueStateText("");
+		// 	oView.getModel("viewModel").setProperty("/bEnableSave", true);
+		// 	if (sAttribute.includes("DATA.CLASS") == 0) {
 
-				for (sKey in this._oDCErrorStack) {
-					if (this._oDCErrorStack[sKey].getValueState() == "Error") {
-						oView.getModel("viewModel").setProperty("/bEnableSave", false);
-					}
-				}
-				return;
-			}
-			this.displayDataClassificationValidationError(sAttribute, sAttributeValue);
+		// 		for (sKey in this._oDCErrorStack) {
+		// 			if (this._oDCErrorStack[sKey].getValueState() == "Error") {
+		// 				oView.getModel("viewModel").setProperty("/bEnableSave", false);
+		// 			}
+		// 		}
+		// 		return;
+		// 	}
+		// 	this.displayDataClassificationValidationError(sAttribute, sAttributeValue);
 
-		},
+		// },
 		displayDataClassificationValidationError: function (sAttribute, sAttributeValue) {
 			var oView = this.getView(), oDataModel = oView.getModel();
 			oDataModel.callFunction("/Func_Imp_DC_Val", {

@@ -12,11 +12,7 @@
               <cus:sections>
                
                     <!-- Single Values Selection Table-->
-                    <VBox
-                      
-                    >
-                        
-                  
+                    <VBox>
                      <Table items="{SingleValues>/}" sticky="HeaderToolbar,InfoToolbar,ColumnHeaders"  customData:title="Single Values" customData:icon="sap-icon://slim-arrow-down" >
                         <columns>
                          <Column 	  demandPopin="true">

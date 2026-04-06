@@ -136,10 +136,10 @@
 													width="100%"
 													value="{ruleModel>ValueDesc}"
 													class="plDacRuleInputFontSize"
-													showValueHelp="{path:'ruleModel>Attribute',formatter:'.handleValueHelpVisibilty'}"
+													showValueHelp="true"
 													valueHelpRequest=".onShowValueDialog"
 													liveChange="onRHSLiveInputChange" 
-													change="onRHSInputValueChanged"
+													
 												>
 													<customData>
 														<core:CustomData key="data" value="{ruleModel>}"/>
